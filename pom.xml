@@ -16,6 +16,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.drools.planner</groupId>
+      <artifactId>drools-planner-core</artifactId>
+      <version>5.4.0.Beta2</version>
+    </dependency>
+    <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
       <version>1.0.1</version>
