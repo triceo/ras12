@@ -64,6 +64,8 @@ public class RAS2012ProblemIO implements ProblemIO {
         return t.toString();
     }
 
+    private String             name;
+
     private Map<Integer, Node> nodes;
 
     private RAS2012Solution createSolution(final DataSetParser p) {
@@ -92,7 +94,7 @@ public class RAS2012ProblemIO implements ProblemIO {
     @Override
     public String getFileExtension() {
         // FIXME inconsistent planner API; where to get the file name from?
-        return null;
+        return this.name;
     }
 
     private Collection<Arc> initArcs(final DataSetParser p) {
@@ -197,7 +199,9 @@ public class RAS2012ProblemIO implements ProblemIO {
         try (InputStream is = new FileInputStream(inputSolutionFile)) {
             final DataSetParser p = new DataSetParser(is);
             p.parse();
-            return this.createSolution(p);
+            final RAS2012Solution s = this.createSolution(p);
+            this.name = s.getName();
+            return s;
         } catch (final FileNotFoundException e) {
             throw new IllegalArgumentException("Solution file doesn't exist: " + inputSolutionFile,
                     e);
@@ -208,7 +212,6 @@ public class RAS2012ProblemIO implements ProblemIO {
             throw new IllegalArgumentException("Problem parsing solution file: "
                     + inputSolutionFile, e);
         }
-
     }
 
     @Override
