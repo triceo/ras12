@@ -4,34 +4,30 @@ import java.util.Collection;
 
 import org.drools.planner.core.score.buildin.hardandsoft.HardAndSoftScore;
 import org.drools.planner.core.solution.Solution;
-import org.drools.planner.examples.ras2012.model.Arc;
 import org.drools.planner.examples.ras2012.model.MaintenanceWindow;
+import org.drools.planner.examples.ras2012.model.Network;
 import org.drools.planner.examples.ras2012.model.Train;
 
 public class RAS2012Solution implements Solution<HardAndSoftScore> {
 
     private final String                        name;
-    private final Collection<Arc>               arcs;
+    private final Network                       net;
     private final Collection<MaintenanceWindow> maintenances;
     private final Collection<Train>             trains;
 
     private HardAndSoftScore                    score;
 
-    public RAS2012Solution(final String name, final Collection<Arc> arcs,
+    public RAS2012Solution(final String name, Network net,
             final Collection<MaintenanceWindow> maintenances, final Collection<Train> trains) {
         this.name = name;
-        this.arcs = arcs;
+        this.net = net;
         this.maintenances = maintenances;
         this.trains = trains;
     }
 
     @Override
     public Solution<HardAndSoftScore> cloneSolution() {
-        return new RAS2012Solution(this.name, this.arcs, this.maintenances, this.trains);
-    }
-
-    public Collection<Arc> getArcs() {
-        return this.arcs;
+        return new RAS2012Solution(this.name, this.net, this.maintenances, this.trains);
     }
 
     public Collection<MaintenanceWindow> getMaintenances() {
@@ -64,8 +60,11 @@ public class RAS2012Solution implements Solution<HardAndSoftScore> {
 
     @Override
     public String toString() {
-        return "RAS2012Solution [name=" + this.name + ", arcs=" + this.arcs + ", maintenances="
-                + this.maintenances + ", trains=" + this.trains + ", score=" + this.score + "]";
+        StringBuilder builder = new StringBuilder();
+        builder.append("RAS2012Solution [name=").append(name).append(", net=").append(net)
+                .append(", maintenances=").append(maintenances).append(", trains=").append(trains)
+                .append(", score=").append(score).append("]");
+        return builder.toString();
     }
 
 }

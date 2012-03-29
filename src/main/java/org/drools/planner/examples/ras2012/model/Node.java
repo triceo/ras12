@@ -41,7 +41,7 @@ public class Node {
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        builder.append("Node [id=").append(this.id).append("]");
+        builder.append("Node #").append(this.id);
         return builder.toString();
     }
 

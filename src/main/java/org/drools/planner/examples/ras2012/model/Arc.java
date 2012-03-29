@@ -137,9 +137,9 @@ public class Arc {
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        builder.append("Arc [startingNode=").append(this.startingNode).append(", endingNode=")
-                .append(this.endingNode).append(", lengthInMiles=").append(this.lengthInMiles)
-                .append(", trackType=").append(this.trackType).append("]");
+        builder.append("Arc [").append(this.startingNode).append("->").append(this.endingNode)
+                .append(", miles=").append(this.lengthInMiles).append(", type=")
+                .append(this.trackType).append("]");
         return builder.toString();
     }
 

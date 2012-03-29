@@ -18,6 +18,7 @@ import org.drools.planner.core.solution.Solution;
 import org.drools.planner.examples.ras2012.model.Arc;
 import org.drools.planner.examples.ras2012.model.Arc.TrackType;
 import org.drools.planner.examples.ras2012.model.MaintenanceWindow;
+import org.drools.planner.examples.ras2012.model.Network;
 import org.drools.planner.examples.ras2012.model.Node;
 import org.drools.planner.examples.ras2012.model.ScheduleAdherenceRequirement;
 import org.drools.planner.examples.ras2012.model.Train;
@@ -88,7 +89,7 @@ public class RAS2012ProblemIO implements ProblemIO {
         final Collection<Arc> arcs = this.initArcs(p);
         final Collection<MaintenanceWindow> mows = this.initMOW(p);
         final Collection<Train> trains = this.initTrains(p);
-        return new RAS2012Solution(name, arcs, mows, trains);
+        return new RAS2012Solution(name, new Network(this.nodes.values(), arcs), mows, trains);
     }
 
     @Override
@@ -124,7 +125,6 @@ public class RAS2012ProblemIO implements ProblemIO {
             if (!newNodes.containsKey(endNodeId)) {
                 newNodes.put(endNodeId, new Node(endNodeId));
             }
-            // FIXME build an undirected graph of connections between nodes
             // and finally create the arc
             final Arc arc = new Arc(t, length, newNodes.get(startNodeId), newNodes.get(endNodeId));
             newArcs.add(arc);
