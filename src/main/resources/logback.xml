@@ -9,6 +9,7 @@
     </appender>
     <appender name="FILE" class="ch.qos.logback.core.FileAppender"> 
         <file>runtime.log</file> 
+        <param name="append" value="false" />
         <encoder> 
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder> 
@@ -18,7 +19,7 @@
         <param name="IncludeCallerData" value="true"/>
         <appender-ref ref="FILE"/>
     </appender>
-    <root level="DEBUG">
+    <root level="TRACE">
         <appender-ref ref="CONSOLE" /> 
         <appender-ref ref="ASYNC" /> 
     </root>
