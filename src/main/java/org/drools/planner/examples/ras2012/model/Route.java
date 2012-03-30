@@ -3,6 +3,8 @@ package org.drools.planner.examples.ras2012.model;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,33 +27,6 @@ public class Route {
         this(d);
         for (final Arc a : e) {
             this.parts.add(a);
-        }
-    }
-
-    public Arc getFirstArc() {
-        if (this.direction == Direction.WESTBOUND) {
-            return this.parts.get(this.parts.size() - 1);
-        } else {
-            return this.parts.get(0);
-        }
-    }
-
-    public Arc getNextArc(Arc a) {
-        if (a == null)
-            return this.getFirstArc();
-        int index = this.parts.indexOf(a);
-        if (this.direction == Direction.WESTBOUND) {
-            if (index == 0) {
-                return null;
-            } else {
-                return this.parts.get(index - 1);
-            }
-        } else {
-            if (index == (this.parts.size() - 1)) {
-                return null;
-            } else {
-                return this.parts.get(index + 1);
-            }
         }
     }
 
@@ -95,6 +70,14 @@ public class Route {
         return this.direction;
     }
 
+    public Arc getFirstArc() {
+        if (this.direction == Direction.WESTBOUND) {
+            return this.parts.get(this.parts.size() - 1);
+        } else {
+            return this.parts.get(0);
+        }
+    }
+
     public BigDecimal getLengthInMiles() {
         BigDecimal result = BigDecimal.ZERO;
         for (final Arc a : this.parts) {
@@ -105,6 +88,58 @@ public class Route {
 
     public int getLengthInNodes() {
         return this.parts.size();
+    }
+
+    public Arc getNextArc(final Arc a) {
+        if (a == null) {
+            return this.getFirstArc();
+        }
+        final int index = this.parts.indexOf(a);
+        if (this.direction == Direction.WESTBOUND) {
+            if (index == 0) {
+                return null;
+            } else {
+                return this.parts.get(index - 1);
+            }
+        } else {
+            if (index == this.parts.size() - 1) {
+                return null;
+            } else {
+                return this.parts.get(index + 1);
+            }
+        }
+    }
+
+    public Collection<Node> getWaitPoints() {
+        final Collection<Node> waitPoints = new HashSet<Node>();
+        // we want to be able to hold the train before it enters the network
+        final Arc firstArc = this.getFirstArc();
+        if (this.direction == Direction.EASTBOUND) {
+            waitPoints.add(firstArc.getStartingNode());
+        } else {
+            waitPoints.add(firstArc.getEndingNode());
+        }
+        // other wait points depend on te type of the track
+        for (final Arc a : this.parts) {
+            if (a.getTrackType() == TrackType.SIDING) {
+                // on sidings, wait before leaving them through a switch
+                if (this.direction == Direction.EASTBOUND) {
+                    waitPoints.add(a.getEndingNode());
+                } else {
+                    waitPoints.add(a.getStartingNode());
+                }
+            } else if (!a.getTrackType().isMainTrack()) {
+                // on crossovers and switches, wait before joining them
+                if (this.direction == Direction.EASTBOUND) {
+                    waitPoints.add(a.getStartingNode());
+                } else {
+                    waitPoints.add(a.getEndingNode());
+                }
+            } else {
+                // on main tracks, never wait
+            }
+        }
+        return Collections.unmodifiableCollection(waitPoints);
     }
 
     @Override

@@ -2,9 +2,13 @@ package org.drools.planner.examples.ras2012.model;
 
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.drools.planner.examples.ras2012.RAS2012Solution;
@@ -31,16 +35,57 @@ public class RoutePlan {
 
         private final RoutePlan                plan;
         private final BigDecimal               trainEntryTime;
-        private final AtomicInteger            idGenerator     = new AtomicInteger(0);
-        private final Map<Integer, Arc>        arcProgression  = new TreeMap<Integer, Arc>();
-        private final Map<Integer, Node>       nodeProgression = new TreeMap<Integer, Node>();
-        private final Map<Integer, BigDecimal> nodeDistances   = new TreeMap<Integer, BigDecimal>();
+        private final AtomicInteger            idGenerator            = new AtomicInteger(1);
+        private final Map<Integer, Arc>        arcProgression         = new TreeMap<Integer, Arc>();
+        private final Map<Integer, Node>       nodeProgression        = new TreeMap<Integer, Node>();
+        private final Map<Integer, BigDecimal> nodeDistances          = new TreeMap<Integer, BigDecimal>();
 
-        private final Map<Integer, BigDecimal> nodeEntryTimes  = new TreeMap<Integer, BigDecimal>();
+        /**
+         * This contains the entry times as they came from the pass() method. Never use these values directly! Only use them via
+         * getAdjustedEntryTimes(), which adjusts them for the wait times existing at the time.
+         */
+        private final Map<Integer, BigDecimal> relativeNodeEntryTimes = new TreeMap<Integer, BigDecimal>();
+        private final Map<Node, WaitTime>      nodeWaitTimes          = new HashMap<Node, WaitTime>();
 
         public Itinerary(final RoutePlan plan) {
             this.plan = plan;
             this.trainEntryTime = BigDecimal.valueOf(this.plan.getTrain().getEntryTime());
+            // initialize data structures with the first node
+            this.nodeProgression.put(0, plan.getTrain().getOrigin());
+            this.nodeDistances.put(0, this.plan.getRoute().getFirstArc().getLengthInMiles());
+            this.relativeNodeEntryTimes.put(0, BigDecimal.ZERO);
+        }
+
+        /**
+         * Adjusts entry times provided via pass() for delay entered later by the wait times. This is the only way you should
+         * ever use the node entry times.
+         * 
+         * @return
+         */
+        private Map<Integer, BigDecimal> getAdjustedEntryTimes() {
+            final Map<Integer, BigDecimal> adjusted = new TreeMap<Integer, BigDecimal>();
+            final SortedSet<Integer> keys = new TreeSet<Integer>(this.nodeDistances.keySet());
+            int i = 0;
+            for (final int key : keys) {
+                BigDecimal time = this.relativeNodeEntryTimes.get(key);
+                if (i == 0) {
+                    // first item needs to be augmented by the train entry time
+                    time = time.add(this.trainEntryTime);
+                } else {
+                    // otherwise we need to convert a relative time to an absolute time by adding the previous node's time
+                    time = time.add(adjusted.get(key - 1));
+                }
+                // now adjust for node wait time, should there be any
+                final Node n = this.nodeProgression.get(key);
+                final WaitTime wt = this.nodeWaitTimes.get(n);
+                if (wt != null) {
+                    time = time.add(BigDecimal.valueOf(wt.getMinutesWaitFor()));
+                }
+                // and store
+                adjusted.put(key, time);
+                i++;
+            }
+            return Collections.unmodifiableMap(adjusted);
         }
 
         private int getArcId(final Arc arc) {
@@ -53,7 +98,7 @@ public class RoutePlan {
         }
 
         public Arc getCurrentArc(final BigDecimal timeInMinutes) {
-            for (final Map.Entry<Integer, BigDecimal> e : this.nodeEntryTimes.entrySet()) {
+            for (final Map.Entry<Integer, BigDecimal> e : this.getAdjustedEntryTimes().entrySet()) {
                 final int nodeId = e.getKey();
                 final BigDecimal nodeEntryTime = e.getValue();
                 if (Itinerary.isLarger(timeInMinutes, nodeEntryTime)) {
@@ -80,8 +125,9 @@ public class RoutePlan {
             BigDecimal unaccountedTrainLength = this.plan.getTrain().getLength();
             // now figure out how far the head is into the arc
             final int previousArcId = leadingArcId - 1;
-            final BigDecimal lastCheckpointTime = this.nodeEntryTimes.containsKey(previousArcId) ? this.nodeEntryTimes
-                    .get(leadingArcId - 1) : BigDecimal.ZERO;
+            final Map<Integer, BigDecimal> adjustedNodeEntryTimes = this.getAdjustedEntryTimes();
+            final BigDecimal lastCheckpointTime = adjustedNodeEntryTimes.containsKey(previousArcId) ? adjustedNodeEntryTimes
+                    .get(leadingArcId - 1) : this.trainEntryTime;
             final BigDecimal timeDifference = timeInMinutes.subtract(lastCheckpointTime);
             final BigDecimal distanceTravelledInArc = Itinerary
                     .getDistanceInMilesFromSpeedAndTime(
@@ -120,14 +166,13 @@ public class RoutePlan {
         private void pass(final Arc a, final BigDecimal distance,
                 final BigDecimal relativeTimeOfArrival) {
             // get previous node enter time, so that we can calculate the time difference
-            final BigDecimal actualTimeOfArrival = relativeTimeOfArrival.add(this.trainEntryTime);
             BigDecimal relativeTime = BigDecimal.ZERO;
-            if (this.nodeEntryTimes.isEmpty()) {
-                relativeTime = actualTimeOfArrival;
+            if (this.relativeNodeEntryTimes.isEmpty()) {
+                relativeTime = relativeTimeOfArrival;
             } else {
                 final int previousId = this.idGenerator.get() - 1;
-                final BigDecimal previousTime = this.nodeEntryTimes.get(previousId);
-                relativeTime = actualTimeOfArrival.subtract(previousTime);
+                final BigDecimal previousTime = this.relativeNodeEntryTimes.get(previousId);
+                relativeTime = relativeTimeOfArrival.subtract(previousTime);
             }
             final Node n = this.getTerminatingNode(a);
             if (!Itinerary.isLarger(relativeTime, BigDecimal.ZERO)) {
@@ -139,15 +184,32 @@ public class RoutePlan {
             this.arcProgression.put(id, a);
             this.nodeProgression.put(id, n);
             this.nodeDistances.put(id, distance);
-            this.nodeEntryTimes.put(id, actualTimeOfArrival);
+            this.relativeNodeEntryTimes.put(id, relativeTime);
             // calculate average speed at this arc
             final BigDecimal result = distance.divide(
                     relativeTime.divide(BigDecimal.valueOf(60), 5, BigDecimal.ROUND_UP), 5,
                     BigDecimal.ROUND_UP);
             final long speed = Math.round(result.doubleValue());
             Itinerary.logger.debug(n + " (" + distance + " miles) reached in " + relativeTime
-                    + " min.; total " + actualTimeOfArrival + " min., avg. speed " + speed
+                    + " min.; total " + relativeTimeOfArrival + " min., avg. speed " + speed
                     + " mph.");
+        }
+
+        public WaitTime removeWaitTime(final Node n) {
+            if (this.nodeWaitTimes.containsKey(n)) {
+                return this.nodeWaitTimes.remove(n);
+            } else {
+                return null;
+            }
+        }
+
+        public boolean setWaitTime(final WaitTime w, final Node n) {
+            if (this.plan.getRoute().getWaitPoints().contains(n)) {
+                this.nodeWaitTimes.put(n, w);
+                return true;
+            } else {
+                return false;
+            }
         }
 
         @Override
@@ -157,7 +219,7 @@ public class RoutePlan {
             for (int i = 0; i < this.idGenerator.get(); i++) {
                 sb.append(this.nodeProgression.get(i));
                 sb.append("@");
-                sb.append(this.nodeEntryTimes.get(i));
+                sb.append(this.getAdjustedEntryTimes().get(i));
                 sb.append(" ");
             }
             sb.append(".");
