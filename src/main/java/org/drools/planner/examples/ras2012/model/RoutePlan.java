@@ -21,23 +21,25 @@ public class RoutePlan {
 
         private static final class Window {
 
-            public boolean isInside(BigDecimal time) {
-                if (start.compareTo(time) > 0)
-                    return false; // window didn't start yet
-                if (end.compareTo(time) < 0)
-                    return false; // window is already over
-                return true;
-            }
-
             private final BigDecimal start, end;
 
-            public BigDecimal getEnd() {
-                return end;
-            }
-
-            public Window(int start, int end) {
+            public Window(final int start, final int end) {
                 this.start = BigDecimal.valueOf(start);
                 this.end = BigDecimal.valueOf(end);
+            }
+
+            public BigDecimal getEnd() {
+                return this.end;
+            }
+
+            public boolean isInside(final BigDecimal time) {
+                if (this.start.compareTo(time) > 0) {
+                    return false; // window didn't start yet
+                }
+                if (this.end.compareTo(time) < 0) {
+                    return false; // window is already over
+                }
+                return true;
             }
 
         }
@@ -67,53 +69,28 @@ public class RoutePlan {
         // FIXME only one window per node; multiple different windows with same node will get lost
         private final Map<Node, Window>        maintenances       = new HashMap<Node, Window>();
 
-        public Itinerary(final RoutePlan plan, Collection<MaintenanceWindow> maintenanceWindows) {
+        private int                            numHaltsFromLastNodeEntryCalculation;
+
+        public Itinerary(final RoutePlan plan,
+                final Collection<MaintenanceWindow> maintenanceWindows) {
             this.plan = plan;
             this.trainEntryTime = BigDecimal.valueOf(this.plan.getTrain().getEntryTime());
             // initialize data structures with the first node
             this.nodeProgression.put(0, plan.getTrain().getOrigin());
             this.nodeDistances.put(0, this.plan.getRoute().getFirstArc().getLengthInMiles());
             this.arcTravellingTimes.put(0, BigDecimal.ZERO);
-            for (MaintenanceWindow mow : maintenanceWindows) {
-                Node n = this.plan.getTrain().isEastbound() ? mow.getWestNode() : mow.getEastNode();
-                Window w = new Window(mow.getStartingMinute(), mow.getEndingMinute());
+            for (final MaintenanceWindow mow : maintenanceWindows) {
+                final Node n = this.plan.getTrain().isEastbound() ? mow.getWestNode() : mow
+                        .getEastNode();
+                final Window w = new Window(mow.getStartingMinute(), mow.getEndingMinute());
                 this.maintenances.put(n, w);
             }
         }
 
-        private Map<Integer, BigDecimal> getNodeEntryTimes() {
-            final Map<Integer, BigDecimal> adjusted = new TreeMap<Integer, BigDecimal>();
-            final SortedSet<Integer> keys = new TreeSet<Integer>(this.nodeDistances.keySet());
-            int i = 0;
-            for (final int key : keys) {
-                BigDecimal time = this.arcTravellingTimes.get(key);
-                if (i == 0) {
-                    // first item needs to be augmented by the train entry time
-                    time = time.add(this.trainEntryTime);
-                } else {
-                    // otherwise we need to convert a relative time to an absolute time by adding the previous node's time
-                    time = time.add(adjusted.get(key - 1));
-                }
-                // now adjust for node wait time, should there be any
-                final Node n = this.nodeProgression.get(key);
-                final WaitTime wt = this.nodeWaitTimes.get(n);
-                if (wt != null) {
-                    time = time.add(BigDecimal.valueOf(wt.getMinutesWaitFor()));
-                }
-                // check for maintenance windows
-                if (this.maintenances.containsKey(n)) {
-                    // there is a maintenance registered for the next node
-                    Window w = this.maintenances.get(n);
-                    if (w.isInside(time)) {
-                        // the maintenance is ongoing, we have to wait
-                        time = w.getEnd();
-                    }
-                }
-                // and store
-                adjusted.put(key, time);
-                i++;
-            }
-            return Collections.unmodifiableMap(adjusted);
+        // FIXME dirty, ugly, terrible
+        public synchronized int countHalts() {
+            this.getNodeEntryTimes();
+            return this.numHaltsFromLastNodeEntryCalculation;
         }
 
         private int getArcId(final Arc arc) {
@@ -179,8 +156,51 @@ public class RoutePlan {
             return occupiedArcs;
         }
 
-        public Node getNextStop(final BigDecimal timeInMinutes) {
+        public Node getNextNodeToReach(final BigDecimal timeInMinutes) {
             return this.getTerminatingNode(this.getCurrentArc(timeInMinutes));
+        }
+
+        private Map<Integer, BigDecimal> getNodeEntryTimes() {
+            int halts = 0;
+            final Map<Integer, BigDecimal> adjusted = new TreeMap<Integer, BigDecimal>();
+            final SortedSet<Integer> keys = new TreeSet<Integer>(this.nodeDistances.keySet());
+            int i = 0;
+            for (final int key : keys) {
+                BigDecimal time = this.arcTravellingTimes.get(key);
+                if (i == 0) {
+                    // first item needs to be augmented by the train entry time
+                    time = time.add(this.trainEntryTime);
+                } else {
+                    // otherwise we need to convert a relative time to an absolute time by adding the previous node's time
+                    time = time.add(adjusted.get(key - 1));
+                }
+                // now adjust for node wait time, should there be any
+                final Node n = this.nodeProgression.get(key);
+                final WaitTime wt = this.nodeWaitTimes.get(n);
+                boolean isHalted = false;
+                if (wt != null) {
+                    isHalted = true;
+                    halts++;
+                    time = time.add(BigDecimal.valueOf(wt.getMinutesWaitFor()));
+                }
+                // check for maintenance windows
+                if (this.maintenances.containsKey(n)) {
+                    // there is a maintenance registered for the next node
+                    final Window w = this.maintenances.get(n);
+                    if (w.isInside(time)) {
+                        if (!isHalted) {
+                            halts++;
+                        }
+                        // the maintenance is ongoing, we have to wait
+                        time = w.getEnd();
+                    }
+                }
+                // and store
+                adjusted.put(key, time);
+                i++;
+            }
+            this.numHaltsFromLastNodeEntryCalculation = halts;
+            return Collections.unmodifiableMap(adjusted);
         }
 
         private Node getTerminatingNode(final Arc a) {
@@ -228,7 +248,7 @@ public class RoutePlan {
 
         @Override
         public String toString() {
-            Map<Integer, BigDecimal> adjustedEntryTimes = this.getNodeEntryTimes();
+            final Map<Integer, BigDecimal> adjustedEntryTimes = this.getNodeEntryTimes();
             final StringBuilder sb = new StringBuilder();
             sb.append("Itinerary (");
             sb.append(this.plan.getRoute().getLengthInMiles());
@@ -260,7 +280,7 @@ public class RoutePlan {
 
     private final Route     route;
 
-    public RoutePlan(final Route r, final Train t, Collection<MaintenanceWindow> maintenances) {
+    public RoutePlan(final Route r, final Train t, final Collection<MaintenanceWindow> maintenances) {
         if (!r.isPossibleForTrain(t)) {
             throw new IllegalArgumentException("Route " + r + " not possible for train " + t);
         }
