@@ -19,7 +19,7 @@
         <param name="IncludeCallerData" value="true"/>
         <appender-ref ref="FILE"/>
     </appender>
-    <root level="TRACE">
+    <root level="DEBUG">
         <appender-ref ref="CONSOLE" /> 
         <appender-ref ref="ASYNC" /> 
     </root>
