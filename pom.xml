@@ -89,4 +89,13 @@
       </plugins>
     </pluginManagement>
   </build>
+  <reporting>
+    <plugins>
+      <plugin> <!-- Cobertura doesn't work with Java 7. Neither does EMMA. -->
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+        <version>2.5.1</version>
+      </plugin>
+    </plugins>
+  </reporting>
 </project>

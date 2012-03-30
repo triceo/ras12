@@ -5,6 +5,9 @@ public class Node {
     private final int id;
 
     public Node(final int id) {
+        if (id < 0) {
+            throw new IllegalArgumentException("Node ID cannot be less than zero!");
+        }
         this.id = id;
     }
 

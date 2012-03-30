@@ -1,19 +1,18 @@
 package org.drools.planner.examples.ras2012.model;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 public class ScheduleAdherenceRequirement {
 
-    private static final AtomicInteger idGenerator = new AtomicInteger();
+    private final Node destination;
 
-    private final Integer              id          = ScheduleAdherenceRequirement.idGenerator
-                                                           .incrementAndGet();
-
-    private final Node                 destination;
-
-    private final int                  timeSinceStartOfWorld;
+    private final int  timeSinceStartOfWorld;
 
     public ScheduleAdherenceRequirement(final Node where, final int when) {
+        if (where == null) {
+            throw new IllegalArgumentException("Node cannot be null.");
+        }
+        if (when < 0) {
+            throw new IllegalArgumentException("The time requirement must not be negative.");
+        }
         this.destination = where;
         this.timeSinceStartOfWorld = when;
     }
@@ -30,11 +29,14 @@ public class ScheduleAdherenceRequirement {
             return false;
         }
         final ScheduleAdherenceRequirement other = (ScheduleAdherenceRequirement) obj;
-        if (this.id == null) {
-            if (other.id != null) {
+        if (this.destination == null) {
+            if (other.destination != null) {
                 return false;
             }
-        } else if (!this.id.equals(other.id)) {
+        } else if (!this.destination.equals(other.destination)) {
+            return false;
+        }
+        if (this.timeSinceStartOfWorld != other.timeSinceStartOfWorld) {
             return false;
         }
         return true;
@@ -52,7 +54,8 @@ public class ScheduleAdherenceRequirement {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (this.id == null ? 0 : this.id.hashCode());
+        result = prime * result + (this.destination == null ? 0 : this.destination.hashCode());
+        result = prime * result + this.timeSinceStartOfWorld;
         return result;
     }
 

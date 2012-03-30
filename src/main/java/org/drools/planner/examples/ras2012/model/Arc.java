@@ -7,6 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Arc {
 
+    // FIXME rework so that speeds aren't static
     public enum TrackType {
 
         MAIN_0, MAIN_1, MAIN_2, SWITCH(false), SIDING(false), CROSSOVER(false);
@@ -82,6 +83,15 @@ public class Arc {
 
     public Arc(final TrackType t, final BigDecimal lengthInMiles, final Node startingNode,
             final Node endingNode) {
+        if (t == null || lengthInMiles == null || startingNode == null || endingNode == null) {
+            throw new IllegalArgumentException("Neither of the arguments can be null.");
+        }
+        if (startingNode.equals(endingNode)) {
+            throw new IllegalArgumentException("Arcs must be between two different nodes.");
+        }
+        if (BigDecimal.ZERO.compareTo(lengthInMiles) > -1) {
+            throw new IllegalArgumentException("Arc length must be greater than zero.");
+        }
         this.trackType = t;
         this.lengthInMiles = lengthInMiles;
         this.startingNode = startingNode;

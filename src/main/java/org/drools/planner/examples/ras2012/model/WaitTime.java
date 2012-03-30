@@ -5,6 +5,9 @@ public class WaitTime {
     private final int minutesWaitFor;
 
     public WaitTime(final int minutes) {
+        if (minutes < 1) {
+            throw new IllegalArgumentException("Wait time must be bigger than zero.");
+        }
         this.minutesWaitFor = minutes;
     }
 

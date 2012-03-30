@@ -1,22 +1,24 @@
 package org.drools.planner.examples.ras2012.model;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 public class MaintenanceWindow {
 
-    private static final AtomicInteger idGenerator = new AtomicInteger();
-
-    private final Integer              id          = MaintenanceWindow.idGenerator
-                                                           .incrementAndGet();
-
-    private final Node                 startNode;
-    private final Node                 endNode;
-    private final int                  startingMinute;
-    private final int                  endingMinute;
+    private final Node startNode;
+    private final Node endNode;
+    private final int  startingMinute;
+    private final int  endingMinute;
 
     // FIXME just in case; make sure start/end are in ascending order
     public MaintenanceWindow(final Node startNode, final Node endNode, final int startingMinute,
             final int endingMinute) {
+        if (startNode == null || endNode == null) {
+            throw new IllegalArgumentException("Neither node can be null.");
+        }
+        if (startingMinute < 0 || endingMinute < 0) {
+            throw new IllegalArgumentException("Neither time can be less than zero.");
+        }
+        if (startingMinute >= endingMinute) {
+            throw new IllegalArgumentException("Maintenance must end after it started.");
+        }
         this.startNode = startNode;
         this.endNode = endNode;
         this.startingMinute = startingMinute;
@@ -35,11 +37,24 @@ public class MaintenanceWindow {
             return false;
         }
         final MaintenanceWindow other = (MaintenanceWindow) obj;
-        if (this.id == null) {
-            if (other.id != null) {
+        if (this.endNode == null) {
+            if (other.endNode != null) {
                 return false;
             }
-        } else if (!this.id.equals(other.id)) {
+        } else if (!this.endNode.equals(other.endNode)) {
+            return false;
+        }
+        if (this.endingMinute != other.endingMinute) {
+            return false;
+        }
+        if (this.startNode == null) {
+            if (other.startNode != null) {
+                return false;
+            }
+        } else if (!this.startNode.equals(other.startNode)) {
+            return false;
+        }
+        if (this.startingMinute != other.startingMinute) {
             return false;
         }
         return true;
@@ -65,7 +80,10 @@ public class MaintenanceWindow {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (this.id == null ? 0 : this.id.hashCode());
+        result = prime * result + (this.endNode == null ? 0 : this.endNode.hashCode());
+        result = prime * result + this.endingMinute;
+        result = prime * result + (this.startNode == null ? 0 : this.startNode.hashCode());
+        result = prime * result + this.startingMinute;
         return result;
     }
 
