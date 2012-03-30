@@ -19,6 +19,29 @@ public class RoutePlan {
 
     public static final class Itinerary {
 
+        private static final class Window {
+
+            public boolean isInside(BigDecimal time) {
+                if (start.compareTo(time) > 0)
+                    return false; // window didn't start yet
+                if (end.compareTo(time) < 0)
+                    return false; // window is already over
+                return true;
+            }
+
+            private final BigDecimal start, end;
+
+            public BigDecimal getEnd() {
+                return end;
+            }
+
+            public Window(int start, int end) {
+                this.start = BigDecimal.valueOf(start);
+                this.end = BigDecimal.valueOf(end);
+            }
+
+        }
+
         private static final Logger logger = LoggerFactory.getLogger(Itinerary.class);
 
         private static BigDecimal getDistanceInMilesFromSpeedAndTime(final int speedInMPH,
@@ -35,39 +58,35 @@ public class RoutePlan {
 
         private final RoutePlan                plan;
         private final BigDecimal               trainEntryTime;
-        private final AtomicInteger            idGenerator            = new AtomicInteger(1);
-        private final Map<Integer, Arc>        arcProgression         = new TreeMap<Integer, Arc>();
-        private final Map<Integer, Node>       nodeProgression        = new TreeMap<Integer, Node>();
-        private final Map<Integer, BigDecimal> nodeDistances          = new TreeMap<Integer, BigDecimal>();
+        private final AtomicInteger            idGenerator        = new AtomicInteger(1);
+        private final Map<Integer, Arc>        arcProgression     = new TreeMap<Integer, Arc>();
+        private final Map<Integer, Node>       nodeProgression    = new TreeMap<Integer, Node>();
+        private final Map<Integer, BigDecimal> nodeDistances      = new TreeMap<Integer, BigDecimal>();
+        private final Map<Integer, BigDecimal> arcTravellingTimes = new TreeMap<Integer, BigDecimal>();
+        private final Map<Node, WaitTime>      nodeWaitTimes      = new HashMap<Node, WaitTime>();
+        // FIXME only one window per node; multiple different windows with same node will get lost
+        private final Map<Node, Window>        maintenances       = new HashMap<Node, Window>();
 
-        /**
-         * This contains the entry times as they came from the pass() method. Never use these values directly! Only use them via
-         * getAdjustedEntryTimes(), which adjusts them for the wait times existing at the time.
-         */
-        private final Map<Integer, BigDecimal> relativeNodeEntryTimes = new TreeMap<Integer, BigDecimal>();
-        private final Map<Node, WaitTime>      nodeWaitTimes          = new HashMap<Node, WaitTime>();
-
-        public Itinerary(final RoutePlan plan) {
+        public Itinerary(final RoutePlan plan, Collection<MaintenanceWindow> maintenanceWindows) {
             this.plan = plan;
             this.trainEntryTime = BigDecimal.valueOf(this.plan.getTrain().getEntryTime());
             // initialize data structures with the first node
             this.nodeProgression.put(0, plan.getTrain().getOrigin());
             this.nodeDistances.put(0, this.plan.getRoute().getFirstArc().getLengthInMiles());
-            this.relativeNodeEntryTimes.put(0, BigDecimal.ZERO);
+            this.arcTravellingTimes.put(0, BigDecimal.ZERO);
+            for (MaintenanceWindow mow : maintenanceWindows) {
+                Node n = this.plan.getTrain().isEastbound() ? mow.getWestNode() : mow.getEastNode();
+                Window w = new Window(mow.getStartingMinute(), mow.getEndingMinute());
+                this.maintenances.put(n, w);
+            }
         }
 
-        /**
-         * Adjusts entry times provided via pass() for delay entered later by the wait times. This is the only way you should
-         * ever use the node entry times.
-         * 
-         * @return
-         */
-        private Map<Integer, BigDecimal> getAdjustedEntryTimes() {
+        private Map<Integer, BigDecimal> getNodeEntryTimes() {
             final Map<Integer, BigDecimal> adjusted = new TreeMap<Integer, BigDecimal>();
             final SortedSet<Integer> keys = new TreeSet<Integer>(this.nodeDistances.keySet());
             int i = 0;
             for (final int key : keys) {
-                BigDecimal time = this.relativeNodeEntryTimes.get(key);
+                BigDecimal time = this.arcTravellingTimes.get(key);
                 if (i == 0) {
                     // first item needs to be augmented by the train entry time
                     time = time.add(this.trainEntryTime);
@@ -80,6 +99,15 @@ public class RoutePlan {
                 final WaitTime wt = this.nodeWaitTimes.get(n);
                 if (wt != null) {
                     time = time.add(BigDecimal.valueOf(wt.getMinutesWaitFor()));
+                }
+                // check for maintenance windows
+                if (this.maintenances.containsKey(n)) {
+                    // there is a maintenance registered for the next node
+                    Window w = this.maintenances.get(n);
+                    if (w.isInside(time)) {
+                        // the maintenance is ongoing, we have to wait
+                        time = w.getEnd();
+                    }
                 }
                 // and store
                 adjusted.put(key, time);
@@ -98,7 +126,7 @@ public class RoutePlan {
         }
 
         public Arc getCurrentArc(final BigDecimal timeInMinutes) {
-            for (final Map.Entry<Integer, BigDecimal> e : this.getAdjustedEntryTimes().entrySet()) {
+            for (final Map.Entry<Integer, BigDecimal> e : this.getNodeEntryTimes().entrySet()) {
                 final int nodeId = e.getKey();
                 final BigDecimal nodeEntryTime = e.getValue();
                 if (Itinerary.isLarger(timeInMinutes, nodeEntryTime)) {
@@ -125,7 +153,7 @@ public class RoutePlan {
             BigDecimal unaccountedTrainLength = this.plan.getTrain().getLength();
             // now figure out how far the head is into the arc
             final int previousArcId = leadingArcId - 1;
-            final Map<Integer, BigDecimal> adjustedNodeEntryTimes = this.getAdjustedEntryTimes();
+            final Map<Integer, BigDecimal> adjustedNodeEntryTimes = this.getNodeEntryTimes();
             final BigDecimal lastCheckpointTime = adjustedNodeEntryTimes.containsKey(previousArcId) ? adjustedNodeEntryTimes
                     .get(leadingArcId - 1) : this.trainEntryTime;
             final BigDecimal timeDifference = timeInMinutes.subtract(lastCheckpointTime);
@@ -163,36 +191,22 @@ public class RoutePlan {
             }
         }
 
-        private void pass(final Arc a, final BigDecimal distance,
-                final BigDecimal relativeTimeOfArrival) {
+        private void pass(final Arc a, final BigDecimal distance, final BigDecimal minutesPerArc) {
             // get previous node enter time, so that we can calculate the time difference
-            BigDecimal relativeTime = BigDecimal.ZERO;
-            if (this.relativeNodeEntryTimes.isEmpty()) {
-                relativeTime = relativeTimeOfArrival;
-            } else {
-                final int previousId = this.idGenerator.get() - 1;
-                final BigDecimal previousTime = this.relativeNodeEntryTimes.get(previousId);
-                relativeTime = relativeTimeOfArrival.subtract(previousTime);
-            }
             final Node n = this.getTerminatingNode(a);
-            if (!Itinerary.isLarger(relativeTime, BigDecimal.ZERO)) {
-                throw new IllegalStateException("Relative time at " + n
-                        + " is negative; suggests a bug in itinerary calculation code.");
-            }
             // and now mark passing another node
             final int id = this.idGenerator.getAndIncrement();
             this.arcProgression.put(id, a);
             this.nodeProgression.put(id, n);
             this.nodeDistances.put(id, distance);
-            this.relativeNodeEntryTimes.put(id, relativeTime);
+            this.arcTravellingTimes.put(id, minutesPerArc);
             // calculate average speed at this arc
             final BigDecimal result = distance.divide(
-                    relativeTime.divide(BigDecimal.valueOf(60), 5, BigDecimal.ROUND_UP), 5,
+                    minutesPerArc.divide(BigDecimal.valueOf(60), 5, BigDecimal.ROUND_UP), 5,
                     BigDecimal.ROUND_UP);
             final long speed = Math.round(result.doubleValue());
-            Itinerary.logger.debug(n + " (" + distance + " miles) reached in " + relativeTime
-                    + " min.; total " + relativeTimeOfArrival + " min., avg. speed " + speed
-                    + " mph.");
+            Itinerary.logger.debug(n + " (" + distance + " miles) reached in " + minutesPerArc
+                    + " min.; total " + minutesPerArc + " min., avg. speed " + speed + " mph.");
         }
 
         public WaitTime removeWaitTime(final Node n) {
@@ -214,18 +228,20 @@ public class RoutePlan {
 
         @Override
         public String toString() {
+            Map<Integer, BigDecimal> adjustedEntryTimes = this.getNodeEntryTimes();
             final StringBuilder sb = new StringBuilder();
-            sb.append("Itinerary:");
+            sb.append("Itinerary (");
+            sb.append(this.plan.getRoute().getLengthInMiles());
+            sb.append(" miles): ");
             for (int i = 0; i < this.idGenerator.get(); i++) {
                 sb.append(this.nodeProgression.get(i));
                 sb.append("@");
-                sb.append(this.getAdjustedEntryTimes().get(i));
+                sb.append(adjustedEntryTimes.get(i));
                 sb.append(" ");
             }
             sb.append(".");
             return sb.toString();
         }
-
     }
 
     private static BigDecimal getTimeInMinutesFromSpeedAndDistance(final int speedInMPH,
@@ -244,26 +260,24 @@ public class RoutePlan {
 
     private final Route     route;
 
-    public RoutePlan(final Route r, final Train t) {
+    public RoutePlan(final Route r, final Train t, Collection<MaintenanceWindow> maintenances) {
         if (!r.isPossibleForTrain(t)) {
             throw new IllegalArgumentException("Route " + r + " not possible for train " + t);
         }
         this.route = r;
         this.train = t;
-        this.itinerary = new Itinerary(this);
+        this.itinerary = new Itinerary(this, maintenances);
         this.assembleItinerary();
     }
 
     private void assembleItinerary() {
         Arc currentArc = null;
-        BigDecimal totalTime = BigDecimal.ZERO;
         while ((currentArc = this.route.getNextArc(currentArc)) != null) {
             final int currentSpeed = this.train.getMaximumSpeed(currentArc.getTrackType());
             final BigDecimal arcLength = currentArc.getLengthInMiles();
             final BigDecimal timeItTakes = RoutePlan.getTimeInMinutesFromSpeedAndDistance(
                     currentSpeed, arcLength);
-            totalTime = totalTime.add(timeItTakes);
-            this.itinerary.pass(currentArc, arcLength, totalTime);
+            this.itinerary.pass(currentArc, arcLength, timeItTakes);
         }
     }
 

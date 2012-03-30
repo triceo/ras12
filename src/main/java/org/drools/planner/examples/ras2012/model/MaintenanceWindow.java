@@ -2,27 +2,24 @@ package org.drools.planner.examples.ras2012.model;
 
 public class MaintenanceWindow {
 
-    private final Node startNode;
-    private final Node endNode;
+    private final Node westNode;
+    private final Node eastNode;
     private final int  startingMinute;
     private final int  endingMinute;
 
     // FIXME just in case; make sure start/end are in ascending order
-    public MaintenanceWindow(final Node startNode, final Node endNode, final int startingMinute,
-            final int endingMinute) {
-        if (startNode == null || endNode == null) {
+    public MaintenanceWindow(final Node westNode, final Node eastNode, final int time1,
+            final int time2) {
+        if (eastNode == null || westNode == null) {
             throw new IllegalArgumentException("Neither node can be null.");
         }
-        if (startingMinute < 0 || endingMinute < 0) {
+        if (time1 < 0 || time2 < 0) {
             throw new IllegalArgumentException("Neither time can be less than zero.");
         }
-        if (startingMinute >= endingMinute) {
-            throw new IllegalArgumentException("Maintenance must end after it started.");
-        }
-        this.startNode = startNode;
-        this.endNode = endNode;
-        this.startingMinute = startingMinute;
-        this.endingMinute = endingMinute;
+        this.westNode = westNode;
+        this.eastNode = eastNode;
+        this.startingMinute = Math.min(time1, time2);
+        this.endingMinute = Math.max(time1, time2);
     }
 
     @Override
@@ -37,21 +34,21 @@ public class MaintenanceWindow {
             return false;
         }
         final MaintenanceWindow other = (MaintenanceWindow) obj;
-        if (this.endNode == null) {
-            if (other.endNode != null) {
+        if (this.eastNode == null) {
+            if (other.eastNode != null) {
                 return false;
             }
-        } else if (!this.endNode.equals(other.endNode)) {
+        } else if (!this.eastNode.equals(other.eastNode)) {
             return false;
         }
         if (this.endingMinute != other.endingMinute) {
             return false;
         }
-        if (this.startNode == null) {
-            if (other.startNode != null) {
+        if (this.westNode == null) {
+            if (other.westNode != null) {
                 return false;
             }
-        } else if (!this.startNode.equals(other.startNode)) {
+        } else if (!this.westNode.equals(other.westNode)) {
             return false;
         }
         if (this.startingMinute != other.startingMinute) {
@@ -64,25 +61,25 @@ public class MaintenanceWindow {
         return this.endingMinute;
     }
 
-    public Node getEndNode() {
-        return this.endNode;
+    public Node getEastNode() {
+        return this.eastNode;
     }
 
     public int getStartingMinute() {
         return this.startingMinute;
     }
 
-    public Node getStartNode() {
-        return this.startNode;
+    public Node getWestNode() {
+        return this.westNode;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (this.endNode == null ? 0 : this.endNode.hashCode());
+        result = prime * result + (this.eastNode == null ? 0 : this.eastNode.hashCode());
         result = prime * result + this.endingMinute;
-        result = prime * result + (this.startNode == null ? 0 : this.startNode.hashCode());
+        result = prime * result + (this.westNode == null ? 0 : this.westNode.hashCode());
         result = prime * result + this.startingMinute;
         return result;
     }
@@ -90,8 +87,8 @@ public class MaintenanceWindow {
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        builder.append("MaintenanceWindow [startNode=").append(this.startNode).append(", endNode=")
-                .append(this.endNode).append(", startingMinute=").append(this.startingMinute)
+        builder.append("MaintenanceWindow [startNode=").append(this.westNode).append(", endNode=")
+                .append(this.eastNode).append(", startingMinute=").append(this.startingMinute)
                 .append(", endingMinute=").append(this.endingMinute).append("]");
         return builder.toString();
     }

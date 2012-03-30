@@ -1,11 +1,17 @@
 package org.drools.planner.examples.ras2012;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import org.drools.planner.core.score.buildin.hardandsoft.HardAndSoftScore;
 import org.drools.planner.core.solution.Solution;
 import org.drools.planner.examples.ras2012.model.MaintenanceWindow;
 import org.drools.planner.examples.ras2012.model.Network;
+import org.drools.planner.examples.ras2012.model.Route;
+import org.drools.planner.examples.ras2012.model.RoutePlan;
 import org.drools.planner.examples.ras2012.model.Train;
 
 public class RAS2012Solution implements Solution<HardAndSoftScore> {
@@ -16,6 +22,7 @@ public class RAS2012Solution implements Solution<HardAndSoftScore> {
     private final Network                       net;
     private final Collection<MaintenanceWindow> maintenances;
     private final Collection<Train>             trains;
+    private Map<Train, Set<RoutePlan>>          routePlans               = new HashMap<Train, Set<RoutePlan>>();
 
     private HardAndSoftScore                    score;
 
@@ -25,15 +32,35 @@ public class RAS2012Solution implements Solution<HardAndSoftScore> {
         this.net = net;
         this.maintenances = maintenances;
         this.trains = trains;
+        for (Train t : this.trains) {
+            Collection<Route> routes = t.isEastbound() ? this.net.getAllEastboundRoutes()
+                    : this.net.getAllWestboundRoutes();
+            for (Route r : routes) {
+                if (!r.isPossibleForTrain(t)) {
+                    continue;
+                }
+                if (!this.routePlans.containsKey(t)) {
+                    this.routePlans.put(t, new HashSet<RoutePlan>());
+                }
+                this.routePlans.get(t).add(new RoutePlan(r, t, maintenances));
+            }
+        }
+    }
+
+    private RAS2012Solution(final String name, Network net,
+            final Collection<MaintenanceWindow> maintenances, final Collection<Train> trains,
+            final Map<Train, Set<RoutePlan>> routePlans) {
+        this.name = name;
+        this.net = net;
+        this.maintenances = maintenances;
+        this.trains = trains;
+        this.routePlans = routePlans;
     }
 
     @Override
     public Solution<HardAndSoftScore> cloneSolution() {
-        return new RAS2012Solution(this.name, this.net, this.maintenances, this.trains);
-    }
-
-    public Collection<MaintenanceWindow> getMaintenances() {
-        return this.maintenances;
+        return new RAS2012Solution(this.name, this.net, this.maintenances, this.trains,
+                this.routePlans);
     }
 
     public String getName() {

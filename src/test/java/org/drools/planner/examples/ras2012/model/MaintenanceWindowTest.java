@@ -49,8 +49,4 @@ public class MaintenanceWindowTest {
         new MaintenanceWindow(new Node(0), new Node(1), 1, -1);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testConstructorReverseTime() {
-        new MaintenanceWindow(new Node(0), new Node(1), 2, 1);
-    }
 }
