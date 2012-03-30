@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.drools.planner.examples.ras2012.model.Arc.TrackType;
 
@@ -13,8 +14,8 @@ public class Route {
         EASTBOUND, WESTBOUND
     }
 
-    private final Collection<Arc> parts = new LinkedList<Arc>();
-    private final Direction       direction;
+    private final List<Arc> parts = new LinkedList<Arc>();
+    private final Direction direction;
 
     public Route(final Direction d) {
         this.direction = d;
@@ -24,6 +25,33 @@ public class Route {
         this(d);
         for (final Arc a : e) {
             this.parts.add(a);
+        }
+    }
+
+    public Arc getFirstArc() {
+        if (this.direction == Direction.WESTBOUND) {
+            return this.parts.get(this.parts.size() - 1);
+        } else {
+            return this.parts.get(0);
+        }
+    }
+
+    public Arc getNextArc(Arc a) {
+        if (a == null)
+            return this.getFirstArc();
+        int index = this.parts.indexOf(a);
+        if (this.direction == Direction.WESTBOUND) {
+            if (index == 0) {
+                return null;
+            } else {
+                return this.parts.get(index - 1);
+            }
+        } else {
+            if (index == (this.parts.size() - 1)) {
+                return null;
+            } else {
+                return this.parts.get(index + 1);
+            }
         }
     }
 

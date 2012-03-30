@@ -1,14 +1,20 @@
 package org.drools.planner.examples.ras2012;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 import org.drools.planner.core.score.buildin.hardandsoft.HardAndSoftScore;
 import org.drools.planner.core.solution.Solution;
 import org.drools.planner.examples.ras2012.model.MaintenanceWindow;
 import org.drools.planner.examples.ras2012.model.Network;
+import org.drools.planner.examples.ras2012.model.Route;
+import org.drools.planner.examples.ras2012.model.RoutePlan;
 import org.drools.planner.examples.ras2012.model.Train;
 
 public class RAS2012Solution implements Solution<HardAndSoftScore> {
+
+    public static final Integer                 PLANNING_HORIZON_MINUTES = 12 * 60;
 
     private final String                        name;
     private final Network                       net;
@@ -23,6 +29,9 @@ public class RAS2012Solution implements Solution<HardAndSoftScore> {
         this.net = net;
         this.maintenances = maintenances;
         this.trains = trains;
+        RoutePlan rp = new RoutePlan(((Set<Route>) this.net.getAllEastboundRoutes()).iterator()
+                .next(), (((List<Train>) this.trains).get(0)));
+        rp.assembleItinerary();
     }
 
     @Override
