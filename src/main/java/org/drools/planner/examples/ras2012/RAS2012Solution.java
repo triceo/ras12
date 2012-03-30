@@ -8,10 +8,10 @@ import java.util.Set;
 
 import org.drools.planner.core.score.buildin.hardandsoft.HardAndSoftScore;
 import org.drools.planner.core.solution.Solution;
+import org.drools.planner.examples.ras2012.model.Itinerary;
 import org.drools.planner.examples.ras2012.model.MaintenanceWindow;
 import org.drools.planner.examples.ras2012.model.Network;
 import org.drools.planner.examples.ras2012.model.Route;
-import org.drools.planner.examples.ras2012.model.RoutePlan;
 import org.drools.planner.examples.ras2012.model.Train;
 
 public class RAS2012Solution implements Solution<HardAndSoftScore> {
@@ -22,45 +22,45 @@ public class RAS2012Solution implements Solution<HardAndSoftScore> {
     private final Network                       net;
     private final Collection<MaintenanceWindow> maintenances;
     private final Collection<Train>             trains;
-    private Map<Train, Set<RoutePlan>>          routePlans               = new HashMap<Train, Set<RoutePlan>>();
+    private Map<Train, Set<Itinerary>>          itineraries              = new HashMap<Train, Set<Itinerary>>();
 
     private HardAndSoftScore                    score;
 
-    public RAS2012Solution(final String name, Network net,
+    public RAS2012Solution(final String name, final Network net,
             final Collection<MaintenanceWindow> maintenances, final Collection<Train> trains) {
         this.name = name;
         this.net = net;
         this.maintenances = maintenances;
         this.trains = trains;
-        for (Train t : this.trains) {
-            Collection<Route> routes = t.isEastbound() ? this.net.getAllEastboundRoutes()
+        for (final Train t : this.trains) {
+            final Collection<Route> routes = t.isEastbound() ? this.net.getAllEastboundRoutes()
                     : this.net.getAllWestboundRoutes();
-            for (Route r : routes) {
+            for (final Route r : routes) {
                 if (!r.isPossibleForTrain(t)) {
                     continue;
                 }
-                if (!this.routePlans.containsKey(t)) {
-                    this.routePlans.put(t, new HashSet<RoutePlan>());
+                if (!this.itineraries.containsKey(t)) {
+                    this.itineraries.put(t, new HashSet<Itinerary>());
                 }
-                this.routePlans.get(t).add(new RoutePlan(r, t, maintenances));
+                this.itineraries.get(t).add(new Itinerary(r, t, maintenances));
             }
         }
     }
 
-    private RAS2012Solution(final String name, Network net,
+    private RAS2012Solution(final String name, final Network net,
             final Collection<MaintenanceWindow> maintenances, final Collection<Train> trains,
-            final Map<Train, Set<RoutePlan>> routePlans) {
+            final Map<Train, Set<Itinerary>> itineraries) {
         this.name = name;
         this.net = net;
         this.maintenances = maintenances;
         this.trains = trains;
-        this.routePlans = routePlans;
+        this.itineraries = itineraries;
     }
 
     @Override
     public Solution<HardAndSoftScore> cloneSolution() {
         return new RAS2012Solution(this.name, this.net, this.maintenances, this.trains,
-                this.routePlans);
+                this.itineraries);
     }
 
     public String getName() {
@@ -89,10 +89,11 @@ public class RAS2012Solution implements Solution<HardAndSoftScore> {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("RAS2012Solution [name=").append(name).append(", net=").append(net)
-                .append(", maintenances=").append(maintenances).append(", trains=").append(trains)
-                .append(", score=").append(score).append("]");
+        final StringBuilder builder = new StringBuilder();
+        builder.append("RAS2012Solution [name=").append(this.name).append(", net=")
+                .append(this.net).append(", maintenances=").append(this.maintenances)
+                .append(", trains=").append(this.trains).append(", score=").append(this.score)
+                .append("]");
         return builder.toString();
     }
 
