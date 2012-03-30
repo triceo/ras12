@@ -6,11 +6,6 @@ import org.junit.Test;
 public class ScheduleAdherenceRequirementTest {
 
     @Test(expected = IllegalArgumentException.class)
-    public void testScheduleAdherenceRequirementNegativeTime() {
-        new ScheduleAdherenceRequirement(new Node(0), -1);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
     public void testScheduleAdherenceRequirementNullNode() {
         new ScheduleAdherenceRequirement(null, 1);
     }

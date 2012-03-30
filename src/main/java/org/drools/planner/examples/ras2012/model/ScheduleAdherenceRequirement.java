@@ -10,9 +10,6 @@ public class ScheduleAdherenceRequirement {
         if (where == null) {
             throw new IllegalArgumentException("Node cannot be null.");
         }
-        if (when < 0) {
-            throw new IllegalArgumentException("The time requirement must not be negative.");
-        }
         this.destination = where;
         this.timeSinceStartOfWorld = when;
     }
