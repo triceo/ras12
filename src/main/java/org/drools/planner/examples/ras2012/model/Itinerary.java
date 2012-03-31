@@ -85,7 +85,7 @@ public final class Itinerary {
         this.trainEntryTime = BigDecimal.valueOf(t.getEntryTime());
         // initialize data structures with the first node
         this.nodeProgression.put(0, t.getOrigin());
-        this.nodeDistances.put(0, r.getFirstArc().getLengthInMiles());
+        this.nodeDistances.put(0, r.getInitialArc().getLengthInMiles());
         this.arcTravellingTimes.put(0, BigDecimal.ZERO);
         // assemble the node-traversal information
         Arc currentArc = null;
@@ -223,9 +223,9 @@ public final class Itinerary {
 
     private Node getTerminatingNode(final Arc a) {
         if (this.getTrain().isEastbound()) {
-            return a.getEndingNode();
+            return a.getEastNode();
         } else {
-            return a.getStartingNode();
+            return a.getWestNode();
         }
     }
 

@@ -78,15 +78,15 @@ public class Arc {
 
     private final BigDecimal           lengthInMiles;
 
-    private final Node                 startingNode;
-    private final Node                 endingNode;
+    private final Node                 westNode;
+    private final Node                 eastNode;
 
-    public Arc(final TrackType t, final BigDecimal lengthInMiles, final Node startingNode,
-            final Node endingNode) {
-        if (t == null || lengthInMiles == null || startingNode == null || endingNode == null) {
+    public Arc(final TrackType t, final BigDecimal lengthInMiles, final Node westNode,
+            final Node eastNode) {
+        if (t == null || lengthInMiles == null || westNode == null || eastNode == null) {
             throw new IllegalArgumentException("Neither of the arguments can be null.");
         }
-        if (startingNode.equals(endingNode)) {
+        if (westNode.equals(eastNode)) {
             throw new IllegalArgumentException("Arcs must be between two different nodes.");
         }
         if (BigDecimal.ZERO.compareTo(lengthInMiles) > -1) {
@@ -94,8 +94,8 @@ public class Arc {
         }
         this.trackType = t;
         this.lengthInMiles = lengthInMiles;
-        this.startingNode = startingNode;
-        this.endingNode = endingNode;
+        this.westNode = westNode;
+        this.eastNode = eastNode;
     }
 
     @Override
@@ -120,20 +120,20 @@ public class Arc {
         return true;
     }
 
-    public Node getEndingNode() {
-        return this.endingNode;
+    public Node getEastNode() {
+        return this.eastNode;
     }
 
     public BigDecimal getLengthInMiles() {
         return this.lengthInMiles;
     }
 
-    public Node getStartingNode() {
-        return this.startingNode;
-    }
-
     public TrackType getTrackType() {
         return this.trackType;
+    }
+
+    public Node getWestNode() {
+        return this.westNode;
     }
 
     @Override
@@ -147,7 +147,7 @@ public class Arc {
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        builder.append("Arc [").append(this.startingNode).append("->").append(this.endingNode)
+        builder.append("Arc [").append(this.westNode).append("->").append(this.eastNode)
                 .append(", miles=").append(this.lengthInMiles).append(", type=")
                 .append(this.trackType).append("]");
         return builder.toString();

@@ -30,14 +30,14 @@ public class Network {
         final Map<Node, Map<Node, Arc>> tmpEastboundConnections = new HashMap<Node, Map<Node, Arc>>();
         final Map<Node, Map<Node, Arc>> tmpWestboundConnections = new HashMap<Node, Map<Node, Arc>>();
         for (final Arc a : edges) {
-            if (tmpEastboundConnections.get(a.getStartingNode()) == null) {
-                tmpEastboundConnections.put(a.getStartingNode(), new HashMap<Node, Arc>());
+            if (tmpEastboundConnections.get(a.getWestNode()) == null) {
+                tmpEastboundConnections.put(a.getWestNode(), new HashMap<Node, Arc>());
             }
-            tmpEastboundConnections.get(a.getStartingNode()).put(a.getEndingNode(), a);
-            if (tmpWestboundConnections.get(a.getEndingNode()) == null) {
-                tmpWestboundConnections.put(a.getEndingNode(), new HashMap<Node, Arc>());
+            tmpEastboundConnections.get(a.getWestNode()).put(a.getEastNode(), a);
+            if (tmpWestboundConnections.get(a.getEastNode()) == null) {
+                tmpWestboundConnections.put(a.getEastNode(), new HashMap<Node, Arc>());
             }
-            tmpWestboundConnections.get(a.getEndingNode()).put(a.getStartingNode(), a);
+            tmpWestboundConnections.get(a.getEastNode()).put(a.getWestNode(), a);
         }
         this.eastboundConnections = Collections.unmodifiableMap(tmpEastboundConnections);
         this.westboundConnections = Collections.unmodifiableMap(tmpWestboundConnections);

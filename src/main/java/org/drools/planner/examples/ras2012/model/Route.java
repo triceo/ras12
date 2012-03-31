@@ -23,7 +23,7 @@ public class Route {
         this.direction = d;
     }
 
-    public Route(final Direction d, final Arc... e) {
+    private Route(final Direction d, final Arc... e) {
         this(d);
         for (final Arc a : e) {
             this.parts.add(a);
@@ -59,9 +59,15 @@ public class Route {
         return true;
     }
 
-    public Route extend(final Arc e) {
+    public Route extend(final Arc add) {
+        if (add == null) {
+            throw new IllegalArgumentException("Cannot extend route with a null arc!");
+        }
+        if (this.parts.contains(add)) {
+            throw new IllegalArgumentException("Cannot extend route with the same arc twice!");
+        }
         final Collection<Arc> newParts = new ArrayList<Arc>(this.parts);
-        newParts.add(e);
+        newParts.add(add);
         final Arc[] result = newParts.toArray(new Arc[newParts.size()]);
         return new Route(this.getDirection(), result);
     }
@@ -70,12 +76,16 @@ public class Route {
         return this.direction;
     }
 
-    public Arc getFirstArc() {
+    public Arc getInitialArc() {
         if (this.direction == Direction.WESTBOUND) {
             return this.parts.get(this.parts.size() - 1);
         } else {
             return this.parts.get(0);
         }
+    }
+
+    public int getLengthInArcs() {
+        return this.parts.size();
     }
 
     public BigDecimal getLengthInMiles() {
@@ -86,13 +96,15 @@ public class Route {
         return result;
     }
 
-    public int getLengthInNodes() {
-        return this.parts.size();
-    }
-
     public Arc getNextArc(final Arc a) {
+        if (this.parts.isEmpty()) {
+            throw new IllegalArgumentException("There is no next arc in an empty route.");
+        }
         if (a == null) {
-            return this.getFirstArc();
+            return this.getInitialArc();
+        }
+        if (!this.contains(a)) {
+            throw new IllegalArgumentException("The route doesn't contain the arc.");
         }
         final int index = this.parts.indexOf(a);
         if (this.direction == Direction.WESTBOUND) {
@@ -110,30 +122,38 @@ public class Route {
         }
     }
 
+    public Arc getTerminalArc() {
+        if (this.direction == Direction.EASTBOUND) {
+            return this.parts.get(this.parts.size() - 1);
+        } else {
+            return this.parts.get(0);
+        }
+    }
+
     public Collection<Node> getWaitPoints() {
         final Collection<Node> waitPoints = new HashSet<Node>();
         // we want to be able to hold the train before it enters the network
-        final Arc firstArc = this.getFirstArc();
+        final Arc firstArc = this.getInitialArc();
         if (this.direction == Direction.EASTBOUND) {
-            waitPoints.add(firstArc.getStartingNode());
+            waitPoints.add(firstArc.getWestNode());
         } else {
-            waitPoints.add(firstArc.getEndingNode());
+            waitPoints.add(firstArc.getEastNode());
         }
-        // other wait points depend on te type of the track
+        // other wait points depend on the type of the track
         for (final Arc a : this.parts) {
             if (a.getTrackType() == TrackType.SIDING) {
                 // on sidings, wait before leaving them through a switch
                 if (this.direction == Direction.EASTBOUND) {
-                    waitPoints.add(a.getEndingNode());
+                    waitPoints.add(a.getEastNode());
                 } else {
-                    waitPoints.add(a.getStartingNode());
+                    waitPoints.add(a.getWestNode());
                 }
             } else if (!a.getTrackType().isMainTrack()) {
                 // on crossovers and switches, wait before joining them
                 if (this.direction == Direction.EASTBOUND) {
-                    waitPoints.add(a.getStartingNode());
+                    waitPoints.add(a.getWestNode());
                 } else {
-                    waitPoints.add(a.getEndingNode());
+                    waitPoints.add(a.getEastNode());
                 }
             } else {
                 // on main tracks, never wait
