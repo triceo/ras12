@@ -3,7 +3,6 @@ package org.drools.planner.examples.ras2012.model;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.drools.planner.examples.ras2012.model.Arc.TrackType;
 
@@ -28,11 +27,6 @@ public class Train {
         }
     }
 
-    private static final AtomicInteger               idGenerator = new AtomicInteger();
-
-    private final Integer                            id          = Train.idGenerator
-                                                                         .incrementAndGet();
-
     private final String                             name;
 
     private final BigDecimal                         length;
@@ -54,6 +48,29 @@ public class Train {
             final int wantTime, final int originalScheduleAdherence,
             final List<ScheduleAdherenceRequirement> sars, final boolean hazmat,
             final boolean isWestbound) {
+        // FIXME validate train name of [A-F][num]
+        if (name == null || name.trim().length() == 0) {
+            throw new IllegalArgumentException("Train name must be a non-empty String.");
+        }
+        if (length == null || length.compareTo(BigDecimal.ZERO) != 1) {
+            throw new IllegalArgumentException("Train must have a length greater than 0.");
+        }
+        if (speedMultiplier == null || speedMultiplier.compareTo(BigDecimal.ZERO) != 1) {
+            throw new IllegalArgumentException("Train must have a speed multiplier greater than 0.");
+        }
+        if (tob < 1) {
+            throw new IllegalArgumentException("Train must have TOB > 0.");
+        }
+        if (origin == null || destination == null || origin.equals(destination)) {
+            throw new IllegalArgumentException(
+                    "Train origin and destination must be two different valid nodes.");
+        }
+        if (entryTime < 0) {
+            throw new IllegalArgumentException("Train entry time may not be negative.");
+        }
+        if (wantTime < 0) {
+            throw new IllegalArgumentException("Train want time may not be negative.");
+        }
         this.name = name;
         this.length = length;
         this.speedMultiplier = speedMultiplier;
@@ -63,7 +80,8 @@ public class Train {
         this.entryTime = entryTime;
         this.wantTime = wantTime;
         this.originalDelay = originalScheduleAdherence;
-        this.scheduleAdherenceRequirements = Collections.unmodifiableList(sars);
+        this.scheduleAdherenceRequirements = sars == null ? Collections
+                .<ScheduleAdherenceRequirement> emptyList() : Collections.unmodifiableList(sars);
         this.carriesHazardousMaterials = hazmat;
         this.isWestbound = isWestbound;
     }
@@ -84,11 +102,11 @@ public class Train {
             return false;
         }
         final Train other = (Train) obj;
-        if (this.id == null) {
-            if (other.id != null) {
+        if (this.name == null) {
+            if (other.name != null) {
                 return false;
             }
-        } else if (!this.id.equals(other.id)) {
+        } else if (!this.name.equals(other.name)) {
             return false;
         }
         return true;
@@ -161,7 +179,7 @@ public class Train {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (this.id == null ? 0 : this.id.hashCode());
+        result = prime * result + (this.name == null ? 0 : this.name.hashCode());
         return result;
     }
 
