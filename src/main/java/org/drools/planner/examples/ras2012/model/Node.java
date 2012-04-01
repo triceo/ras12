@@ -1,6 +1,6 @@
 package org.drools.planner.examples.ras2012.model;
 
-public class Node {
+public class Node implements Comparable<Node> {
 
     private final int id;
 
@@ -9,6 +9,12 @@ public class Node {
             throw new IllegalArgumentException("Node ID cannot be less than zero!");
         }
         this.id = id;
+    }
+
+    // FIXME test for this
+    @Override
+    public int compareTo(final Node arg0) {
+        return Integer.valueOf(this.getId()).compareTo(arg0.getId());
     }
 
     @Override
