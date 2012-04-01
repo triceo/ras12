@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.drools.planner.examples.ras2012.model.Arc.TrackType;
 
-public class Train {
+public class Train implements Comparable<Train> {
 
     public static enum TrainType {
         A, B, C, D, E(false), F(false);
@@ -88,6 +88,17 @@ public class Train {
 
     public boolean carriesHazardousMaterials() {
         return this.carriesHazardousMaterials;
+    }
+
+    /**
+     * Trains are compared by their names as strings, sorted in reverse order.
+     * 
+     * @return 0 If the names are equal, 1 when this train's name is closer to the beginning of the alphabet than the other's,
+     *         -1 otherwise. FIXME test this
+     */
+    @Override
+    public int compareTo(final Train arg0) {
+        return arg0.getName().compareTo(this.getName());
     }
 
     @Override
