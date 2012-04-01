@@ -2,9 +2,11 @@ package org.drools.planner.examples.ras2012.model;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.LinkedList;
+import java.util.SortedMap;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.drools.planner.examples.ras2012.model.Route.Direction;
 
@@ -14,33 +16,33 @@ import org.drools.planner.examples.ras2012.model.Route.Direction;
  */
 public class Network {
 
-    private final Map<Integer, Node>        nodes = new HashMap<Integer, Node>();
-    private final Node                      eastDepo;
-    private final Node                      westDepo;
-    private final Map<Node, Map<Node, Arc>> eastboundConnections;
-    private final Map<Node, Map<Node, Arc>> westboundConnections;
-    private Collection<Route>               westboundRoutes;
-    private Collection<Route>               eastboundRoutes;
+    private final SortedMap<Integer, Node>              nodes = new TreeMap<Integer, Node>();
+    private final Node                                  eastDepo;
+    private final Node                                  westDepo;
+    private final SortedMap<Node, SortedMap<Node, Arc>> eastboundConnections;
+    private final SortedMap<Node, SortedMap<Node, Arc>> westboundConnections;
+    private Collection<Route>                           westboundRoutes;
+    private Collection<Route>                           eastboundRoutes;
 
     public Network(final Collection<Node> nodes, final Collection<Arc> edges) {
         for (final Node n : nodes) {
             this.nodes.put(n.getId(), n);
         }
         // now map every connection node
-        final Map<Node, Map<Node, Arc>> tmpEastboundConnections = new HashMap<Node, Map<Node, Arc>>();
-        final Map<Node, Map<Node, Arc>> tmpWestboundConnections = new HashMap<Node, Map<Node, Arc>>();
+        final SortedMap<Node, SortedMap<Node, Arc>> tmpEastboundConnections = new TreeMap<Node, SortedMap<Node, Arc>>();
+        final SortedMap<Node, SortedMap<Node, Arc>> tmpWestboundConnections = new TreeMap<Node, SortedMap<Node, Arc>>();
         for (final Arc a : edges) {
             if (tmpEastboundConnections.get(a.getWestNode()) == null) {
-                tmpEastboundConnections.put(a.getWestNode(), new HashMap<Node, Arc>());
+                tmpEastboundConnections.put(a.getWestNode(), new TreeMap<Node, Arc>());
             }
             tmpEastboundConnections.get(a.getWestNode()).put(a.getEastNode(), a);
             if (tmpWestboundConnections.get(a.getEastNode()) == null) {
-                tmpWestboundConnections.put(a.getEastNode(), new HashMap<Node, Arc>());
+                tmpWestboundConnections.put(a.getEastNode(), new TreeMap<Node, Arc>());
             }
             tmpWestboundConnections.get(a.getEastNode()).put(a.getWestNode(), a);
         }
-        this.eastboundConnections = Collections.unmodifiableMap(tmpEastboundConnections);
-        this.westboundConnections = Collections.unmodifiableMap(tmpWestboundConnections);
+        this.eastboundConnections = Collections.unmodifiableSortedMap(tmpEastboundConnections);
+        this.westboundConnections = Collections.unmodifiableSortedMap(tmpWestboundConnections);
         this.eastDepo = this.locateEastboundDepo();
         this.westDepo = this.locateWestboundDepo();
     }
@@ -53,15 +55,27 @@ public class Network {
         return this.eastboundRoutes;
     }
 
+    /**
+     * Some of the tests depend on the exact ordering of routes produced by this method.
+     * 
+     * FIXME test for ordering of this method
+     * 
+     * @param r
+     * @param connections
+     * @param startingNode
+     * @return
+     */
     private Collection<Route> getAllRoutes(final Route r,
-            final Map<Node, Map<Node, Arc>> connections, final Node startingNode) {
-        final Collection<Route> routes = new HashSet<Route>();
+            final SortedMap<Node, SortedMap<Node, Arc>> connections, final Node startingNode) {
+        final Collection<Route> routes = new LinkedList<Route>();
         if (connections.get(startingNode) == null) {
             return routes;
         }
-        for (final Map.Entry<Node, Arc> e : connections.get(startingNode).entrySet()) {
-            final Node nextNode = e.getKey();
-            final Arc edge = e.getValue();
+        // traverse all the nodes in a defined order, create new routes from them
+        SortedSet<Node> keys = new TreeSet<Node>(connections.get(startingNode).keySet());
+        for (final Node n : keys) {
+            final Node nextNode = n;
+            final Arc edge = connections.get(startingNode).get(n);
             if (r.contains(edge)) {
                 continue; // we'we been there already; skip this branch
             }
