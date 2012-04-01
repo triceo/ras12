@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.drools.planner.examples.ras2012.model.Arc.TrackType;
 
@@ -19,8 +20,12 @@ public class Route implements Comparable<Route> {
         EASTBOUND, WESTBOUND
     }
 
-    private final List<Arc> parts = new LinkedList<Arc>();
-    private final Direction direction;
+    private final List<Arc>            parts       = new LinkedList<Arc>();
+    private final Direction            direction;
+
+    private static final AtomicInteger idGenerator = new AtomicInteger(0);
+
+    private final int                  id          = Route.idGenerator.getAndIncrement();
 
     public Route(final Direction d) {
         this.direction = d;
@@ -97,6 +102,10 @@ public class Route implements Comparable<Route> {
 
     public Direction getDirection() {
         return this.direction;
+    }
+
+    public int getId() {
+        return this.id;
     }
 
     public Arc getInitialArc() {
@@ -245,9 +254,7 @@ public class Route implements Comparable<Route> {
 
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("Route [direction=").append(this.direction).append(", parts=")
-                .append(this.parts).append("]");
-        return builder.toString();
+        return "Route [id=" + this.id + ", direction=" + this.direction + ", parts=" + this.parts
+                + "]";
     }
 }
