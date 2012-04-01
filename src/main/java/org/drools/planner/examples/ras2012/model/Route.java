@@ -10,7 +10,10 @@ import java.util.List;
 
 import org.drools.planner.examples.ras2012.model.Arc.TrackType;
 
-public class Route {
+/**
+ * Note: this class has a natural ordering that is inconsistent with equals.
+ */
+public class Route implements Comparable<Route> {
 
     public static enum Direction {
         EASTBOUND, WESTBOUND
@@ -27,6 +30,26 @@ public class Route {
         this(d);
         for (final Arc a : e) {
             this.parts.add(a);
+        }
+    }
+
+    // FIXME add tests for this
+    @Override
+    public int compareTo(final Route o) {
+        if (this.direction == o.direction) { // shorter = better
+            final int comparison = this.getTravellingTimeInMinutes().compareTo(
+                    o.getTravellingTimeInMinutes());
+            if (comparison == 0) { // more main tracks = better
+                return this.getNumberOfMainTracks() - o.getNumberOfMainTracks();
+            } else {
+                return comparison;
+            }
+        } else {
+            if (this.direction == Direction.EASTBOUND) {
+                return -1;
+            } else {
+                return 1;
+            }
         }
     }
 
@@ -96,6 +119,11 @@ public class Route {
         return result;
     }
 
+    // FIXME add tests for this
+    public int getLengthInNodes() {
+        return this.parts.size();
+    }
+
     public Arc getNextArc(final Arc a) {
         if (this.parts.isEmpty()) {
             throw new IllegalArgumentException("There is no next arc in an empty route.");
@@ -122,12 +150,37 @@ public class Route {
         }
     }
 
+    // FIXME add tests for this
+    public int getNumberOfMainTracks() {
+        int i = 0;
+        for (final Arc a : this.parts) {
+            if (a.getTrackType().isMainTrack()) {
+                i++;
+            }
+        }
+        return i;
+    }
+
     public Arc getTerminalArc() {
         if (this.direction == Direction.EASTBOUND) {
             return this.parts.get(this.parts.size() - 1);
         } else {
             return this.parts.get(0);
         }
+    }
+
+    // FIXME add tests for this
+    public BigDecimal getTravellingTimeInMinutes() {
+        BigDecimal result = BigDecimal.ZERO;
+        for (final Arc a : this.parts) {
+            final BigDecimal length = a.getLengthInMiles();
+            final int speed = this.direction == Direction.EASTBOUND ? a.getTrackType()
+                    .getSpeedEastbound() : a.getTrackType().getSpeedWestbound();
+            final BigDecimal timeInHours = length.divide(BigDecimal.valueOf(speed), 2,
+                    BigDecimal.ROUND_HALF_DOWN);
+            result = result.add(timeInHours.multiply(BigDecimal.valueOf(60)));
+        }
+        return result;
     }
 
     public Collection<Node> getWaitPoints() {
@@ -197,5 +250,4 @@ public class Route {
                 .append(this.parts).append("]");
         return builder.toString();
     }
-
 }
