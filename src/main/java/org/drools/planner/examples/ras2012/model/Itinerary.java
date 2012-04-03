@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -18,7 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class Itinerary {
+public final class Itinerary implements ItineraryInterface {
 
     private static final class Window {
 
@@ -109,6 +110,7 @@ public final class Itinerary {
     }
 
     // FIXME dirty, ugly, terrible
+    @Override
     public synchronized int countHalts() {
         this.getNodeEntryTimes();
         return this.numHaltsFromLastNodeEntryCalculation;
@@ -123,6 +125,7 @@ public final class Itinerary {
         throw new IllegalStateException("No such arc in the itinerary: " + arc);
     }
 
+    @Override
     public Arc getCurrentArc(final BigDecimal timeInMinutes) {
         for (final Map.Entry<Integer, BigDecimal> e : this.getNodeEntryTimes().entrySet()) {
             final int nodeId = e.getKey();
@@ -136,6 +139,7 @@ public final class Itinerary {
         throw new IllegalStateException("Train is no longer en route at the time: " + timeInMinutes);
     }
 
+    @Override
     public Collection<Arc> getCurrentlyOccupiedArcs(final BigDecimal timeInMinutes) {
         // locate the head of the train
         Arc leadingArc;
@@ -174,6 +178,7 @@ public final class Itinerary {
         return occupiedArcs;
     }
 
+    @Override
     public Node getNextNodeToReach(final BigDecimal timeInMinutes) {
         return this.getTerminatingNode(this.getCurrentArc(timeInMinutes));
     }
@@ -225,6 +230,15 @@ public final class Itinerary {
         return this.route;
     }
 
+    @Override
+    public SortedMap<Node, BigDecimal> getSchedule() {
+        final SortedMap<Node, BigDecimal> results = new TreeMap<Node, BigDecimal>();
+        for (final Map.Entry<Integer, BigDecimal> entry : this.getNodeEntryTimes().entrySet()) {
+            results.put(this.nodeProgression.get(entry.getKey()), entry.getValue());
+        }
+        return results;
+    }
+
     private Node getTerminatingNode(final Arc a) {
         if (this.getTrain().isEastbound()) {
             return a.getEastNode();
@@ -256,6 +270,7 @@ public final class Itinerary {
                 + " min.; total " + minutesPerArc + " min., avg. speed " + speed + " mph.");
     }
 
+    @Override
     public WaitTime removeWaitTime(final Node n) {
         if (this.nodeWaitTimes.containsKey(n)) {
             return this.nodeWaitTimes.remove(n);
@@ -264,27 +279,29 @@ public final class Itinerary {
         }
     }
 
-    public boolean setWaitTime(final WaitTime w, final Node n) {
+    @Override
+    public WaitTime setWaitTime(final WaitTime w, final Node n) {
         if (this.getRoute().getWaitPoints().contains(n)) {
+            final WaitTime previous = this.nodeWaitTimes.get(n);
             this.nodeWaitTimes.put(n, w);
-            return true;
+            return previous;
         } else {
-            return false;
+            return null;
         }
     }
 
-    public boolean toCSV(OutputStream os) {
+    public boolean toCSV(final OutputStream os) {
         try (BufferedWriter w = new BufferedWriter(new OutputStreamWriter(os))) {
             w.write("node;time");
             w.newLine();
-            for (Map.Entry<Integer, BigDecimal> times : this.getNodeEntryTimes().entrySet()) {
+            for (final Map.Entry<Integer, BigDecimal> times : this.getNodeEntryTimes().entrySet()) {
                 w.write(String.valueOf(this.nodeProgression.get(times.getKey()).getId()));
                 w.write(";");
                 w.write(times.getValue().toString());
                 w.newLine();
             }
             return true;
-        } catch (IOException ex) {
+        } catch (final IOException ex) {
             return false;
         }
     }
