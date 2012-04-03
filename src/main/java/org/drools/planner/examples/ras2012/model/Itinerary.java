@@ -1,5 +1,9 @@
 package org.drools.planner.examples.ras2012.model;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
@@ -265,6 +269,22 @@ public final class Itinerary {
             this.nodeWaitTimes.put(n, w);
             return true;
         } else {
+            return false;
+        }
+    }
+
+    public boolean toCSV(OutputStream os) {
+        try (BufferedWriter w = new BufferedWriter(new OutputStreamWriter(os))) {
+            w.write("node;time");
+            w.newLine();
+            for (Map.Entry<Integer, BigDecimal> times : this.getNodeEntryTimes().entrySet()) {
+                w.write(String.valueOf(this.nodeProgression.get(times.getKey()).getId()));
+                w.write(";");
+                w.write(times.getValue().toString());
+                w.newLine();
+            }
+            return true;
+        } catch (IOException ex) {
             return false;
         }
     }
