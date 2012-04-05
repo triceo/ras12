@@ -22,6 +22,14 @@ public interface ItineraryInterface {
     public Arc getCurrentArc(BigDecimal time);
 
     /**
+     * Return length of track travelled from the beginning of time to the given point in time.
+     * 
+     * @param time Number in minutes, specifying the time since the beginning of world.
+     * @return Value in miles. When the train is already in its destination, it returns the length of the route.
+     */
+    public BigDecimal getDistanceTravelled(BigDecimal time);
+
+    /**
      * Get every arc that the train is occupying at a given length of time. Arc is either occupied or free, there is no concept
      * of partially-occupied.
      * 

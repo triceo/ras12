@@ -7,8 +7,8 @@ import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.SortedSet;
@@ -68,20 +68,20 @@ public final class Itinerary implements ItineraryInterface {
         return left.compareTo(right) > 0;
     }
 
-    private final Route                       route;
-    private final Train                       train;
-    private final BigDecimal                  trainEntryTime;
-    private final AtomicInteger               idGenerator        = new AtomicInteger(1);
-    private final Map<Integer, Arc>           arcProgression     = new TreeMap<Integer, Arc>();
-    private final Map<Integer, Node>          nodeProgression    = new TreeMap<Integer, Node>();
-    private final Map<Integer, BigDecimal>    nodeDistances      = new TreeMap<Integer, BigDecimal>();
-    private final Map<Integer, BigDecimal>    arcTravellingTimes = new TreeMap<Integer, BigDecimal>();
-    private final Map<Node, WaitTime>         nodeWaitTimes      = new HashMap<Node, WaitTime>();
+    private final Route                             route;
+    private final Train                             train;
+    private final BigDecimal                        trainEntryTime;
+    private final AtomicInteger                     idGenerator        = new AtomicInteger(1);
+    private final SortedMap<Integer, Arc>           arcProgression     = new TreeMap<Integer, Arc>();
+    private final SortedMap<Integer, Node>          nodeProgression    = new TreeMap<Integer, Node>();
+    private final SortedMap<Integer, BigDecimal>    nodeDistances      = new TreeMap<Integer, BigDecimal>();
+    private final SortedMap<Integer, BigDecimal>    arcTravellingTimes = new TreeMap<Integer, BigDecimal>();
+    private final SortedMap<Node, WaitTime>         nodeWaitTimes      = new TreeMap<Node, WaitTime>();
 
     // FIXME only one window per node; multiple different windows with same node will get lost
-    private final Map<Node, Itinerary.Window> maintenances       = new HashMap<Node, Itinerary.Window>();
+    private final SortedMap<Node, Itinerary.Window> maintenances       = new TreeMap<Node, Itinerary.Window>();
 
-    private int                               numHaltsFromLastNodeEntryCalculation;
+    private int                                     numHaltsFromLastNodeEntryCalculation;
 
     public Itinerary(final Route r, final Train t,
             final Collection<MaintenanceWindow> maintenanceWindows) {
@@ -150,32 +150,72 @@ public final class Itinerary implements ItineraryInterface {
             // FIXME train leaves the network when the head enters the depot; it should be the tail
             return new LinkedList<Arc>();
         }
+        // get the distance that the end of the train has made since the start of time
+        final BigDecimal distanceTravelled = this.getDistanceTravelled(timeInMinutes);
+        final BigDecimal endOfTrainIsAt = distanceTravelled.subtract(this.getTrain().getLength());
+        // and now locate the arc that the end of the train is at
+        BigDecimal arcEndsAtMile = BigDecimal.ZERO;
+        Arc terminalArc = null;
+        Arc previousArc = null;
+        for (int i = 0; i < this.arcProgression.size(); i++) {
+            final Arc a = this.arcProgression.get(i);
+            arcEndsAtMile = arcEndsAtMile.add(a.getLengthInMiles());
+            final int comparison = endOfTrainIsAt.compareTo(arcEndsAtMile);
+            if (comparison == 0) {
+                // the current arc is where the node ends
+                terminalArc = a;
+                break;
+            } else if (comparison == -1) {
+                // the train ends on some of the following arcs
+                previousArc = a;
+            } else {
+                // train already ended
+                terminalArc = previousArc;
+                break;
+            }
+        }
+        // and now enumerate every arc from the terminal to the leading
+        Arc currentArc = terminalArc;
+        final List<Arc> result = new LinkedList<Arc>();
+        result.add(currentArc);
+        while ((currentArc = this.route.getNextArc(currentArc)) != leadingArc) {
+            result.add(currentArc);
+        }
+        result.add(leadingArc);
+        return result;
+    }
+
+    @Override
+    public BigDecimal getDistanceTravelled(final BigDecimal time) {
+        // locate the head of the train
+        Arc leadingArc;
+        try {
+            leadingArc = this.getCurrentArc(time);
+        } catch (final IllegalStateException ex) {
+            // train is already in the destination
+            return this.getRoute().getLengthInMiles();
+        }
         final int leadingArcId = this.getArcId(leadingArc);
-        BigDecimal unaccountedTrainLength = this.getTrain().getLength();
         // now figure out how far the head is into the arc
         final int previousArcId = leadingArcId - 1;
         final Map<Integer, BigDecimal> adjustedNodeEntryTimes = this.getNodeEntryTimes();
         final BigDecimal lastCheckpointTime = adjustedNodeEntryTimes.containsKey(previousArcId) ? adjustedNodeEntryTimes
                 .get(leadingArcId - 1) : this.trainEntryTime;
-        final BigDecimal timeDifference = timeInMinutes.subtract(lastCheckpointTime);
+        final BigDecimal timeDifference = time.subtract(lastCheckpointTime);
         final BigDecimal distanceTravelledInArc = Itinerary.getDistanceInMilesFromSpeedAndTime(this
                 .getTrain().getMaximumSpeed(leadingArc.getTrackType()), timeDifference);
-        unaccountedTrainLength = unaccountedTrainLength.subtract(distanceTravelledInArc);
-        final Collection<Arc> occupiedArcs = new LinkedList<Arc>();
-        occupiedArcs.add(leadingArc);
-        // and now find any other arcs that our train may be blocking towards the read
-        for (int arcId = leadingArcId - 1; arcId >= 0; arcId--) {
-            if (unaccountedTrainLength.compareTo(BigDecimal.ZERO) < 0) {
-                // we've found the arc where the train ends
+        // and add the distance to whatever route length before the arc
+        BigDecimal travelled = BigDecimal.ZERO;
+        for (int i = 0; i < this.arcProgression.size(); i++) {
+            final Arc a = this.arcProgression.get(i);
+            if (a == leadingArc) {
+                travelled = travelled.add(distanceTravelledInArc);
                 break;
             } else {
-                final Arc arc = this.arcProgression.get(arcId);
-                final BigDecimal arcLength = arc.getLengthInMiles();
-                unaccountedTrainLength = unaccountedTrainLength.subtract(arcLength);
-                occupiedArcs.add(arc);
+                travelled = travelled.add(a.getLengthInMiles());
             }
         }
-        return occupiedArcs;
+        return travelled;
     }
 
     @Override
