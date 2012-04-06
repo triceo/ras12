@@ -98,58 +98,23 @@ public final class Itinerary implements ItineraryInterface {
     // FIXME dirty, ugly, terrible
     @Override
     public synchronized int countHalts() {
-        this.getArcEntryTimes();
+        this.getNodeEntryTimes();
         return this.numHaltsFromLastNodeEntryCalculation;
     }
 
-    private Map<Arc, BigDecimal> getArcEntryTimes() {
-        int halts = 0;
-        final Map<Arc, BigDecimal> adjusted = new HashMap<Arc, BigDecimal>();
-        int i = 0;
-        Arc previousArc = null;
-        for (final Arc currentArc : this.arcProgression) {
-            BigDecimal time = currentArc.getTravellingTimeInMinutes(this.getTrain());
-            if (i == 0) {
-                // first item needs to be augmented by the train entry time
-                time = time.add(this.trainEntryTime);
-            } else {
-                // otherwise we need to convert a relative time to an absolute time by adding the previous node's time
-                time = time.add(adjusted.get(previousArc));
+    private Arc getArcPerStartingNode(final Node n) {
+        for (final Arc a : this.arcProgression) {
+            if (a.getStartingNode(this.getTrain()) == n) {
+                return a;
             }
-            // now adjust for node wait time, should there be any
-            final Node n = currentArc.getStartingNode(this.getTrain());
-            final WaitTime wt = this.nodeWaitTimes.get(n);
-            boolean isHalted = false;
-            if (wt != null) {
-                isHalted = true;
-                halts++;
-                time = time.add(BigDecimal.valueOf(wt.getMinutesWaitFor()));
-            }
-            // check for maintenance windows
-            if (this.maintenances.containsKey(n)) {
-                // there is a maintenance registered for the next node
-                final Itinerary.Window w = this.maintenances.get(n);
-                if (w.isInside(time)) {
-                    if (!isHalted) {
-                        halts++;
-                    }
-                    // the maintenance is ongoing, we have to wait
-                    time = w.getEnd();
-                }
-            }
-            // and store
-            adjusted.put(currentArc, time);
-            previousArc = currentArc;
-            i++;
         }
-        this.numHaltsFromLastNodeEntryCalculation = halts;
-        return Collections.unmodifiableMap(adjusted);
+        return null;
     }
 
     @Override
     public Arc getCurrentArc(final BigDecimal timeInMinutes) {
-        for (final Map.Entry<Arc, BigDecimal> e : this.getArcEntryTimes().entrySet()) {
-            final Arc currentArc = e.getKey();
+        for (final Map.Entry<Node, BigDecimal> e : this.getNodeEntryTimes().entrySet()) {
+            final Arc currentArc = this.getArcPerStartingNode(e.getKey());
             final BigDecimal nodeEntryTime = e.getValue();
             if (Itinerary.isLarger(timeInMinutes, nodeEntryTime)) {
                 continue;
@@ -222,8 +187,8 @@ public final class Itinerary implements ItineraryInterface {
         // calculate whatever we've travelled before we reached the current arc
         BigDecimal travelled = BigDecimal.ZERO;
         BigDecimal lastCheckpointTime = null;
-        for (final Map.Entry<Arc, BigDecimal> entry : this.getArcEntryTimes().entrySet()) {
-            final Arc a = entry.getKey();
+        for (final Map.Entry<Node, BigDecimal> entry : this.getNodeEntryTimes().entrySet()) {
+            final Arc a = this.getArcPerStartingNode(entry.getKey());
             if (a == leadingArc) {
                 lastCheckpointTime = entry.getValue();
                 break;
@@ -243,15 +208,64 @@ public final class Itinerary implements ItineraryInterface {
         return this.getCurrentArc(timeInMinutes).getEndingNode(this.getTrain());
     }
 
+    private Map<Node, BigDecimal> getNodeEntryTimes() {
+        int halts = 0;
+        final Map<Node, BigDecimal> adjusted = new HashMap<Node, BigDecimal>();
+        int i = 0;
+        BigDecimal previousTime = BigDecimal.ZERO;
+        Arc previousArc = null;
+        for (final Arc currentArc : this.arcProgression) {
+            BigDecimal time = BigDecimal.ZERO;
+            if (i == 0) {
+                // first item needs to be augmented by the train entry time
+                time = time.add(this.trainEntryTime);
+            } else {
+                // otherwise we need to convert a relative time to an absolute time by adding the previous node's time
+                time = previousArc.getTravellingTimeInMinutes(this.getTrain());
+                time = time.add(previousTime);
+            }
+            // now adjust for node wait time, should there be any
+            final Node n = currentArc.getStartingNode(this.getTrain());
+            final WaitTime wt = this.nodeWaitTimes.get(n);
+            boolean isHalted = false;
+            if (wt != null) {
+                isHalted = true;
+                halts++;
+                time = time.add(BigDecimal.valueOf(wt.getMinutesWaitFor()));
+            }
+            // check for maintenance windows
+            if (this.maintenances.containsKey(n)) {
+                // there is a maintenance registered for the next node
+                final Itinerary.Window w = this.maintenances.get(n);
+                if (w.isInside(time)) {
+                    if (!isHalted) {
+                        halts++;
+                    }
+                    // the maintenance is ongoing, we have to wait
+                    time = w.getEnd();
+                }
+            }
+            // and store
+            adjusted.put(n, time);
+            previousTime = time;
+            previousArc = currentArc;
+            i++;
+        }
+        adjusted.put(previousArc.getEndingNode(this.getTrain()),
+                previousTime.add(previousArc.getTravellingTimeInMinutes(this.getTrain())));
+        this.numHaltsFromLastNodeEntryCalculation = halts;
+        return Collections.unmodifiableMap(adjusted);
+    }
+
     public Route getRoute() {
         return this.route;
     }
 
     @Override
-    public SortedMap<Node, BigDecimal> getSchedule() {
-        final SortedMap<Node, BigDecimal> results = new TreeMap<Node, BigDecimal>();
-        for (final Map.Entry<Arc, BigDecimal> entry : this.getArcEntryTimes().entrySet()) {
-            results.put(entry.getKey().getStartingNode(this.getTrain()), entry.getValue());
+    public SortedMap<BigDecimal, Node> getSchedule() {
+        final SortedMap<BigDecimal, Node> results = new TreeMap<BigDecimal, Node>();
+        for (final Map.Entry<Node, BigDecimal> entry : this.getNodeEntryTimes().entrySet()) {
+            results.put(entry.getValue(), entry.getKey());
         }
         return results;
     }
@@ -301,8 +315,8 @@ public final class Itinerary implements ItineraryInterface {
         try (BufferedWriter w = new BufferedWriter(new OutputStreamWriter(os))) {
             w.write("node;time");
             w.newLine();
-            for (final Map.Entry<Arc, BigDecimal> times : this.getArcEntryTimes().entrySet()) {
-                w.write(String.valueOf(times.getKey().getStartingNode(this.getTrain()).getId()));
+            for (final Map.Entry<Node, BigDecimal> times : this.getNodeEntryTimes().entrySet()) {
+                w.write(String.valueOf(times.getKey().getId()));
                 w.write(";");
                 w.write(times.getValue().toString());
                 w.newLine();
@@ -315,7 +329,6 @@ public final class Itinerary implements ItineraryInterface {
 
     @Override
     public String toString() {
-        final Map<Arc, BigDecimal> adjustedEntryTimes = this.getArcEntryTimes();
         final int halts = this.numHaltsFromLastNodeEntryCalculation;
         final StringBuilder sb = new StringBuilder();
         sb.append("Itinerary (~");
@@ -323,8 +336,8 @@ public final class Itinerary implements ItineraryInterface {
         sb.append(" miles, ~");
         sb.append(halts);
         sb.append(" halts): ");
-        for (final Map.Entry<Arc, BigDecimal> a : adjustedEntryTimes.entrySet()) {
-            sb.append(a.getKey().getStartingNode(this.getTrain()).getId());
+        for (final Map.Entry<Node, BigDecimal> a : this.getNodeEntryTimes().entrySet()) {
+            sb.append(a.getKey().getId());
             sb.append("@");
             sb.append(a.getValue());
             sb.append(" ");
