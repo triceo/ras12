@@ -117,10 +117,18 @@ public class Route implements Comparable<Route> {
     }
 
     public Arc getInitialArc() {
-        if (this.direction == Direction.WESTBOUND) {
-            return this.parts.get(this.parts.size() - 1);
+        /*
+         * get the first and last arc inserted; some arc should have the west node == 0, it is the west-most arc; the other is
+         * by definition the east-most arc
+         */
+        Arc one = this.parts.get(0);
+        Arc two = this.parts.get(this.parts.size() - 1);
+        if (one.getWestNode().getId() == 0) {
+            // one is west-most
+            return (this.direction == Direction.WESTBOUND) ? two : one;
         } else {
-            return this.parts.get(0);
+            // one is east-most
+            return (this.direction == Direction.WESTBOUND) ? one : two;
         }
     }
 
@@ -151,19 +159,22 @@ public class Route implements Comparable<Route> {
         if (!this.contains(a)) {
             throw new IllegalArgumentException("The route doesn't contain the arc.");
         }
-        final int index = this.parts.indexOf(a);
         if (this.direction == Direction.WESTBOUND) {
-            if (index == 0) {
-                return null;
-            } else {
-                return this.parts.get(index - 1);
+            Node n = a.getWestNode();
+            for (Arc a2 : this.parts) {
+                if (a2.getEastNode() == n) {
+                    return a2;
+                }
             }
+            return null;
         } else {
-            if (index == this.parts.size() - 1) {
-                return null;
-            } else {
-                return this.parts.get(index + 1);
+            Node n = a.getEastNode();
+            for (Arc a2 : this.parts) {
+                if (a2.getWestNode() == n) {
+                    return a2;
+                }
             }
+            return null;
         }
     }
 
@@ -179,10 +190,13 @@ public class Route implements Comparable<Route> {
     }
 
     public Arc getTerminalArc() {
-        if (this.direction == Direction.EASTBOUND) {
-            return this.parts.get(this.parts.size() - 1);
+        Arc one = this.parts.get(0);
+        Arc two = this.parts.get(this.parts.size() - 1);
+        Arc initial = this.getInitialArc();
+        if (one == initial) {
+            return two;
         } else {
-            return this.parts.get(0);
+            return one;
         }
     }
 

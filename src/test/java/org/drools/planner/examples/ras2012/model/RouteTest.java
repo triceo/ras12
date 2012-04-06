@@ -13,6 +13,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+// FIXME test also routes with nodes going inf->0, not just 0->inf
 @RunWith(Parameterized.class)
 public class RouteTest {
 

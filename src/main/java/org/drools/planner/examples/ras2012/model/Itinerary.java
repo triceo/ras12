@@ -95,11 +95,7 @@ public final class Itinerary implements ItineraryInterface {
         // assemble the node-traversal information
         Arc currentArc = null;
         while ((currentArc = this.route.getNextArc(currentArc)) != null) {
-            final int currentSpeed = this.train.getMaximumSpeed(currentArc.getTrackType());
-            final BigDecimal arcLength = currentArc.getLengthInMiles();
-            final BigDecimal timeItTakes = Itinerary.getTimeInMinutesFromSpeedAndDistance(
-                    currentSpeed, arcLength);
-            this.pass(currentArc, arcLength, timeItTakes);
+            this.pass(currentArc);
         }
         // initialize the maintenance windows
         for (final MaintenanceWindow mow : maintenanceWindows) {
@@ -133,7 +129,7 @@ public final class Itinerary implements ItineraryInterface {
             if (Itinerary.isLarger(timeInMinutes, nodeEntryTime)) {
                 continue;
             } else {
-                return this.arcProgression.get(nodeId);
+                return this.arcProgression.get(nodeId - 1);
             }
         }
         throw new IllegalStateException("Train is no longer en route at the time: " + timeInMinutes);
@@ -295,7 +291,10 @@ public final class Itinerary implements ItineraryInterface {
     }
 
     // FIXME prevent calling from outside constructor
-    private void pass(final Arc a, final BigDecimal distance, final BigDecimal minutesPerArc) {
+    private void pass(final Arc a) {
+        final BigDecimal distance = a.getLengthInMiles();
+        final BigDecimal minutesPerArc = Itinerary.getTimeInMinutesFromSpeedAndDistance(
+                this.train.getMaximumSpeed(a.getTrackType()), distance);
         // get previous node enter time, so that we can calculate the time difference
         final Node n = this.getTerminatingNode(a);
         // and now mark passing another node
