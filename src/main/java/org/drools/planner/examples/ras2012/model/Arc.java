@@ -34,7 +34,8 @@ public class Arc {
         }
 
         private static void setSpeedEastbound(final TrackType t, final int speed) {
-            if (TrackType.speedsEastbound.get(t) != null) {
+            if (TrackType.speedsEastbound.get(t) != null
+                    && TrackType.speedsEastbound.get(t) != speed) {
                 throw new IllegalStateException(
                         "Cannot re-assign an already assigned eastbound track speed.");
             }
@@ -42,7 +43,8 @@ public class Arc {
         }
 
         private static void setSpeedWestbound(final TrackType t, final int speed) {
-            if (TrackType.speedsWestbound.get(t) != null) {
+            if (TrackType.speedsWestbound.get(t) != null
+                    && TrackType.speedsWestbound.get(t) != speed) {
                 throw new IllegalStateException(
                         "Cannot re-assign an already assigned westbound track speed.");
             }
