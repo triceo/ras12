@@ -11,7 +11,6 @@ public class Node implements Comparable<Node> {
         this.id = id;
     }
 
-    // FIXME test for this
     @Override
     public int compareTo(final Node arg0) {
         return Integer.valueOf(this.getId()).compareTo(arg0.getId());
