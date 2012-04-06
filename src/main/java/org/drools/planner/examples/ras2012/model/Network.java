@@ -21,8 +21,8 @@ public class Network {
     private final Node                                  westDepo;
     private final SortedMap<Node, SortedMap<Node, Arc>> eastboundConnections;
     private final SortedMap<Node, SortedMap<Node, Arc>> westboundConnections;
-    private Collection<Route>                           westboundRoutes;
-    private Collection<Route>                           eastboundRoutes;
+    private final Collection<Route>                     westboundRoutes;
+    private final Collection<Route>                     eastboundRoutes;
 
     public Network(final Collection<Node> nodes, final Collection<Arc> edges) {
         for (final Node n : nodes) {
@@ -45,13 +45,14 @@ public class Network {
         this.westboundConnections = Collections.unmodifiableSortedMap(tmpWestboundConnections);
         this.eastDepo = this.locateEastboundDepo();
         this.westDepo = this.locateWestboundDepo();
+        Route.resetRouteCounter();
+        this.eastboundRoutes = this.getAllRoutes(new Route(Direction.EASTBOUND),
+                this.eastboundConnections, this.westDepo);
+        this.westboundRoutes = this.getAllRoutes(new Route(Direction.WESTBOUND),
+                this.westboundConnections, this.eastDepo);
     }
 
     public synchronized Collection<Route> getAllEastboundRoutes() {
-        if (this.eastboundRoutes == null) {
-            this.eastboundRoutes = this.getAllRoutes(new Route(Direction.EASTBOUND),
-                    this.eastboundConnections, this.westDepo);
-        }
         return this.eastboundRoutes;
     }
 
@@ -72,7 +73,7 @@ public class Network {
             return routes;
         }
         // traverse all the nodes in a defined order, create new routes from them
-        SortedSet<Node> keys = new TreeSet<Node>(connections.get(startingNode).keySet());
+        final SortedSet<Node> keys = new TreeSet<Node>(connections.get(startingNode).keySet());
         for (final Node n : keys) {
             final Node nextNode = n;
             final Arc edge = connections.get(startingNode).get(n);
@@ -91,10 +92,6 @@ public class Network {
     }
 
     public synchronized Collection<Route> getAllWestboundRoutes() {
-        if (this.westboundRoutes == null) {
-            this.westboundRoutes = this.getAllRoutes(new Route(Direction.WESTBOUND),
-                    this.westboundConnections, this.eastDepo);
-        }
         return this.westboundRoutes;
     }
 

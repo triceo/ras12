@@ -24,6 +24,10 @@ public class Route implements Comparable<Route> {
         EASTBOUND, WESTBOUND
     }
 
+    protected static int resetRouteCounter() {
+        return Route.idGenerator.getAndSet(0);
+    }
+
     private final List<Arc>            parts       = new LinkedList<Arc>();
     private final Direction            direction;
 
@@ -256,7 +260,7 @@ public class Route implements Comparable<Route> {
         return true;
     }
 
-    public boolean toCSV(OutputStream os) {
+    public boolean toCSV(final OutputStream os) {
         try (BufferedWriter w = new BufferedWriter(new OutputStreamWriter(os))) {
             if (this.getDirection() == Direction.EASTBOUND) {
                 w.write("west;east;length;speed");
@@ -264,7 +268,7 @@ public class Route implements Comparable<Route> {
                 w.write("east;west;length;speed");
             }
             w.newLine();
-            for (Arc arc : this.parts) {
+            for (final Arc arc : this.parts) {
                 if (this.getDirection() == Direction.EASTBOUND) {
                     w.write(String.valueOf(arc.getWestNode().getId()));
                     w.write(";");
@@ -286,7 +290,7 @@ public class Route implements Comparable<Route> {
                 w.newLine();
             }
             return true;
-        } catch (IOException ex) {
+        } catch (final IOException ex) {
             return false;
         }
     }
