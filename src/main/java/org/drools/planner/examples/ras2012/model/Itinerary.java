@@ -74,7 +74,6 @@ public final class Itinerary implements ItineraryInterface {
     private final AtomicInteger                     idGenerator        = new AtomicInteger(1);
     private final SortedMap<Integer, Arc>           arcProgression     = new TreeMap<Integer, Arc>();
     private final SortedMap<Integer, Node>          nodeProgression    = new TreeMap<Integer, Node>();
-    private final SortedMap<Integer, BigDecimal>    nodeDistances      = new TreeMap<Integer, BigDecimal>();
     private final SortedMap<Integer, BigDecimal>    arcTravellingTimes = new TreeMap<Integer, BigDecimal>();
     private final SortedMap<Node, WaitTime>         nodeWaitTimes      = new TreeMap<Node, WaitTime>();
 
@@ -90,7 +89,6 @@ public final class Itinerary implements ItineraryInterface {
         this.trainEntryTime = BigDecimal.valueOf(t.getEntryTime());
         // initialize data structures with the first node
         this.nodeProgression.put(0, t.getOrigin());
-        this.nodeDistances.put(0, r.getInitialArc().getLengthInMiles());
         this.arcTravellingTimes.put(0, BigDecimal.ZERO);
         // assemble the node-traversal information
         Arc currentArc = null;
@@ -225,7 +223,7 @@ public final class Itinerary implements ItineraryInterface {
     private Map<Integer, BigDecimal> getNodeEntryTimes() {
         int halts = 0;
         final Map<Integer, BigDecimal> adjusted = new TreeMap<Integer, BigDecimal>();
-        final SortedSet<Integer> keys = new TreeSet<Integer>(this.nodeDistances.keySet());
+        final SortedSet<Integer> keys = new TreeSet<Integer>(this.nodeProgression.keySet());
         int i = 0;
         for (final int key : keys) {
             BigDecimal time = this.arcTravellingTimes.get(key);
@@ -301,7 +299,6 @@ public final class Itinerary implements ItineraryInterface {
         final int id = this.idGenerator.getAndIncrement();
         this.arcProgression.put(id, a);
         this.nodeProgression.put(id, n);
-        this.nodeDistances.put(id, distance);
         this.arcTravellingTimes.put(id, minutesPerArc);
         // calculate average speed at this arc
         final BigDecimal result = distance.divide(
