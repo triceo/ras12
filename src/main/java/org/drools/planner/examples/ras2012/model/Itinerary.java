@@ -141,15 +141,6 @@ public final class Itinerary implements ItineraryInterface {
 
     @Override
     public Collection<Arc> getCurrentlyOccupiedArcs(final BigDecimal timeInMinutes) {
-        // locate the head of the train
-        Arc leadingArc;
-        try {
-            leadingArc = this.getCurrentArc(timeInMinutes);
-        } catch (final IllegalStateException ex) {
-            // train is no longer in the network
-            // FIXME train leaves the network when the head enters the depot; it should be the tail
-            return new LinkedList<Arc>();
-        }
         // get the distance that the end of the train has made since the start of time
         final BigDecimal distanceTravelled = this.getDistanceTravelled(timeInMinutes);
         final BigDecimal endOfTrainIsAt = distanceTravelled.subtract(this.getTrain().getLength());
@@ -174,6 +165,15 @@ public final class Itinerary implements ItineraryInterface {
                 break;
             }
         }
+        // locate the head of the train
+        Arc leadingArc;
+        try {
+            leadingArc = this.getCurrentArc(timeInMinutes);
+        } catch (final IllegalStateException ex) {
+            // train is no longer in the network
+            // FIXME train leaves the network when the head enters the depot; it should be the tail
+            return new LinkedList<Arc>();
+        }
         // and now enumerate every arc from the terminal to the leading
         Arc currentArc = terminalArc;
         final List<Arc> result = new LinkedList<Arc>();
@@ -191,6 +191,9 @@ public final class Itinerary implements ItineraryInterface {
         Arc leadingArc;
         try {
             leadingArc = this.getCurrentArc(time);
+            if (leadingArc == null) {
+                return BigDecimal.ZERO;
+            }
         } catch (final IllegalStateException ex) {
             // train is already in the destination
             return this.getRoute().getLengthInMiles();
