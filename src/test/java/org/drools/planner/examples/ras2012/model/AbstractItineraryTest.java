@@ -198,6 +198,11 @@ public abstract class AbstractItineraryTest {
     }
 
     @Test
+    public void testGetSchedule() {
+        Assert.fail("Not yet implemented"); // TODO
+    }
+
+    @Test
     public void testRemoveWaitTime() {
         Assert.fail("Not yet implemented"); // TODO
     }
