@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.drools.planner.examples.ras2012.model.Route.Direction;
+
 public class Arc {
 
     // FIXME rework so that speeds aren't static
@@ -126,12 +128,56 @@ public class Arc {
         return this.eastNode;
     }
 
+    // FIXME test this
+    public Node getEndingNode(final Route r) {
+        if (r.getDirection() == Direction.EASTBOUND) {
+            return this.eastNode;
+        } else {
+            return this.westNode;
+        }
+    }
+
+    // FIXME test this
+    public Node getEndingNode(final Train t) {
+        if (t.isEastbound()) {
+            return this.eastNode;
+        } else {
+            return this.westNode;
+        }
+    }
+
     public BigDecimal getLengthInMiles() {
         return this.lengthInMiles;
     }
 
+    // FIXME test this
+    public Node getStartingNode(final Route r) {
+        if (r.getDirection() == Direction.EASTBOUND) {
+            return this.westNode;
+        } else {
+            return this.eastNode;
+        }
+    }
+
+    // FIXME test this
+    public Node getStartingNode(final Train t) {
+        if (t.isEastbound()) {
+            return this.westNode;
+        } else {
+            return this.eastNode;
+        }
+    }
+
     public TrackType getTrackType() {
         return this.trackType;
+    }
+
+    // FIXME test this
+    public BigDecimal getTravellingTimeInMinutes(final Train t) {
+        final BigDecimal milesPerHour = BigDecimal.valueOf(t.getMaximumSpeed(this.getTrackType()));
+        final BigDecimal hours = this.getLengthInMiles().divide(milesPerHour, 5,
+                BigDecimal.ROUND_HALF_DOWN);
+        return hours.multiply(BigDecimal.valueOf(60));
     }
 
     public Node getWestNode() {
