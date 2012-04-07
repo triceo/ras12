@@ -341,17 +341,22 @@ public class RouteTest {
         final Arc a = new Arc(TrackType.SIDING, BigDecimal.ONE, n1, n2);
         Route r = new Route(this.originalDirection);
         r = r.extend(a);
-        // prepare trains; one will be longer than the siding, the other won't
         final boolean isWestbound = this.originalDirection == Direction.WESTBOUND;
-        final Train longTrain = new Train("EB", BigDecimal.ONE.add(BigDecimal.ONE), BigDecimal.ONE,
-                90, n1, n2, 0, 1, 0, Collections.<ScheduleAdherenceRequirement> emptyList(), true,
-                isWestbound);
         final Train shortTrain = new Train("WB", BigDecimal.ONE, BigDecimal.ONE, 90, n2, n1, 0, 1,
-                0, Collections.<ScheduleAdherenceRequirement> emptyList(), true, isWestbound);
-        // make sure it works
-        Assert.assertTrue("Train shorter than the siding will be let trough.",
+                0, Collections.<ScheduleAdherenceRequirement> emptyList(), false, isWestbound);
+        Assert.assertTrue("Train shorter than the siding won't be let through.",
                 r.isPossibleForTrain(shortTrain));
-        Assert.assertFalse("Train longer than the siding won't be let trough.",
+        final Train longTrain = new Train("EB", BigDecimal.ONE.add(BigDecimal.ONE), BigDecimal.ONE,
+                90, n1, n2, 0, 1, 0, Collections.<ScheduleAdherenceRequirement> emptyList(), false,
+                isWestbound);
+        Assert.assertFalse("Train longer than the siding will be let through.",
                 r.isPossibleForTrain(longTrain));
+        final Train hazmatTrain = new Train("WB", BigDecimal.ONE, BigDecimal.ONE, 90, n2, n1, 0, 1,
+                0, Collections.<ScheduleAdherenceRequirement> emptyList(), true, isWestbound);
+        Assert.assertFalse("Train with hazardous materials will be let through.",
+                r.isPossibleForTrain(hazmatTrain));
+        final Train heavyTrain = new Train("WB", BigDecimal.ONE, BigDecimal.ONE, 110, n2, n1, 0, 1,
+                0, Collections.<ScheduleAdherenceRequirement> emptyList(), false, isWestbound);
+        Assert.assertFalse("Heavy train will be let through.", r.isPossibleForTrain(heavyTrain));
     }
 }

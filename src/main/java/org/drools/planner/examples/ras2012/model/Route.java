@@ -262,9 +262,20 @@ public class Route implements Comparable<Route> {
         if (!(bothEastbound || bothWestbound)) {
             return false;
         }
-        // make sure the route doesn't contain a siding shorter than the train
         for (final Arc a : this.parts) {
             if (a.getTrackType() == TrackType.SIDING) {
+                if (t.isHeavy()) {
+                    /*
+                     * heavy trains must never use a siding when there is a meet-pass with another NSA train. this is the
+                     * easiest way to fulfill the requirement.
+                     */
+                    return false;
+                }
+                // hazmat trains disallowed to take sidings
+                if (t.carriesHazardousMaterials()) {
+                    return false;
+                }
+                // make sure the route doesn't contain a siding shorter than the train
                 final int result = a.getLengthInMiles().compareTo(t.getLength());
                 if (result < 0) {
                     return false;
