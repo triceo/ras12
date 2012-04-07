@@ -213,9 +213,7 @@ public abstract class AbstractItineraryTest {
                 expecteds.put(totalTime.subtract(arcTravellingTimeThird), currentArc); // two thirds into the node
             }
             // and now validate against reality
-            System.out.println(r);
             for (final Map.Entry<BigDecimal, Arc> entry : expecteds.entrySet()) {
-                System.out.println(entry.getKey());
                 Assert.assertEquals("Train " + t.getName() + " on route " + r.getId() + " at time "
                         + entry.getKey() + " isn't where it's supposed to be.", entry.getValue(),
                         i.getCurrentArc(entry.getKey()));

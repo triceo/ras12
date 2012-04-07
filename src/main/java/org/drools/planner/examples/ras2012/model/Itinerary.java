@@ -117,7 +117,6 @@ public final class Itinerary implements ItineraryInterface {
         Arc previousArc = null;
         for (final Map.Entry<BigDecimal, Node> e : this.getNodeEntryTimes().entrySet()) {
             final Arc currentArc = this.getArcPerStartingNode(e.getValue());
-            System.out.println(e.getKey() + " " + currentArc);
             final BigDecimal nodeEntryTime = e.getKey();
             final int comparison = timeInMinutes.compareTo(nodeEntryTime);
             if (comparison > 0) {
