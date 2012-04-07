@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<solver>
+  <solutionClass>org.drools.planner.examples.ras2012.RAS2012Solution</solutionClass>
+  <planningEntityClass>org.drools.planner.examples.ras2012.model.planner.ItineraryAssignment</planningEntityClass>
+  <scoreDirectorFactory>
+    <scoreDefinitionType>HARD_AND_SOFT</scoreDefinitionType>
+    <simpleScoreCalculatorClass>org.drools.planner.examples.ras2012.RAS2012ScoreCalculator</simpleScoreCalculatorClass>
+  </scoreDirectorFactory>
+  <localSearch>
+    <termination>
+      <terminationCompositionStyle>OR</terminationCompositionStyle>
+      <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
+      <scoreAttained>0hard/0soft</scoreAttained>
+    </termination> 
+    <acceptor>
+      <moveTabuSize>5</moveTabuSize>
+      <undoMoveTabuSize>5</undoMoveTabuSize>
+      <simulatedAnnealingStartingTemperature>0hard/10soft</simulatedAnnealingStartingTemperature>
+    </acceptor>
+    <forager>
+      <minimalAcceptedSelection>4</minimalAcceptedSelection>
+    </forager>    
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+  </localSearch>
+</solver>

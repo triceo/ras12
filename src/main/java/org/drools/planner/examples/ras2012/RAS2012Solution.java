@@ -2,23 +2,18 @@ package org.drools.planner.examples.ras2012;
 
 import java.math.BigDecimal;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.drools.planner.api.domain.solution.PlanningEntityCollectionProperty;
 import org.drools.planner.core.score.buildin.hardandsoft.HardAndSoftScore;
 import org.drools.planner.core.solution.Solution;
-import org.drools.planner.examples.ras2012.model.Arc;
-import org.drools.planner.examples.ras2012.model.Itinerary;
 import org.drools.planner.examples.ras2012.model.MaintenanceWindow;
 import org.drools.planner.examples.ras2012.model.Network;
 import org.drools.planner.examples.ras2012.model.Route;
 import org.drools.planner.examples.ras2012.model.Train;
 import org.drools.planner.examples.ras2012.model.planner.ItineraryAssignment;
-import org.drools.planner.examples.ras2012.model.planner.TrainConflict;
 
 public class RAS2012Solution implements Solution<HardAndSoftScore> {
 
@@ -63,6 +58,7 @@ public class RAS2012Solution implements Solution<HardAndSoftScore> {
                 throw new IllegalStateException("Not all trains have been assigned routes!");
             }
         }
+        this.setScore(new RAS2012ScoreCalculator().calculateScore(this));
     }
 
     private RAS2012Solution(final String name, final Network net,
@@ -76,6 +72,7 @@ public class RAS2012Solution implements Solution<HardAndSoftScore> {
         for (final ItineraryAssignment a : assignments) {
             this.assignments.add(a.clone());
         }
+        this.setScore(new RAS2012ScoreCalculator().calculateScore(this));
     }
 
     @Override
@@ -104,30 +101,6 @@ public class RAS2012Solution implements Solution<HardAndSoftScore> {
     @Override
     public Collection<? extends Object> getProblemFacts() {
         final Collection<Object> allFacts = new LinkedList<Object>();
-        // insert the number of conflicts for the given assignments
-        for (BigDecimal time = BigDecimal.ZERO; time.intValue() <= RAS2012Solution.PLANNING_HORIZON_MINUTES; time = time
-                .add(RAS2012Solution.PLANNING_TIME_DIVISION_MINUTES)) {
-            // for each point in time...
-            final Map<Arc, Integer> arcUsage = new HashMap<Arc, Integer>();
-            for (final ItineraryAssignment ia : this.assignments) {
-                // ... and each assignment...
-                final Itinerary i = ia.getItinerary();
-                for (final Arc a : i.getCurrentlyOccupiedArcs(time)) {
-                    // ... find out how many times an arc has been used
-                    if (arcUsage.containsKey(a)) {
-                        arcUsage.put(a, arcUsage.get(a) + 1);
-                    } else {
-                        arcUsage.put(a, 1);
-                    }
-                }
-            }
-            int conflicts = 0;
-            // when an arc has been used more than once, it is a conflict of two itineraries
-            for (final int numOfUses : arcUsage.values()) {
-                conflicts += numOfUses - 1;
-            }
-            allFacts.add(new TrainConflict(time, conflicts));
-        }
         return allFacts;
     }
 

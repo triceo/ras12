@@ -4,7 +4,8 @@ import java.util.Collection;
 
 import org.drools.planner.api.domain.entity.PlanningEntity;
 import org.drools.planner.api.domain.variable.PlanningVariable;
-import org.drools.planner.api.domain.variable.ValueRangeUndefined;
+import org.drools.planner.api.domain.variable.ValueRange;
+import org.drools.planner.api.domain.variable.ValueRangeType;
 import org.drools.planner.examples.ras2012.model.Itinerary;
 import org.drools.planner.examples.ras2012.model.MaintenanceWindow;
 import org.drools.planner.examples.ras2012.model.Route;
@@ -33,7 +34,7 @@ public class ItineraryAssignment {
     }
 
     @PlanningVariable
-    @ValueRangeUndefined
+    @ValueRange(type = ValueRangeType.UNDEFINED)
     public Route getRoute() {
         return route;
     }
