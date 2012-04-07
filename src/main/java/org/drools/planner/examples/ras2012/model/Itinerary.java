@@ -7,6 +7,7 @@ import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -131,53 +132,57 @@ public final class Itinerary implements ItineraryInterface {
                 return previousArc;
             }
         }
-        throw new IllegalStateException("This can never happen.");
+        throw new IllegalStateException("Train probably already finished.");
     }
 
     @Override
     public Collection<Arc> getCurrentlyOccupiedArcs(final BigDecimal timeInMinutes) {
-        // get the distance that the end of the train has made since the start of time
-        final BigDecimal distanceTravelled = this.getDistanceTravelled(timeInMinutes);
-        final BigDecimal endOfTrainIsAt = distanceTravelled.subtract(this.getTrain().getLength());
-        // and now locate the arc that the end of the train is at
-        BigDecimal arcEndsAtMile = BigDecimal.ZERO;
-        Arc terminalArc = null;
-        Arc previousArc = null;
-        for (int i = 0; i < this.arcProgression.size(); i++) {
-            final Arc a = this.arcProgression.get(i);
-            arcEndsAtMile = arcEndsAtMile.add(a.getLengthInMiles());
-            final int comparison = endOfTrainIsAt.compareTo(arcEndsAtMile);
-            if (comparison == 0) {
-                // the current arc is where the node ends
-                terminalArc = a;
-                break;
-            } else if (comparison == -1) {
-                // the train ends on some of the following arcs
-                previousArc = a;
-            } else {
-                // train already ended
-                terminalArc = previousArc;
+        Arc leadingArc = null;
+        try {
+            leadingArc = this.getCurrentArc(timeInMinutes);
+        } finally {
+            if (leadingArc == null) {
+                // train not in the network
+                // FIXME train should leave the network gradually, not at once when it reaches destination
+                return new HashSet<Arc>();
+            }
+        }
+        final List<Arc> occupiedArcs = new LinkedList<Arc>();
+        occupiedArcs.add(leadingArc);
+        // calculate how far are we into the leading arc
+        final Node beginningOfLeadingArc = leadingArc.getStartingNode(this.getTrain());
+        final Map<BigDecimal, Node> nodeEntryTimes = this.getNodeEntryTimes();
+        BigDecimal timeArcEntered = null;
+        for (final Map.Entry<BigDecimal, Node> entry : nodeEntryTimes.entrySet()) {
+            if (entry.getValue() == beginningOfLeadingArc) {
+                timeArcEntered = entry.getKey();
                 break;
             }
         }
-        // locate the head of the train
-        Arc leadingArc;
-        try {
-            leadingArc = this.getCurrentArc(timeInMinutes);
-        } catch (final IllegalStateException ex) {
-            // train is no longer in the network
-            // FIXME train leaves the network when the head enters the depot; it should be the tail
-            return new LinkedList<Arc>();
+        final BigDecimal timeTravelledInLeadingArc = timeInMinutes.subtract(timeArcEntered);
+        final BigDecimal travelledInLeadingArc = Itinerary.getDistanceInMilesFromSpeedAndTime(this
+                .getTrain().getMaximumSpeed(leadingArc.getTrackType()), timeTravelledInLeadingArc);
+        BigDecimal remainingLengthOfTrain = this.getTrain().getLength()
+                .subtract(travelledInLeadingArc);
+        // and now add any preceding arcs for as long as the remaining train length > 0
+        Arc currentlyProcessedArc = leadingArc;
+        while (remainingLengthOfTrain.compareTo(BigDecimal.ZERO) > 0) {
+            Arc previousArc = this.getRoute().getInitialArc();
+            for (final Arc a : this.arcProgression) {
+                if (a == currentlyProcessedArc) {
+                    break;
+                } else {
+                    previousArc = a;
+                }
+            }
+            if (!occupiedArcs.contains(previousArc)) { // each arc only once
+                occupiedArcs.add(previousArc);
+            }
+            remainingLengthOfTrain = remainingLengthOfTrain
+                    .subtract(previousArc.getLengthInMiles());
+            currentlyProcessedArc = previousArc;
         }
-        // and now enumerate every arc from the terminal to the leading
-        Arc currentArc = terminalArc;
-        final List<Arc> result = new LinkedList<Arc>();
-        result.add(currentArc);
-        while ((currentArc = this.route.getNextArc(currentArc)) != leadingArc) {
-            result.add(currentArc);
-        }
-        result.add(leadingArc);
-        return result;
+        return occupiedArcs;
     }
 
     @Override
