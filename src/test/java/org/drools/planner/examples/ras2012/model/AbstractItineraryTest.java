@@ -234,7 +234,61 @@ public abstract class AbstractItineraryTest {
 
     @Test
     public void testGetDistanceTravelled() {
-        Assert.fail("Not yet implemented"); // TODO
+        for (final Itinerary i : this.getItineraries()) {
+            // assemble a list of "checkpoint" where the train should be at which times
+            final Map<BigDecimal, BigDecimal> expecteds = new HashMap<BigDecimal, BigDecimal>();
+            final Route r = i.getRoute();
+            final Train t = i.getTrain();
+            Arc currentArc = null;
+            if (t.getEntryTime() > 0) {
+                // the train shouldn't be on the route before its time of entry
+                expecteds.put(BigDecimal.ZERO, BigDecimal.ZERO);
+                expecteds.put(
+                        BigDecimal.valueOf(t.getEntryTime()).divide(BigDecimal.valueOf(2), 10,
+                                ItineraryInterface.BIGDECIMAL_ROUNDING), BigDecimal.ZERO);
+            }
+            BigDecimal travelledSoFar = BigDecimal.ZERO;
+            BigDecimal travellingTime = BigDecimal.valueOf(t.getEntryTime());
+            while ((currentArc = r.getNextArc(currentArc)) != null) {
+                // account for possible maintenance windows
+                final Node n = currentArc.getStartingNode(r);
+                if (i.getMaintenances().containsKey(n)
+                        && i.getMaintenances().get(n).isInside(travellingTime)) {
+                    travellingTime = i.getMaintenances().get(n).getEnd();
+                }
+                // cut the arc nine times, measure the distance and time at each point
+                BigDecimal arcTravellingTime = currentArc.getTravellingTimeInMinutes(t);
+                BigDecimal travellingTimeTenth = arcTravellingTime.divide(BigDecimal.TEN, 10,
+                        ItineraryInterface.BIGDECIMAL_ROUNDING);
+                BigDecimal travellingLengthTenth = currentArc.getLengthInMiles().divide(
+                        BigDecimal.TEN, 10, ItineraryInterface.BIGDECIMAL_ROUNDING);
+                for (int j = 1; j < 10; j++) {
+                    BigDecimal travellingTimeNew = travellingTime.add(travellingTimeTenth
+                            .multiply(BigDecimal.valueOf(j)));
+                    BigDecimal travellingLengthNew = travelledSoFar.add(travellingLengthTenth
+                            .multiply(BigDecimal.valueOf(j)));
+                    expecteds.put(travellingTimeNew, travellingLengthNew);
+                }
+                // and now measure time and distance at the end of the arc
+                travelledSoFar = travelledSoFar.add(currentArc.getLengthInMiles());
+                travellingTime = travellingTime.add(arcTravellingTime);
+                expecteds.put(travellingTime, travelledSoFar);
+            }
+            /*
+             * ensure proper calculation even when the train's already arrived
+             */
+            expecteds.put(travellingTime.add(BigDecimal.ZERO), r.getLengthInMiles());
+            // and now validate against reality
+            for (final Map.Entry<BigDecimal, BigDecimal> entry : expecteds.entrySet()) {
+                BigDecimal expected = entry.getValue()
+                        .setScale(ItineraryInterface.BIGDECIMAL_SCALE,
+                                ItineraryInterface.BIGDECIMAL_ROUNDING);
+                BigDecimal actual = i.getDistanceTravelled(entry.getKey());
+                Assert.assertEquals("Train " + t.getName() + " on route " + r.getId() + " at time "
+                        + entry.getKey() + " isn't where it's supposed to be.",
+                        expected.doubleValue(), actual.doubleValue(), 0.001); // avoid rounding problems
+            }
+        }
     }
 
     @Test

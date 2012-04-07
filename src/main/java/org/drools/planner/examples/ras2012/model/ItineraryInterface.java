@@ -6,6 +6,9 @@ import java.util.SortedMap;
 
 public interface ItineraryInterface {
 
+    public static final int BIGDECIMAL_SCALE    = 4;
+    public static final int BIGDECIMAL_ROUNDING = BigDecimal.ROUND_HALF_EVEN;
+
     /**
      * Count how many times a train will have to stop on its way to the destination.
      * 
@@ -17,7 +20,7 @@ public interface ItineraryInterface {
      * Get the arc that the train is occupying at a given point in time.
      * 
      * @param time Number in minutes, specifying the time since the beginning of world.
-     * @return The arc where the head of the locomotive is located.
+     * @return The arc where the head of the locomotive is located. When a train isn't en route yet or already, return null.
      */
     public Arc getCurrentArc(BigDecimal time);
 
@@ -34,7 +37,8 @@ public interface ItineraryInterface {
      * Return length of track travelled from the beginning of time to the given point in time.
      * 
      * @param time Number in minutes, specifying the time since the beginning of world.
-     * @return Value in miles. When the train is already in its destination, it returns the length of the route.
+     * @return Value in miles, to @see{Itinerary.BIGDECIMAL_SCALE} decimal digits, rounding @see{Itinerary.BIGDECIMAL_ROUNDING}.
+     *         When the train is already in its destination, it returns the length of the route.
      */
     public BigDecimal getDistanceTravelled(BigDecimal time);
 

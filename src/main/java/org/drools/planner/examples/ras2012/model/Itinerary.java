@@ -48,16 +48,16 @@ public final class Itinerary implements ItineraryInterface {
     private static BigDecimal getDistanceInMilesFromSpeedAndTime(final int speedInMPH,
             final BigDecimal time) {
         final BigDecimal milesPerHour = BigDecimal.valueOf(speedInMPH);
-        final BigDecimal milesPerMinute = milesPerHour.divide(BigDecimal.valueOf(60), 5,
-                BigDecimal.ROUND_HALF_DOWN);
+        final BigDecimal milesPerMinute = milesPerHour.divide(BigDecimal.valueOf(60), 10,
+                ItineraryInterface.BIGDECIMAL_ROUNDING);
         return milesPerMinute.multiply(time);
     }
 
     private static BigDecimal getTimeInMinutesFromSpeedAndDistance(final int speedInMPH,
             final BigDecimal distanceInMiles) {
         final BigDecimal milesPerHour = BigDecimal.valueOf(speedInMPH);
-        final BigDecimal hours = distanceInMiles
-                .divide(milesPerHour, 5, BigDecimal.ROUND_HALF_DOWN);
+        final BigDecimal hours = distanceInMiles.divide(milesPerHour, 10,
+                ItineraryInterface.BIGDECIMAL_ROUNDING);
         return hours.multiply(BigDecimal.valueOf(60));
     }
 
@@ -131,7 +131,7 @@ public final class Itinerary implements ItineraryInterface {
                 return previousArc;
             }
         }
-        throw new IllegalStateException("Train is no longer en route at the time: " + timeInMinutes);
+        throw new IllegalStateException("This can never happen.");
     }
 
     @Override
@@ -183,15 +183,20 @@ public final class Itinerary implements ItineraryInterface {
     @Override
     public BigDecimal getDistanceTravelled(final BigDecimal time) {
         // locate the head of the train
-        Arc leadingArc;
-        try {
-            leadingArc = this.getCurrentArc(time);
-            if (leadingArc == null) {
-                return BigDecimal.ZERO;
+        final Arc leadingArc = this.getCurrentArc(time);
+        if (leadingArc == null) {
+            if (this.trainEntryTime.compareTo(time) > 0) {
+                // train didn't even start
+                return BigDecimal.ZERO.setScale(ItineraryInterface.BIGDECIMAL_SCALE,
+                        ItineraryInterface.BIGDECIMAL_ROUNDING);
+            } else {
+                // train finished already
+                return this
+                        .getRoute()
+                        .getLengthInMiles()
+                        .setScale(ItineraryInterface.BIGDECIMAL_SCALE,
+                                ItineraryInterface.BIGDECIMAL_ROUNDING);
             }
-        } catch (final IllegalStateException ex) {
-            // train is already in the destination
-            return this.getRoute().getLengthInMiles();
         }
         // calculate whatever we've travelled before we reached the current arc
         BigDecimal travelled = BigDecimal.ZERO;
@@ -209,7 +214,8 @@ public final class Itinerary implements ItineraryInterface {
         final BigDecimal timeDifference = time.subtract(lastCheckpointTime);
         final BigDecimal distanceTravelledInArc = Itinerary.getDistanceInMilesFromSpeedAndTime(this
                 .getTrain().getMaximumSpeed(leadingArc.getTrackType()), timeDifference);
-        return travelled.add(distanceTravelledInArc);
+        return travelled.add(distanceTravelledInArc).setScale(ItineraryInterface.BIGDECIMAL_SCALE,
+                ItineraryInterface.BIGDECIMAL_ROUNDING);
     }
 
     public SortedMap<Node, Itinerary.Window> getMaintenances() {
@@ -348,9 +354,9 @@ public final class Itinerary implements ItineraryInterface {
     public String toString() {
         final int halts = this.numHaltsFromLastNodeEntryCalculation;
         final StringBuilder sb = new StringBuilder();
-        sb.append("Itinerary (~");
-        sb.append(this.getRoute().getLengthInMiles().intValue());
-        sb.append(" miles, ~");
+        sb.append("Itinerary (");
+        sb.append(this.getRoute().getLengthInMiles());
+        sb.append(" miles, ");
         sb.append(halts);
         sb.append(" halts): ");
         for (final Map.Entry<BigDecimal, Node> a : this.getNodeEntryTimes().entrySet()) {
