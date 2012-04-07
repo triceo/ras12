@@ -276,6 +276,11 @@ public final class Itinerary implements ItineraryInterface {
     }
 
     @Override
+    public WaitTime getWaitTime(final Node n) {
+        return this.nodeWaitTimes.get(n);
+    }
+
+    @Override
     public void removeAllWaitTimes() {
         if (this.nodeWaitTimes.size() > 0) {
             this.nodeEntryTimeCacheValid.set(false);
@@ -295,6 +300,9 @@ public final class Itinerary implements ItineraryInterface {
 
     @Override
     public WaitTime setWaitTime(final WaitTime w, final Node n) {
+        if (w == null) {
+            return this.removeWaitTime(n);
+        }
         if (this.getRoute().getWaitPoints().contains(n)) {
             this.nodeEntryTimeCacheValid.set(false);
             final WaitTime previous = this.nodeWaitTimes.get(n);

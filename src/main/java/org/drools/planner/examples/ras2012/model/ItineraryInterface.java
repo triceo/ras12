@@ -57,6 +57,14 @@ public interface ItineraryInterface {
     public SortedMap<BigDecimal, Node> getSchedule();
 
     /**
+     * Retrieve the wait time for the given node.
+     * 
+     * @param n The node that the wait time should be looked at for.
+     * @return The wait time.
+     */
+    public WaitTime getWaitTime(Node n);
+
+    /**
      * Remove all previously set wait times.
      */
     public void removeAllWaitTimes();

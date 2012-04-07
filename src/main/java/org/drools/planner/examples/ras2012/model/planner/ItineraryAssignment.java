@@ -1,8 +1,6 @@
 package org.drools.planner.examples.ras2012.model.planner;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.drools.planner.api.domain.entity.PlanningEntity;
 import org.drools.planner.api.domain.variable.PlanningVariable;
@@ -41,18 +39,12 @@ public class ItineraryAssignment {
         return route;
     }
 
-    private final Map<Route, Itinerary> itineraries = new HashMap<Route, Itinerary>();
-
     public synchronized void setRoute(Route route) {
         if (!route.isPossibleForTrain(this.train)) {
             throw new IllegalArgumentException(route + " not possible for " + train);
         }
         this.route = route;
-        if (!itineraries.containsKey(route)) {
-            this.itineraries.put(route, new Itinerary(this.route, this.train, this.maintenances));
-        }
-        this.itinerary = this.itineraries.get(route);
-        this.itinerary.removeAllWaitTimes();
+        this.itinerary = new Itinerary(this.route, this.train, this.maintenances);
     }
 
     public Itinerary getItinerary() {

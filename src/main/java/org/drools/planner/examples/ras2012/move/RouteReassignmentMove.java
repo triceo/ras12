@@ -10,40 +10,23 @@ import org.drools.planner.examples.ras2012.model.planner.ItineraryAssignment;
 
 public class RouteReassignmentMove implements Move {
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("RouteReassignmentMove [train=");
-        builder.append(this.assignment.getTrain().getName());
-        builder.append(", ");
-        builder.append(previousRoute.getId());
-        builder.append(" -> ");
-        builder.append(route.getId());
-        builder.append("]");
-        return builder.toString();
-    }
-
     private final ItineraryAssignment assignment;
+
     private final Route               route, previousRoute;
 
-    public RouteReassignmentMove(ItineraryAssignment ia, Route r) {
+    public RouteReassignmentMove(final ItineraryAssignment ia, final Route r) {
         this.assignment = ia;
         this.route = r;
         this.previousRoute = ia.getRoute();
     }
 
     @Override
-    public boolean isMoveDoable(ScoreDirector scoreDirector) {
-        return (this.route.isPossibleForTrain(assignment.getTrain()));
+    public Move createUndoMove(final ScoreDirector scoreDirector) {
+        return new RouteReassignmentMove(this.assignment, this.previousRoute);
     }
 
     @Override
-    public Move createUndoMove(ScoreDirector scoreDirector) {
-        return new RouteReassignmentMove(assignment, previousRoute);
-    }
-
-    @Override
-    public void doMove(ScoreDirector scoreDirector) {
+    public void doMove(final ScoreDirector scoreDirector) {
         this.assignment.setRoute(this.route);
     }
 
@@ -55,6 +38,24 @@ public class RouteReassignmentMove implements Move {
     @Override
     public Collection<? extends Object> getPlanningValues() {
         return Collections.singletonList(this.route);
+    }
+
+    @Override
+    public boolean isMoveDoable(final ScoreDirector scoreDirector) {
+        return this.route.isPossibleForTrain(this.assignment.getTrain());
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder builder = new StringBuilder();
+        builder.append("RouteReassignmentMove [train=");
+        builder.append(this.assignment.getTrain().getName());
+        builder.append(", ");
+        builder.append(this.previousRoute.getId());
+        builder.append(" -> ");
+        builder.append(this.route.getId());
+        builder.append("]");
+        return builder.toString();
     }
 
 }
