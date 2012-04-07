@@ -2,6 +2,8 @@ package org.drools.planner.examples.ras2012.model;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.drools.planner.examples.ras2012.RAS2012ProblemIO;
@@ -40,36 +42,63 @@ public class Itinerary1Test extends AbstractItineraryTest {
 
     @Override
     protected Map<String, int[]> getExpectedValues() {
-        Map<String, int[]> expected = new HashMap<String, int[]>();
-        expected.put(TRAIN1, new int[] { TRAIN1_ROUTE0, TRAIN1_ROUTE1 });
-        expected.put(TRAIN2, new int[] { TRAIN2_ROUTE0, TRAIN2_ROUTE1 });
-        expected.put(TRAIN3, new int[] { TRAIN3_ROUTE0, TRAIN3_ROUTE1 });
-        expected.put(TRAIN4, new int[] { TRAIN4_ROUTE0, TRAIN4_ROUTE1 });
-        expected.put(TRAIN5, new int[] { TRAIN5_ROUTE0, TRAIN5_ROUTE1 });
-        expected.put(TRAIN6, new int[] { TRAIN6_ROUTE0, TRAIN6_ROUTE1 });
-        expected.put(TRAIN7, new int[] { TRAIN7_ROUTE0, TRAIN7_ROUTE1 });
+        final Map<String, int[]> expected = new HashMap<String, int[]>();
+        expected.put(Itinerary1Test.TRAIN1, new int[] { Itinerary1Test.TRAIN1_ROUTE0,
+                Itinerary1Test.TRAIN1_ROUTE1 });
+        expected.put(Itinerary1Test.TRAIN2, new int[] { Itinerary1Test.TRAIN2_ROUTE0,
+                Itinerary1Test.TRAIN2_ROUTE1 });
+        expected.put(Itinerary1Test.TRAIN3, new int[] { Itinerary1Test.TRAIN3_ROUTE0,
+                Itinerary1Test.TRAIN3_ROUTE1 });
+        expected.put(Itinerary1Test.TRAIN4, new int[] { Itinerary1Test.TRAIN4_ROUTE0,
+                Itinerary1Test.TRAIN4_ROUTE1 });
+        expected.put(Itinerary1Test.TRAIN5, new int[] { Itinerary1Test.TRAIN5_ROUTE0,
+                Itinerary1Test.TRAIN5_ROUTE1 });
+        expected.put(Itinerary1Test.TRAIN6, new int[] { Itinerary1Test.TRAIN6_ROUTE0,
+                Itinerary1Test.TRAIN6_ROUTE1 });
+        expected.put(Itinerary1Test.TRAIN7, new int[] { Itinerary1Test.TRAIN7_ROUTE0,
+                Itinerary1Test.TRAIN7_ROUTE1 });
         return expected;
     }
 
     @Override
     protected Map<Itinerary, Integer> getHaltInformation() {
-        Map<Itinerary, Integer> results = new HashMap<Itinerary, Integer>();
-        results.put(this.getItinerary(TRAIN1, TRAIN1_ROUTE0), 0);
-        results.put(this.getItinerary(TRAIN1, TRAIN1_ROUTE1), 0);
-        results.put(this.getItinerary(TRAIN2, TRAIN2_ROUTE0), 0);
-        results.put(this.getItinerary(TRAIN2, TRAIN2_ROUTE1), 0);
-        results.put(this.getItinerary(TRAIN3, TRAIN3_ROUTE0), 0);
-        results.put(this.getItinerary(TRAIN3, TRAIN3_ROUTE1), 0);
-        results.put(this.getItinerary(TRAIN4, TRAIN4_ROUTE0), 0);
-        results.put(this.getItinerary(TRAIN4, TRAIN4_ROUTE1), 0);
-        results.put(this.getItinerary(TRAIN5, TRAIN5_ROUTE0), 0);
-        results.put(this.getItinerary(TRAIN5, TRAIN5_ROUTE1), 0);
-        results.put(this.getItinerary(TRAIN6, TRAIN6_ROUTE0), 1);
-        results.put(this.getItinerary(TRAIN6, TRAIN6_ROUTE1), 0);
-        results.put(this.getItinerary(TRAIN7, TRAIN7_ROUTE0), 0);
-        results.put(this.getItinerary(TRAIN7, TRAIN7_ROUTE1), 1);
+        final Map<Itinerary, Integer> results = new HashMap<Itinerary, Integer>();
+        results.put(this.getItinerary(Itinerary1Test.TRAIN1, Itinerary1Test.TRAIN1_ROUTE0), 0);
+        results.put(this.getItinerary(Itinerary1Test.TRAIN1, Itinerary1Test.TRAIN1_ROUTE1), 0);
+        results.put(this.getItinerary(Itinerary1Test.TRAIN2, Itinerary1Test.TRAIN2_ROUTE0), 0);
+        results.put(this.getItinerary(Itinerary1Test.TRAIN2, Itinerary1Test.TRAIN2_ROUTE1), 0);
+        results.put(this.getItinerary(Itinerary1Test.TRAIN3, Itinerary1Test.TRAIN3_ROUTE0), 0);
+        results.put(this.getItinerary(Itinerary1Test.TRAIN3, Itinerary1Test.TRAIN3_ROUTE1), 0);
+        results.put(this.getItinerary(Itinerary1Test.TRAIN4, Itinerary1Test.TRAIN4_ROUTE0), 0);
+        results.put(this.getItinerary(Itinerary1Test.TRAIN4, Itinerary1Test.TRAIN4_ROUTE1), 0);
+        results.put(this.getItinerary(Itinerary1Test.TRAIN5, Itinerary1Test.TRAIN5_ROUTE0), 0);
+        results.put(this.getItinerary(Itinerary1Test.TRAIN5, Itinerary1Test.TRAIN5_ROUTE1), 0);
+        results.put(this.getItinerary(Itinerary1Test.TRAIN6, Itinerary1Test.TRAIN6_ROUTE0), 1);
+        results.put(this.getItinerary(Itinerary1Test.TRAIN6, Itinerary1Test.TRAIN6_ROUTE1), 0);
+        results.put(this.getItinerary(Itinerary1Test.TRAIN7, Itinerary1Test.TRAIN7_ROUTE0), 0);
+        results.put(this.getItinerary(Itinerary1Test.TRAIN7, Itinerary1Test.TRAIN7_ROUTE1), 1);
         return results;
 
+    }
+
+    @Override
+    protected List<Itinerary> getItineraries() {
+        final List<Itinerary> results = new LinkedList<Itinerary>();
+        results.add(this.getItinerary(Itinerary1Test.TRAIN1, Itinerary1Test.TRAIN1_ROUTE0));
+        results.add(this.getItinerary(Itinerary1Test.TRAIN1, Itinerary1Test.TRAIN1_ROUTE1));
+        results.add(this.getItinerary(Itinerary1Test.TRAIN2, Itinerary1Test.TRAIN2_ROUTE0));
+        results.add(this.getItinerary(Itinerary1Test.TRAIN2, Itinerary1Test.TRAIN2_ROUTE1));
+        results.add(this.getItinerary(Itinerary1Test.TRAIN3, Itinerary1Test.TRAIN3_ROUTE0));
+        results.add(this.getItinerary(Itinerary1Test.TRAIN3, Itinerary1Test.TRAIN3_ROUTE1));
+        results.add(this.getItinerary(Itinerary1Test.TRAIN4, Itinerary1Test.TRAIN4_ROUTE0));
+        results.add(this.getItinerary(Itinerary1Test.TRAIN4, Itinerary1Test.TRAIN4_ROUTE1));
+        results.add(this.getItinerary(Itinerary1Test.TRAIN5, Itinerary1Test.TRAIN5_ROUTE0));
+        results.add(this.getItinerary(Itinerary1Test.TRAIN5, Itinerary1Test.TRAIN5_ROUTE1));
+        results.add(this.getItinerary(Itinerary1Test.TRAIN6, Itinerary1Test.TRAIN6_ROUTE0));
+        results.add(this.getItinerary(Itinerary1Test.TRAIN6, Itinerary1Test.TRAIN6_ROUTE1));
+        results.add(this.getItinerary(Itinerary1Test.TRAIN7, Itinerary1Test.TRAIN7_ROUTE0));
+        results.add(this.getItinerary(Itinerary1Test.TRAIN7, Itinerary1Test.TRAIN7_ROUTE1));
+        return results;
     }
 
 }

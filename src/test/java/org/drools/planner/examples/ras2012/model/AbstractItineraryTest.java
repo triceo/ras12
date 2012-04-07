@@ -3,7 +3,9 @@ package org.drools.planner.examples.ras2012.model;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -79,6 +81,8 @@ public abstract class AbstractItineraryTest {
     protected abstract Map<String, int[]> getExpectedValues();
 
     protected abstract Map<Itinerary, Integer> getHaltInformation();
+
+    protected abstract List<Itinerary> getItineraries();
 
     protected Itinerary getItinerary(final String trainName, final int routeId) {
         for (final Map.Entry<Train, Set<Route>> entry : this.getTestedRoutes().entrySet()) {
@@ -178,8 +182,51 @@ public abstract class AbstractItineraryTest {
     }
 
     @Test
-    public void testGetCurrentArc() {
-        Assert.fail("Not yet implemented"); // TODO
+    public void testGetCurrentArcAndNextNode() {
+        for (final Itinerary i : this.getItineraries()) {
+            // assemble a list of "checkpoint" where the train should be at which times
+            final Map<BigDecimal, Arc> expecteds = new HashMap<BigDecimal, Arc>();
+            final Route r = i.getRoute();
+            final Train t = i.getTrain();
+            Arc currentArc = null;
+            if (t.getEntryTime() > 0) {
+                // the train shouldn't be on the route before its time of entry
+                expecteds.put(BigDecimal.ZERO, null);
+                expecteds.put(
+                        BigDecimal.valueOf(t.getEntryTime()).divide(BigDecimal.valueOf(2), 5,
+                                BigDecimal.ROUND_HALF_DOWN), null);
+            }
+            BigDecimal totalTime = BigDecimal.valueOf(t.getEntryTime());
+            while ((currentArc = r.getNextArc(currentArc)) != null) {
+                // account for possible maintenance windows
+                final Node n = currentArc.getStartingNode(r);
+                if (i.getMaintenances().containsKey(n)
+                        && i.getMaintenances().get(n).isInside(totalTime)) {
+                    totalTime = i.getMaintenances().get(n).getEnd();
+                }
+                expecteds.put(totalTime, currentArc); // immediately after entering the node
+                final BigDecimal arcTravellingTime = currentArc.getTravellingTimeInMinutes(t);
+                final BigDecimal arcTravellingTimeThird = arcTravellingTime.divide(
+                        BigDecimal.valueOf(3), 5, BigDecimal.ROUND_HALF_DOWN);
+                expecteds.put(totalTime.add(arcTravellingTimeThird), currentArc); // one third into the node
+                totalTime = totalTime.add(arcTravellingTime);
+                expecteds.put(totalTime.subtract(arcTravellingTimeThird), currentArc); // two thirds into the node
+            }
+            // and now validate against reality
+            System.out.println(r);
+            for (final Map.Entry<BigDecimal, Arc> entry : expecteds.entrySet()) {
+                System.out.println(entry.getKey());
+                Assert.assertEquals("Train " + t.getName() + " on route " + r.getId() + " at time "
+                        + entry.getKey() + " isn't where it's supposed to be.", entry.getValue(),
+                        i.getCurrentArc(entry.getKey()));
+                if (entry.getValue() != null) { // train not en route, do not test nodes
+                    Assert.assertEquals("Train " + t.getName() + " on route " + r.getId()
+                            + " at time " + entry.getKey()
+                            + " isn't headed where it's supposed to.", entry.getValue()
+                            .getEndingNode(t), i.getNextNodeToReach(entry.getKey()));
+                }
+            }
+        }
     }
 
     @Test
@@ -189,11 +236,6 @@ public abstract class AbstractItineraryTest {
 
     @Test
     public void testGetDistanceTravelled() {
-        Assert.fail("Not yet implemented"); // TODO
-    }
-
-    @Test
-    public void testGetNextNodeToReach() {
         Assert.fail("Not yet implemented"); // TODO
     }
 
