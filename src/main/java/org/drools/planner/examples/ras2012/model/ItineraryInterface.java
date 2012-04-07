@@ -49,14 +49,6 @@ public interface ItineraryInterface {
     public BigDecimal getDistanceTravelled(BigDecimal time);
 
     /**
-     * Get the first next node that the train is going to arrive at, given the current point in time.
-     * 
-     * @param time Number in minutes, specifying the time since the beginning of world.
-     * @return The next node.
-     */
-    public Node getNextNodeToReach(BigDecimal time);
-
-    /**
      * Retrieve the schedule for the given train on the given route. The schedule takes into account all the maintenance windows
      * and halt points.
      * 
