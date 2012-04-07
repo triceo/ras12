@@ -19,5 +19,25 @@ public class NodeTest {
         Node n3 = new Node(1);
         Assert.assertFalse("Node shouldn't equal nodes with different IDs.", n1.equals(n3));
     }
+    
+    @Test
+    public void testCompareTo() {
+        Node n0 = new Node(0);
+        Node n1 = new Node(1);
+        Node nMax = new Node(Integer.MAX_VALUE);
+        
+        // any node should equal to itself
+        Assert.assertTrue("Node should equal itself.", n0.compareTo(n0) == 0);
+        Assert.assertTrue("Node should equal itself.", n1.compareTo(n1) == 0);
+        Assert.assertTrue("Node should equal itself.", nMax.compareTo(nMax) == 0);
+
+        // lesser ID => lesser node
+        Assert.assertTrue("Node with lesser ID should be less than a node with greater ID.", n0.compareTo(n1) < 0);
+        Assert.assertTrue("Node with lesser ID should be less than a node with greater ID.", n1.compareTo(nMax) < 0);
+
+        // and vice versa
+        Assert.assertTrue("Node with greater ID should be greater than a node with lesser ID.", nMax.compareTo(n1) > 0);
+        Assert.assertTrue("Node with greater ID should be greater than a node with lesser ID.", n1.compareTo(n0) > 0);
+    }
 
 }
