@@ -259,7 +259,7 @@ public class Route implements Comparable<Route> {
         // make sure both the route and the train are in the same direction
         final boolean bothEastbound = t.isEastbound() && this.getDirection() == Direction.EASTBOUND;
         final boolean bothWestbound = t.isWestbound() && this.getDirection() == Direction.WESTBOUND;
-        if (!bothEastbound && !bothWestbound) {
+        if (!(bothEastbound || bothWestbound)) {
             return false;
         }
         // make sure the route doesn't contain a siding shorter than the train
