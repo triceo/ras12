@@ -6,8 +6,14 @@ import java.util.SortedMap;
 
 public interface ItineraryInterface {
 
-    public static final int BIGDECIMAL_SCALE    = 4;
-    public static final int BIGDECIMAL_ROUNDING = BigDecimal.ROUND_HALF_EVEN;
+    /**
+     * Default scale to use for BigDecimals returned by the methods of this interface.
+     */
+    public static final int BIGDECIMAL_SCALE    = 5;
+    /**
+     * Default rounding to use for BigDecimals returned by the methods of this interface.
+     */
+    public static final int BIGDECIMAL_ROUNDING = BigDecimal.ROUND_DOWN;
 
     /**
      * Count how many times a train will have to stop on its way to the destination.

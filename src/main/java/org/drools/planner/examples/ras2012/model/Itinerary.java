@@ -49,7 +49,7 @@ public final class Itinerary implements ItineraryInterface {
             final BigDecimal time) {
         final BigDecimal milesPerHour = BigDecimal.valueOf(speedInMPH);
         final BigDecimal milesPerMinute = milesPerHour.divide(BigDecimal.valueOf(60), 10,
-                ItineraryInterface.BIGDECIMAL_ROUNDING);
+                BigDecimal.ROUND_HALF_EVEN);
         return milesPerMinute.multiply(time);
     }
 
@@ -57,7 +57,7 @@ public final class Itinerary implements ItineraryInterface {
             final BigDecimal distanceInMiles) {
         final BigDecimal milesPerHour = BigDecimal.valueOf(speedInMPH);
         final BigDecimal hours = distanceInMiles.divide(milesPerHour, 10,
-                ItineraryInterface.BIGDECIMAL_ROUNDING);
+                BigDecimal.ROUND_HALF_EVEN);
         return hours.multiply(BigDecimal.valueOf(60));
     }
 

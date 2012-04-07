@@ -278,6 +278,10 @@ public abstract class AbstractItineraryTest {
              * ensure proper calculation even when the train's already arrived
              */
             expecteds.put(travellingTime.add(BigDecimal.ZERO), r.getLengthInMiles());
+            /*
+             * when comparing two bigdecimals, ignore rounding errors of 2 orders of magnitude. FIXME why isn't 1 enough???
+             */
+            double delta = Math.pow(10, -(ItineraryInterface.BIGDECIMAL_SCALE - 2));
             // and now validate against reality
             for (final Map.Entry<BigDecimal, BigDecimal> entry : expecteds.entrySet()) {
                 BigDecimal expected = entry.getValue()
@@ -286,7 +290,7 @@ public abstract class AbstractItineraryTest {
                 BigDecimal actual = i.getDistanceTravelled(entry.getKey());
                 Assert.assertEquals("Train " + t.getName() + " on route " + r.getId() + " at time "
                         + entry.getKey() + " isn't where it's supposed to be.",
-                        expected.doubleValue(), actual.doubleValue(), 0.001); // avoid rounding problems
+                        expected.doubleValue(), actual.doubleValue(), delta); // avoid rounding problems
             }
         }
     }
