@@ -2,13 +2,15 @@ package org.drools.planner.examples.ras2012.model;
 
 public class Node implements Comparable<Node> {
 
-    private final int id;
+    private final int    id;
+    private final String asString;
 
     public Node(final int id) {
         if (id < 0) {
             throw new IllegalArgumentException("Node ID cannot be less than zero!");
         }
         this.id = id;
+        this.asString = this.toStringInternal();
     }
 
     @Override
@@ -48,6 +50,10 @@ public class Node implements Comparable<Node> {
 
     @Override
     public String toString() {
+        return this.asString;
+    }
+
+    private String toStringInternal() {
         final StringBuilder builder = new StringBuilder();
         builder.append("Node #").append(this.id);
         return builder.toString();

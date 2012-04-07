@@ -18,7 +18,9 @@ public class RouteReassignmentMoveFactory extends AbstractMoveFactory {
         RAS2012Solution sol = (RAS2012Solution) solution;
         for (ItineraryAssignment ia : sol.getAssignments()) {
             for (Route r : sol.getRoutes()) {
-                moves.add(new RouteReassignmentMove(ia, r));
+                if (ia.getRoute() != r) {
+                    moves.add(new RouteReassignmentMove(ia, r));
+                }
             }
         }
         return moves;

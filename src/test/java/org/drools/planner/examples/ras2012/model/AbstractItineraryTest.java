@@ -182,7 +182,7 @@ public abstract class AbstractItineraryTest {
     }
 
     @Test
-    public void testGetCurrentArcAndNextNode() {
+    public void testGetCurrentArc() {
         for (final Itinerary i : this.getItineraries()) {
             // assemble a list of "checkpoint" where the train should be at which times
             final Map<BigDecimal, Arc> expecteds = new HashMap<BigDecimal, Arc>();
@@ -217,12 +217,6 @@ public abstract class AbstractItineraryTest {
                 Assert.assertEquals("Train " + t.getName() + " on route " + r.getId() + " at time "
                         + entry.getKey() + " isn't where it's supposed to be.", entry.getValue(),
                         i.getCurrentArc(entry.getKey()));
-                if (entry.getValue() != null) { // train not en route, do not test nodes
-                    Assert.assertEquals("Train " + t.getName() + " on route " + r.getId()
-                            + " at time " + entry.getKey()
-                            + " isn't headed where it's supposed to.", entry.getValue()
-                            .getEndingNode(t), i.getNextNodeToReach(entry.getKey()));
-                }
             }
         }
     }

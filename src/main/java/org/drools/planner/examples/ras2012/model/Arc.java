@@ -84,6 +84,7 @@ public class Arc {
 
     private final Node                 westNode;
     private final Node                 eastNode;
+    private final String               asString;
 
     public Arc(final TrackType t, final BigDecimal lengthInMiles, final Node westNode,
             final Node eastNode) {
@@ -100,6 +101,7 @@ public class Arc {
         this.lengthInMiles = lengthInMiles;
         this.westNode = westNode;
         this.eastNode = eastNode;
+        this.asString = this.toStringInternal();
     }
 
     @Override
@@ -194,6 +196,10 @@ public class Arc {
 
     @Override
     public String toString() {
+        return this.asString;
+    }
+
+    private String toStringInternal() {
         final StringBuilder builder = new StringBuilder();
         builder.append("Arc [").append(this.westNode).append("->").append(this.eastNode)
                 .append(", miles=").append(this.lengthInMiles).append(", type=")

@@ -57,6 +57,11 @@ public interface ItineraryInterface {
     public SortedMap<BigDecimal, Node> getSchedule();
 
     /**
+     * Remove all previously set wait times.
+     */
+    public void removeAllWaitTimes();
+
+    /**
      * Specify that a train shouldn't wait at a given node.
      * 
      * @param n The node that the wait time should be removed from.

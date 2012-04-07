@@ -18,7 +18,7 @@
       <simulatedAnnealingStartingTemperature>0hard/10soft</simulatedAnnealingStartingTemperature>
     </acceptor>
     <forager>
-      <minimalAcceptedSelection>4</minimalAcceptedSelection>
+      <minimalAcceptedSelection>8</minimalAcceptedSelection>
     </forager>    
     <selector>
       <selector>
