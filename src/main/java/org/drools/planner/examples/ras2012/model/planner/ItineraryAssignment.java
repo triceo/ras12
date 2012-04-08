@@ -13,7 +13,7 @@ import org.drools.planner.examples.ras2012.model.Route;
 import org.drools.planner.examples.ras2012.model.Train;
 
 @PlanningEntity
-public class ItineraryAssignment {
+public class ItineraryAssignment implements Cloneable {
 
     private final Train                         train;
 
@@ -40,7 +40,7 @@ public class ItineraryAssignment {
 
     @PlanningVariable
     @ValueRange(type = ValueRangeType.UNDEFINED)
-    public Route getRoute() {
+    public synchronized Route getRoute() {
         return this.route;
     }
 
