@@ -19,20 +19,20 @@ public class Itinerary1Test extends AbstractItineraryTest {
     private static final String TRAIN6        = "B1";
     private static final String TRAIN7        = "A2";
 
-    private static final int    TRAIN1_ROUTE0 = 3381; // 1C
-    private static final int    TRAIN1_ROUTE1 = 4128; // 10SW, 3C, 5S
-    private static final int    TRAIN2_ROUTE0 = 100; // 1C
-    private static final int    TRAIN2_ROUTE1 = 2468; // 10SW, 3C, 5S
-    private static final int    TRAIN3_ROUTE0 = 2804; // 1C
-    private static final int    TRAIN3_ROUTE1 = 4705; // 10SW, 1C, 5S
-    private static final int    TRAIN4_ROUTE0 = 122; // 1C
-    private static final int    TRAIN4_ROUTE1 = 2446; // 10SW, 1C, 5S
-    private static final int    TRAIN5_ROUTE0 = 198; // 3C
-    private static final int    TRAIN5_ROUTE1 = 2320; // 8SW, 3C, 4S
-    private static final int    TRAIN6_ROUTE0 = 2612; // 3C
-    private static final int    TRAIN6_ROUTE1 = 4221; // 8SW, 3C, 4S
-    private static final int    TRAIN7_ROUTE0 = 50;  // 3C
-    private static final int    TRAIN7_ROUTE1 = 2298; // 8SW, 3C, 4S
+    private static final int    TRAIN1_ROUTE0 = 3381;
+    private static final int    TRAIN1_ROUTE1 = 4128;
+    private static final int    TRAIN2_ROUTE0 = 100;
+    private static final int    TRAIN2_ROUTE1 = 2468;
+    private static final int    TRAIN3_ROUTE0 = 2804;
+    private static final int    TRAIN3_ROUTE1 = 4705;
+    private static final int    TRAIN4_ROUTE0 = 122;
+    private static final int    TRAIN4_ROUTE1 = 2446;
+    private static final int    TRAIN5_ROUTE0 = 198;
+    private static final int    TRAIN5_ROUTE1 = 2320;
+    private static final int    TRAIN6_ROUTE0 = 2612;
+    private static final int    TRAIN6_ROUTE1 = 4221;
+    private static final int    TRAIN7_ROUTE0 = 50;
+    private static final int    TRAIN7_ROUTE1 = 2298;
 
     @Override
     protected RAS2012Solution fetchSolution() {
