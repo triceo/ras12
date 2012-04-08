@@ -334,7 +334,7 @@ public class RouteTest {
     }
 
     @Test
-    public void testIsPossibleForTrainSidings() {
+    public void testIsPossibleForTrainProperties() {
         // prepare route
         final Node n1 = new Node(0);
         final Node n2 = new Node(1);
@@ -351,12 +351,12 @@ public class RouteTest {
                 isWestbound);
         Assert.assertFalse("Train longer than the siding will be let through.",
                 r.isPossibleForTrain(longTrain));
-        final Train hazmatTrain = new Train("WB", BigDecimal.ONE, BigDecimal.ONE, 90, n2, n1, 0, 1,
-                0, Collections.<ScheduleAdherenceRequirement> emptyList(), true, isWestbound);
+        final Train hazmatTrain = new Train("Hazard", BigDecimal.ONE, BigDecimal.ONE, 90, n2, n1,
+                0, 1, 0, Collections.<ScheduleAdherenceRequirement> emptyList(), true, isWestbound);
         Assert.assertFalse("Train with hazardous materials will be let through.",
                 r.isPossibleForTrain(hazmatTrain));
-        final Train heavyTrain = new Train("WB", BigDecimal.ONE, BigDecimal.ONE, 110, n2, n1, 0, 1,
-                0, Collections.<ScheduleAdherenceRequirement> emptyList(), false, isWestbound);
+        final Train heavyTrain = new Train("Heavy", BigDecimal.ONE, BigDecimal.ONE, 110, n2, n1, 0,
+                1, 0, Collections.<ScheduleAdherenceRequirement> emptyList(), false, isWestbound);
         Assert.assertFalse("Heavy train will be let through.", r.isPossibleForTrain(heavyTrain));
     }
 }
