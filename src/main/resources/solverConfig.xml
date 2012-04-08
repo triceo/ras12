@@ -9,7 +9,7 @@
   <localSearch>
     <termination>
       <terminationCompositionStyle>OR</terminationCompositionStyle>
-      <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
+      <maximumUnimprovedStepCount>10</maximumUnimprovedStepCount>
       <scoreAttained>0hard/0soft</scoreAttained>
     </termination> 
     <acceptor>
