@@ -41,15 +41,6 @@ public interface ScheduleProducer {
     public Collection<Arc> getCurrentlyOccupiedArcs(BigDecimal time);
 
     /**
-     * Return length of track travelled from the beginning of time to the given point in time.
-     * 
-     * @param time Number in minutes, specifying the time since the beginning of world.
-     * @return Value in miles, to @see{Itinerary.BIGDECIMAL_SCALE} decimal digits, rounding @see{Itinerary.BIGDECIMAL_ROUNDING}.
-     *         When the train is already in its destination, it returns the length of the route.
-     */
-    public BigDecimal getDistanceTravelled(BigDecimal time);
-
-    /**
      * Retrieve the route that this itinerary relates to.
      * 
      * @return The route, never null.

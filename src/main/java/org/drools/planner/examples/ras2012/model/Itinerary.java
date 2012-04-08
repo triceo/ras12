@@ -152,44 +152,6 @@ public final class Itinerary implements ScheduleProducer {
         return occupiedArcs;
     }
 
-    @Override
-    public BigDecimal getDistanceTravelled(final BigDecimal time) {
-        // locate the head of the train
-        final Arc leadingArc = this.getCurrentArc(time);
-        if (leadingArc == null) {
-            if (this.trainEntryTime.compareTo(time) > 0) {
-                // train didn't even start
-                return BigDecimal.ZERO.setScale(ScheduleProducer.BIGDECIMAL_SCALE,
-                        ScheduleProducer.BIGDECIMAL_ROUNDING);
-            } else {
-                // train finished already
-                return this
-                        .getRoute()
-                        .getLengthInMiles()
-                        .setScale(ScheduleProducer.BIGDECIMAL_SCALE,
-                                ScheduleProducer.BIGDECIMAL_ROUNDING);
-            }
-        }
-        // calculate whatever we've travelled before we reached the current arc
-        BigDecimal travelled = BigDecimal.ZERO;
-        BigDecimal lastCheckpointTime = null;
-        for (final SortedMap.Entry<BigDecimal, Node> entry : this.getNodeEntryTimes().entrySet()) {
-            final Arc a = this.getArcPerStartingNode(entry.getValue());
-            if (a == leadingArc) {
-                lastCheckpointTime = entry.getKey();
-                break;
-            } else {
-                travelled = travelled.add(a.getLengthInMiles());
-            }
-        }
-        // and now calculate how much we've travelled in the current arc so far
-        final BigDecimal timeDifference = time.subtract(lastCheckpointTime);
-        final BigDecimal distanceTravelledInArc = Itinerary.getDistanceInMilesFromSpeedAndTime(this
-                .getTrain().getMaximumSpeed(leadingArc.getTrackType()), timeDifference);
-        return travelled.add(distanceTravelledInArc).setScale(ScheduleProducer.BIGDECIMAL_SCALE,
-                ScheduleProducer.BIGDECIMAL_ROUNDING);
-    }
-
     public Map<Node, Itinerary.Window> getMaintenances() {
         return this.maintenances;
     }

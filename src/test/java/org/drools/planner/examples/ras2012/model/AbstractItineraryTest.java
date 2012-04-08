@@ -13,7 +13,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.drools.planner.examples.ras2012.RAS2012Solution;
-import org.drools.planner.examples.ras2012.interfaces.ScheduleProducer;
 import org.drools.planner.examples.ras2012.model.Train.TrainType;
 import org.junit.Assert;
 import org.junit.Test;
@@ -205,73 +204,6 @@ public abstract class AbstractItineraryTest {
     @Test
     public void testGetCurrentlyOccupiedArcs() {
         Assert.fail("Not yet implemented"); // TODO
-    }
-
-    @Test
-    public void testGetDistanceTravelled() {
-        for (final Itinerary i : this.getItineraries()) {
-            // assemble a list of "checkpoint" where the train should be at which times
-            final Map<BigDecimal, BigDecimal> expecteds = new HashMap<BigDecimal, BigDecimal>();
-            final Route r = i.getRoute();
-            final Train t = i.getTrain();
-            Arc currentArc = null;
-            if (t.getEntryTime() > 0) {
-                // the train shouldn't be on the route before its time of entry
-                expecteds.put(BigDecimal.ZERO, BigDecimal.ZERO);
-                expecteds.put(
-                        BigDecimal.valueOf(t.getEntryTime()).divide(BigDecimal.valueOf(2), 10,
-                                ScheduleProducer.BIGDECIMAL_ROUNDING), BigDecimal.ZERO);
-            }
-            BigDecimal travelledSoFar = BigDecimal.ZERO;
-            BigDecimal travellingTime = BigDecimal.valueOf(t.getEntryTime());
-            while ((currentArc = r.getNextArc(currentArc)) != null) {
-                // account for possible maintenance windows
-                final Node n = currentArc.getStartingNode(r);
-                if (i.getMaintenances().containsKey(n)
-                        && i.getMaintenances().get(n).isInside(travellingTime)) {
-                    travellingTime = i.getMaintenances().get(n).getEnd();
-                }
-                // cut the arc nine times, measure the distance and time at each point
-                final BigDecimal arcTravellingTime = currentArc.getTravellingTimeInMinutes(t);
-                final BigDecimal travellingTimeTenth = arcTravellingTime.divide(BigDecimal.TEN, 10,
-                        ScheduleProducer.BIGDECIMAL_ROUNDING);
-                final BigDecimal travellingLengthTenth = currentArc.getLengthInMiles().divide(
-                        BigDecimal.TEN, 10, ScheduleProducer.BIGDECIMAL_ROUNDING);
-                for (int j = 1; j < 10; j++) {
-                    final BigDecimal travellingTimeNew = travellingTime.add(travellingTimeTenth
-                            .multiply(BigDecimal.valueOf(j)));
-                    final BigDecimal travellingLengthNew = travelledSoFar.add(travellingLengthTenth
-                            .multiply(BigDecimal.valueOf(j)));
-                    expecteds.put(travellingTimeNew, travellingLengthNew);
-                }
-                // and now measure time and distance at the end of the arc
-                travelledSoFar = travelledSoFar.add(currentArc.getLengthInMiles());
-                travellingTime = travellingTime.add(arcTravellingTime);
-                expecteds.put(travellingTime, travelledSoFar);
-            }
-            /*
-             * ensure proper calculation even when the train's already arrived
-             */
-            expecteds.put(travellingTime.add(BigDecimal.ZERO), r.getLengthInMiles());
-            /*
-             * when comparing two bigdecimals, ignore rounding errors of 2 orders of magnitude. FIXME why isn't 1 enough???
-             */
-            final double delta = Math.pow(10, -(ScheduleProducer.BIGDECIMAL_SCALE - 2));
-            // and now validate against reality
-            for (final Map.Entry<BigDecimal, BigDecimal> entry : expecteds.entrySet()) {
-                final BigDecimal expected = entry.getValue().setScale(
-                        ScheduleProducer.BIGDECIMAL_SCALE, ScheduleProducer.BIGDECIMAL_ROUNDING);
-                if (entry.getKey().compareTo(
-                        BigDecimal.valueOf(RAS2012Solution.PLANNING_HORIZON_MINUTES)) > 0) {
-                    // don't measure beyond the planning horizon
-                    break;
-                }
-                final BigDecimal actual = i.getDistanceTravelled(entry.getKey());
-                Assert.assertEquals("Train " + t.getName() + " on route " + r.getId() + " at time "
-                        + entry.getKey() + " isn't where it's supposed to be.",
-                        expected.doubleValue(), actual.doubleValue(), delta); // avoid rounding problems
-            }
-        }
     }
 
     @Test
