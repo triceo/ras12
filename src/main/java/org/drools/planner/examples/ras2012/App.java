@@ -85,7 +85,7 @@ public class App {
             // visualize the network
             success = this.network.visualize(new File(parentFolder, "network.png"));
             VisualizationController.logger.info("Finished visualization work.");
-            visualizerExecutor.shutdownNow();
+            App.visualizerExecutor.shutdownNow();
             return success;
         }
     }

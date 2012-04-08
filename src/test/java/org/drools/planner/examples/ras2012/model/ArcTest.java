@@ -8,16 +8,9 @@ import org.junit.Test;
 
 public class ArcTest {
 
-    @Test
-    public void testEqualsObject() {
-        Node n1 = new Node(0);
-        Node n2 = new Node(1);
-        BigDecimal length = new BigDecimal("1.5");
-        Arc a1 = new Arc(TrackType.MAIN_0, length, n1, n2);
-        Assert.assertTrue("The object should equal itself.", a1.equals(a1));
-        Arc a2 = new Arc(TrackType.MAIN_0, length, n1, n2);
-        Assert.assertFalse("Objects with the exact same parameters shouldn't equal itself.",
-                a1.equals(a2));
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorNegativeLength() {
+        new Arc(TrackType.MAIN_0, new BigDecimal("-0.05"), new Node(0), new Node(1));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -50,8 +43,15 @@ public class ArcTest {
         new Arc(TrackType.MAIN_0, new BigDecimal("0"), new Node(0), new Node(1));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testConstructorNegativeLength() {
-        new Arc(TrackType.MAIN_0, new BigDecimal("-0.05"), new Node(0), new Node(1));
+    @Test
+    public void testEqualsObject() {
+        final Node n1 = new Node(0);
+        final Node n2 = new Node(1);
+        final BigDecimal length = new BigDecimal("1.5");
+        final Arc a1 = new Arc(TrackType.MAIN_0, length, n1, n2);
+        Assert.assertTrue("The object should equal itself.", a1.equals(a1));
+        final Arc a2 = new Arc(TrackType.MAIN_0, length, n1, n2);
+        Assert.assertFalse("Objects with the exact same parameters shouldn't equal itself.",
+                a1.equals(a2));
     }
 }

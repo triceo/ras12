@@ -17,13 +17,13 @@ public class TrainConflict {
         return this.numConflicts;
     }
 
-    @Override
-    public String toString() {
-        return "TrainConflict [@" + time + ", " + numConflicts + "x]";
-    }
-
     public BigDecimal getTime() {
         return this.time;
+    }
+
+    @Override
+    public String toString() {
+        return "TrainConflict [@" + this.time + ", " + this.numConflicts + "x]";
     }
 
 }

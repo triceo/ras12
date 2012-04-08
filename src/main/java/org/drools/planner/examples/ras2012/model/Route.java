@@ -286,10 +286,10 @@ public class Route implements Comparable<Route>, Visualizable {
             }
         }
         // make sure that the train traverses through everywhere it's expected to
-        for (ScheduleAdherenceRequirement sar : t.getScheduleAdherenceRequirements()) {
-            Node requestedNode = sar.getDestination();
+        for (final ScheduleAdherenceRequirement sar : t.getScheduleAdherenceRequirements()) {
+            final Node requestedNode = sar.getDestination();
             boolean found = false;
-            for (Arc a : this.parts) {
+            for (final Arc a : this.parts) {
                 if (a.getStartingNode(t) == requestedNode) {
                     found = true;
                     break;

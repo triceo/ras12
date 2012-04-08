@@ -57,12 +57,12 @@ public class MaintenanceWindow {
         return true;
     }
 
-    public int getEndingMinute() {
-        return this.endingMinute;
-    }
-
     public Node getEastNode() {
         return this.eastNode;
+    }
+
+    public int getEndingMinute() {
+        return this.endingMinute;
     }
 
     public int getStartingMinute() {

@@ -106,15 +106,15 @@ public class Network implements Visualizable {
         return this.westboundRoutes;
     }
 
-    public Route getBestRoute(Train t) {
-        SortedSet<Route> routes = new TreeSet<Route>();
+    public Route getBestRoute(final Train t) {
+        final SortedSet<Route> routes = new TreeSet<Route>();
         Collection<Route> allRoutes;
         if (t.isEastbound()) {
             allRoutes = this.getAllEastboundRoutes();
         } else {
             allRoutes = this.getAllWestboundRoutes();
         }
-        for (Route r : allRoutes) {
+        for (final Route r : allRoutes) {
             if (r.isPossibleForTrain(t)) {
                 routes.add(r);
             }

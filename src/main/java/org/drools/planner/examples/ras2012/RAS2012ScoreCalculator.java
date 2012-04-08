@@ -135,11 +135,12 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
         final int hoursDelay = this.roundMinutesToWholeHours(actualArrival.subtract(idealArrival));
         if (hoursDelay < 0) {
             // FIXME fuck!
-            logger.debug("Delay for "
-                    + i.getTrain().getName()
-                    + " on route "
-                    + i.getRoute().getId()
-                    + " was negative! The optimal route probably hit a maintenance window that the actual route avoided.");
+            RAS2012ScoreCalculator.logger
+                    .debug("Delay for "
+                            + i.getTrain().getName()
+                            + " on route "
+                            + i.getRoute().getId()
+                            + " was negative! The optimal route probably hit a maintenance window that the actual route avoided.");
         }
         return Math.max(0, hoursDelay) * i.getTrain().getType().getDelayPenalty();
     }
