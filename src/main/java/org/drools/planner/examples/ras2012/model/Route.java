@@ -54,11 +54,16 @@ public class Route implements Comparable<Route>, Visualizable {
     // FIXME add tests for this
     @Override
     public int compareTo(final Route o) {
-        if (this.direction == o.direction) {// more main tracks = better
-            final int comparison = this.getNumberOfPreferredTracks()
-                    - o.getNumberOfPreferredTracks();
+        if (this.direction == o.direction) { // less tracks = better
+            final int comparison = o.getLengthInArcs() - this.getLengthInArcs();
             if (comparison == 0) { // shorter = better
-                return this.getTravellingTimeInMinutes().compareTo(o.getTravellingTimeInMinutes());
+                final int comparison2 = o.getTravellingTimeInMinutes().compareTo(
+                        this.getTravellingTimeInMinutes());
+                if (comparison2 == 0) { // more preferred tracks = better
+                    return this.getNumberOfPreferredTracks() - o.getNumberOfPreferredTracks();
+                } else {
+                    return comparison2;
+                }
             } else {
                 return comparison;
             }
@@ -149,11 +154,6 @@ public class Route implements Comparable<Route>, Visualizable {
         return result;
     }
 
-    // FIXME add tests for this
-    public int getLengthInNodes() {
-        return this.parts.size();
-    }
-
     public Arc getNextArc(final Arc a) {
         if (this.parts.isEmpty()) {
             throw new IllegalArgumentException("There is no next arc in an empty route.");
@@ -204,26 +204,12 @@ public class Route implements Comparable<Route>, Visualizable {
         }
     }
 
-    // FIXME add tests for this
-    public BigDecimal getTravellingTimeInMinutes() {
+    private BigDecimal getTravellingTimeInMinutes() {
         BigDecimal result = BigDecimal.ZERO;
         for (final Arc a : this.parts) {
             final BigDecimal length = a.getLengthInMiles();
             final int speed = this.direction == Direction.EASTBOUND ? a.getTrackType()
                     .getSpeedEastbound() : a.getTrackType().getSpeedWestbound();
-            final BigDecimal timeInHours = length.divide(BigDecimal.valueOf(speed), 2,
-                    BigDecimal.ROUND_HALF_DOWN);
-            result = result.add(timeInHours.multiply(BigDecimal.valueOf(60)));
-        }
-        return result;
-    }
-
-    // FIXME add tests for this
-    public BigDecimal getTravellingTimeInMinutes(final Train t) {
-        BigDecimal result = BigDecimal.ZERO;
-        for (final Arc a : this.parts) {
-            final BigDecimal length = a.getLengthInMiles();
-            final int speed = t.getMaximumSpeed(a.getTrackType());
             final BigDecimal timeInHours = length.divide(BigDecimal.valueOf(speed), 2,
                     BigDecimal.ROUND_HALF_DOWN);
             result = result.add(timeInHours.multiply(BigDecimal.valueOf(60)));
@@ -297,6 +283,20 @@ public class Route implements Comparable<Route>, Visualizable {
                 if (result < 0) {
                     return false;
                 }
+            }
+        }
+        // make sure that the train traverses through everywhere it's expected to
+        for (ScheduleAdherenceRequirement sar : t.getScheduleAdherenceRequirements()) {
+            Node requestedNode = sar.getDestination();
+            boolean found = false;
+            for (Arc a : this.parts) {
+                if (a.getStartingNode(t) == requestedNode) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                return false;
             }
         }
         return true;

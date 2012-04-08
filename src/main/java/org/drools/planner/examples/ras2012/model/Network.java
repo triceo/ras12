@@ -33,7 +33,6 @@ public class Network implements Visualizable {
     private final SortedMap<Node, SortedMap<Node, Arc>> westboundConnections;
     private final Collection<Route>                     westboundRoutes;
     private final Collection<Route>                     eastboundRoutes;
-    private final Route                                 bestWestboundRoute, bestEastboundRoute;
 
     public Network(final Collection<Node> nodes, final Collection<Arc> edges) {
         this.visualizer = new GraphVisualizer(edges);
@@ -62,8 +61,6 @@ public class Network implements Visualizable {
                 this.eastboundConnections, this.westDepo);
         this.westboundRoutes = this.getAllRoutes(new Route(Direction.WESTBOUND),
                 this.westboundConnections, this.eastDepo);
-        this.bestEastboundRoute = new TreeSet<Route>(this.eastboundRoutes).last();
-        this.bestWestboundRoute = new TreeSet<Route>(this.westboundRoutes).last();
     }
 
     public synchronized Collection<Route> getAllEastboundRoutes() {
@@ -109,12 +106,20 @@ public class Network implements Visualizable {
         return this.westboundRoutes;
     }
 
-    public Route getBestEastboundRoute() {
-        return this.bestEastboundRoute;
-    }
-
-    public Route getBestWestboundRoute() {
-        return this.bestWestboundRoute;
+    public Route getBestRoute(Train t) {
+        SortedSet<Route> routes = new TreeSet<Route>();
+        Collection<Route> allRoutes;
+        if (t.isEastbound()) {
+            allRoutes = this.getAllEastboundRoutes();
+        } else {
+            allRoutes = this.getAllWestboundRoutes();
+        }
+        for (Route r : allRoutes) {
+            if (r.isPossibleForTrain(t)) {
+                routes.add(r);
+            }
+        }
+        return routes.last();
     }
 
     public Collection<Route> getWestboundRoutes() {
