@@ -186,6 +186,26 @@ public class Arc {
         return this.westNode;
     }
 
+    public boolean isPreferred(Train t) {
+        return this.isPreferred(t.isEastbound() ? Direction.EASTBOUND : Direction.WESTBOUND);
+    }
+
+    public boolean isPreferred(Route r) {
+        return this.isPreferred(r.getDirection());
+    }
+
+    private boolean isPreferred(Direction d) {
+        if (this.trackType == TrackType.MAIN_0) {
+            return true;
+        } else if (d == Direction.EASTBOUND && this.trackType == TrackType.MAIN_2) {
+            return true;
+        } else if (d == Direction.WESTBOUND && this.trackType == TrackType.MAIN_1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;

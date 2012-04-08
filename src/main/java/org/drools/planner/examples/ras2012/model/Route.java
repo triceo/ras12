@@ -58,7 +58,7 @@ public class Route implements Comparable<Route>, Visualizable {
             final int comparison = this.getTravellingTimeInMinutes().compareTo(
                     o.getTravellingTimeInMinutes());
             if (comparison == 0) { // more main tracks = better
-                return this.getNumberOfMainTracks() - o.getNumberOfMainTracks();
+                return this.getNumberOfPreferredTracks() - o.getNumberOfPreferredTracks();
             } else {
                 return comparison;
             }
@@ -183,11 +183,10 @@ public class Route implements Comparable<Route>, Visualizable {
         }
     }
 
-    // FIXME add tests for this
-    public int getNumberOfMainTracks() {
+    private int getNumberOfPreferredTracks() {
         int i = 0;
         for (final Arc a : this.parts) {
-            if (a.getTrackType().isMainTrack()) {
+            if (a.isPreferred(this)) {
                 i++;
             }
         }
