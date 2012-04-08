@@ -6,9 +6,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.drools.planner.examples.ras2012.interfaces.Visualizable;
@@ -34,15 +36,17 @@ public class Route implements Comparable<Route>, Visualizable {
         return Route.idGenerator.getAndSet(0);
     }
 
-    private final List<Arc> parts                   = new LinkedList<Arc>();
+    private final List<Arc>           parts                   = new LinkedList<Arc>();
 
-    private final Direction direction;
+    private final Direction           direction;
 
-    private final int       id                      = Route.idGenerator.getAndIncrement();
+    private final int                 id                      = Route.idGenerator.getAndIncrement();
 
-    private int             numberOfPreferredTracks = -1;
+    private int                       numberOfPreferredTracks = -1;
 
-    private BigDecimal      travellingTimeInMinutes = null;
+    private BigDecimal                travellingTimeInMinutes = null;
+
+    private final Map<Train, Boolean> routePossibilitiesCache = new HashMap<Train, Boolean>();
 
     public Route(final Direction d) {
         this.direction = d;
@@ -269,6 +273,13 @@ public class Route implements Comparable<Route>, Visualizable {
     }
 
     public boolean isPossibleForTrain(final Train t) {
+        if (!this.routePossibilitiesCache.containsKey(t)) {
+            this.routePossibilitiesCache.put(t, this.isPossibleForTrainUncached(t));
+        }
+        return this.routePossibilitiesCache.get(t);
+    }
+
+    private boolean isPossibleForTrainUncached(final Train t) {
         // make sure both the route and the train are in the same direction
         final boolean bothEastbound = t.isEastbound() && this.getDirection() == Direction.EASTBOUND;
         final boolean bothWestbound = t.isWestbound() && this.getDirection() == Direction.WESTBOUND;
