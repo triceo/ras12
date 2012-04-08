@@ -7,6 +7,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.imageio.ImageIO;
 
@@ -82,6 +84,8 @@ public class GraphVisualizer {
         return g;
     }
 
+    private static final Lock l = new ReentrantLock();
+
     public void visualize(final OutputStream visualize) throws IOException {
         final Layout<Node, Arc> layout = new ISOMLayout<>(this.formGraph());
         layout.setSize(new Dimension(GraphVisualizer.GRAPH_WIDTH, GraphVisualizer.GRAPH_HEIGHT));
@@ -90,12 +94,20 @@ public class GraphVisualizer {
         server.getRenderContext().setLabelOffset(30);
         server.getRenderContext().setEdgeLabelTransformer(new ArcLabeller());
         server.getRenderContext().setVertexLabelTransformer(new NodeLabeller());
-        final Image i = server.getImage(new Point2D.Double(GraphVisualizer.GRAPH_WIDTH / 2,
-                GraphVisualizer.GRAPH_HEIGHT / 2), layout.getSize());
+        Image i = null;
+        l.lock();
+        try {
+            /*
+             * the call to getImage() causes trouble when running in multiple threads; keep other threads out using a lock.
+             */
+            i = server.getImage(new Point2D.Double(GraphVisualizer.GRAPH_WIDTH / 2,
+                    GraphVisualizer.GRAPH_HEIGHT / 2), layout.getSize());
+        } finally {
+            l.unlock();
+        }
         final BufferedImage bi = new BufferedImage(GraphVisualizer.GRAPH_WIDTH,
                 GraphVisualizer.GRAPH_HEIGHT, BufferedImage.TYPE_INT_RGB);
         bi.createGraphics().drawImage(i, null, null);
         ImageIO.write(bi, "png", visualize);
     }
-
 }
