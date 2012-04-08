@@ -1,11 +1,17 @@
-package org.drools.planner.examples.ras2012.model;
+package org.drools.planner.examples.ras2012.interfaces;
 
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Map;
 import java.util.SortedMap;
 
-public interface ItineraryInterface {
+import org.drools.planner.examples.ras2012.model.Arc;
+import org.drools.planner.examples.ras2012.model.Node;
+import org.drools.planner.examples.ras2012.model.Route;
+import org.drools.planner.examples.ras2012.model.Train;
+import org.drools.planner.examples.ras2012.model.WaitTime;
+
+public interface ScheduleProducer {
 
     /**
      * Default scale to use for BigDecimals returned by the methods of this interface.

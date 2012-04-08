@@ -12,7 +12,9 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public final class Itinerary implements ItineraryInterface {
+import org.drools.planner.examples.ras2012.interfaces.ScheduleProducer;
+
+public final class Itinerary implements ScheduleProducer {
 
     public static final class Window {
 
@@ -165,15 +167,15 @@ public final class Itinerary implements ItineraryInterface {
         if (leadingArc == null) {
             if (this.trainEntryTime.compareTo(time) > 0) {
                 // train didn't even start
-                return BigDecimal.ZERO.setScale(ItineraryInterface.BIGDECIMAL_SCALE,
-                        ItineraryInterface.BIGDECIMAL_ROUNDING);
+                return BigDecimal.ZERO.setScale(ScheduleProducer.BIGDECIMAL_SCALE,
+                        ScheduleProducer.BIGDECIMAL_ROUNDING);
             } else {
                 // train finished already
                 return this
                         .getRoute()
                         .getLengthInMiles()
-                        .setScale(ItineraryInterface.BIGDECIMAL_SCALE,
-                                ItineraryInterface.BIGDECIMAL_ROUNDING);
+                        .setScale(ScheduleProducer.BIGDECIMAL_SCALE,
+                                ScheduleProducer.BIGDECIMAL_ROUNDING);
             }
         }
         // calculate whatever we've travelled before we reached the current arc
@@ -192,8 +194,8 @@ public final class Itinerary implements ItineraryInterface {
         final BigDecimal timeDifference = time.subtract(lastCheckpointTime);
         final BigDecimal distanceTravelledInArc = Itinerary.getDistanceInMilesFromSpeedAndTime(this
                 .getTrain().getMaximumSpeed(leadingArc.getTrackType()), timeDifference);
-        return travelled.add(distanceTravelledInArc).setScale(ItineraryInterface.BIGDECIMAL_SCALE,
-                ItineraryInterface.BIGDECIMAL_ROUNDING);
+        return travelled.add(distanceTravelledInArc).setScale(ScheduleProducer.BIGDECIMAL_SCALE,
+                ScheduleProducer.BIGDECIMAL_ROUNDING);
     }
 
     public Map<Node, Itinerary.Window> getMaintenances() {

@@ -6,11 +6,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.drools.planner.examples.ras2012.interfaces.ScheduleProducer;
+
 import org.drools.planner.core.score.buildin.hardandsoft.DefaultHardAndSoftScore;
 import org.drools.planner.core.score.buildin.hardandsoft.HardAndSoftScore;
 import org.drools.planner.core.score.director.simple.SimpleScoreCalculator;
 import org.drools.planner.examples.ras2012.model.Arc;
-import org.drools.planner.examples.ras2012.model.ItineraryInterface;
 import org.drools.planner.examples.ras2012.model.planner.ItineraryAssignment;
 import org.drools.planner.examples.ras2012.model.planner.TrainConflict;
 
@@ -24,7 +25,7 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
         return time.compareTo(BigDecimal.valueOf(RAS2012Solution.PLANNING_HORIZON_MINUTES)) <= 0;
     }
 
-    private int getCostPerItinerary(ItineraryInterface i) {
+    private int getCostPerItinerary(ScheduleProducer i) {
         int penalty = 0;
         /*
          * want time penalties are only counted when the train arrives on hour before or three hours after the want time
@@ -83,7 +84,7 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
             final Map<Arc, Integer> arcUsage = new HashMap<Arc, Integer>();
             for (final ItineraryAssignment ia : solution.getAssignments()) {
                 // ... and each assignment...
-                final ItineraryInterface i = ia.getItinerary();
+                final ScheduleProducer i = ia.getItinerary();
                 for (final Arc a : i.getCurrentlyOccupiedArcs(time)) {
                     // ... find out how many times an arc has been used
                     if (arcUsage.containsKey(a)) {

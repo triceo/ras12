@@ -15,6 +15,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.drools.planner.examples.ras2012.RAS2012Solution;
+import org.drools.planner.examples.ras2012.interfaces.ScheduleProducer;
 import org.drools.planner.examples.ras2012.model.Train.TrainType;
 import org.junit.Assert;
 import org.junit.Test;
@@ -244,7 +245,7 @@ public abstract class AbstractItineraryTest {
                 expecteds.put(BigDecimal.ZERO, BigDecimal.ZERO);
                 expecteds.put(
                         BigDecimal.valueOf(t.getEntryTime()).divide(BigDecimal.valueOf(2), 10,
-                                ItineraryInterface.BIGDECIMAL_ROUNDING), BigDecimal.ZERO);
+                                ScheduleProducer.BIGDECIMAL_ROUNDING), BigDecimal.ZERO);
             }
             BigDecimal travelledSoFar = BigDecimal.ZERO;
             BigDecimal travellingTime = BigDecimal.valueOf(t.getEntryTime());
@@ -256,15 +257,15 @@ public abstract class AbstractItineraryTest {
                     travellingTime = i.getMaintenances().get(n).getEnd();
                 }
                 // cut the arc nine times, measure the distance and time at each point
-                BigDecimal arcTravellingTime = currentArc.getTravellingTimeInMinutes(t);
-                BigDecimal travellingTimeTenth = arcTravellingTime.divide(BigDecimal.TEN, 10,
-                        ItineraryInterface.BIGDECIMAL_ROUNDING);
-                BigDecimal travellingLengthTenth = currentArc.getLengthInMiles().divide(
-                        BigDecimal.TEN, 10, ItineraryInterface.BIGDECIMAL_ROUNDING);
+                final BigDecimal arcTravellingTime = currentArc.getTravellingTimeInMinutes(t);
+                final BigDecimal travellingTimeTenth = arcTravellingTime.divide(BigDecimal.TEN, 10,
+                        ScheduleProducer.BIGDECIMAL_ROUNDING);
+                final BigDecimal travellingLengthTenth = currentArc.getLengthInMiles().divide(
+                        BigDecimal.TEN, 10, ScheduleProducer.BIGDECIMAL_ROUNDING);
                 for (int j = 1; j < 10; j++) {
-                    BigDecimal travellingTimeNew = travellingTime.add(travellingTimeTenth
+                    final BigDecimal travellingTimeNew = travellingTime.add(travellingTimeTenth
                             .multiply(BigDecimal.valueOf(j)));
-                    BigDecimal travellingLengthNew = travelledSoFar.add(travellingLengthTenth
+                    final BigDecimal travellingLengthNew = travelledSoFar.add(travellingLengthTenth
                             .multiply(BigDecimal.valueOf(j)));
                     expecteds.put(travellingTimeNew, travellingLengthNew);
                 }
@@ -280,18 +281,17 @@ public abstract class AbstractItineraryTest {
             /*
              * when comparing two bigdecimals, ignore rounding errors of 2 orders of magnitude. FIXME why isn't 1 enough???
              */
-            double delta = Math.pow(10, -(ItineraryInterface.BIGDECIMAL_SCALE - 2));
+            final double delta = Math.pow(10, -(ScheduleProducer.BIGDECIMAL_SCALE - 2));
             // and now validate against reality
             for (final Map.Entry<BigDecimal, BigDecimal> entry : expecteds.entrySet()) {
-                BigDecimal expected = entry.getValue()
-                        .setScale(ItineraryInterface.BIGDECIMAL_SCALE,
-                                ItineraryInterface.BIGDECIMAL_ROUNDING);
+                final BigDecimal expected = entry.getValue().setScale(
+                        ScheduleProducer.BIGDECIMAL_SCALE, ScheduleProducer.BIGDECIMAL_ROUNDING);
                 if (entry.getKey().compareTo(
                         BigDecimal.valueOf(RAS2012Solution.PLANNING_HORIZON_MINUTES)) > 0) {
                     // don't measure beyond the planning horizon
                     break;
                 }
-                BigDecimal actual = i.getDistanceTravelled(entry.getKey());
+                final BigDecimal actual = i.getDistanceTravelled(entry.getKey());
                 Assert.assertEquals("Train " + t.getName() + " on route " + r.getId() + " at time "
                         + entry.getKey() + " isn't where it's supposed to be.",
                         expected.doubleValue(), actual.doubleValue(), delta); // avoid rounding problems
