@@ -10,11 +10,69 @@ import org.drools.planner.core.score.buildin.hardandsoft.DefaultHardAndSoftScore
 import org.drools.planner.core.score.buildin.hardandsoft.HardAndSoftScore;
 import org.drools.planner.core.score.director.simple.SimpleScoreCalculator;
 import org.drools.planner.examples.ras2012.model.Arc;
-import org.drools.planner.examples.ras2012.model.Itinerary;
+import org.drools.planner.examples.ras2012.model.ItineraryInterface;
 import org.drools.planner.examples.ras2012.model.planner.ItineraryAssignment;
 import org.drools.planner.examples.ras2012.model.planner.TrainConflict;
 
 public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solution> {
+
+    private int roundToWhole(BigDecimal d) {
+        return d.setScale(0, BigDecimal.ROUND_UP).intValue();
+    }
+
+    private boolean isInPlanningHorizon(BigDecimal time) {
+        return time.compareTo(BigDecimal.valueOf(RAS2012Solution.PLANNING_HORIZON_MINUTES)) <= 0;
+    }
+
+    private int getCostPerItinerary(ItineraryInterface i) {
+        int penalty = 0;
+        /*
+         * want time penalties are only counted when the train arrives on hour before or three hours after the want time
+         */
+        int hourlyDifference = 0;
+        Map<BigDecimal, BigDecimal> wantTimeDifferences = i.getWantTimeDifference();
+        for (Map.Entry<BigDecimal, BigDecimal> entry : wantTimeDifferences.entrySet()) {
+            if (!isInPlanningHorizon(entry.getKey())) {
+                // difference occured past the planning horizon; we don't care about it
+                continue;
+            }
+            BigDecimal wantTimeDifference = entry.getValue();
+            if (wantTimeDifference.signum() > 0) {
+                int hours = roundToWhole(wantTimeDifference);
+                if (hours > 3) {
+                    hourlyDifference = hours - 3;
+                }
+            } else if (wantTimeDifference.signum() < 0) {
+                int hours = roundToWhole(wantTimeDifference);
+                if (hours < -1) {
+                    hourlyDifference = Math.abs(hours + 1);
+                }
+            }
+            penalty += hourlyDifference * 75;
+        }
+        /*
+         * calculate hot schedule adherence penalties, given that the train needs to adhere and that the delay is more than 2
+         * hours
+         */
+        if (i.getTrain().getType().adhereToSchedule()) {
+            Map<BigDecimal, BigDecimal> sa = i.getScheduleAdherenceStatus();
+            for (Map.Entry<BigDecimal, BigDecimal> entry : sa.entrySet()) {
+                if (!isInPlanningHorizon(entry.getKey())) {
+                    // difference occured past the planning horizon; we don't care about it
+                    continue;
+                }
+                BigDecimal difference = entry.getValue();
+                if (difference.signum() < 1) {
+                    continue;
+                }
+                hourlyDifference = roundToWhole(difference);
+                if (hourlyDifference > 2) {
+                    penalty += (hourlyDifference - 2) * 200;
+                }
+            }
+        }
+        return penalty;
+    }
 
     private Set<TrainConflict> getConflicts(RAS2012Solution solution) {
         Set<TrainConflict> allConflicts = new HashSet<TrainConflict>();
@@ -25,7 +83,7 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
             final Map<Arc, Integer> arcUsage = new HashMap<Arc, Integer>();
             for (final ItineraryAssignment ia : solution.getAssignments()) {
                 // ... and each assignment...
-                final Itinerary i = ia.getItinerary();
+                final ItineraryInterface i = ia.getItinerary();
                 for (final Arc a : i.getCurrentlyOccupiedArcs(time)) {
                     // ... find out how many times an arc has been used
                     if (arcUsage.containsKey(a)) {
@@ -52,7 +110,11 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
         for (TrainConflict c : this.getConflicts(solution)) {
             conflicts += c.getNumConflicts();
         }
-        HardAndSoftScore score = DefaultHardAndSoftScore.valueOf(-conflicts, 0);
+        int cost = 0;
+        for (ItineraryAssignment ia : solution.getAssignments()) {
+            cost += this.getCostPerItinerary(ia.getItinerary());
+        }
+        HardAndSoftScore score = DefaultHardAndSoftScore.valueOf(-conflicts, -cost);
         return score;
     }
 

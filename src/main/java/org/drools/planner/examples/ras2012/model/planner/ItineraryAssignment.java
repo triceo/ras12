@@ -7,6 +7,7 @@ import org.drools.planner.api.domain.variable.PlanningVariable;
 import org.drools.planner.api.domain.variable.ValueRange;
 import org.drools.planner.api.domain.variable.ValueRangeType;
 import org.drools.planner.examples.ras2012.model.Itinerary;
+import org.drools.planner.examples.ras2012.model.ItineraryInterface;
 import org.drools.planner.examples.ras2012.model.MaintenanceWindow;
 import org.drools.planner.examples.ras2012.model.Route;
 import org.drools.planner.examples.ras2012.model.Train;
@@ -21,7 +22,7 @@ public class ItineraryAssignment {
 
     private Train                         train;
     private Route                         route;
-    private Itinerary                     itinerary;
+    private ItineraryInterface            itinerary;
     private Collection<MaintenanceWindow> maintenances;
 
     public ItineraryAssignment(Train t, Collection<MaintenanceWindow> maintenances) {
@@ -47,7 +48,7 @@ public class ItineraryAssignment {
         this.itinerary = new Itinerary(this.route, this.train, this.maintenances);
     }
 
-    public Itinerary getItinerary() {
+    public ItineraryInterface getItinerary() {
         return itinerary;
     }
 

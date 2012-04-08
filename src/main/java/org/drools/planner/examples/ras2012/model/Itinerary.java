@@ -114,7 +114,7 @@ public final class Itinerary implements ItineraryInterface {
 
     @Override
     public Collection<Arc> getCurrentlyOccupiedArcs(final BigDecimal timeInMinutes) {
-        Arc leadingArc = this.getCurrentArc(timeInMinutes);
+        final Arc leadingArc = this.getCurrentArc(timeInMinutes);
         if (leadingArc == null) {
             // train not in the network
             // FIXME train should leave the network gradually, not at once when it reaches destination
@@ -266,6 +266,27 @@ public final class Itinerary implements ItineraryInterface {
         return results;
     }
 
+    @Override
+    public Map<BigDecimal, BigDecimal> getScheduleAdherenceStatus() {
+        final Map<BigDecimal, BigDecimal> result = new HashMap<BigDecimal, BigDecimal>();
+        for (final ScheduleAdherenceRequirement sa : this.getTrain()
+                .getScheduleAdherenceRequirements()) {
+            final Node pointOnRoute = sa.getDestination();
+            final BigDecimal expectedTime = BigDecimal.valueOf(sa.getTimeSinceStartOfWorld());
+            for (final SortedMap.Entry<BigDecimal, Node> entry : this.getNodeEntryTimes()
+                    .entrySet()) {
+                if (entry.getValue() == pointOnRoute) {
+                    final BigDecimal difference = entry.getKey().subtract(expectedTime);
+                    result.put(entry.getKey(), difference);
+                }
+            }
+        }
+        if (result.size() != this.getTrain().getScheduleAdherenceRequirements().size()) {
+            throw new IllegalStateException("Failed acquiring SA status!");
+        }
+        return result;
+    }
+
     public Train getTrain() {
         return this.train;
     }
@@ -273,6 +294,20 @@ public final class Itinerary implements ItineraryInterface {
     @Override
     public WaitTime getWaitTime(final Node n) {
         return this.nodeWaitTimes.get(n);
+    }
+
+    // FIXME only return non-zero number when the train arrived before planning horizon end
+    @Override
+    public Map<BigDecimal, BigDecimal> getWantTimeDifference() {
+        final Map<BigDecimal, BigDecimal> result = new HashMap<BigDecimal, BigDecimal>();
+        for (final SortedMap.Entry<BigDecimal, Node> entry : this.getNodeEntryTimes().entrySet()) {
+            if (entry.getValue() == this.getTrain().getDestination()) {
+                final BigDecimal difference = entry.getKey().subtract(
+                        BigDecimal.valueOf(this.getTrain().getWantTime()));
+                result.put(entry.getKey(), difference);
+            }
+        }
+        return result;
     }
 
     @Override

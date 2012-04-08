@@ -2,6 +2,7 @@ package org.drools.planner.examples.ras2012.model;
 
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.Map;
 import java.util.SortedMap;
 
 public interface ItineraryInterface {
@@ -49,6 +50,13 @@ public interface ItineraryInterface {
     public BigDecimal getDistanceTravelled(BigDecimal time);
 
     /**
+     * Retrieve the route that this itinerary relates to.
+     * 
+     * @return The route, never null.
+     */
+    public Route getRoute();
+
+    /**
      * Retrieve the schedule for the given train on the given route. The schedule takes into account all the maintenance windows
      * and halt points.
      * 
@@ -57,12 +65,35 @@ public interface ItineraryInterface {
     public SortedMap<BigDecimal, Node> getSchedule();
 
     /**
+     * Retrieve the difference between the train's schedule and the reality.
+     * 
+     * @return Key is the time of arrival at the SA checkpoint, value is the difference. Positive when there's been a delay,
+     *         negative when the train is ahead of schedule.
+     */
+    public Map<BigDecimal, BigDecimal> getScheduleAdherenceStatus();
+
+    /**
+     * Retrieve the train that this itinerary relates to.
+     * 
+     * @return The train, never null.
+     */
+    public Train getTrain();
+
+    /**
      * Retrieve the wait time for the given node.
      * 
      * @param n The node that the wait time should be looked at for.
      * @return The wait time.
      */
     public WaitTime getWaitTime(Node n);
+
+    /**
+     * Retrieve the difference between the train's want time and the actual time of arrival.
+     * 
+     * @return Only contains one entry. Key is the tim of arrival at the destination node, value is the difference. Positive
+     *         when there's been a delay, negative when the train is ahead of schedule.
+     */
+    public Map<BigDecimal, BigDecimal> getWantTimeDifference();
 
     /**
      * Remove all previously set wait times.

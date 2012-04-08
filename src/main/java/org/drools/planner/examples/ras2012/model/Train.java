@@ -9,21 +9,27 @@ import org.drools.planner.examples.ras2012.model.Arc.TrackType;
 public class Train implements Comparable<Train> {
 
     public static enum TrainType {
-        A, B, C, D, E(false), F(false);
+        A(600), B(500), C(400), D(300), E(150, false), F(100, false);
 
         private final boolean adhereToSchedule;
+        private final int     delayPenalty;
 
-        TrainType() {
-            this(true);
+        TrainType(final int delayPenalty) {
+            this(delayPenalty, true);
         }
 
-        TrainType(final boolean adhereToSchedule) {
+        TrainType(final int delayPenalty, final boolean adhereToSchedule) {
             this.adhereToSchedule = adhereToSchedule;
+            this.delayPenalty = delayPenalty;
         }
 
         // FIXME would be cool if this was rule-based
         public boolean adhereToSchedule() {
             return this.adhereToSchedule;
+        }
+
+        public int getDelayPenalty() {
+            return this.delayPenalty;
         }
     }
 
