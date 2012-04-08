@@ -10,6 +10,7 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.drools.planner.examples.ras2012.interfaces.Visualizable;
 import org.drools.planner.examples.ras2012.model.Route.Direction;
 import org.drools.planner.examples.ras2012.util.GraphVisualizer;
 
@@ -17,7 +18,7 @@ import org.drools.planner.examples.ras2012.util.GraphVisualizer;
  * Assumptions: node #0 is WEST-most node.
  * 
  */
-public class Network {
+public class Network implements Visualizable {
 
     private final GraphVisualizer                       visualizer;
     private final SortedMap<Integer, Node>              nodes = new TreeMap<Integer, Node>();

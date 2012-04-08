@@ -13,13 +13,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.drools.planner.examples.ras2012.interfaces.Visualizable;
 import org.drools.planner.examples.ras2012.model.Arc.TrackType;
 import org.drools.planner.examples.ras2012.util.GraphVisualizer;
 
 /**
  * Note: this class has a natural ordering that is inconsistent with equals.
  */
-public class Route implements Comparable<Route> {
+public class Route implements Comparable<Route>, Visualizable {
 
     public static enum Direction {
         EASTBOUND, WESTBOUND
