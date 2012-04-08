@@ -2,7 +2,6 @@ package org.drools.planner.examples.ras2012;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
@@ -28,10 +27,8 @@ public class App {
 
     private static class RouteVisualizer implements Callable<Boolean> {
 
-        private static final Logger logger = LoggerFactory.getLogger(RouteVisualizer.class);
-
-        private final Route         route;
-        private final File          file;
+        private final Route route;
+        private final File  file;
 
         public RouteVisualizer(final Route r, final File parentFolder) {
             this.route = r;
@@ -40,15 +37,7 @@ public class App {
 
         @Override
         public Boolean call() {
-            try (FileOutputStream fos = new FileOutputStream(this.file)) {
-                RouteVisualizer.logger.info("Route visualization started: " + this.route.getId());
-                this.route.visualize(fos);
-                RouteVisualizer.logger.info("Route visualization finished: " + this.route.getId());
-                return true;
-            } catch (final Exception e) {
-                RouteVisualizer.logger.warn("Route visualization failed: " + this.route.getId(), e);
-                return false;
-            }
+            return this.route.visualize(this.file);
         }
 
     }
@@ -70,42 +59,32 @@ public class App {
         @Override
         public Boolean call() {
             VisualizationController.logger.info("Started visualization work.");
-            try {
-                // prepare folder structure
-                final File parentFolder = new File("data", this.file.getName());
-                if (!parentFolder.exists()) {
-                    parentFolder.mkdirs();
-                }
-                // visualize the network
-                VisualizationController.logger.debug("Started visualizing the network.");
-                final FileOutputStream fos = new FileOutputStream(new File(parentFolder,
-                        "network.png"));
-                this.network.visualize(fos);
-                fos.close();
-                // visualize the routes
-                final Collection<Route> routes = new LinkedList<Route>();
-                routes.addAll(this.network.getAllEastboundRoutes());
-                routes.addAll(this.network.getAllWestboundRoutes());
-                for (final Route r : routes) {
-                    this.futures.add(App.visualizerExecutor.submit(new RouteVisualizer(r,
-                            parentFolder)));
-                }
-                boolean success = true;
-                for (final Future<Boolean> future : this.futures) {
-                    try {
-                        success = future.get() & success;
-                    } catch (final Exception e) {
-                        VisualizationController.logger.warn(
-                                "Execution of route visualization failed.", e);
-                        success = false;
-                    }
-                }
-                VisualizationController.logger.info("Finished visualization work.");
-                return success;
-            } catch (final IOException ex) {
-                VisualizationController.logger.warn("Visualizing failed.", ex);
-                return false;
+            // prepare folder structure
+            final File parentFolder = new File("data", this.file.getName());
+            if (!parentFolder.exists()) {
+                parentFolder.mkdirs();
             }
+            // visualize the network
+            boolean success = this.network.visualize(new File(parentFolder, "network.png"));
+            // visualize the routes
+            final Collection<Route> routes = new LinkedList<Route>();
+            routes.addAll(this.network.getAllEastboundRoutes());
+            routes.addAll(this.network.getAllWestboundRoutes());
+            for (final Route r : routes) {
+                this.futures.add(App.visualizerExecutor
+                        .submit(new RouteVisualizer(r, parentFolder)));
+            }
+            for (final Future<Boolean> future : this.futures) {
+                try {
+                    success = future.get() & success;
+                } catch (final Exception e) {
+                    VisualizationController.logger.warn("Execution of route visualization failed.",
+                            e);
+                    success = false;
+                }
+            }
+            VisualizationController.logger.info("Finished visualization work.");
+            return success;
         }
     }
 

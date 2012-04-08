@@ -1,6 +1,8 @@
 package org.drools.planner.examples.ras2012.model;
 
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -16,6 +18,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.drools.planner.examples.ras2012.interfaces.Visualizable;
 import org.drools.planner.examples.ras2012.model.Arc.TrackType;
 import org.drools.planner.examples.ras2012.util.GraphVisualizer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Note: this class has a natural ordering that is inconsistent with equals.
@@ -26,16 +30,19 @@ public class Route implements Comparable<Route>, Visualizable {
         EASTBOUND, WESTBOUND
     }
 
+    private static final Logger        logger      = LoggerFactory.getLogger(Route.class);
+
+    private static final AtomicInteger idGenerator = new AtomicInteger(0);
+
     protected static int resetRouteCounter() {
         return Route.idGenerator.getAndSet(0);
     }
 
-    private final List<Arc>            parts       = new LinkedList<Arc>();
-    private final Direction            direction;
+    private final List<Arc> parts = new LinkedList<Arc>();
 
-    private static final AtomicInteger idGenerator = new AtomicInteger(0);
+    private final Direction direction;
 
-    private final int                  id          = Route.idGenerator.getAndIncrement();
+    private final int       id    = Route.idGenerator.getAndIncrement();
 
     public Route(final Direction d) {
         this.direction = d;
@@ -341,12 +348,21 @@ public class Route implements Comparable<Route>, Visualizable {
                 + "]";
     }
 
-    public void visualize(final OutputStream stream) throws IOException {
-        final Collection<Node> nodes = new LinkedList<Node>();
-        for (final Arc a : this.parts) {
-            nodes.add(a.getStartingNode(this));
-            nodes.add(a.getEndingNode(this));
+    @Override
+    public boolean visualize(final File target) {
+        try (FileOutputStream fos = new FileOutputStream(target)) {
+            final Collection<Node> nodes = new LinkedList<Node>();
+            for (final Arc a : this.parts) {
+                nodes.add(a.getStartingNode(this));
+                nodes.add(a.getEndingNode(this));
+            }
+            Route.logger.info("Starting visualizing route: " + this.getId());
+            new GraphVisualizer(nodes, this.parts).visualize(fos);
+            Route.logger.info("Route visualization finished: " + this.getId());
+            return true;
+        } catch (final Exception ex) {
+            Route.logger.error("Visualizing route " + this.getId() + " failed.", ex);
+            return false;
         }
-        new GraphVisualizer(nodes, this.parts).visualize(stream);
     }
 }

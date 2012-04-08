@@ -1,7 +1,7 @@
 package org.drools.planner.examples.ras2012.model;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -13,6 +13,8 @@ import java.util.TreeSet;
 import org.drools.planner.examples.ras2012.interfaces.Visualizable;
 import org.drools.planner.examples.ras2012.model.Route.Direction;
 import org.drools.planner.examples.ras2012.util.GraphVisualizer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Assumptions: node #0 is WEST-most node.
@@ -20,8 +22,11 @@ import org.drools.planner.examples.ras2012.util.GraphVisualizer;
  */
 public class Network implements Visualizable {
 
+    private static final Logger                         logger = LoggerFactory
+                                                                       .getLogger(Network.class);
+
     private final GraphVisualizer                       visualizer;
-    private final SortedMap<Integer, Node>              nodes = new TreeMap<Integer, Node>();
+    private final SortedMap<Integer, Node>              nodes  = new TreeMap<Integer, Node>();
     private final Node                                  eastDepo;
     private final Node                                  westDepo;
     private final SortedMap<Node, SortedMap<Node, Arc>> eastboundConnections;
@@ -119,7 +124,16 @@ public class Network implements Visualizable {
         return null;
     }
 
-    public void visualize(final OutputStream file) throws IOException {
-        this.visualizer.visualize(file);
+    @Override
+    public boolean visualize(final File target) {
+        try (FileOutputStream fos = new FileOutputStream(target)) {
+            Network.logger.info("Starting visualizing network.");
+            this.visualizer.visualize(fos);
+            Network.logger.info("Network vizualization finished.");
+            return true;
+        } catch (final Exception ex) {
+            Network.logger.error("Visualizing network failed.", ex);
+            return false;
+        }
     }
 }

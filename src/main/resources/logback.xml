@@ -20,8 +20,7 @@
         <appender-ref ref="FILE"/>
     </appender>
     <logger name="org.drools.planner" level="DEBUG" />
-    <logger name="org.drools.planner.examples.ras2012" level="INFO" />
-    <logger name="org.drools.planner.examples.ras2012.App" level="WARN" />
+    <logger name="org.drools.planner.examples.ras2012" level="WARN" />
     <root level="DEBUG">
         <appender-ref ref="CONSOLE" /> 
         <appender-ref ref="ASYNC" /> 

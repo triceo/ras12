@@ -1,15 +1,15 @@
 package org.drools.planner.examples.ras2012.interfaces;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.File;
 
 public interface Visualizable {
 
     /**
-     * Visualize the resource and write the results to the output stream.
+     * Visualize the resource and write the results to the file.
      * 
-     * @param stream Target for writing the visualization to.
+     * @param target Target for writing the visualization to.
+     * @return True if the operation was a success, false otherwise.
      */
-    public void visualize(OutputStream stream) throws IOException;
+    public boolean visualize(File target);
 
 }
