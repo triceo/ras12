@@ -53,14 +53,14 @@ public final class Itinerary implements ScheduleProducer {
 
     private final Train                       train;
 
-    private final AtomicBoolean               nodeEntryTimeCacheValid = new AtomicBoolean(false);
-    private SortedMap<BigDecimal, Node>       nodeEntryTimeCache      = null;
+    private final AtomicBoolean               scheduleCacheValid = new AtomicBoolean(false);
+    private SortedMap<BigDecimal, Node>       scheduleCache      = null;
     private final BigDecimal                  trainEntryTime;
-    private final List<Arc>                   arcProgression          = new LinkedList<Arc>();
-    private final Map<Node, Arc>              arcPerStartNode         = new HashMap<Node, Arc>();
-    private final Map<Node, WaitTime>         nodeWaitTimes           = new HashMap<Node, WaitTime>();
+    private final List<Arc>                   arcProgression     = new LinkedList<Arc>();
+    private final Map<Node, Arc>              arcPerStartNode    = new HashMap<Node, Arc>();
+    private final Map<Node, WaitTime>         nodeWaitTimes      = new HashMap<Node, WaitTime>();
     // FIXME only one window per node; multiple different windows with same node will get lost
-    private final Map<Node, Itinerary.Window> maintenances            = new HashMap<Node, Itinerary.Window>();
+    private final Map<Node, Itinerary.Window> maintenances       = new HashMap<Node, Itinerary.Window>();
 
     public Itinerary(final Route r, final Train t,
             final Collection<MaintenanceWindow> maintenanceWindows) {
@@ -90,7 +90,7 @@ public final class Itinerary implements ScheduleProducer {
             return null;
         }
         Node previousNode = null;
-        for (final SortedMap.Entry<BigDecimal, Node> entry : this.getNodeEntryTimes().entrySet()) {
+        for (final SortedMap.Entry<BigDecimal, Node> entry : this.getSchedule().entrySet()) {
             final int comparison = timeInMinutes.compareTo(entry.getKey());
             final Node currentNode = entry.getValue();
             if (comparison > 0) {
@@ -117,7 +117,7 @@ public final class Itinerary implements ScheduleProducer {
         occupiedArcs.add(leadingArc);
         // calculate how far are we into the leading arc
         final Node beginningOfLeadingArc = leadingArc.getStartingNode(this.getTrain());
-        final SortedMap<BigDecimal, Node> nodeEntryTimes = this.getNodeEntryTimes();
+        final SortedMap<BigDecimal, Node> nodeEntryTimes = this.getSchedule();
         BigDecimal timeArcEntered = null;
         for (final SortedMap.Entry<BigDecimal, Node> entry : nodeEntryTimes.entrySet()) {
             if (entry.getValue() == beginningOfLeadingArc) {
@@ -155,8 +155,14 @@ public final class Itinerary implements ScheduleProducer {
         return this.maintenances;
     }
 
-    private synchronized SortedMap<BigDecimal, Node> getNodeEntryTimes() {
-        if (!this.nodeEntryTimeCacheValid.get()) {
+    @Override
+    public Route getRoute() {
+        return this.route;
+    }
+
+    @Override
+    public synchronized SortedMap<BigDecimal, Node> getSchedule() {
+        if (!this.scheduleCacheValid.get()) {
             final SortedMap<BigDecimal, Node> adjusted = new TreeMap<BigDecimal, Node>();
             int i = 0;
             BigDecimal previousTime = BigDecimal.ZERO;
@@ -194,24 +200,10 @@ public final class Itinerary implements ScheduleProducer {
             }
             adjusted.put(previousTime.add(previousArc.getTravellingTimeInMinutes(this.getTrain())),
                     previousArc.getEndingNode(this.getTrain()));
-            this.nodeEntryTimeCache = Collections.unmodifiableSortedMap(adjusted);
-            this.nodeEntryTimeCacheValid.set(true);
+            this.scheduleCache = Collections.unmodifiableSortedMap(adjusted);
+            this.scheduleCacheValid.set(true);
         }
-        return this.nodeEntryTimeCache;
-    }
-
-    @Override
-    public Route getRoute() {
-        return this.route;
-    }
-
-    @Override
-    public SortedMap<BigDecimal, Node> getSchedule() {
-        final SortedMap<BigDecimal, Node> results = new TreeMap<BigDecimal, Node>();
-        for (final SortedMap.Entry<BigDecimal, Node> entry : this.getNodeEntryTimes().entrySet()) {
-            results.put(entry.getKey(), entry.getValue());
-        }
-        return results;
+        return this.scheduleCache;
     }
 
     @Override
@@ -221,8 +213,7 @@ public final class Itinerary implements ScheduleProducer {
                 .getScheduleAdherenceRequirements()) {
             final Node pointOnRoute = sa.getDestination();
             final BigDecimal expectedTime = BigDecimal.valueOf(sa.getTimeSinceStartOfWorld());
-            for (final SortedMap.Entry<BigDecimal, Node> entry : this.getNodeEntryTimes()
-                    .entrySet()) {
+            for (final SortedMap.Entry<BigDecimal, Node> entry : this.getSchedule().entrySet()) {
                 if (entry.getValue() == pointOnRoute) {
                     final BigDecimal difference = entry.getKey().subtract(expectedTime);
                     result.put(entry.getKey(), difference);
@@ -237,7 +228,7 @@ public final class Itinerary implements ScheduleProducer {
 
     @Override
     public BigDecimal getTimeSpentOnUnpreferredTracks(final BigDecimal time) {
-        final SortedMap<BigDecimal, Node> nodeEntryTimes = this.getNodeEntryTimes();
+        final SortedMap<BigDecimal, Node> nodeEntryTimes = this.getSchedule();
         final SortedMap<BigDecimal, Arc> arcEntryTimes = new TreeMap<BigDecimal, Arc>();
         for (final SortedMap.Entry<BigDecimal, Node> entry : nodeEntryTimes.entrySet()) {
             final Arc a = this.getArcPerStartingNode(entry.getValue());
@@ -289,7 +280,7 @@ public final class Itinerary implements ScheduleProducer {
     @Override
     public Map<BigDecimal, BigDecimal> getWantTimeDifference() {
         final Map<BigDecimal, BigDecimal> result = new HashMap<BigDecimal, BigDecimal>();
-        for (final SortedMap.Entry<BigDecimal, Node> entry : this.getNodeEntryTimes().entrySet()) {
+        for (final SortedMap.Entry<BigDecimal, Node> entry : this.getSchedule().entrySet()) {
             if (entry.getValue() == this.getTrain().getDestination()) {
                 final BigDecimal difference = entry.getKey().subtract(
                         BigDecimal.valueOf(this.getTrain().getWantTime()));
@@ -302,7 +293,7 @@ public final class Itinerary implements ScheduleProducer {
     @Override
     public void removeAllWaitTimes() {
         if (this.nodeWaitTimes.size() > 0) {
-            this.nodeEntryTimeCacheValid.set(false);
+            this.scheduleCacheValid.set(false);
         }
         this.nodeWaitTimes.clear();
     }
@@ -310,7 +301,7 @@ public final class Itinerary implements ScheduleProducer {
     @Override
     public WaitTime removeWaitTime(final Node n) {
         if (this.nodeWaitTimes.containsKey(n)) {
-            this.nodeEntryTimeCacheValid.set(false);
+            this.scheduleCacheValid.set(false);
             return this.nodeWaitTimes.remove(n);
         } else {
             return null;
@@ -323,7 +314,7 @@ public final class Itinerary implements ScheduleProducer {
             return this.removeWaitTime(n);
         }
         if (this.getRoute().getWaitPoints().contains(n)) {
-            this.nodeEntryTimeCacheValid.set(false);
+            this.scheduleCacheValid.set(false);
             final WaitTime previous = this.nodeWaitTimes.get(n);
             this.nodeWaitTimes.put(n, w);
             return previous;
@@ -338,7 +329,7 @@ public final class Itinerary implements ScheduleProducer {
         sb.append("Itinerary (");
         sb.append(this.getRoute().getLengthInMiles());
         sb.append(" miles): ");
-        for (final SortedMap.Entry<BigDecimal, Node> a : this.getNodeEntryTimes().entrySet()) {
+        for (final SortedMap.Entry<BigDecimal, Node> a : this.getSchedule().entrySet()) {
             sb.append(a.getValue().getId());
             sb.append("@");
             sb.append(a.getKey());
