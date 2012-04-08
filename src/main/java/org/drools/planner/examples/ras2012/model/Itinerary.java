@@ -291,6 +291,47 @@ public final class Itinerary implements ScheduleProducer {
     }
 
     @Override
+    public BigDecimal getTimeSpentOnUnpreferredTracks(final BigDecimal time) {
+        final SortedMap<BigDecimal, Node> nodeEntryTimes = this.getNodeEntryTimes();
+        final SortedMap<BigDecimal, Arc> arcEntryTimes = new TreeMap<BigDecimal, Arc>();
+        for (final SortedMap.Entry<BigDecimal, Node> entry : nodeEntryTimes.entrySet()) {
+            final Arc a = this.getArcPerStartingNode(entry.getValue());
+            if (a == null) {
+                continue;
+            }
+            arcEntryTimes.put(entry.getKey(), a);
+        }
+        BigDecimal spentTime = BigDecimal.ZERO;
+        final Arc leadingArc = this.getCurrentArc(time);
+        /*
+         * the time spent in between the nodes is calculated as a difference of their entry times; if we calculated just the
+         * time spent traversing the arc, we would have missed wait times and MOWs.
+         */
+        BigDecimal previousTimeOfEntry = BigDecimal.ZERO;
+        Arc previousArc = null;
+        for (final SortedMap.Entry<BigDecimal, Arc> entry : arcEntryTimes.entrySet()) {
+            final BigDecimal currentTimeOfEntry = entry.getKey();
+            final int comparison = currentTimeOfEntry.compareTo(time);
+            if (comparison > 0) {
+                // we're not interested in values that are beyong the specified time
+                continue;
+            }
+            final Arc a = entry.getValue();
+            if (previousArc != null && !previousArc.isPreferred(this.getTrain())) {
+                if (previousArc == leadingArc) {
+                    // include the time spent on this track so far
+                    spentTime = spentTime.add(time.subtract(currentTimeOfEntry));
+                }
+                // include the whole time spent on previous
+                spentTime = spentTime.add(currentTimeOfEntry.subtract(previousTimeOfEntry));
+            }
+            previousTimeOfEntry = currentTimeOfEntry;
+            previousArc = a;
+        }
+        return spentTime;
+    }
+
+    @Override
     public Train getTrain() {
         return this.train;
     }

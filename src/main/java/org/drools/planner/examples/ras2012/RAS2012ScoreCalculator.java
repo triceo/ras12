@@ -6,19 +6,19 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.drools.planner.examples.ras2012.interfaces.ScheduleProducer;
-
 import org.drools.planner.core.score.buildin.hardandsoft.DefaultHardAndSoftScore;
 import org.drools.planner.core.score.buildin.hardandsoft.HardAndSoftScore;
 import org.drools.planner.core.score.director.simple.SimpleScoreCalculator;
+import org.drools.planner.examples.ras2012.interfaces.ScheduleProducer;
 import org.drools.planner.examples.ras2012.model.Arc;
 import org.drools.planner.examples.ras2012.model.planner.ItineraryAssignment;
 import org.drools.planner.examples.ras2012.model.planner.TrainConflict;
 
 public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solution> {
 
-    private int roundToWhole(BigDecimal d) {
-        return d.setScale(0, BigDecimal.ROUND_UP).intValue();
+    private int roundMinutesToWholeHours(BigDecimal minutes) {
+        return minutes.divide(BigDecimal.valueOf(60), 10, BigDecimal.ROUND_HALF_EVEN)
+                .setScale(0, BigDecimal.ROUND_UP).intValue();
     }
 
     private boolean isInPlanningHorizon(BigDecimal time) {
@@ -39,12 +39,12 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
             }
             BigDecimal wantTimeDifference = entry.getValue();
             if (wantTimeDifference.signum() > 0) {
-                int hours = roundToWhole(wantTimeDifference);
+                int hours = roundMinutesToWholeHours(wantTimeDifference);
                 if (hours > 3) {
                     hourlyDifference = hours - 3;
                 }
             } else if (wantTimeDifference.signum() < 0) {
-                int hours = roundToWhole(wantTimeDifference);
+                int hours = roundMinutesToWholeHours(wantTimeDifference);
                 if (hours < -1) {
                     hourlyDifference = Math.abs(hours + 1);
                 }
@@ -66,12 +66,17 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
                 if (difference.signum() < 1) {
                     continue;
                 }
-                hourlyDifference = roundToWhole(difference);
+                hourlyDifference = roundMinutesToWholeHours(difference);
                 if (hourlyDifference > 2) {
                     penalty += (hourlyDifference - 2) * 200;
                 }
             }
         }
+        /*
+         * calculate time spent on unpreferred tracks
+         */
+        penalty += roundMinutesToWholeHours(i.getTimeSpentOnUnpreferredTracks(BigDecimal
+                .valueOf(RAS2012Solution.PLANNING_HORIZON_MINUTES))) * 50;
         return penalty;
     }
 

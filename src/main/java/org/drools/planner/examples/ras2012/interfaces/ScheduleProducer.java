@@ -80,6 +80,14 @@ public interface ScheduleProducer {
     public Map<BigDecimal, BigDecimal> getScheduleAdherenceStatus();
 
     /**
+     * Retrieve the time in minutes that the train has spent on unpreferred tracks.
+     * 
+     * @param time Time in minutes.
+     * @return Number of minutes spent on unpreferred tracks.
+     */
+    public BigDecimal getTimeSpentOnUnpreferredTracks(BigDecimal time);
+
+    /**
      * Retrieve the train that this itinerary relates to.
      * 
      * @return The train, never null.
