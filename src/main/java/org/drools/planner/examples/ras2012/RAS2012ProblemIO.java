@@ -160,7 +160,7 @@ public class RAS2012ProblemIO implements ProblemIO {
                 .getNodeDestination()));
         // just checking; make sure that the direction and target depot match
         final String wantDepot = RAS2012ProblemIO.tokenToString(t.getWantTime().get(0));
-        if (wantDepot.equals("WEST") && !isWestbound || wantDepot.equals("EAST") && isWestbound) {
+        if ((wantDepot.equals("WEST") && !isWestbound) || (wantDepot.equals("EAST") && isWestbound)) {
             throw new IllegalStateException("Train is headed away from the target destination!");
         }
         // and now assemble schedules
