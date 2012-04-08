@@ -34,11 +34,15 @@ public class Route implements Comparable<Route>, Visualizable {
         return Route.idGenerator.getAndSet(0);
     }
 
-    private final List<Arc> parts = new LinkedList<Arc>();
+    private final List<Arc> parts                   = new LinkedList<Arc>();
 
     private final Direction direction;
 
-    private final int       id    = Route.idGenerator.getAndIncrement();
+    private final int       id                      = Route.idGenerator.getAndIncrement();
+
+    private int             numberOfPreferredTracks = -1;
+
+    private BigDecimal      travellingTimeInMinutes = null;
 
     public Route(final Direction d) {
         this.direction = d;
@@ -184,13 +188,16 @@ public class Route implements Comparable<Route>, Visualizable {
     }
 
     private int getNumberOfPreferredTracks() {
-        int i = 0;
-        for (final Arc a : this.parts) {
-            if (a.isPreferred(this)) {
-                i++;
+        if (this.numberOfPreferredTracks == -1) {
+            int i = 0;
+            for (final Arc a : this.parts) {
+                if (a.isPreferred(this)) {
+                    i++;
+                }
             }
+            this.numberOfPreferredTracks = i;
         }
-        return i;
+        return this.numberOfPreferredTracks;
     }
 
     public Arc getTerminalArc() {
@@ -205,16 +212,19 @@ public class Route implements Comparable<Route>, Visualizable {
     }
 
     private BigDecimal getTravellingTimeInMinutes() {
-        BigDecimal result = BigDecimal.ZERO;
-        for (final Arc a : this.parts) {
-            final BigDecimal length = a.getLengthInMiles();
-            final int speed = this.direction == Direction.EASTBOUND ? a.getTrackType()
-                    .getSpeedEastbound() : a.getTrackType().getSpeedWestbound();
-            final BigDecimal timeInHours = length.divide(BigDecimal.valueOf(speed), 2,
-                    BigDecimal.ROUND_HALF_DOWN);
-            result = result.add(timeInHours.multiply(BigDecimal.valueOf(60)));
+        if (this.travellingTimeInMinutes == null) {
+            BigDecimal result = BigDecimal.ZERO;
+            for (final Arc a : this.parts) {
+                final BigDecimal length = a.getLengthInMiles();
+                final int speed = this.direction == Direction.EASTBOUND ? a.getTrackType()
+                        .getSpeedEastbound() : a.getTrackType().getSpeedWestbound();
+                final BigDecimal timeInHours = length.divide(BigDecimal.valueOf(speed), 2,
+                        BigDecimal.ROUND_HALF_DOWN);
+                result = result.add(timeInHours.multiply(BigDecimal.valueOf(60)));
+            }
+            this.travellingTimeInMinutes = result;
         }
-        return result;
+        return this.travellingTimeInMinutes;
     }
 
     public Collection<Node> getWaitPoints() {
