@@ -37,7 +37,7 @@ public class Itinerary1Test extends AbstractItineraryTest {
     @Override
     protected RAS2012Solution fetchSolution() {
         return new RAS2012ProblemIO().read(new File(
-                "src/main/resources/org/drools/planner/examples/ras2012/RAS DATA SET 1.txt"));
+                "src/main/resources/org/drools/planner/examples/ras2012/RDS1.txt"));
     }
 
     @Override
