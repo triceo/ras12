@@ -186,15 +186,15 @@ public class Arc {
         return this.westNode;
     }
 
-    public boolean isPreferred(Train t) {
-        return this.isPreferred(t.isEastbound() ? Direction.EASTBOUND : Direction.WESTBOUND);
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (this.id == null ? 0 : this.id.hashCode());
+        return result;
     }
 
-    public boolean isPreferred(Route r) {
-        return this.isPreferred(r.getDirection());
-    }
-
-    private boolean isPreferred(Direction d) {
+    private boolean isPreferred(final Direction d) {
         if (this.trackType == TrackType.MAIN_0) {
             return true;
         } else if (d == Direction.EASTBOUND && this.trackType == TrackType.MAIN_2) {
@@ -206,12 +206,12 @@ public class Arc {
         }
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (this.id == null ? 0 : this.id.hashCode());
-        return result;
+    public boolean isPreferred(final Route r) {
+        return this.isPreferred(r.getDirection());
+    }
+
+    public boolean isPreferred(final Train t) {
+        return this.isPreferred(t.isEastbound() ? Direction.EASTBOUND : Direction.WESTBOUND);
     }
 
     @Override
