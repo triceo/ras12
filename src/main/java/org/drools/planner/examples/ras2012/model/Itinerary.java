@@ -85,15 +85,14 @@ public final class Itinerary implements ScheduleProducer {
         return this.arcPerStartNode.get(n);
     }
 
-    @Override
-    public Arc getCurrentArc(final BigDecimal timeInMinutes) {
+    protected Arc getCurrentArc(final BigDecimal timeInMinutes) {
         if (timeInMinutes.compareTo(this.trainEntryTime) == -1) {
             return null;
         }
         Node previousNode = null;
         for (final SortedMap.Entry<BigDecimal, Node> entry : this.getNodeEntryTimes().entrySet()) {
             final int comparison = timeInMinutes.compareTo(entry.getKey());
-            Node currentNode = entry.getValue();
+            final Node currentNode = entry.getValue();
             if (comparison > 0) {
                 previousNode = currentNode;
                 continue;

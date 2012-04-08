@@ -156,6 +156,10 @@ public abstract class AbstractItineraryTest {
         return this.testedRoutes;
     }
 
+    /**
+     * Technically we shouldn't be testing getCurrentArc() as it's not a public API. However, since this method is absolutely
+     * crucial to the workings of Itinerary, we make an exception here.
+     */
     @Test
     public void testGetCurrentArc() {
         for (final Itinerary i : this.getItineraries()) {

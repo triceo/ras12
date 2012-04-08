@@ -24,14 +24,6 @@ public interface ScheduleProducer {
     public static final int BIGDECIMAL_ROUNDING = BigDecimal.ROUND_DOWN;
 
     /**
-     * Get the arc that the train is occupying at a given point in time.
-     * 
-     * @param time Number in minutes, specifying the time since the beginning of world.
-     * @return The arc where the head of the locomotive is located. When a train isn't en route yet or already, return null.
-     */
-    public Arc getCurrentArc(BigDecimal time);
-
-    /**
      * Get every arc that the train is occupying at a given length of time. Arc is either occupied or free, there is no concept
      * of partially-occupied.
      * 
