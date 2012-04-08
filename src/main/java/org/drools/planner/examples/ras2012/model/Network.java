@@ -70,8 +70,6 @@ public class Network implements Visualizable {
     /**
      * Some of the tests depend on the exact ordering of routes produced by this method.
      * 
-     * FIXME test for ordering of this method
-     * 
      * @param r
      * @param connections
      * @param startingNode

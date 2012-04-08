@@ -15,6 +15,7 @@ import java.util.TreeSet;
 import org.drools.planner.examples.ras2012.RAS2012Solution;
 import org.drools.planner.examples.ras2012.model.Train.TrainType;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public abstract class AbstractItineraryTest {
@@ -156,6 +157,12 @@ public abstract class AbstractItineraryTest {
         return this.testedRoutes;
     }
 
+    @Ignore
+    @Test
+    public void testGetCurrentlyOccupiedArcs() {
+        Assert.fail("Not yet implemented"); // TODO
+    }
+
     /**
      * Technically we shouldn't be testing getLeadingArc() as it's not a public API. However, since this method is absolutely
      * crucial to the workings of Itinerary, we make an exception here.
@@ -205,23 +212,15 @@ public abstract class AbstractItineraryTest {
         }
     }
 
-    @Test
-    public void testGetCurrentlyOccupiedArcs() {
-        Assert.fail("Not yet implemented"); // TODO
-    }
-
+    @Ignore
     @Test
     public void testGetSchedule() {
         Assert.fail("Not yet implemented"); // TODO
     }
 
+    @Ignore
     @Test
-    public void testRemoveWaitTime() {
-        Assert.fail("Not yet implemented"); // TODO
-    }
-
-    @Test
-    public void testSetWaitTime() {
+    public void testWaitTimes() {
         Assert.fail("Not yet implemented"); // TODO
     }
 

@@ -16,7 +16,7 @@ public class TrainTest {
     @Test
     @Ignore
     public void testConstructor() {
-        // FIXME implement me
+        // TODO
     }
 
     @Test
@@ -36,13 +36,13 @@ public class TrainTest {
     @Test
     @Ignore
     public void testEqualsObject() {
-        // FIXME implement me
+        // TODO
     }
 
     @Test
     @Ignore
     public void testGetMaximumSpeed() {
-        // FIXME implement me
+        // TODO
     }
 
     @Test

@@ -23,7 +23,6 @@ public class Train implements Comparable<Train> {
             this.delayPenalty = delayPenalty;
         }
 
-        // FIXME would be cool if this was rule-based
         public boolean adhereToSchedule() {
             return this.adhereToSchedule;
         }
@@ -100,7 +99,7 @@ public class Train implements Comparable<Train> {
      * Trains are compared by their names as strings, sorted in reverse order.
      * 
      * @return 0 If the names are equal, 1 when this train's name is closer to the beginning of the alphabet than the other's,
-     *         -1 otherwise. FIXME test this
+     *         -1 otherwise.
      */
     @Override
     public int compareTo(final Train arg0) {
@@ -141,7 +140,6 @@ public class Train implements Comparable<Train> {
         return this.length;
     }
 
-    // FIXME would be cool if this was rule-based
     public Integer getMaximumSpeed(final TrackType t) {
         final int coreSpeed = this.isWestbound() ? t.getSpeedWestbound() : t.getSpeedEastbound();
         if (t.isMainTrack()) {
@@ -167,7 +165,6 @@ public class Train implements Comparable<Train> {
         return this.scheduleAdherenceRequirements;
     }
 
-    // FIXME cache this
     public TrainType getType() {
         final String firstCharOfName = this.name.substring(0, 1);
         switch (firstCharOfName) {

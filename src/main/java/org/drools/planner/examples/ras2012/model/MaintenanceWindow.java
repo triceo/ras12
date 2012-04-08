@@ -7,7 +7,6 @@ public class MaintenanceWindow {
     private final int  startingMinute;
     private final int  endingMinute;
 
-    // FIXME just in case; make sure start/end are in ascending order
     public MaintenanceWindow(final Node westNode, final Node eastNode, final int time1,
             final int time2) {
         if (eastNode == null || westNode == null) {

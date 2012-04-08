@@ -59,7 +59,6 @@ public class Route implements Comparable<Route>, Visualizable {
         }
     }
 
-    // FIXME add tests for this
     @Override
     public int compareTo(final Route o) {
         if (this.direction == o.direction) { // less tracks = better

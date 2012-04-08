@@ -9,7 +9,7 @@ import org.drools.planner.examples.ras2012.model.Route.Direction;
 
 public class Arc {
 
-    // FIXME rework so that speeds aren't static
+    // TODO rework so that speeds aren't static
     public enum TrackType {
 
         MAIN_0, MAIN_1, MAIN_2, SWITCH(false), SIDING(false), CROSSOVER(false);
@@ -130,7 +130,6 @@ public class Arc {
         return this.eastNode;
     }
 
-    // FIXME test this
     public Node getEndingNode(final Route r) {
         if (r.getDirection() == Direction.EASTBOUND) {
             return this.eastNode;
@@ -139,7 +138,6 @@ public class Arc {
         }
     }
 
-    // FIXME test this
     public Node getEndingNode(final Train t) {
         if (t.isEastbound()) {
             return this.eastNode;
@@ -152,7 +150,6 @@ public class Arc {
         return this.lengthInMiles;
     }
 
-    // FIXME test this
     public Node getStartingNode(final Route r) {
         if (r.getDirection() == Direction.EASTBOUND) {
             return this.westNode;
@@ -161,7 +158,6 @@ public class Arc {
         }
     }
 
-    // FIXME test this
     public Node getStartingNode(final Train t) {
         if (t.isEastbound()) {
             return this.westNode;
@@ -174,7 +170,6 @@ public class Arc {
         return this.trackType;
     }
 
-    // FIXME test this
     public BigDecimal getTravellingTimeInMinutes(final Train t) {
         final BigDecimal milesPerHour = BigDecimal.valueOf(t.getMaximumSpeed(this.getTrackType()));
         final BigDecimal hours = this.getLengthInMiles().divide(milesPerHour, 5,
