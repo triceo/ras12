@@ -32,7 +32,7 @@ public class App {
 
         public RouteVisualizer(final Route r, final File parentFolder) {
             this.route = r;
-            this.file = new File(parentFolder, r.getId() + ".png");
+            this.file = new File(parentFolder, "route" + r.getId() + ".png");
         }
 
         @Override
