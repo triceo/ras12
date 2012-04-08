@@ -74,53 +74,20 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
         /*
          * want time penalties are only counted when the train arrives on hour before or three hours after the want time
          */
-        int hourlyDifference = 0;
-        final Map<BigDecimal, BigDecimal> wantTimeDifferences = i.getWantTimeDifference();
-        for (final Map.Entry<BigDecimal, BigDecimal> entry : wantTimeDifferences.entrySet()) {
-            if (!this.isInPlanningHorizon(entry.getKey())) {
-                // difference occured past the planning horizon; we don't care about it
-                continue;
-            }
-            final BigDecimal wantTimeDifference = entry.getValue();
-            if (wantTimeDifference.signum() > 0) {
-                final int hours = this.roundMinutesToWholeHours(wantTimeDifference);
-                if (hours > 3) {
-                    hourlyDifference = hours - 3;
-                }
-            } else if (wantTimeDifference.signum() < 0) {
-                final int hours = this.roundMinutesToWholeHours(wantTimeDifference);
-                if (hours < -1) {
-                    hourlyDifference = Math.abs(hours + 1);
-                }
-            }
-            penalty += hourlyDifference * 75;
-        }
+        penalty += this.getWantTimePenalty(i, solution);
         /*
          * calculate hot schedule adherence penalties, given that the train needs to adhere and that the delay is more than 2
          * hours
          */
-        if (i.getTrain().getType().adhereToSchedule()) {
-            final Map<BigDecimal, BigDecimal> sa = i.getScheduleAdherenceStatus();
-            for (final Map.Entry<BigDecimal, BigDecimal> entry : sa.entrySet()) {
-                if (!this.isInPlanningHorizon(entry.getKey())) {
-                    // difference occured past the planning horizon; we don't care about it
-                    continue;
-                }
-                final BigDecimal difference = entry.getValue();
-                if (difference.signum() < 1) {
-                    continue;
-                }
-                hourlyDifference = this.roundMinutesToWholeHours(difference);
-                if (hourlyDifference > 2) {
-                    penalty += (hourlyDifference - 2) * 200;
-                }
-            }
-        }
+        penalty += this.getScheduleAdherencePenalty(i, solution);
         /*
          * calculate time spent on unpreferred tracks
          */
         penalty += this.roundMinutesToWholeHours(i.getTimeSpentOnUnpreferredTracks(BigDecimal
                 .valueOf(RAS2012Solution.PLANNING_HORIZON_MINUTES))) * 50;
+        /*
+         * calculate penalty for delays on the route
+         */
         penalty += this.getDelayPenalty(i, solution);
         return penalty;
     }
@@ -143,6 +110,54 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
                             + " was negative! The optimal route probably hit a maintenance window that the actual route avoided.");
         }
         return Math.max(0, hoursDelay) * i.getTrain().getType().getDelayPenalty();
+    }
+
+    private int getScheduleAdherencePenalty(final ScheduleProducer i, final RAS2012Solution solution) {
+        int penalty = 0;
+        if (i.getTrain().getType().adhereToSchedule()) {
+            final Map<BigDecimal, BigDecimal> sa = i.getScheduleAdherenceStatus();
+            for (final Map.Entry<BigDecimal, BigDecimal> entry : sa.entrySet()) {
+                if (!this.isInPlanningHorizon(entry.getKey())) {
+                    // difference occured past the planning horizon; we don't care about it
+                    continue;
+                }
+                final BigDecimal difference = entry.getValue();
+                if (difference.signum() < 1) {
+                    continue;
+                }
+                final int hourlyDifference = this.roundMinutesToWholeHours(difference);
+                if (hourlyDifference > 2) {
+                    penalty += (hourlyDifference - 2) * 200;
+                }
+            }
+        }
+        return penalty;
+    }
+
+    private int getWantTimePenalty(final ScheduleProducer i, final RAS2012Solution solution) {
+        int penalty = 0;
+        int hourlyDifference = 0;
+        final Map<BigDecimal, BigDecimal> wantTimeDifferences = i.getWantTimeDifference();
+        for (final Map.Entry<BigDecimal, BigDecimal> entry : wantTimeDifferences.entrySet()) {
+            if (!this.isInPlanningHorizon(entry.getKey())) {
+                // difference occured past the planning horizon; we don't care about it
+                continue;
+            }
+            final BigDecimal wantTimeDifference = entry.getValue();
+            if (wantTimeDifference.signum() > 0) {
+                final int hours = this.roundMinutesToWholeHours(wantTimeDifference);
+                if (hours > 3) {
+                    hourlyDifference = hours - 3;
+                }
+            } else if (wantTimeDifference.signum() < 0) {
+                final int hours = this.roundMinutesToWholeHours(wantTimeDifference);
+                if (hours < -1) {
+                    hourlyDifference = Math.abs(hours + 1);
+                }
+            }
+            penalty += hourlyDifference * 75;
+        }
+        return penalty;
     }
 
     private boolean isInPlanningHorizon(final BigDecimal time) {
