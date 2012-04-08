@@ -214,6 +214,11 @@ public abstract class AbstractItineraryTest {
             }
             // and now validate against reality
             for (final Map.Entry<BigDecimal, Arc> entry : expecteds.entrySet()) {
+                if (entry.getKey().compareTo(
+                        BigDecimal.valueOf(RAS2012Solution.PLANNING_HORIZON_MINUTES)) > 0) {
+                    // don't measure beyond the planning horizon
+                    break;
+                }
                 Assert.assertEquals("Train " + t.getName() + " on route " + r.getId() + " at time "
                         + entry.getKey() + " isn't where it's supposed to be.", entry.getValue(),
                         i.getCurrentArc(entry.getKey()));
@@ -281,6 +286,11 @@ public abstract class AbstractItineraryTest {
                 BigDecimal expected = entry.getValue()
                         .setScale(ItineraryInterface.BIGDECIMAL_SCALE,
                                 ItineraryInterface.BIGDECIMAL_ROUNDING);
+                if (entry.getKey().compareTo(
+                        BigDecimal.valueOf(RAS2012Solution.PLANNING_HORIZON_MINUTES)) > 0) {
+                    // don't measure beyond the planning horizon
+                    break;
+                }
                 BigDecimal actual = i.getDistanceTravelled(entry.getKey());
                 Assert.assertEquals("Train " + t.getName() + " on route " + r.getId() + " at time "
                         + entry.getKey() + " isn't where it's supposed to be.",
