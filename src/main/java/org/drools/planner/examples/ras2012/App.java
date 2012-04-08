@@ -94,14 +94,15 @@ public class App {
                                                                     .getRuntime()
                                                                     .availableProcessors() - 1);
 
-    private static final Logger          logger             = LoggerFactory.getLogger(App.class);
-
+    @SuppressWarnings("unused")
     public static void main(final String[] args) throws FileNotFoundException, IOException {
         // read solution
         final File f = new File("src/main/resources/org/drools/planner/examples/ras2012/RDS1.txt");
         final RAS2012Solution sol = new RAS2012ProblemIO().read(f);
-        final Future<Boolean> visualizationSuccess = App.visualizerExecutor
-                .submit(new VisualizationController(f, sol.getNetwork()));
+        if (false) {
+            final Future<Boolean> visualizationSuccess = App.visualizerExecutor
+                    .submit(new VisualizationController(f, sol.getNetwork()));
+        }
         // and now start solving
         final XmlSolverFactory configurer = new XmlSolverFactory();
         configurer.configure(App.class.getResourceAsStream("/solverConfig.xml"));
@@ -109,9 +110,5 @@ public class App {
         solver.setPlanningProblem(sol);
         solver.solve();
         System.out.println(solver.getBestSolution());
-        if (!visualizationSuccess.isDone()) {
-            App.logger.info("Waiting for visualizations to finish.");
-        }
-
     }
 }
