@@ -111,7 +111,6 @@ public class App {
         System.out.println(solver.getBestSolution());
         if (!visualizationSuccess.isDone()) {
             App.logger.info("Waiting for visualizations to finish.");
-            System.out.println("Waiting");
         }
 
     }
