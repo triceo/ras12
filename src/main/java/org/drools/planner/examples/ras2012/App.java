@@ -85,6 +85,7 @@ public class App {
             // visualize the network
             success = this.network.visualize(new File(parentFolder, "network.png"));
             VisualizationController.logger.info("Finished visualization work.");
+            visualizerExecutor.shutdownNow();
             return success;
         }
     }
@@ -110,6 +111,7 @@ public class App {
         System.out.println(solver.getBestSolution());
         if (!visualizationSuccess.isDone()) {
             App.logger.info("Waiting for visualizations to finish.");
+            System.out.println("Waiting");
         }
 
     }
