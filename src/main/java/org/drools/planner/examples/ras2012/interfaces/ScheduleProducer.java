@@ -24,13 +24,6 @@ public interface ScheduleProducer {
     public static final int BIGDECIMAL_ROUNDING = BigDecimal.ROUND_DOWN;
 
     /**
-     * Count how many times a train will have to stop on its way to the destination.
-     * 
-     * @return Number of stops.
-     */
-    public int countHalts();
-
-    /**
      * Get the arc that the train is occupying at a given point in time.
      * 
      * @param time Number in minutes, specifying the time since the beginning of world.

@@ -62,8 +62,6 @@ public final class Itinerary implements ScheduleProducer {
     // FIXME only one window per node; multiple different windows with same node will get lost
     private final Map<Node, Itinerary.Window> maintenances            = new HashMap<Node, Itinerary.Window>();
 
-    private int                               numHaltsFromLastNodeEntryCalculation;
-
     public Itinerary(final Route r, final Train t,
             final Collection<MaintenanceWindow> maintenanceWindows) {
         this.route = r;
@@ -83,13 +81,6 @@ public final class Itinerary implements ScheduleProducer {
         }
     }
 
-    // FIXME dirty, ugly, terrible
-    @Override
-    public synchronized int countHalts() {
-        this.getNodeEntryTimes();
-        return this.numHaltsFromLastNodeEntryCalculation;
-    }
-
     private Arc getArcPerStartingNode(final Node n) {
         return this.arcPerStartNode.get(n);
     }
@@ -100,13 +91,14 @@ public final class Itinerary implements ScheduleProducer {
             return null;
         }
         Node previousNode = null;
-        for (final SortedMap.Entry<BigDecimal, Node> e : this.getNodeEntryTimes().entrySet()) {
-            final int comparison = timeInMinutes.compareTo(e.getKey());
+        for (final SortedMap.Entry<BigDecimal, Node> entry : this.getNodeEntryTimes().entrySet()) {
+            final int comparison = timeInMinutes.compareTo(entry.getKey());
+            Node currentNode = entry.getValue();
             if (comparison > 0) {
-                previousNode = e.getValue();
+                previousNode = currentNode;
                 continue;
             } else if (comparison == 0) {
-                return this.getArcPerStartingNode(e.getValue());
+                return this.getArcPerStartingNode(currentNode);
             } else {
                 return this.getArcPerStartingNode(previousNode);
             }
@@ -204,7 +196,6 @@ public final class Itinerary implements ScheduleProducer {
 
     private synchronized SortedMap<BigDecimal, Node> getNodeEntryTimes() {
         if (!this.nodeEntryTimeCacheValid.get()) {
-            int halts = 0;
             final SortedMap<BigDecimal, Node> adjusted = new TreeMap<BigDecimal, Node>();
             int i = 0;
             BigDecimal previousTime = BigDecimal.ZERO;
@@ -222,10 +213,7 @@ public final class Itinerary implements ScheduleProducer {
                 // now adjust for node wait time, should there be any
                 final Node n = currentArc.getStartingNode(this.getTrain());
                 final WaitTime wt = this.nodeWaitTimes.get(n);
-                boolean isHalted = false;
                 if (wt != null) {
-                    isHalted = true;
-                    halts++;
                     time = time.add(BigDecimal.valueOf(wt.getMinutesWaitFor()));
                 }
                 // check for maintenance windows
@@ -233,9 +221,6 @@ public final class Itinerary implements ScheduleProducer {
                     // there is a maintenance registered for the next node
                     final Itinerary.Window w = this.maintenances.get(n);
                     if (w.isInside(time)) {
-                        if (!isHalted) {
-                            halts++;
-                        }
                         // the maintenance is ongoing, we have to wait
                         time = w.getEnd();
                     }
@@ -248,7 +233,6 @@ public final class Itinerary implements ScheduleProducer {
             }
             adjusted.put(previousTime.add(previousArc.getTravellingTimeInMinutes(this.getTrain())),
                     previousArc.getEndingNode(this.getTrain()));
-            this.numHaltsFromLastNodeEntryCalculation = halts;
             this.nodeEntryTimeCache = Collections.unmodifiableSortedMap(adjusted);
             this.nodeEntryTimeCacheValid.set(true);
         }
@@ -389,13 +373,10 @@ public final class Itinerary implements ScheduleProducer {
 
     @Override
     public String toString() {
-        final int halts = this.numHaltsFromLastNodeEntryCalculation;
         final StringBuilder sb = new StringBuilder();
         sb.append("Itinerary (");
         sb.append(this.getRoute().getLengthInMiles());
-        sb.append(" miles, ");
-        sb.append(halts);
-        sb.append(" halts): ");
+        sb.append(" miles): ");
         for (final SortedMap.Entry<BigDecimal, Node> a : this.getNodeEntryTimes().entrySet()) {
             sb.append(a.getValue().getId());
             sb.append("@");

@@ -61,27 +61,6 @@ public class Itinerary1Test extends AbstractItineraryTest {
     }
 
     @Override
-    protected Map<Itinerary, Integer> getHaltInformation() {
-        final Map<Itinerary, Integer> results = new HashMap<Itinerary, Integer>();
-        results.put(this.getItinerary(Itinerary1Test.TRAIN1, Itinerary1Test.TRAIN1_ROUTE0), 0);
-        results.put(this.getItinerary(Itinerary1Test.TRAIN1, Itinerary1Test.TRAIN1_ROUTE1), 0);
-        results.put(this.getItinerary(Itinerary1Test.TRAIN2, Itinerary1Test.TRAIN2_ROUTE0), 0);
-        results.put(this.getItinerary(Itinerary1Test.TRAIN2, Itinerary1Test.TRAIN2_ROUTE1), 0);
-        results.put(this.getItinerary(Itinerary1Test.TRAIN3, Itinerary1Test.TRAIN3_ROUTE0), 0);
-        results.put(this.getItinerary(Itinerary1Test.TRAIN3, Itinerary1Test.TRAIN3_ROUTE1), 0);
-        results.put(this.getItinerary(Itinerary1Test.TRAIN4, Itinerary1Test.TRAIN4_ROUTE0), 0);
-        results.put(this.getItinerary(Itinerary1Test.TRAIN4, Itinerary1Test.TRAIN4_ROUTE1), 0);
-        results.put(this.getItinerary(Itinerary1Test.TRAIN5, Itinerary1Test.TRAIN5_ROUTE0), 0);
-        results.put(this.getItinerary(Itinerary1Test.TRAIN5, Itinerary1Test.TRAIN5_ROUTE1), 0);
-        results.put(this.getItinerary(Itinerary1Test.TRAIN6, Itinerary1Test.TRAIN6_ROUTE0), 1);
-        results.put(this.getItinerary(Itinerary1Test.TRAIN6, Itinerary1Test.TRAIN6_ROUTE1), 0);
-        results.put(this.getItinerary(Itinerary1Test.TRAIN7, Itinerary1Test.TRAIN7_ROUTE0), 0);
-        results.put(this.getItinerary(Itinerary1Test.TRAIN7, Itinerary1Test.TRAIN7_ROUTE1), 0);
-        return results;
-
-    }
-
-    @Override
     protected List<Itinerary> getItineraries() {
         final List<Itinerary> results = new LinkedList<Itinerary>();
         results.add(this.getItinerary(Itinerary1Test.TRAIN1, Itinerary1Test.TRAIN1_ROUTE0));

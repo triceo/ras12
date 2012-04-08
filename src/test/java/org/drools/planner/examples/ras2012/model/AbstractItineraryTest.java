@@ -79,8 +79,6 @@ public abstract class AbstractItineraryTest {
      */
     protected abstract Map<String, int[]> getExpectedValues();
 
-    protected abstract Map<Itinerary, Integer> getHaltInformation();
-
     protected abstract List<Itinerary> getItineraries();
 
     protected Itinerary getItinerary(final String trainName, final int routeId) {
@@ -157,18 +155,6 @@ public abstract class AbstractItineraryTest {
             }
         }
         return this.testedRoutes;
-    }
-
-    @Test
-    public void testCountHalts() {
-        for (final Map.Entry<Itinerary, Integer> values : this.getHaltInformation().entrySet()) {
-            final Itinerary i = values.getKey();
-            final int expectedValue = values.getValue();
-            Assert.assertEquals("Train " + i.getTrain().getName() + " on route "
-                    + i.getRoute().getId() + " has been halted invalid amount of times.",
-                    expectedValue, i.countHalts());
-        }
-
     }
 
     @Test
