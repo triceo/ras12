@@ -157,11 +157,11 @@ public abstract class AbstractItineraryTest {
     }
 
     /**
-     * Technically we shouldn't be testing getCurrentArc() as it's not a public API. However, since this method is absolutely
+     * Technically we shouldn't be testing getLeadingArc() as it's not a public API. However, since this method is absolutely
      * crucial to the workings of Itinerary, we make an exception here.
      */
     @Test
-    public void testGetCurrentArc() {
+    public void testGetLeadingArc() {
         for (final Itinerary i : this.getItineraries()) {
             // assemble a list of "checkpoint" where the train should be at which times
             final Map<BigDecimal, Arc> expecteds = new HashMap<BigDecimal, Arc>();
@@ -200,7 +200,7 @@ public abstract class AbstractItineraryTest {
                 }
                 Assert.assertEquals("Train " + t.getName() + " on route " + r.getId() + " at time "
                         + entry.getKey() + " isn't where it's supposed to be.", entry.getValue(),
-                        i.getCurrentArc(entry.getKey()));
+                        i.getLeadingArc(entry.getKey()));
             }
         }
     }

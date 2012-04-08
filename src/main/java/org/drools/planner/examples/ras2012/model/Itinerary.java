@@ -62,6 +62,8 @@ public final class Itinerary implements ScheduleProducer {
     // FIXME only one window per node; multiple different windows with same node will get lost
     private final Map<Node, Itinerary.Window> maintenances       = new HashMap<Node, Itinerary.Window>();
 
+    private final Map<BigDecimal, Arc>        currentArcs        = new HashMap<BigDecimal, Arc>();
+
     public Itinerary(final Route r, final Train t,
             final Collection<MaintenanceWindow> maintenanceWindows) {
         this.route = r;
@@ -85,29 +87,9 @@ public final class Itinerary implements ScheduleProducer {
         return this.arcPerStartNode.get(n);
     }
 
-    protected Arc getCurrentArc(final BigDecimal timeInMinutes) {
-        if (timeInMinutes.compareTo(this.trainEntryTime) == -1) {
-            return null;
-        }
-        Node previousNode = null;
-        for (final SortedMap.Entry<BigDecimal, Node> entry : this.getSchedule().entrySet()) {
-            final int comparison = timeInMinutes.compareTo(entry.getKey());
-            final Node currentNode = entry.getValue();
-            if (comparison > 0) {
-                previousNode = currentNode;
-                continue;
-            } else if (comparison == 0) {
-                return this.getArcPerStartingNode(currentNode);
-            } else {
-                return this.getArcPerStartingNode(previousNode);
-            }
-        }
-        return null;
-    }
-
     @Override
     public Collection<Arc> getCurrentlyOccupiedArcs(final BigDecimal timeInMinutes) {
-        final Arc leadingArc = this.getCurrentArc(timeInMinutes);
+        final Arc leadingArc = this.getLeadingArc(timeInMinutes);
         if (leadingArc == null) {
             // train not in the network
             // FIXME train should leave the network gradually, not at once when it reaches destination
@@ -149,6 +131,36 @@ public final class Itinerary implements ScheduleProducer {
             currentlyProcessedArc = previousArc;
         }
         return occupiedArcs;
+    }
+
+    protected Arc getLeadingArc(final BigDecimal timeInMinutes) {
+        if (!this.scheduleCacheValid.get()) {
+            this.currentArcs.clear();
+        }
+        if (!this.currentArcs.containsKey(timeInMinutes)) {
+            this.currentArcs.put(timeInMinutes, this.getLeadingArcUncached(timeInMinutes));
+        }
+        return this.currentArcs.get(timeInMinutes);
+    }
+
+    private Arc getLeadingArcUncached(final BigDecimal timeInMinutes) {
+        if (timeInMinutes.compareTo(this.trainEntryTime) == -1) {
+            return null;
+        }
+        Node previousNode = null;
+        for (final SortedMap.Entry<BigDecimal, Node> entry : this.getSchedule().entrySet()) {
+            final int comparison = timeInMinutes.compareTo(entry.getKey());
+            final Node currentNode = entry.getValue();
+            if (comparison > 0) {
+                previousNode = currentNode;
+                continue;
+            } else if (comparison == 0) {
+                return this.getArcPerStartingNode(currentNode);
+            } else {
+                return this.getArcPerStartingNode(previousNode);
+            }
+        }
+        return null;
     }
 
     public Map<Node, Itinerary.Window> getMaintenances() {
@@ -238,7 +250,7 @@ public final class Itinerary implements ScheduleProducer {
             arcEntryTimes.put(entry.getKey(), a);
         }
         BigDecimal spentTime = BigDecimal.ZERO;
-        final Arc leadingArc = this.getCurrentArc(time);
+        final Arc leadingArc = this.getLeadingArc(time);
         /*
          * the time spent in between the nodes is calculated as a difference of their entry times; if we calculated just the
          * time spent traversing the arc, we would have missed wait times and MOWs.
