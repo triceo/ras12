@@ -35,7 +35,7 @@ public class Network implements Visualizable {
     private final Collection<Route>                     eastboundRoutes;
 
     public Network(final Collection<Node> nodes, final Collection<Arc> edges) {
-        this.visualizer = new GraphVisualizer(nodes, edges);
+        this.visualizer = new GraphVisualizer(edges);
         for (final Node n : nodes) {
             this.nodes.put(n.getId(), n);
         }

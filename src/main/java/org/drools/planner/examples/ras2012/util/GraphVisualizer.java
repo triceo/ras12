@@ -63,23 +63,20 @@ public class GraphVisualizer {
 
     }
 
-    private static final int       GRAPH_WIDTH  = 1920;
+    private static final int      GRAPH_WIDTH  = 1920;
 
-    private static final int       GRAPH_HEIGHT = 1080;
+    private static final int      GRAPH_HEIGHT = 1080;
 
-    private final Collection<Node> nodes;
-    private final Collection<Arc>  edges;
-    private final Direction        direction;
+    private final Collection<Arc> edges;
+    private final Direction       direction;
 
-    private static final Lock      l            = new ReentrantLock();
+    private static final Lock     l            = new ReentrantLock();
 
-    public GraphVisualizer(final Collection<Node> nodes, final Collection<Arc> edges) {
-        this(nodes, edges, null);
+    public GraphVisualizer(final Collection<Arc> edges) {
+        this(edges, null);
     }
 
-    public GraphVisualizer(final Collection<Node> nodes, final Collection<Arc> edges,
-            final Direction direction) {
-        this.nodes = nodes;
+    public GraphVisualizer(final Collection<Arc> edges, final Direction direction) {
         this.edges = edges;
         this.direction = direction;
     }
@@ -91,10 +88,9 @@ public class GraphVisualizer {
         } else {
             g = new UndirectedOrderedSparseMultigraph<Node, Arc>();
         }
-        for (final Node n : this.nodes) {
-            g.addVertex(n);
-        }
         for (final Arc a : this.edges) {
+            g.addVertex(a.getEastNode());
+            g.addVertex(a.getWestNode());
             if (this.direction == null || this.direction == Direction.EASTBOUND) {
                 g.addEdge(a, a.getWestNode(), a.getEastNode());
             } else {

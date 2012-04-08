@@ -357,7 +357,7 @@ public class Route implements Comparable<Route>, Visualizable {
                 nodes.add(a.getEndingNode(this));
             }
             Route.logger.info("Starting visualizing route: " + this.getId());
-            new GraphVisualizer(nodes, this.parts, this.getDirection()).visualize(fos);
+            new GraphVisualizer(this.parts, this.getDirection()).visualize(fos);
             Route.logger.info("Route visualization finished: " + this.getId());
             return true;
         } catch (final Exception ex) {
