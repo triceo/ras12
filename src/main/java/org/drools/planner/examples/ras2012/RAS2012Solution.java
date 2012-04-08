@@ -1,6 +1,5 @@
 package org.drools.planner.examples.ras2012;
 
-import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.SortedSet;
@@ -18,8 +17,7 @@ import org.drools.planner.examples.ras2012.model.planner.ItineraryAssignment;
 public class RAS2012Solution implements Solution<HardAndSoftScore> {
 
     public static final Integer                   PLANNING_HORIZON_MINUTES       = 12 * 60;
-    public static final BigDecimal                PLANNING_TIME_DIVISION_MINUTES = new BigDecimal(
-                                                                                         "0.5");
+    public static final double                    PLANNING_TIME_DIVISION_MINUTES = 0.5;
     private final String                          name;
     private final Network                         network;
 

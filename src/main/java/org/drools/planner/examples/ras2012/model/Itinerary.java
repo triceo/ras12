@@ -49,20 +49,19 @@ public final class Itinerary implements ScheduleProducer {
         return milesPerMinute.multiply(time);
     }
 
-    private final Route                       route;
+    private final Route                            route;
 
-    private final Train                       train;
+    private final Train                            train;
 
-    private final AtomicBoolean               scheduleCacheValid = new AtomicBoolean(false);
-    private SortedMap<BigDecimal, Node>       scheduleCache      = null;
-    private final BigDecimal                  trainEntryTime;
-    private final List<Arc>                   arcProgression     = new LinkedList<Arc>();
-    private final Map<Node, Arc>              arcPerStartNode    = new HashMap<Node, Arc>();
-    private final Map<Node, WaitTime>         nodeWaitTimes      = new HashMap<Node, WaitTime>();
+    private final AtomicBoolean                    scheduleCacheValid = new AtomicBoolean(false);
+    private final SortedMap<BigDecimal, Node>      scheduleCache      = new TreeMap<BigDecimal, Node>();
+    private final BigDecimal                       trainEntryTime;
+    private final List<Arc>                        arcProgression     = new LinkedList<Arc>();
+    private final Map<Node, Arc>                   arcPerStartNode    = new HashMap<Node, Arc>();
+    private final Map<Node, WaitTime>              nodeWaitTimes      = new HashMap<Node, WaitTime>();
     // FIXME only one window per node; multiple different windows with same node will get lost
-    private final Map<Node, Itinerary.Window> maintenances       = new HashMap<Node, Itinerary.Window>();
-
-    private final Map<BigDecimal, Arc>        currentArcs        = new HashMap<BigDecimal, Arc>();
+    private final Map<Node, Itinerary.Window>      maintenances       = new HashMap<Node, Itinerary.Window>();
+    private final Map<BigDecimal, Collection<Arc>> currentlyOccupied  = new HashMap<BigDecimal, Collection<Arc>>();
 
     public Itinerary(final Route r, final Train t,
             final Collection<MaintenanceWindow> maintenanceWindows) {
@@ -89,6 +88,20 @@ public final class Itinerary implements ScheduleProducer {
 
     @Override
     public Collection<Arc> getCurrentlyOccupiedArcs(final BigDecimal timeInMinutes) {
+        boolean cleared = false;
+        if (!this.scheduleCacheValid.get()) {
+            this.currentlyOccupied.clear();
+            cleared = true;
+        }
+        if (cleared || !this.currentlyOccupied.containsKey(timeInMinutes)) {
+            final Collection<Arc> a = this.getCurrentlyOccupiedArcsUncached(timeInMinutes);
+            this.currentlyOccupied.put(timeInMinutes, a);
+            return a;
+        }
+        return this.currentlyOccupied.get(timeInMinutes);
+    }
+
+    private Collection<Arc> getCurrentlyOccupiedArcsUncached(final BigDecimal timeInMinutes) {
         final Arc leadingArc = this.getLeadingArc(timeInMinutes);
         if (leadingArc == null) {
             // train not in the network
@@ -134,16 +147,6 @@ public final class Itinerary implements ScheduleProducer {
     }
 
     protected Arc getLeadingArc(final BigDecimal timeInMinutes) {
-        if (!this.scheduleCacheValid.get()) {
-            this.currentArcs.clear();
-        }
-        if (!this.currentArcs.containsKey(timeInMinutes)) {
-            this.currentArcs.put(timeInMinutes, this.getLeadingArcUncached(timeInMinutes));
-        }
-        return this.currentArcs.get(timeInMinutes);
-    }
-
-    private Arc getLeadingArcUncached(final BigDecimal timeInMinutes) {
         if (timeInMinutes.compareTo(this.trainEntryTime) == -1) {
             return null;
         }
@@ -175,7 +178,7 @@ public final class Itinerary implements ScheduleProducer {
     @Override
     public synchronized SortedMap<BigDecimal, Node> getSchedule() {
         if (!this.scheduleCacheValid.get()) {
-            final SortedMap<BigDecimal, Node> adjusted = new TreeMap<BigDecimal, Node>();
+            this.scheduleCache.clear();
             int i = 0;
             BigDecimal previousTime = BigDecimal.ZERO;
             Arc previousArc = null;
@@ -205,17 +208,17 @@ public final class Itinerary implements ScheduleProducer {
                     }
                 }
                 // and store
-                adjusted.put(time, n);
+                this.scheduleCache.put(time, n);
                 previousTime = time;
                 previousArc = currentArc;
                 i++;
             }
-            adjusted.put(previousTime.add(previousArc.getTravellingTimeInMinutes(this.getTrain())),
+            this.scheduleCache.put(
+                    previousTime.add(previousArc.getTravellingTimeInMinutes(this.getTrain())),
                     previousArc.getEndingNode(this.getTrain()));
-            this.scheduleCache = Collections.unmodifiableSortedMap(adjusted);
             this.scheduleCacheValid.set(true);
         }
-        return this.scheduleCache;
+        return Collections.unmodifiableSortedMap(this.scheduleCache);
     }
 
     @Override
