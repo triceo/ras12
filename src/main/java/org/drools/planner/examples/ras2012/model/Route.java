@@ -1,11 +1,7 @@
 package org.drools.planner.examples.ras2012.model;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -305,41 +301,6 @@ public class Route implements Comparable<Route>, Visualizable {
             }
         }
         return true;
-    }
-
-    public boolean toCSV(final OutputStream os) {
-        try (BufferedWriter w = new BufferedWriter(new OutputStreamWriter(os))) {
-            if (this.getDirection() == Direction.EASTBOUND) {
-                w.write("west;east;length;speed");
-            } else {
-                w.write("east;west;length;speed");
-            }
-            w.newLine();
-            for (final Arc arc : this.parts) {
-                if (this.getDirection() == Direction.EASTBOUND) {
-                    w.write(String.valueOf(arc.getWestNode().getId()));
-                    w.write(";");
-                    w.write(String.valueOf(arc.getEastNode().getId()));
-                    w.write(";");
-                } else {
-                    w.write(String.valueOf(arc.getEastNode().getId()));
-                    w.write(";");
-                    w.write(String.valueOf(arc.getWestNode().getId()));
-                    w.write(";");
-                }
-                w.write(arc.getLengthInMiles().toString());
-                w.write(";");
-                if (this.getDirection() == Direction.EASTBOUND) {
-                    w.write(String.valueOf(arc.getTrackType().getSpeedEastbound()));
-                } else {
-                    w.write(String.valueOf(arc.getTrackType().getSpeedWestbound()));
-                }
-                w.newLine();
-            }
-            return true;
-        } catch (final IOException ex) {
-            return false;
-        }
     }
 
     @Override

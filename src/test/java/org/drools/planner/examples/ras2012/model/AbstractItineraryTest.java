@@ -1,8 +1,6 @@
 package org.drools.planner.examples.ras2012.model;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.HashMap;
@@ -156,15 +154,6 @@ public abstract class AbstractItineraryTest {
             final File folder = this.getTargetDataFolder();
             if (!folder.exists()) {
                 folder.mkdirs();
-            }
-            for (final Train t : trains) {
-                for (final Route r : toTest.get(t)) {
-                    try {
-                        r.toCSV(new FileOutputStream(new File(folder, "Route" + r.getId() + ".csv")));
-                    } catch (final FileNotFoundException e) {
-                        // ignore
-                    }
-                }
             }
         }
         return this.testedRoutes;
