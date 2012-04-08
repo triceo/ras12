@@ -13,9 +13,7 @@
       <scoreAttained>0hard/0soft</scoreAttained>
     </termination> 
     <acceptor>
-      <moveTabuSize>5</moveTabuSize>
-      <undoMoveTabuSize>5</undoMoveTabuSize>
-      <simulatedAnnealingStartingTemperature>0hard/10soft</simulatedAnnealingStartingTemperature>
+      <simulatedAnnealingStartingTemperature>5hard/100soft</simulatedAnnealingStartingTemperature>
     </acceptor>
     <forager>
       <minimalAcceptedSelection>8</minimalAcceptedSelection>
