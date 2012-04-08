@@ -1,5 +1,7 @@
 package org.drools.planner.examples.ras2012.model;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -9,6 +11,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.drools.planner.examples.ras2012.model.Route.Direction;
+import org.drools.planner.examples.ras2012.util.GraphVisualizer;
 
 /**
  * Assumptions: node #0 is WEST-most node.
@@ -16,6 +19,7 @@ import org.drools.planner.examples.ras2012.model.Route.Direction;
  */
 public class Network {
 
+    private final GraphVisualizer                       visualizer;
     private final SortedMap<Integer, Node>              nodes = new TreeMap<Integer, Node>();
     private final Node                                  eastDepo;
     private final Node                                  westDepo;
@@ -25,6 +29,7 @@ public class Network {
     private final Collection<Route>                     eastboundRoutes;
 
     public Network(final Collection<Node> nodes, final Collection<Arc> edges) {
+        this.visualizer = new GraphVisualizer(nodes, edges);
         for (final Node n : nodes) {
             this.nodes.put(n.getId(), n);
         }
@@ -111,5 +116,9 @@ public class Network {
             }
         }
         return null;
+    }
+
+    public void visualize(final OutputStream file) throws IOException {
+        this.visualizer.visualize(file);
     }
 }

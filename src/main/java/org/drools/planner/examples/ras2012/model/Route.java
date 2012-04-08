@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.drools.planner.examples.ras2012.model.Arc.TrackType;
+import org.drools.planner.examples.ras2012.util.GraphVisualizer;
 
 /**
  * Note: this class has a natural ordering that is inconsistent with equals.
@@ -121,14 +122,14 @@ public class Route implements Comparable<Route> {
          * get the first and last arc inserted; some arc should have the west node == 0, it is the west-most arc; the other is
          * by definition the east-most arc
          */
-        Arc one = this.parts.get(0);
-        Arc two = this.parts.get(this.parts.size() - 1);
+        final Arc one = this.parts.get(0);
+        final Arc two = this.parts.get(this.parts.size() - 1);
         if (one.getWestNode().getId() == 0) {
             // one is west-most
-            return (this.direction == Direction.WESTBOUND) ? two : one;
+            return this.direction == Direction.WESTBOUND ? two : one;
         } else {
             // one is east-most
-            return (this.direction == Direction.WESTBOUND) ? one : two;
+            return this.direction == Direction.WESTBOUND ? one : two;
         }
     }
 
@@ -160,16 +161,16 @@ public class Route implements Comparable<Route> {
             throw new IllegalArgumentException("The route doesn't contain the arc.");
         }
         if (this.direction == Direction.WESTBOUND) {
-            Node n = a.getWestNode();
-            for (Arc a2 : this.parts) {
+            final Node n = a.getWestNode();
+            for (final Arc a2 : this.parts) {
                 if (a2.getEastNode() == n) {
                     return a2;
                 }
             }
             return null;
         } else {
-            Node n = a.getEastNode();
-            for (Arc a2 : this.parts) {
+            final Node n = a.getEastNode();
+            for (final Arc a2 : this.parts) {
                 if (a2.getWestNode() == n) {
                     return a2;
                 }
@@ -190,9 +191,9 @@ public class Route implements Comparable<Route> {
     }
 
     public Arc getTerminalArc() {
-        Arc one = this.parts.get(0);
-        Arc two = this.parts.get(this.parts.size() - 1);
-        Arc initial = this.getInitialArc();
+        final Arc one = this.parts.get(0);
+        final Arc two = this.parts.get(this.parts.size() - 1);
+        final Arc initial = this.getInitialArc();
         if (one == initial) {
             return two;
         } else {
@@ -215,7 +216,7 @@ public class Route implements Comparable<Route> {
     }
 
     // FIXME add tests for this
-    public BigDecimal getTravellingTimeInMinutes(Train t) {
+    public BigDecimal getTravellingTimeInMinutes(final Train t) {
         BigDecimal result = BigDecimal.ZERO;
         for (final Arc a : this.parts) {
             final BigDecimal length = a.getLengthInMiles();
@@ -337,5 +338,14 @@ public class Route implements Comparable<Route> {
     public String toString() {
         return "Route [id=" + this.id + ", direction=" + this.direction + ", parts=" + this.parts
                 + "]";
+    }
+
+    public void visualize(final OutputStream stream) throws IOException {
+        final Collection<Node> nodes = new LinkedList<Node>();
+        for (final Arc a : this.parts) {
+            nodes.add(a.getStartingNode(this));
+            nodes.add(a.getEndingNode(this));
+        }
+        new GraphVisualizer(nodes, this.parts).visualize(stream);
     }
 }
