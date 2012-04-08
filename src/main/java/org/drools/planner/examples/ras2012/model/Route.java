@@ -54,11 +54,11 @@ public class Route implements Comparable<Route>, Visualizable {
     // FIXME add tests for this
     @Override
     public int compareTo(final Route o) {
-        if (this.direction == o.direction) { // shorter = better
-            final int comparison = this.getTravellingTimeInMinutes().compareTo(
-                    o.getTravellingTimeInMinutes());
-            if (comparison == 0) { // more main tracks = better
-                return this.getNumberOfPreferredTracks() - o.getNumberOfPreferredTracks();
+        if (this.direction == o.direction) {// more main tracks = better
+            final int comparison = this.getNumberOfPreferredTracks()
+                    - o.getNumberOfPreferredTracks();
+            if (comparison == 0) { // shorter = better
+                return this.getTravellingTimeInMinutes().compareTo(o.getTravellingTimeInMinutes());
             } else {
                 return comparison;
             }

@@ -19,20 +19,20 @@ public class Itinerary1Test extends AbstractItineraryTest {
     private static final String TRAIN6        = "B1";
     private static final String TRAIN7        = "A2";
 
-    private static final int    TRAIN1_ROUTE0 = 3381;
-    private static final int    TRAIN1_ROUTE1 = 4128;
-    private static final int    TRAIN2_ROUTE0 = 100;
-    private static final int    TRAIN2_ROUTE1 = 2468;
-    private static final int    TRAIN3_ROUTE0 = 2804;
-    private static final int    TRAIN3_ROUTE1 = 4705;
-    private static final int    TRAIN4_ROUTE0 = 122;
+    private static final int    TRAIN1_ROUTE0 = 2519;
+    private static final int    TRAIN1_ROUTE1 = 4608;
+    private static final int    TRAIN2_ROUTE0 = 122;
+    private static final int    TRAIN2_ROUTE1 = 2348;
+    private static final int    TRAIN3_ROUTE0 = 2522;
+    private static final int    TRAIN3_ROUTE1 = 4798;
+    private static final int    TRAIN4_ROUTE0 = 126;
     private static final int    TRAIN4_ROUTE1 = 2446;
-    private static final int    TRAIN5_ROUTE0 = 198;
-    private static final int    TRAIN5_ROUTE1 = 2320;
-    private static final int    TRAIN6_ROUTE0 = 2612;
-    private static final int    TRAIN6_ROUTE1 = 4221;
-    private static final int    TRAIN7_ROUTE0 = 50;
-    private static final int    TRAIN7_ROUTE1 = 2298;
+    private static final int    TRAIN5_ROUTE0 = 734;
+    private static final int    TRAIN5_ROUTE1 = 1114;
+    private static final int    TRAIN6_ROUTE0 = 2535;
+    private static final int    TRAIN6_ROUTE1 = 4416;
+    private static final int    TRAIN7_ROUTE0 = 270;
+    private static final int    TRAIN7_ROUTE1 = 1736;
 
     @Override
     protected RAS2012Solution fetchSolution() {
@@ -74,9 +74,9 @@ public class Itinerary1Test extends AbstractItineraryTest {
         results.put(this.getItinerary(Itinerary1Test.TRAIN5, Itinerary1Test.TRAIN5_ROUTE0), 0);
         results.put(this.getItinerary(Itinerary1Test.TRAIN5, Itinerary1Test.TRAIN5_ROUTE1), 0);
         results.put(this.getItinerary(Itinerary1Test.TRAIN6, Itinerary1Test.TRAIN6_ROUTE0), 1);
-        results.put(this.getItinerary(Itinerary1Test.TRAIN6, Itinerary1Test.TRAIN6_ROUTE1), 0);
+        results.put(this.getItinerary(Itinerary1Test.TRAIN6, Itinerary1Test.TRAIN6_ROUTE1), 1);
         results.put(this.getItinerary(Itinerary1Test.TRAIN7, Itinerary1Test.TRAIN7_ROUTE0), 0);
-        results.put(this.getItinerary(Itinerary1Test.TRAIN7, Itinerary1Test.TRAIN7_ROUTE1), 0);
+        results.put(this.getItinerary(Itinerary1Test.TRAIN7, Itinerary1Test.TRAIN7_ROUTE1), 1);
         return results;
 
     }

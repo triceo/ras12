@@ -17,8 +17,9 @@ import org.drools.planner.examples.ras2012.model.planner.TrainConflict;
 public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solution> {
 
     private int roundMinutesToWholeHours(BigDecimal minutes) {
-        return minutes.divide(BigDecimal.valueOf(60), 10, BigDecimal.ROUND_HALF_EVEN)
-                .setScale(0, BigDecimal.ROUND_UP).intValue();
+        BigDecimal hours = minutes.divide(BigDecimal.valueOf(60), 10, BigDecimal.ROUND_HALF_EVEN);
+        int result = hours.setScale(0, BigDecimal.ROUND_UP).intValue();
+        return result;
     }
 
     private boolean isInPlanningHorizon(BigDecimal time) {
