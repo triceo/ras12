@@ -110,20 +110,16 @@ public final class Itinerary implements ItineraryInterface {
                 return this.getArcPerStartingNode(previousNode);
             }
         }
-        throw new IllegalStateException("Train probably already finished.");
+        return null;
     }
 
     @Override
     public Collection<Arc> getCurrentlyOccupiedArcs(final BigDecimal timeInMinutes) {
-        Arc leadingArc = null;
-        try {
-            leadingArc = this.getCurrentArc(timeInMinutes);
-        } finally {
-            if (leadingArc == null) {
-                // train not in the network
-                // FIXME train should leave the network gradually, not at once when it reaches destination
-                return new HashSet<Arc>();
-            }
+        Arc leadingArc = this.getCurrentArc(timeInMinutes);
+        if (leadingArc == null) {
+            // train not in the network
+            // FIXME train should leave the network gradually, not at once when it reaches destination
+            return new HashSet<Arc>();
         }
         final List<Arc> occupiedArcs = new LinkedList<Arc>();
         occupiedArcs.add(leadingArc);
