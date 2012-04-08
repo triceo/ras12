@@ -14,12 +14,14 @@ import javax.imageio.ImageIO;
 
 import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
-import edu.uci.ics.jung.graph.UndirectedGraph;
+import edu.uci.ics.jung.graph.DirectedOrderedSparseMultigraph;
+import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.UndirectedOrderedSparseMultigraph;
 import edu.uci.ics.jung.visualization.VisualizationImageServer;
 import org.apache.commons.collections15.Transformer;
 import org.drools.planner.examples.ras2012.model.Arc;
 import org.drools.planner.examples.ras2012.model.Node;
+import org.drools.planner.examples.ras2012.model.Route.Direction;
 
 public class GraphVisualizer {
 
@@ -67,24 +69,40 @@ public class GraphVisualizer {
 
     private final Collection<Node> nodes;
     private final Collection<Arc>  edges;
+    private final Direction        direction;
+
+    private static final Lock      l            = new ReentrantLock();
 
     public GraphVisualizer(final Collection<Node> nodes, final Collection<Arc> edges) {
-        this.nodes = nodes;
-        this.edges = edges;
+        this(nodes, edges, null);
     }
 
-    private UndirectedGraph<Node, Arc> formGraph() {
-        final UndirectedGraph<Node, Arc> g = new UndirectedOrderedSparseMultigraph<Node, Arc>();
+    public GraphVisualizer(final Collection<Node> nodes, final Collection<Arc> edges,
+            final Direction direction) {
+        this.nodes = nodes;
+        this.edges = edges;
+        this.direction = direction;
+    }
+
+    private Graph<Node, Arc> formGraph() {
+        Graph<Node, Arc> g = null;
+        if (this.direction != null) {
+            g = new DirectedOrderedSparseMultigraph<Node, Arc>();
+        } else {
+            g = new UndirectedOrderedSparseMultigraph<Node, Arc>();
+        }
         for (final Node n : this.nodes) {
             g.addVertex(n);
         }
         for (final Arc a : this.edges) {
-            g.addEdge(a, a.getWestNode(), a.getEastNode());
+            if (this.direction == null || this.direction == Direction.EASTBOUND) {
+                g.addEdge(a, a.getWestNode(), a.getEastNode());
+            } else {
+                g.addEdge(a, a.getEastNode(), a.getWestNode());
+            }
         }
         return g;
     }
-
-    private static final Lock l = new ReentrantLock();
 
     public void visualize(final OutputStream visualize) throws IOException {
         final Layout<Node, Arc> layout = new ISOMLayout<>(this.formGraph());
@@ -95,7 +113,7 @@ public class GraphVisualizer {
         server.getRenderContext().setEdgeLabelTransformer(new ArcLabeller());
         server.getRenderContext().setVertexLabelTransformer(new NodeLabeller());
         Image i = null;
-        l.lock();
+        GraphVisualizer.l.lock();
         try {
             /*
              * the call to getImage() causes trouble when running in multiple threads; keep other threads out using a lock.
@@ -103,7 +121,7 @@ public class GraphVisualizer {
             i = server.getImage(new Point2D.Double(GraphVisualizer.GRAPH_WIDTH / 2,
                     GraphVisualizer.GRAPH_HEIGHT / 2), layout.getSize());
         } finally {
-            l.unlock();
+            GraphVisualizer.l.unlock();
         }
         final BufferedImage bi = new BufferedImage(GraphVisualizer.GRAPH_WIDTH,
                 GraphVisualizer.GRAPH_HEIGHT, BufferedImage.TYPE_INT_RGB);

@@ -351,13 +351,13 @@ public class Route implements Comparable<Route>, Visualizable {
     @Override
     public boolean visualize(final File target) {
         try (FileOutputStream fos = new FileOutputStream(target)) {
-            final Collection<Node> nodes = new LinkedList<Node>();
+            final Collection<Node> nodes = new HashSet<Node>();
             for (final Arc a : this.parts) {
                 nodes.add(a.getStartingNode(this));
                 nodes.add(a.getEndingNode(this));
             }
             Route.logger.info("Starting visualizing route: " + this.getId());
-            new GraphVisualizer(nodes, this.parts).visualize(fos);
+            new GraphVisualizer(nodes, this.parts, this.getDirection()).visualize(fos);
             Route.logger.info("Route visualization finished: " + this.getId());
             return true;
         } catch (final Exception ex) {

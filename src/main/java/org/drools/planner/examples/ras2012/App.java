@@ -64,8 +64,6 @@ public class App {
             if (!parentFolder.exists()) {
                 parentFolder.mkdirs();
             }
-            // visualize the network
-            boolean success = this.network.visualize(new File(parentFolder, "network.png"));
             // visualize the routes
             final Collection<Route> routes = new LinkedList<Route>();
             routes.addAll(this.network.getAllEastboundRoutes());
@@ -74,6 +72,7 @@ public class App {
                 this.futures.add(App.visualizerExecutor
                         .submit(new RouteVisualizer(r, parentFolder)));
             }
+            boolean success = true;
             for (final Future<Boolean> future : this.futures) {
                 try {
                     success = future.get() & success;
@@ -83,6 +82,8 @@ public class App {
                     success = false;
                 }
             }
+            // visualize the network
+            success = this.network.visualize(new File(parentFolder, "network.png"));
             VisualizationController.logger.info("Finished visualization work.");
             return success;
         }
