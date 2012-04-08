@@ -253,6 +253,7 @@ public final class Itinerary implements ItineraryInterface {
         return this.nodeEntryTimeCache;
     }
 
+    @Override
     public Route getRoute() {
         return this.route;
     }
@@ -287,6 +288,7 @@ public final class Itinerary implements ItineraryInterface {
         return result;
     }
 
+    @Override
     public Train getTrain() {
         return this.train;
     }
@@ -296,7 +298,6 @@ public final class Itinerary implements ItineraryInterface {
         return this.nodeWaitTimes.get(n);
     }
 
-    // FIXME only return non-zero number when the train arrived before planning horizon end
     @Override
     public Map<BigDecimal, BigDecimal> getWantTimeDifference() {
         final Map<BigDecimal, BigDecimal> result = new HashMap<BigDecimal, BigDecimal>();

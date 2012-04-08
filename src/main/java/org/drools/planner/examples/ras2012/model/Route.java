@@ -214,6 +214,19 @@ public class Route implements Comparable<Route> {
         return result;
     }
 
+    // FIXME add tests for this
+    public BigDecimal getTravellingTimeInMinutes(Train t) {
+        BigDecimal result = BigDecimal.ZERO;
+        for (final Arc a : this.parts) {
+            final BigDecimal length = a.getLengthInMiles();
+            final int speed = t.getMaximumSpeed(a.getTrackType());
+            final BigDecimal timeInHours = length.divide(BigDecimal.valueOf(speed), 2,
+                    BigDecimal.ROUND_HALF_DOWN);
+            result = result.add(timeInHours.multiply(BigDecimal.valueOf(60)));
+        }
+        return result;
+    }
+
     public Collection<Node> getWaitPoints() {
         final Collection<Node> waitPoints = new HashSet<Node>();
         // we want to be able to hold the train before it enters the network
