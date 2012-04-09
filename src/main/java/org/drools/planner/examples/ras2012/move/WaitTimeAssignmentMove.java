@@ -109,6 +109,8 @@ public class WaitTimeAssignmentMove implements Move {
         builder.append("WaitTimeAssignmentMove [");
         builder.append(this.assignment.getTrain().getName());
         builder.append("@");
+        builder.append(this.assignment.getRoute().getId());
+        builder.append("-");
         builder.append(this.node.getId());
         builder.append(", ");
         if (this.previousWaitTime == null) {
