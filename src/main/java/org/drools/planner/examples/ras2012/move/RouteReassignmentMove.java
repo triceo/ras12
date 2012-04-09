@@ -31,6 +31,35 @@ public class RouteReassignmentMove implements Move {
     }
 
     @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (this.getClass() != obj.getClass()) {
+            return false;
+        }
+        final RouteReassignmentMove other = (RouteReassignmentMove) obj;
+        if (this.assignment == null) {
+            if (other.assignment != null) {
+                return false;
+            }
+        } else if (!this.assignment.equals(other.assignment)) {
+            return false;
+        }
+        if (this.route == null) {
+            if (other.route != null) {
+                return false;
+            }
+        } else if (!this.route.equals(other.route)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
     public Collection<? extends Object> getPlanningEntities() {
         return Collections.singletonList(this.assignment);
     }
@@ -38,6 +67,15 @@ public class RouteReassignmentMove implements Move {
     @Override
     public Collection<? extends Object> getPlanningValues() {
         return Collections.singletonList(this.route);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (this.assignment == null ? 0 : this.assignment.hashCode());
+        result = prime * result + (this.route == null ? 0 : this.route.hashCode());
+        return result;
     }
 
     @Override
