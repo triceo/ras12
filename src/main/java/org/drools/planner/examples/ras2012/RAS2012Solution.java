@@ -34,28 +34,15 @@ public class RAS2012Solution implements Solution<HardAndSoftScore> {
         this.network = net;
         this.maintenances = maintenances;
         this.trains = trains;
-        // generate assignments; never use any single route twice
-        final Collection<Route> allRoutes = new LinkedList<Route>(this.getRoutes());
-        final Collection<Route> usedRoutes = new LinkedList<Route>();
+        /*
+         * generate assignments; always pick the best route for the particular train, nevermind if it's used by another train
+         * already.
+         */
+        // TODO separate into a solution initializer, for the sake of clarity
         for (final Train t : this.getTrains()) {
-            boolean added = false;
-            for (final Route r : allRoutes) {
-                if (usedRoutes.contains(r)) {
-                    continue;
-                }
-                if (!r.isPossibleForTrain(t)) {
-                    continue;
-                }
-                final ItineraryAssignment ia = new ItineraryAssignment(t, maintenances);
-                ia.setRoute(r);
-                this.assignments.add(ia);
-                usedRoutes.add(r);
-                added = true;
-                break;
-            }
-            if (!added) {
-                throw new IllegalStateException("Not all trains have been assigned routes!");
-            }
+            final ItineraryAssignment ia = new ItineraryAssignment(t, maintenances);
+            ia.setRoute(this.getNetwork().getBestRoute(t));
+            this.assignments.add(ia);
         }
         this.setScore(new RAS2012ScoreCalculator().calculateScore(this));
     }
