@@ -112,7 +112,7 @@ public class Arc {
         if (obj == null) {
             return false;
         }
-        if (this.getClass() != obj.getClass()) {
+        if (!(obj instanceof Arc)) {
             return false;
         }
         final Arc other = (Arc) obj;

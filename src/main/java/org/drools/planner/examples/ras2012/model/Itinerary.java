@@ -88,12 +88,7 @@ public final class Itinerary implements ScheduleProducer {
 
     @Override
     public Collection<Arc> getCurrentlyOccupiedArcs(final BigDecimal timeInMinutes) {
-        boolean cleared = false;
-        if (!this.scheduleCacheValid.get()) {
-            this.currentlyOccupied.clear();
-            cleared = true;
-        }
-        if (cleared || !this.currentlyOccupied.containsKey(timeInMinutes)) {
+        if (!this.currentlyOccupied.containsKey(timeInMinutes)) {
             final Collection<Arc> a = this.getCurrentlyOccupiedArcsUncached(timeInMinutes);
             this.currentlyOccupied.put(timeInMinutes, a);
             return a;
@@ -177,8 +172,7 @@ public final class Itinerary implements ScheduleProducer {
 
     @Override
     public synchronized SortedMap<BigDecimal, Node> getSchedule() {
-        if (!this.scheduleCacheValid.get()) {
-            this.scheduleCache.clear();
+        if (!this.scheduleCacheValid.get() || this.scheduleCache.size() == 0) {
             int i = 0;
             BigDecimal previousTime = BigDecimal.ZERO;
             Arc previousArc = null;
@@ -305,10 +299,15 @@ public final class Itinerary implements ScheduleProducer {
         return result;
     }
 
+    private synchronized void invalidateCaches() {
+        this.currentlyOccupied.clear();
+        this.scheduleCache.clear();
+    }
+
     @Override
     public void removeAllWaitTimes() {
         if (this.nodeWaitTimes.size() > 0) {
-            this.scheduleCacheValid.set(false);
+            this.invalidateCaches();
         }
         this.nodeWaitTimes.clear();
     }
@@ -316,7 +315,7 @@ public final class Itinerary implements ScheduleProducer {
     @Override
     public WaitTime removeWaitTime(final Node n) {
         if (this.nodeWaitTimes.containsKey(n)) {
-            this.scheduleCacheValid.set(false);
+            this.invalidateCaches();
             return this.nodeWaitTimes.remove(n);
         } else {
             return null;
@@ -324,12 +323,12 @@ public final class Itinerary implements ScheduleProducer {
     }
 
     @Override
-    public WaitTime setWaitTime(final WaitTime w, final Node n) {
+    public synchronized WaitTime setWaitTime(final WaitTime w, final Node n) {
         if (w == null) {
             return this.removeWaitTime(n);
         }
         if (this.getRoute().getWaitPoints().contains(n)) {
-            this.scheduleCacheValid.set(false);
+            this.invalidateCaches();
             final WaitTime previous = this.nodeWaitTimes.get(n);
             this.nodeWaitTimes.put(n, w);
             return previous;

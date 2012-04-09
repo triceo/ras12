@@ -9,14 +9,14 @@
   <localSearch>
     <termination>
       <terminationCompositionStyle>OR</terminationCompositionStyle>
-      <maximumUnimprovedStepCount>10</maximumUnimprovedStepCount>
+      <!-- maximumUnimprovedStepCount>100</maximumUnimprovedStepCount-->
       <scoreAttained>0hard/0soft</scoreAttained>
     </termination> 
     <acceptor>
-      <simulatedAnnealingStartingTemperature>5hard/100soft</simulatedAnnealingStartingTemperature>
+      <simulatedAnnealingStartingTemperature>50hard/1000soft</simulatedAnnealingStartingTemperature>
     </acceptor>
     <forager>
-      <minimalAcceptedSelection>8</minimalAcceptedSelection>
+      <minimalAcceptedSelection>4</minimalAcceptedSelection>
     </forager>    
     <selector>
       <selector>
