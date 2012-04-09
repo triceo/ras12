@@ -76,7 +76,7 @@ public class Arc {
 
     private static final AtomicInteger idGenerator = new AtomicInteger();
 
-    private final Integer              id          = Arc.idGenerator.incrementAndGet();
+    private final int                  id          = Arc.idGenerator.incrementAndGet();
 
     private final TrackType            trackType;
 
@@ -116,11 +116,7 @@ public class Arc {
             return false;
         }
         final Arc other = (Arc) obj;
-        if (this.id == null) {
-            if (other.id != null) {
-                return false;
-            }
-        } else if (!this.id.equals(other.id)) {
+        if (this.id != other.id) {
             return false;
         }
         return true;
@@ -185,7 +181,7 @@ public class Arc {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (this.id == null ? 0 : this.id.hashCode());
+        result = prime * result + this.id;
         return result;
     }
 
