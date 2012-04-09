@@ -99,14 +99,7 @@ public class Route implements Comparable<Route>, Visualizable {
             return false;
         }
         final Route other = (Route) obj;
-        if (this.direction != other.direction) {
-            return false;
-        }
-        if (this.parts == null) {
-            if (other.parts != null) {
-                return false;
-            }
-        } else if (!this.parts.equals(other.parts)) {
+        if (this.id != other.id) {
             return false;
         }
         return true;
@@ -266,8 +259,7 @@ public class Route implements Comparable<Route>, Visualizable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (this.direction == null ? 0 : this.direction.hashCode());
-        result = prime * result + (this.parts == null ? 0 : this.parts.hashCode());
+        result = prime * result + this.id;
         return result;
     }
 
