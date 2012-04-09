@@ -34,6 +34,35 @@ public class ItineraryAssignment implements Cloneable {
         return ia;
     }
 
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (this.getClass() != obj.getClass()) {
+            return false;
+        }
+        final ItineraryAssignment other = (ItineraryAssignment) obj;
+        if (this.route == null) {
+            if (other.route != null) {
+                return false;
+            }
+        } else if (!this.route.equals(other.route)) {
+            return false;
+        }
+        if (this.train == null) {
+            if (other.train != null) {
+                return false;
+            }
+        } else if (!this.train.equals(other.train)) {
+            return false;
+        }
+        return true;
+    }
+
     public ScheduleProducer getItinerary() {
         return this.itinerary;
     }
@@ -46,6 +75,15 @@ public class ItineraryAssignment implements Cloneable {
 
     public Train getTrain() {
         return this.train;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (this.route == null ? 0 : this.route.hashCode());
+        result = prime * result + (this.train == null ? 0 : this.train.hashCode());
+        return result;
     }
 
     public synchronized void setRoute(final Route route) {
