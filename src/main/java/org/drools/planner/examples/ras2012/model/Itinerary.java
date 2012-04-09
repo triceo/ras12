@@ -54,7 +54,9 @@ public final class Itinerary implements ScheduleProducer {
     private final Train                            train;
 
     private final AtomicBoolean                    scheduleCacheValid = new AtomicBoolean(false);
+
     private final SortedMap<BigDecimal, Node>      scheduleCache      = new TreeMap<BigDecimal, Node>();
+
     private final BigDecimal                       trainEntryTime;
     private final List<Arc>                        arcProgression     = new LinkedList<Arc>();
     private final Map<Node, Arc>                   arcPerStartNode    = new HashMap<Node, Arc>();
@@ -80,6 +82,47 @@ public final class Itinerary implements ScheduleProducer {
             final Itinerary.Window w = new Window(mow.getStartingMinute(), mow.getEndingMinute());
             this.maintenances.put(n, w);
         }
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof Itinerary)) {
+            return false;
+        }
+        final Itinerary other = (Itinerary) obj;
+        if (this.nodeWaitTimes == null) {
+            if (other.nodeWaitTimes != null) {
+                return false;
+            }
+        } else if (!this.nodeWaitTimes.equals(other.nodeWaitTimes)) {
+            return false;
+        }
+        if (this.route == null) {
+            if (other.route != null) {
+                return false;
+            }
+        } else if (!this.route.equals(other.route)) {
+            return false;
+        }
+        if (this.train == null) {
+            if (other.train != null) {
+                return false;
+            }
+        } else if (!this.train.equals(other.train)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public Map<Node, WaitTime> getAllWaitTimes() {
+        return Collections.unmodifiableMap(this.nodeWaitTimes);
     }
 
     private Arc getArcPerStartingNode(final Node n) {
@@ -299,6 +342,16 @@ public final class Itinerary implements ScheduleProducer {
         return result;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (this.nodeWaitTimes == null ? 0 : this.nodeWaitTimes.hashCode());
+        result = prime * result + (this.route == null ? 0 : this.route.hashCode());
+        result = prime * result + (this.train == null ? 0 : this.train.hashCode());
+        return result;
+    }
+
     private synchronized void invalidateCaches() {
         this.currentlyOccupied.clear();
         this.scheduleCache.clear();
@@ -351,10 +404,5 @@ public final class Itinerary implements ScheduleProducer {
         }
         sb.append(".");
         return sb.toString();
-    }
-
-    @Override
-    public Map<Node, WaitTime> getAllWaitTimes() {
-        return Collections.unmodifiableMap(this.nodeWaitTimes);
     }
 }

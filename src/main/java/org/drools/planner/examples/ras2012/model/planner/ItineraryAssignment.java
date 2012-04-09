@@ -42,22 +42,15 @@ public class ItineraryAssignment implements Cloneable {
         if (obj == null) {
             return false;
         }
-        if (this.getClass() != obj.getClass()) {
+        if (!(obj instanceof ItineraryAssignment)) {
             return false;
         }
         final ItineraryAssignment other = (ItineraryAssignment) obj;
-        if (this.route == null) {
-            if (other.route != null) {
+        if (this.itinerary == null) {
+            if (other.itinerary != null) {
                 return false;
             }
-        } else if (!this.route.equals(other.route)) {
-            return false;
-        }
-        if (this.train == null) {
-            if (other.train != null) {
-                return false;
-            }
-        } else if (!this.train.equals(other.train)) {
+        } else if (!this.itinerary.equals(other.itinerary)) {
             return false;
         }
         return true;
@@ -81,8 +74,7 @@ public class ItineraryAssignment implements Cloneable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (this.route == null ? 0 : this.route.hashCode());
-        result = prime * result + (this.train == null ? 0 : this.train.hashCode());
+        result = prime * result + (this.itinerary == null ? 0 : this.itinerary.hashCode());
         return result;
     }
 

@@ -17,14 +17,15 @@ import org.drools.planner.examples.ras2012.model.planner.ItineraryAssignment;
 public class RAS2012Solution implements Solution<HardAndSoftScore> {
 
     public static final Integer                   PLANNING_HORIZON_MINUTES       = 12 * 60;
+
     public static final double                    PLANNING_TIME_DIVISION_MINUTES = 0.5;
+
     private final String                          name;
     private final Network                         network;
-
     private final Collection<MaintenanceWindow>   maintenances;
     private final Collection<ItineraryAssignment> assignments                    = new LinkedList<ItineraryAssignment>();
-    private final Collection<Train>               trains;
 
+    private final Collection<Train>               trains;
     private HardAndSoftScore                      score;
 
     public RAS2012Solution(final String name, final Network net,
@@ -79,6 +80,28 @@ public class RAS2012Solution implements Solution<HardAndSoftScore> {
                 this.assignments);
     }
 
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof RAS2012Solution)) {
+            return false;
+        }
+        final RAS2012Solution other = (RAS2012Solution) obj;
+        if (this.assignments == null) {
+            if (other.assignments != null) {
+                return false;
+            }
+        } else if (!this.assignments.equals(other.assignments)) {
+            return false;
+        }
+        return true;
+    }
+
     @PlanningEntityCollectionProperty
     public Collection<ItineraryAssignment> getAssignments() {
         return this.assignments;
@@ -116,6 +139,14 @@ public class RAS2012Solution implements Solution<HardAndSoftScore> {
 
     public SortedSet<Train> getTrains() {
         return new TreeSet<Train>(this.trains);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (this.assignments == null ? 0 : this.assignments.hashCode());
+        return result;
     }
 
     @Override
