@@ -353,4 +353,9 @@ public final class Itinerary implements ScheduleProducer {
         sb.append(".");
         return sb.toString();
     }
+
+    @Override
+    public Map<Node, WaitTime> getAllWaitTimes() {
+        return Collections.unmodifiableMap(this.nodeWaitTimes);
+    }
 }

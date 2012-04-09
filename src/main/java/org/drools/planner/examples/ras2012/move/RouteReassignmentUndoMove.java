@@ -11,28 +11,32 @@ import org.drools.planner.examples.ras2012.model.Route;
 import org.drools.planner.examples.ras2012.model.WaitTime;
 import org.drools.planner.examples.ras2012.model.planner.ItineraryAssignment;
 
-public class RouteReassignmentMove implements Move {
+public class RouteReassignmentUndoMove implements Move {
 
     private final ItineraryAssignment assignment;
-    private final Map<Node, WaitTime> previousWaitTimes;
-    private final Route               route, previousRoute;
+    private final Map<Node, WaitTime> originalWaitTimes;
+    private final Route               originalRoute, routeToUndo;
 
-    public RouteReassignmentMove(final ItineraryAssignment ia, final Route r) {
+    public RouteReassignmentUndoMove(final ItineraryAssignment ia, final Route routeToUndo,
+            final Route originalRoute, final Map<Node, WaitTime> originalWaitTimes) {
         this.assignment = ia;
-        this.route = r;
-        this.previousRoute = ia.getRoute();
-        this.previousWaitTimes = ia.getItinerary().getAllWaitTimes();
+        this.originalRoute = originalRoute;
+        this.routeToUndo = routeToUndo;
+        this.originalWaitTimes = originalWaitTimes;
     }
 
     @Override
     public Move createUndoMove(final ScoreDirector scoreDirector) {
-        return new RouteReassignmentUndoMove(this.assignment, this.route, this.previousRoute,
-                this.previousWaitTimes);
+        // this is just an undo move; no need to undo an undo
+        return null;
     }
 
     @Override
     public void doMove(final ScoreDirector scoreDirector) {
-        this.assignment.setRoute(this.route);
+        this.assignment.setRoute(this.originalRoute);
+        for (final Map.Entry<Node, WaitTime> entry : this.originalWaitTimes.entrySet()) {
+            this.assignment.getItinerary().setWaitTime(entry.getValue(), entry.getKey());
+        }
     }
 
     @Override
@@ -46,7 +50,7 @@ public class RouteReassignmentMove implements Move {
         if (this.getClass() != obj.getClass()) {
             return false;
         }
-        final RouteReassignmentMove other = (RouteReassignmentMove) obj;
+        final RouteReassignmentUndoMove other = (RouteReassignmentUndoMove) obj;
         if (this.assignment == null) {
             if (other.assignment != null) {
                 return false;
@@ -54,11 +58,11 @@ public class RouteReassignmentMove implements Move {
         } else if (!this.assignment.equals(other.assignment)) {
             return false;
         }
-        if (this.route == null) {
-            if (other.route != null) {
+        if (this.originalRoute == null) {
+            if (other.originalRoute != null) {
                 return false;
             }
-        } else if (!this.route.equals(other.route)) {
+        } else if (!this.originalRoute.equals(other.originalRoute)) {
             return false;
         }
         return true;
@@ -71,7 +75,7 @@ public class RouteReassignmentMove implements Move {
 
     @Override
     public Collection<? extends Object> getPlanningValues() {
-        return Collections.singletonList(this.route);
+        return Collections.singletonList(this.routeToUndo);
     }
 
     @Override
@@ -79,24 +83,25 @@ public class RouteReassignmentMove implements Move {
         final int prime = 31;
         int result = 1;
         result = prime * result + (this.assignment == null ? 0 : this.assignment.hashCode());
-        result = prime * result + (this.route == null ? 0 : this.route.hashCode());
+        result = prime * result + (this.originalRoute == null ? 0 : this.originalRoute.hashCode());
         return result;
     }
 
     @Override
     public boolean isMoveDoable(final ScoreDirector scoreDirector) {
-        return this.route.isPossibleForTrain(this.assignment.getTrain());
+        // this is just an undo move; it should always be doable
+        return true;
     }
 
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        builder.append("RouteReassignmentMove [train=");
+        builder.append("RouteReassignmentUndoMove [train=");
         builder.append(this.assignment.getTrain().getName());
         builder.append(", ");
-        builder.append(this.previousRoute.getId());
+        builder.append(this.routeToUndo.getId());
         builder.append(" -> ");
-        builder.append(this.route.getId());
+        builder.append(this.originalRoute.getId());
         builder.append("]");
         return builder.toString();
     }

@@ -92,6 +92,11 @@ public interface ScheduleProducer {
     public void removeAllWaitTimes();
 
     /**
+     * Retrieve all the existing wait times.
+     */
+    public Map<Node, WaitTime> getAllWaitTimes();
+
+    /**
      * Specify that a train shouldn't wait at a given node.
      * 
      * @param n The node that the wait time should be removed from.
