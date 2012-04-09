@@ -97,7 +97,7 @@ public class App {
     @SuppressWarnings("unused")
     public static void main(final String[] args) throws FileNotFoundException, IOException {
         // read solution
-        final File f = new File("src/main/resources/org/drools/planner/examples/ras2012/RDS1.txt");
+        final File f = new File("src/main/resources/org/drools/planner/examples/ras2012/RDS3.txt");
         final RAS2012Solution sol = new RAS2012ProblemIO().read(f);
         if (false) {
             final Future<Boolean> visualizationSuccess = App.visualizerExecutor
