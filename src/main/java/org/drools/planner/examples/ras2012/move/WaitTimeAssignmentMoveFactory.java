@@ -20,14 +20,14 @@ public class WaitTimeAssignmentMoveFactory extends AbstractMoveFactory {
         // TODO estimate maximum necessary wait time from the longest arc and slowest train
         List<WaitTime> wts = new LinkedList<WaitTime>();
         wts.add(null);
-        wts.add(new WaitTime(1));
-        wts.add(new WaitTime(2));
-        wts.add(new WaitTime(3));
-        wts.add(new WaitTime(4));
-        wts.add(new WaitTime(5));
-        wts.add(new WaitTime(10));
-        wts.add(new WaitTime(20));
-        wts.add(new WaitTime(40));
+        wts.add(WaitTime.getWaitTime(1));
+        wts.add(WaitTime.getWaitTime(2));
+        wts.add(WaitTime.getWaitTime(3));
+        wts.add(WaitTime.getWaitTime(4));
+        wts.add(WaitTime.getWaitTime(5));
+        wts.add(WaitTime.getWaitTime(10));
+        wts.add(WaitTime.getWaitTime(20));
+        wts.add(WaitTime.getWaitTime(40));
         final List<Move> moves = new ArrayList<Move>();
         final RAS2012Solution sol = (RAS2012Solution) solution;
         for (final ItineraryAssignment ia : sol.getAssignments()) {
