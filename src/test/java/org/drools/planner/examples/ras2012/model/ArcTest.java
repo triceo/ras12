@@ -10,43 +10,43 @@ public class ArcTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorNegativeLength() {
-        new Arc(TrackType.MAIN_0, new BigDecimal("-0.05"), new Node(0), new Node(1));
+        new Arc(TrackType.MAIN_0, new BigDecimal("-0.05"), Node.getNode(0), Node.getNode(1));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorNull1() {
-        new Arc(null, new BigDecimal("10"), new Node(0), new Node(1));
+        new Arc(null, new BigDecimal("10"), Node.getNode(0), Node.getNode(1));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorNull2() {
-        new Arc(TrackType.MAIN_0, null, new Node(0), new Node(1));
+        new Arc(TrackType.MAIN_0, null, Node.getNode(0), Node.getNode(1));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorNull3() {
-        new Arc(TrackType.MAIN_0, new BigDecimal("10"), null, new Node(1));
+        new Arc(TrackType.MAIN_0, new BigDecimal("10"), null, Node.getNode(1));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorNull4() {
-        new Arc(TrackType.MAIN_0, new BigDecimal("10"), new Node(0), null);
+        new Arc(TrackType.MAIN_0, new BigDecimal("10"), Node.getNode(0), null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorSameNodes() {
-        new Arc(TrackType.MAIN_0, new BigDecimal("10"), new Node(0), new Node(0));
+        new Arc(TrackType.MAIN_0, new BigDecimal("10"), Node.getNode(0), Node.getNode(0));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorZeroLength() {
-        new Arc(TrackType.MAIN_0, new BigDecimal("0"), new Node(0), new Node(1));
+        new Arc(TrackType.MAIN_0, new BigDecimal("0"), Node.getNode(0), Node.getNode(1));
     }
 
     @Test
     public void testEqualsObject() {
-        final Node n1 = new Node(0);
-        final Node n2 = new Node(1);
+        final Node n1 = Node.getNode(0);
+        final Node n2 = Node.getNode(1);
         final BigDecimal length = new BigDecimal("1.5");
         final Arc a1 = new Arc(TrackType.MAIN_0, length, n1, n2);
         Assert.assertTrue("The object should equal itself.", a1.equals(a1));

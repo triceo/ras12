@@ -7,9 +7,9 @@ public class NodeTest {
 
     @Test
     public void testCompareTo() {
-        final Node n0 = new Node(0);
-        final Node n1 = new Node(1);
-        final Node nMax = new Node(Integer.MAX_VALUE);
+        final Node n0 = Node.getNode(0);
+        final Node n1 = Node.getNode(1);
+        final Node nMax = Node.getNode(Integer.MAX_VALUE);
 
         // any node should equal to itself
         Assert.assertTrue("Node should equal itself.", n0.compareTo(n0) == 0);
@@ -31,17 +31,17 @@ public class NodeTest {
 
     @Test
     public void testEqualsObject() {
-        final Node n1 = new Node(0);
+        final Node n1 = Node.getNode(0);
         Assert.assertEquals("Node should equal itself.", n1, n1);
-        final Node n2 = new Node(0);
+        final Node n2 = Node.getNode(0);
         Assert.assertEquals("Node should equal other nodes with the same ID.", n1, n2);
-        final Node n3 = new Node(1);
+        final Node n3 = Node.getNode(1);
         Assert.assertFalse("Node shouldn't equal nodes with different IDs.", n1.equals(n3));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testNode() {
-        new Node(-1);
+        Node.getNode(-1);
     }
 
 }

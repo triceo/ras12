@@ -117,10 +117,10 @@ public class RAS2012ProblemIO implements ProblemIO {
             final int startNodeId = RAS2012ProblemIO.tokenToInteger(arcs.get(i).get(0));
             final int endNodeId = RAS2012ProblemIO.tokenToInteger(arcs.get(i).get(1));
             if (!newNodes.containsKey(startNodeId)) {
-                newNodes.put(startNodeId, new Node(startNodeId));
+                newNodes.put(startNodeId, Node.getNode(startNodeId));
             }
             if (!newNodes.containsKey(endNodeId)) {
-                newNodes.put(endNodeId, new Node(endNodeId));
+                newNodes.put(endNodeId, Node.getNode(endNodeId));
             }
             // and finally create the arc
             final Arc arc = new Arc(t, length, newNodes.get(startNodeId), newNodes.get(endNodeId));

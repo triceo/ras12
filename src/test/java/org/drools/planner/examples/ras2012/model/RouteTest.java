@@ -44,8 +44,8 @@ public class RouteTest {
 
     @Test
     public void testContains() {
-        final Arc arc = new Arc(TrackType.MAIN_0, BigDecimal.ONE, new Node(0), new Node(1));
-        final Arc arc2 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, new Node(1), new Node(2));
+        final Arc arc = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
+        final Arc arc2 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(1), Node.getNode(2));
         Route r = new Route(this.originalDirection);
         Assert.assertFalse("Empty collection shouldn't contain the arc.", r.contains(arc));
         r = r.extend(arc);
@@ -57,9 +57,9 @@ public class RouteTest {
     @Test
     public void testExtend() {
         Route r = new Route(this.originalDirection);
-        final Node n1 = new Node(0);
-        final Node n2 = new Node(1);
-        final Node n3 = new Node(2);
+        final Node n1 = Node.getNode(0);
+        final Node n2 = Node.getNode(1);
+        final Node n3 = Node.getNode(2);
         final Arc a1 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n1, n2);
         final Arc a2 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n2, n3);
         r = r.extend(a1);
@@ -68,7 +68,7 @@ public class RouteTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testExtendNotWithSameArc() {
-        final Arc a = new Arc(TrackType.MAIN_0, BigDecimal.ONE, new Node(0), new Node(1));
+        final Arc a = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
         final Route r = new Route(this.originalDirection);
         final Route r2 = r.extend(a);
         r2.extend(a);
@@ -83,18 +83,18 @@ public class RouteTest {
     @Test
     public void testExtendResultsInNewRoute() {
         final Route r = new Route(this.originalDirection);
-        final Route r2 = r.extend(new Arc(TrackType.MAIN_0, BigDecimal.ONE, new Node(0),
-                new Node(1)));
+        final Route r2 = r.extend(new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node
+                .getNode(1)));
         Assert.assertNotSame("Extended route should be a clone of the original one.", r2, r);
         Assert.assertFalse("Old and extended routes shouldn't be equal.", r2.equals(r));
     }
 
     @Test
     public void testGetInitialAndTerminalArc() {
-        final Node n1 = new Node(0);
-        final Node n2 = new Node(1);
-        final Node n3 = new Node(2);
-        final Node n4 = new Node(3);
+        final Node n1 = Node.getNode(0);
+        final Node n2 = Node.getNode(1);
+        final Node n3 = Node.getNode(2);
+        final Node n4 = Node.getNode(3);
         final Arc a1 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n1, n2);
         final Arc a2 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n2, n3);
         final Arc a3 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n3, n4);
@@ -148,7 +148,8 @@ public class RouteTest {
         int nodeId = 0;
         for (final BigDecimal augend : lengths) {
             sum = sum.add(augend);
-            r = r.extend(new Arc(TrackType.MAIN_0, augend, new Node(nodeId), new Node(++nodeId)));
+            r = r.extend(new Arc(TrackType.MAIN_0, augend, Node.getNode(nodeId), Node
+                    .getNode(++nodeId)));
             Assert.assertEquals("Length in miles doesn't match the total.", sum,
                     r.getLengthInMiles());
             Assert.assertEquals("Length in arcs doesn't match the number of arcs.", nodeId,
@@ -159,9 +160,9 @@ public class RouteTest {
     @Test
     public void testGetNextArc() {
         // prepare data
-        final Node n1 = new Node(0);
-        final Node n2 = new Node(1);
-        final Node n3 = new Node(2);
+        final Node n1 = Node.getNode(0);
+        final Node n2 = Node.getNode(1);
+        final Node n3 = Node.getNode(2);
         final Arc a1 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n1, n2);
         final Arc a2 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n2, n3);
         // validate
@@ -189,15 +190,15 @@ public class RouteTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetNextArcEmptyRoute() {
-        final Arc a1 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, new Node(0), new Node(1));
+        final Arc a1 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
         final Route r = new Route(this.originalDirection);
         r.getNextArc(a1);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetNextArcInvalid() {
-        final Arc a1 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, new Node(0), new Node(1));
-        final Arc a2 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, new Node(1), new Node(2));
+        final Arc a1 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
+        final Arc a2 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(1), Node.getNode(2));
         final Route r = new Route(this.originalDirection).extend(a1);
         r.getNextArc(a2);
     }
@@ -205,9 +206,9 @@ public class RouteTest {
     @Test
     public void testGetNextArcNull() {
         // prepare data
-        final Node n1 = new Node(0);
-        final Node n2 = new Node(1);
-        final Node n3 = new Node(2);
+        final Node n1 = Node.getNode(0);
+        final Node n2 = Node.getNode(1);
+        final Node n3 = Node.getNode(2);
         final Arc a1 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n1, n2);
         final Arc a2 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n2, n3);
         // validate
@@ -233,10 +234,10 @@ public class RouteTest {
 
     @Test
     public void testGetWaitPointsOnMainTracks() {
-        final Node n1 = new Node(0);
-        final Node n2 = new Node(1);
-        final Node n3 = new Node(2);
-        final Node n4 = new Node(3);
+        final Node n1 = Node.getNode(0);
+        final Node n2 = Node.getNode(1);
+        final Node n3 = Node.getNode(2);
+        final Node n4 = Node.getNode(3);
         final Arc a1 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n1, n2);
         final Arc a2 = new Arc(TrackType.MAIN_1, BigDecimal.ONE, n2, n3);
         final Arc a3 = new Arc(TrackType.MAIN_2, BigDecimal.ONE, n3, n4);
@@ -255,10 +256,10 @@ public class RouteTest {
 
     @Test
     public void testGetWaitPointsOnSiding() {
-        final Node n1 = new Node(0);
-        final Node n2 = new Node(1);
-        final Node n3 = new Node(2);
-        final Node n4 = new Node(3);
+        final Node n1 = Node.getNode(0);
+        final Node n2 = Node.getNode(1);
+        final Node n3 = Node.getNode(2);
+        final Node n4 = Node.getNode(3);
         final Arc a1 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n1, n2);
         final Arc a2 = new Arc(TrackType.SIDING, BigDecimal.ONE, n2, n3);
         final Arc a3 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n3, n4);
@@ -284,10 +285,10 @@ public class RouteTest {
     }
 
     private void testGetWaitPointsOnSwitchesAndCrossovers(final TrackType t) {
-        final Node n1 = new Node(0);
-        final Node n2 = new Node(1);
-        final Node n3 = new Node(2);
-        final Node n4 = new Node(3);
+        final Node n1 = Node.getNode(0);
+        final Node n2 = Node.getNode(1);
+        final Node n3 = Node.getNode(2);
+        final Node n4 = Node.getNode(3);
         final Arc a1 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n1, n2);
         final Arc a2 = new Arc(t, BigDecimal.ONE, n2, n3);
         final Arc a3 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n3, n4);
@@ -310,8 +311,8 @@ public class RouteTest {
     @Test
     public void testIsPossibleForTrainDirection() {
         // prepare route
-        final Node n1 = new Node(0);
-        final Node n2 = new Node(1);
+        final Node n1 = Node.getNode(0);
+        final Node n2 = Node.getNode(1);
         final Arc a = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n1, n2);
         Route r = new Route(this.originalDirection);
         r = r.extend(a);
@@ -336,8 +337,8 @@ public class RouteTest {
     @Test
     public void testIsPossibleForTrainProperties() {
         // prepare route
-        final Node n1 = new Node(0);
-        final Node n2 = new Node(1);
+        final Node n1 = Node.getNode(0);
+        final Node n2 = Node.getNode(1);
         final Arc a = new Arc(TrackType.SIDING, BigDecimal.ONE, n1, n2);
         Route r = new Route(this.originalDirection);
         r = r.extend(a);

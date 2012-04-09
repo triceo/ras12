@@ -7,29 +7,29 @@ public class MaintenanceWindowTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorNegativeTime1() {
-        new MaintenanceWindow(new Node(0), new Node(1), -1, 1);
+        new MaintenanceWindow(Node.getNode(0), Node.getNode(1), -1, 1);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorNegativeTime2() {
-        new MaintenanceWindow(new Node(0), new Node(1), 1, -1);
+        new MaintenanceWindow(Node.getNode(0), Node.getNode(1), 1, -1);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorNull1() {
-        new MaintenanceWindow(null, new Node(1), 0, 1);
+        new MaintenanceWindow(null, Node.getNode(1), 0, 1);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorNull2() {
-        new MaintenanceWindow(new Node(0), null, 0, 1);
+        new MaintenanceWindow(Node.getNode(0), null, 0, 1);
     }
 
     @Test
     public void testEqualsObject() {
-        final Node n1 = new Node(0);
-        final Node n2 = new Node(1);
-        final Node n3 = new Node(2);
+        final Node n1 = Node.getNode(0);
+        final Node n2 = Node.getNode(1);
+        final Node n3 = Node.getNode(2);
         final MaintenanceWindow m1 = new MaintenanceWindow(n1, n2, 0, 2);
         Assert.assertTrue("MaintenanceWindow should equal itself.", m1.equals(m1));
         final MaintenanceWindow m2 = new MaintenanceWindow(n1, n2, 0, 2);
@@ -48,5 +48,4 @@ public class MaintenanceWindowTest {
         Assert.assertFalse("MaintenanceWindow shouldn't equal another with different parameters.",
                 m1.equals(m6));
     }
-
 }

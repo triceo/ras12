@@ -42,7 +42,7 @@ public class WaitTimeAssignmentMove implements Move {
         if (obj == null) {
             return false;
         }
-        if (this.getClass() != obj.getClass()) {
+        if (!(obj instanceof WaitTimeAssignmentMove)) {
             return false;
         }
         final WaitTimeAssignmentMove other = (WaitTimeAssignmentMove) obj;
@@ -53,11 +53,7 @@ public class WaitTimeAssignmentMove implements Move {
         } else if (!this.assignment.equals(other.assignment)) {
             return false;
         }
-        if (this.node == null) {
-            if (other.node != null) {
-                return false;
-            }
-        } else if (!this.node.equals(other.node)) {
+        if (this.node != other.node) {
             return false;
         }
         if (this.waitTime == null) {
@@ -92,7 +88,7 @@ public class WaitTimeAssignmentMove implements Move {
 
     @Override
     public boolean isMoveDoable(final ScoreDirector scoreDirector) {
-        return (this.waitTime != this.previousWaitTime);
+        return this.waitTime != this.previousWaitTime;
     }
 
     @Override
