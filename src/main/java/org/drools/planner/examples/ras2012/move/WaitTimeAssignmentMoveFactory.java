@@ -17,6 +17,7 @@ public class WaitTimeAssignmentMoveFactory extends AbstractMoveFactory {
     @Override
     public List<Move> createMoveList(@SuppressWarnings("rawtypes") final Solution solution) {
         // prepare the various delays
+        // TODO estimate maximum necessary wait time from the longest arc and slowest train
         List<WaitTime> wts = new LinkedList<WaitTime>();
         wts.add(null);
         wts.add(new WaitTime(1));
@@ -25,12 +26,8 @@ public class WaitTimeAssignmentMoveFactory extends AbstractMoveFactory {
         wts.add(new WaitTime(4));
         wts.add(new WaitTime(5));
         wts.add(new WaitTime(10));
-        wts.add(new WaitTime(15));
         wts.add(new WaitTime(20));
-        wts.add(new WaitTime(25));
-        wts.add(new WaitTime(30));
-        wts.add(new WaitTime(45));
-        wts.add(new WaitTime(60));
+        wts.add(new WaitTime(40));
         final List<Move> moves = new ArrayList<Move>();
         final RAS2012Solution sol = (RAS2012Solution) solution;
         for (final ItineraryAssignment ia : sol.getAssignments()) {
