@@ -96,7 +96,8 @@ public class ItineraryAssignment implements Cloneable {
 
     @Override
     public String toString() {
-        return "ItineraryAssignment [train=" + this.train + ", route=" + this.route + "]";
+        return "ItineraryAssignment [train=" + this.train.getName() + ", route="
+                + this.route.getId() + "]";
     }
 
 }
