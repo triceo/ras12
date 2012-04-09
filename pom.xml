@@ -9,7 +9,7 @@
   <packaging>jar</packaging>
 
   <name>RAS2012: Competition Entry</name>
-  <url>https://github.com/triceo/ras12</url>
+  <url>http://triceo.github.com/ras12</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
