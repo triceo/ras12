@@ -38,24 +38,24 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
         int conflicts = 0;
         // insert the number of conflicts for the given assignments
         for (double minutes = 0; minutes <= RAS2012Solution.PLANNING_HORIZON_MINUTES; minutes += RAS2012Solution.PLANNING_TIME_DIVISION_MINUTES) {
-            BigDecimal time = new BigDecimal(minutes);
+            final BigDecimal time = new BigDecimal(minutes);
             // for each point in time...
-            final Map<Arc, Integer> arcUsage = new HashMap<Arc, Integer>();
+            final Map<Arc, Integer> arcConflicts = new HashMap<Arc, Integer>();
             for (final ItineraryAssignment ia : solution.getAssignments()) {
                 // ... and each assignment...
                 final ScheduleProducer i = ia.getItinerary();
                 for (final Arc a : i.getCurrentlyOccupiedArcs(time)) {
                     // ... find out how many times an arc has been used
-                    if (arcUsage.containsKey(a)) {
-                        arcUsage.put(a, arcUsage.get(a) + 1);
+                    if (arcConflicts.containsKey(a)) {
+                        arcConflicts.put(a, arcConflicts.get(a) + 1);
                     } else {
-                        arcUsage.put(a, 1);
+                        arcConflicts.put(a, 1);
                     }
                 }
             }
             // when an arc has been used more than once, it is a conflict of two itineraries
-            for (final int numOfUses : arcUsage.values()) {
-                conflicts += numOfUses - 1;
+            for (final Map.Entry<Arc, Integer> entry : arcConflicts.entrySet()) {
+                conflicts += entry.getValue();
             }
         }
         return conflicts;
