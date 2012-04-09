@@ -31,7 +31,7 @@ public class WaitTime {
 
     @Override
     public String toString() {
-        return "WaitTime [minutesWaitFor=" + this.minutesWaitFor + "]";
+        return "WaitTime [" + this.minutesWaitFor + " min.]";
     }
 
 }
