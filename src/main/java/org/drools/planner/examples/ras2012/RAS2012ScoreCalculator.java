@@ -49,7 +49,7 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
                     if (arcConflicts.containsKey(a)) {
                         arcConflicts.put(a, arcConflicts.get(a) + 1);
                     } else {
-                        arcConflicts.put(a, 1);
+                        arcConflicts.put(a, 0);
                     }
                 }
             }
