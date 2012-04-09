@@ -22,6 +22,9 @@
       <selector>
         <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
       </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
     </selector>
   </localSearch>
 </solver>
