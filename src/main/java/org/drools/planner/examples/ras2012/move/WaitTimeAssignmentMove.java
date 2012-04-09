@@ -92,7 +92,15 @@ public class WaitTimeAssignmentMove implements Move {
 
     @Override
     public boolean isMoveDoable(final ScoreDirector scoreDirector) {
-        return this.waitTime != this.previousWaitTime;
+        if (this.waitTime == null) {
+            if (this.previousWaitTime == null) {
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return !this.waitTime.equals(this.previousWaitTime);
+        }
     }
 
     @Override
