@@ -24,12 +24,30 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
     @Override
     public HardAndSoftScore calculateScore(final RAS2012Solution solution) {
         // count the number of conflicts
-        int cost = 0;
+        int penalty = 0;
         for (final ItineraryAssignment ia : solution.getAssignments()) {
-            cost += this.getCostPerItinerary(ia.getItinerary(), solution);
+            /*
+             * want time penalties are only counted when the train arrives on hour before or three hours after the want time
+             */
+            penalty += this.getWantTimePenalty(ia.getItinerary(), solution);
+            /*
+             * calculate hot schedule adherence penalties, given that the train needs to adhere and that the delay is more than
+             * 2 hours
+             */
+            penalty += this.getScheduleAdherencePenalty(ia.getItinerary(), solution);
+            /*
+             * calculate time spent on unpreferred tracks
+             */
+            penalty += this.roundMillisecondsToWholeHours(ia.getItinerary()
+                    .getTimeSpentOnUnpreferredTracks(
+                            RAS2012Solution.PLANNING_HORIZON_MINUTES * 60 * 1000)) * 50;
+            /*
+             * calculate penalty for delays on the route
+             */
+            penalty += this.getDelayPenalty(ia.getItinerary(), solution);
         }
         final HardAndSoftScore score = DefaultHardAndSoftScore.valueOf(
-                -this.getConflicts(solution), -cost);
+                -this.getConflicts(solution), -penalty);
         return score;
     }
 
@@ -57,30 +75,6 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
             }
         }
         return conflicts;
-    }
-
-    private int getCostPerItinerary(final ScheduleProducer i, final RAS2012Solution solution) {
-        int penalty = 0;
-        /*
-         * want time penalties are only counted when the train arrives on hour before or three hours after the want time
-         */
-        penalty += this.getWantTimePenalty(i, solution);
-        /*
-         * calculate hot schedule adherence penalties, given that the train needs to adhere and that the delay is more than 2
-         * hours
-         */
-        penalty += this.getScheduleAdherencePenalty(i, solution);
-        /*
-         * calculate time spent on unpreferred tracks
-         */
-        penalty += this
-                .roundMillisecondsToWholeHours(i
-                        .getTimeSpentOnUnpreferredTracks(RAS2012Solution.PLANNING_HORIZON_MINUTES * 60 * 1000)) * 50;
-        /*
-         * calculate penalty for delays on the route
-         */
-        penalty += this.getDelayPenalty(i, solution);
-        return penalty;
     }
 
     private int getDelayPenalty(final ScheduleProducer i, final RAS2012Solution solution) {
