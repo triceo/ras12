@@ -43,9 +43,9 @@ public interface ScheduleProducer {
      * Retrieve the schedule for the given train on the given route. The schedule takes into account all the maintenance windows
      * and halt points.
      * 
-     * @return Map, where the key is the time and the value is the node reached at that time.
+     * @return Map, where the key is the time (in milliseconds) and the value is the node reached at that time.
      */
-    public SortedMap<BigDecimal, Node> getSchedule();
+    public SortedMap<Long, Node> getSchedule();
 
     /**
      * Retrieve the difference between the train's schedule and the reality.

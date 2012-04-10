@@ -86,12 +86,12 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
 
     private int getDelayPenalty(final ScheduleProducer i, final RAS2012Solution solution) {
         final Route bestRoute = solution.getNetwork().getBestRoute(i.getTrain());
-        final SortedMap<BigDecimal, Node> idealSchedule = new Itinerary(bestRoute, i.getTrain(),
+        final SortedMap<Long, Node> idealSchedule = new Itinerary(bestRoute, i.getTrain(),
                 solution.getMaintenances()).getSchedule();
-        final SortedMap<BigDecimal, Node> actualSchedule = i.getSchedule();
-        final BigDecimal idealArrival = new TreeSet<BigDecimal>(idealSchedule.keySet()).last();
-        final BigDecimal actualArrival = new TreeSet<BigDecimal>(actualSchedule.keySet()).last();
-        final int hoursDelay = this.roundMinutesToWholeHours(actualArrival.subtract(idealArrival));
+        final SortedMap<Long, Node> actualSchedule = i.getSchedule();
+        final long idealArrival = new TreeSet<Long>(idealSchedule.keySet()).last();
+        final long actualArrival = new TreeSet<Long>(actualSchedule.keySet()).last();
+        final int hoursDelay = this.roundMillisecondsToWholeHours(actualArrival - idealArrival);
         if (hoursDelay < 0) {
             // FIXME fuck!
             RAS2012ScoreCalculator.logger
@@ -155,14 +155,6 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
     private boolean isInPlanningHorizon(final long time) {
         long horizon = RAS2012Solution.PLANNING_HORIZON_MINUTES * 1000;
         return (time < horizon);
-    }
-
-    // TODO make static
-    private int roundMinutesToWholeHours(final BigDecimal minutes) {
-        final BigDecimal hours = minutes.divide(BigDecimal.valueOf(60), 10,
-                BigDecimal.ROUND_HALF_EVEN);
-        final int result = hours.setScale(0, BigDecimal.ROUND_UP).intValue();
-        return result;
     }
 
     private int roundMillisecondsToWholeHours(final long milliseconds) {
