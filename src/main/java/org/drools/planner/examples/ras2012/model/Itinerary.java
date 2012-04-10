@@ -54,7 +54,8 @@ public final class Itinerary implements ScheduleProducer {
     }
 
     private static BigDecimal getDistanceInMilesFromSpeedAndTime(final int speedInMPH,
-            final BigDecimal time) {
+            final long timeInMilliseconds) {
+        final BigDecimal time = Converter.convertNewValueToOld(timeInMilliseconds);
         final BigDecimal milesPerHour = BigDecimal.valueOf(speedInMPH);
         final BigDecimal milesPerMinute = milesPerHour.divide(BigDecimal.valueOf(60), 10,
                 BigDecimal.ROUND_HALF_EVEN);
@@ -152,7 +153,6 @@ public final class Itinerary implements ScheduleProducer {
     }
 
     private Collection<Arc> getCurrentlyOccupiedArcsUncached(final long time) {
-        final BigDecimal timeInMinutes = Converter.convertNewValueToOld(time);
         final Arc leadingArc = this.getLeadingArc(time);
         if (leadingArc == null) {
             // train not in the network
@@ -164,14 +164,14 @@ public final class Itinerary implements ScheduleProducer {
         // calculate how far are we into the leading arc
         final Node beginningOfLeadingArc = leadingArc.getStartingNode(this.getTrain());
         final SortedMap<Long, Node> nodeEntryTimes = this.getSchedule();
-        BigDecimal timeArcEntered = null;
+        long timeArcEntered = -1; // FIXME make sure this never stays -1
         for (final SortedMap.Entry<Long, Node> entry : nodeEntryTimes.entrySet()) {
             if (entry.getValue() == beginningOfLeadingArc) {
-                timeArcEntered = Converter.convertNewValueToOld(entry.getKey());
+                timeArcEntered = entry.getKey();
                 break;
             }
         }
-        final BigDecimal timeTravelledInLeadingArc = timeInMinutes.subtract(timeArcEntered);
+        final long timeTravelledInLeadingArc = time - timeArcEntered;
         final BigDecimal travelledInLeadingArc = Itinerary.getDistanceInMilesFromSpeedAndTime(this
                 .getTrain().getMaximumSpeed(leadingArc.getTrackType()), timeTravelledInLeadingArc);
         BigDecimal remainingLengthOfTrain = this.getTrain().getLength()
