@@ -277,7 +277,7 @@ public final class Itinerary implements ScheduleProducer {
         for (final ScheduleAdherenceRequirement sa : this.getTrain()
                 .getScheduleAdherenceRequirements()) {
             final Node pointOnRoute = sa.getDestination();
-            final int expectedTime = sa.getTimeSinceStartOfWorld();
+            final int expectedTime = sa.getTimeSinceStartOfWorld() * 60 * 1000;
             for (final SortedMap.Entry<Long, Node> entry : this.getSchedule().entrySet()) {
                 if (entry.getValue() == pointOnRoute) {
                     final long difference = entry.getKey() - expectedTime;
@@ -293,7 +293,6 @@ public final class Itinerary implements ScheduleProducer {
 
     @Override
     public long getTimeSpentOnUnpreferredTracks(final long time) {
-        final BigDecimal convertedTime = Converter.convertNewValueToOld(time);
         final SortedMap<Long, Node> nodeEntryTimes = this.getSchedule();
         final SortedMap<Long, Arc> arcEntryTimes = new TreeMap<Long, Arc>();
         for (final SortedMap.Entry<Long, Node> entry : nodeEntryTimes.entrySet()) {
@@ -303,34 +302,33 @@ public final class Itinerary implements ScheduleProducer {
             }
             arcEntryTimes.put(entry.getKey(), a);
         }
-        BigDecimal spentTime = BigDecimal.ZERO;
+        long spentTime = 0;
         final Arc leadingArc = this.getLeadingArc(time);
         /*
          * the time spent in between the nodes is calculated as a difference of their entry times; if we calculated just the
          * time spent traversing the arc, we would have missed wait times and MOWs.
          */
-        BigDecimal previousTimeOfEntry = BigDecimal.ZERO;
+        long previousTimeOfEntry = 0;
         Arc previousArc = null;
         for (final SortedMap.Entry<Long, Arc> entry : arcEntryTimes.entrySet()) {
-            final BigDecimal currentTimeOfEntry = Converter.convertNewValueToOld(entry.getKey());
-            final int comparison = currentTimeOfEntry.compareTo(convertedTime);
-            if (comparison > 0) {
-                // we're not interested in values that are beyong the specified time
+            final long currentTimeOfEntry = entry.getKey();
+            if (currentTimeOfEntry > time) {
+                // we're not interested in values that are beyond the specified time
                 continue;
             }
             final Arc a = entry.getValue();
             if (previousArc != null && !previousArc.isPreferred(this.getTrain())) {
                 if (previousArc == leadingArc) {
                     // include the time spent on this track so far
-                    spentTime = spentTime.add(convertedTime.subtract(currentTimeOfEntry));
+                    spentTime += (time - currentTimeOfEntry);
                 }
                 // include the whole time spent on previous
-                spentTime = spentTime.add(currentTimeOfEntry.subtract(previousTimeOfEntry));
+                spentTime += (currentTimeOfEntry - previousTimeOfEntry);
             }
             previousTimeOfEntry = currentTimeOfEntry;
             previousArc = a;
         }
-        return Converter.convertOldValueToNew(spentTime);
+        return spentTime;
     }
 
     @Override
