@@ -82,7 +82,7 @@ public final class Itinerary implements ScheduleProducer {
             final Collection<MaintenanceWindow> maintenanceWindows) {
         this.route = r;
         this.train = t;
-        this.trainEntryTime = t.getEntryTime() * 1000;
+        this.trainEntryTime = t.getEntryTime() * 60 * 1000;
         // assemble the node-traversal information
         Arc currentArc = null;
         while ((currentArc = this.route.getNextArc(currentArc)) != null) {
@@ -230,43 +230,42 @@ public final class Itinerary implements ScheduleProducer {
     public synchronized SortedMap<Long, Node> getSchedule() {
         if (!this.scheduleCacheValid.get() || this.scheduleCache.size() == 0) {
             int i = 0;
-            BigDecimal previousTime = BigDecimal.ZERO;
+            long previousTime = 0;
             Arc previousArc = null;
             for (final Arc currentArc : this.arcProgression) {
-                BigDecimal time = BigDecimal.ZERO;
+                long time = 0;
                 if (i == 0) {
                     // first item needs to be augmented by the train entry time
-                    time = time.add(Converter.convertNewValueToOld(this.trainEntryTime));
+                    time += this.trainEntryTime;
                 } else {
                     // otherwise we need to convert a relative time to an absolute time by adding the previous node's time
-                    time = Converter.convertNewValueToOld(previousArc
-                            .getTravellingTimeInMilliseconds(this.getTrain()));
-                    time = time.add(previousTime);
+                    time = previousArc.getTravellingTimeInMilliseconds(this.getTrain());
+                    time += previousTime;
                 }
                 // now adjust for node wait time, should there be any
                 final Node n = currentArc.getStartingNode(this.getTrain());
                 final WaitTime wt = this.nodeWaitTimes.get(n);
                 if (wt != null) {
-                    time = time.add(BigDecimal.valueOf(wt.getMinutesWaitFor()));
+                    time += wt.getMinutesWaitFor();
                 }
                 // check for maintenance windows
                 if (this.maintenances.containsKey(n)) {
                     // there is a maintenance registered for the next node
                     final Itinerary.Window w = this.maintenances.get(n);
-                    if (w.isInside(Converter.convertOldValueToNew(time))) {
+                    if (w.isInside(time)) {
                         // the maintenance is ongoing, we have to wait
-                        time = Converter.convertNewValueToOld(w.getEnd());
+                        time = w.getEnd();
                     }
                 }
                 // and store
-                this.scheduleCache.put(Converter.convertOldValueToNew(time), n);
+                this.scheduleCache.put(time, n);
                 previousTime = time;
                 previousArc = currentArc;
                 i++;
             }
-            this.scheduleCache.put(Converter.convertOldValueToNew(previousTime.add(Converter
-                    .convertNewValueToOld(previousArc.getTravellingTimeInMilliseconds(this
-                            .getTrain())))), previousArc.getEndingNode(this.getTrain()));
+            this.scheduleCache.put(
+                    previousTime + previousArc.getTravellingTimeInMilliseconds(this.getTrain()),
+                    previousArc.getEndingNode(this.getTrain()));
             this.scheduleCacheValid.set(true);
         }
         return Collections.unmodifiableSortedMap(this.scheduleCache);
