@@ -75,7 +75,7 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
         /*
          * calculate time spent on unpreferred tracks
          */
-        penalty += this.roundMinutesToWholeHours(i.getTimeSpentOnUnpreferredTracks(BigDecimal
+        penalty += this.roundMillisecondsToWholeHours(i.getTimeSpentOnUnpreferredTracks(BigDecimal
                 .valueOf(RAS2012Solution.PLANNING_HORIZON_MINUTES))) * 50;
         /*
          * calculate penalty for delays on the route
@@ -156,6 +156,7 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
         return time.compareTo(BigDecimal.valueOf(RAS2012Solution.PLANNING_HORIZON_MINUTES)) <= 0;
     }
 
+    // TODO make static
     private int roundMinutesToWholeHours(final BigDecimal minutes) {
         final BigDecimal hours = minutes.divide(BigDecimal.valueOf(60), 10,
                 BigDecimal.ROUND_HALF_EVEN);
@@ -163,4 +164,7 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
         return result;
     }
 
+    private long roundMillisecondsToWholeHours(final long milliseconds) {
+        return (long) Math.ceil(milliseconds / 1000.0 / 60.0);
+    }
 }

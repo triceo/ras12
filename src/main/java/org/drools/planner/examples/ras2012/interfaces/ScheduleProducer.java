@@ -59,9 +59,9 @@ public interface ScheduleProducer {
      * Retrieve the time in minutes that the train has spent on unpreferred tracks.
      * 
      * @param time Time in minutes.
-     * @return Number of minutes spent on unpreferred tracks.
+     * @return Number of milliseconds spent on unpreferred tracks.
      */
-    public BigDecimal getTimeSpentOnUnpreferredTracks(BigDecimal time);
+    public long getTimeSpentOnUnpreferredTracks(BigDecimal time);
 
     /**
      * Retrieve the train that this itinerary relates to.

@@ -279,7 +279,7 @@ public final class Itinerary implements ScheduleProducer {
     }
 
     @Override
-    public BigDecimal getTimeSpentOnUnpreferredTracks(final BigDecimal time) {
+    public long getTimeSpentOnUnpreferredTracks(final BigDecimal time) {
         final SortedMap<BigDecimal, Node> nodeEntryTimes = this.getSchedule();
         final SortedMap<BigDecimal, Arc> arcEntryTimes = new TreeMap<BigDecimal, Arc>();
         for (final SortedMap.Entry<BigDecimal, Node> entry : nodeEntryTimes.entrySet()) {
@@ -316,7 +316,7 @@ public final class Itinerary implements ScheduleProducer {
             previousTimeOfEntry = currentTimeOfEntry;
             previousArc = a;
         }
-        return spentTime;
+        return spentTime.multiply(BigDecimal.valueOf(1000)).longValue();
     }
 
     @Override
