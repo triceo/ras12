@@ -1,7 +1,6 @@
 package org.drools.planner.examples.ras2012.move;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.drools.planner.core.move.Move;
@@ -16,24 +15,17 @@ public class WaitTimeAssignmentMoveFactory extends AbstractMoveFactory {
 
     @Override
     public List<Move> createMoveList(@SuppressWarnings("rawtypes") final Solution solution) {
-        // prepare the various delays
         // TODO estimate maximum necessary wait time from the longest arc and slowest train
-        List<WaitTime> wts = new LinkedList<WaitTime>();
-        wts.add(null);
-        wts.add(WaitTime.getWaitTime(1));
-        wts.add(WaitTime.getWaitTime(2));
-        wts.add(WaitTime.getWaitTime(3));
-        wts.add(WaitTime.getWaitTime(4));
-        wts.add(WaitTime.getWaitTime(5));
-        wts.add(WaitTime.getWaitTime(10));
-        wts.add(WaitTime.getWaitTime(20));
-        wts.add(WaitTime.getWaitTime(40));
         final List<Move> moves = new ArrayList<Move>();
         final RAS2012Solution sol = (RAS2012Solution) solution;
         for (final ItineraryAssignment ia : sol.getAssignments()) {
             for (final Node waitPoint : ia.getRoute().getWaitPoints()) {
-                for (WaitTime waitTime : wts) {
-                    moves.add(new WaitTimeAssignmentMove(ia, waitPoint, waitTime));
+                moves.add(new WaitTimeAssignmentMove(ia, waitPoint, null));
+                for (int i = 1; i <= 10; i++) { // plan to the minute
+                    moves.add(new WaitTimeAssignmentMove(ia, waitPoint, WaitTime.getWaitTime(i)));
+                }
+                for (int i = 1; i < RAS2012Solution.PLANNING_HORIZON_MINUTES; i += 10) { // rougher plan
+                    moves.add(new WaitTimeAssignmentMove(ia, waitPoint, WaitTime.getWaitTime(i)));
                 }
             }
         }

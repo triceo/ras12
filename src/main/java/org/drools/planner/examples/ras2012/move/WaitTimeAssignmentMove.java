@@ -56,11 +56,7 @@ public class WaitTimeAssignmentMove implements Move {
         if (this.node != other.node) {
             return false;
         }
-        if (this.waitTime == null) {
-            if (other.waitTime != null) {
-                return false;
-            }
-        } else if (!this.waitTime.equals(other.waitTime)) {
+        if (this.waitTime != other.waitTime) {
             return false;
         }
         return true;

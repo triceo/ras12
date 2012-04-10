@@ -13,7 +13,7 @@
       <scoreAttained>0hard/0soft</scoreAttained>
     </termination> 
     <acceptor>
-      <simulatedAnnealingStartingTemperature>50hard/1000soft</simulatedAnnealingStartingTemperature>
+      <simulatedAnnealingStartingTemperature>0hard/100soft</simulatedAnnealingStartingTemperature>
     </acceptor>
     <forager>
       <minimalAcceptedSelection>4</minimalAcceptedSelection>
