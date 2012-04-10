@@ -51,9 +51,9 @@ public interface ScheduleProducer {
      * Retrieve the difference between the train's schedule and the reality.
      * 
      * @return Key is the time of arrival at the SA checkpoint, value is the difference. Positive when there's been a delay,
-     *         negative when the train is ahead of schedule.
+     *         negative when the train is ahead of schedule. Both times are in milliseconds.
      */
-    public Map<BigDecimal, BigDecimal> getScheduleAdherenceStatus();
+    public Map<Long, Long> getScheduleAdherenceStatus();
 
     /**
      * Retrieve the time in minutes that the train has spent on unpreferred tracks.

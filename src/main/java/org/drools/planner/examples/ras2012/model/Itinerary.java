@@ -259,8 +259,8 @@ public final class Itinerary implements ScheduleProducer {
     }
 
     @Override
-    public Map<BigDecimal, BigDecimal> getScheduleAdherenceStatus() {
-        final Map<BigDecimal, BigDecimal> result = new HashMap<BigDecimal, BigDecimal>();
+    public Map<Long, Long> getScheduleAdherenceStatus() {
+        final Map<Long, Long> result = new HashMap<Long, Long>();
         for (final ScheduleAdherenceRequirement sa : this.getTrain()
                 .getScheduleAdherenceRequirements()) {
             final Node pointOnRoute = sa.getDestination();
@@ -268,7 +268,8 @@ public final class Itinerary implements ScheduleProducer {
             for (final SortedMap.Entry<BigDecimal, Node> entry : this.getSchedule().entrySet()) {
                 if (entry.getValue() == pointOnRoute) {
                     final BigDecimal difference = entry.getKey().subtract(expectedTime);
-                    result.put(entry.getKey(), difference);
+                    result.put(convertOldValueToNew(entry.getKey()),
+                            convertOldValueToNew(difference));
                 }
             }
         }

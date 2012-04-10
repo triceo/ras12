@@ -107,17 +107,17 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
     private int getScheduleAdherencePenalty(final ScheduleProducer i, final RAS2012Solution solution) {
         int penalty = 0;
         if (i.getTrain().getType().adhereToSchedule()) {
-            final Map<BigDecimal, BigDecimal> sa = i.getScheduleAdherenceStatus();
-            for (final Map.Entry<BigDecimal, BigDecimal> entry : sa.entrySet()) {
+            final Map<Long, Long> sa = i.getScheduleAdherenceStatus();
+            for (final Map.Entry<Long, Long> entry : sa.entrySet()) {
                 if (!this.isInPlanningHorizon(entry.getKey().longValue() * 1000)) {
                     // difference occured past the planning horizon; we don't care about it
                     continue;
                 }
-                final BigDecimal difference = entry.getValue();
-                if (difference.signum() < 1) {
+                final long difference = entry.getValue();
+                if (difference < 1) {
                     continue;
                 }
-                final int hourlyDifference = this.roundMinutesToWholeHours(difference);
+                final int hourlyDifference = this.roundMillisecondsToWholeHours(difference);
                 if (hourlyDifference > 2) {
                     penalty += (hourlyDifference - 2) * 200;
                 }
