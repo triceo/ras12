@@ -21,10 +21,17 @@ public class WaitTimeAssignmentMoveFactory extends AbstractMoveFactory {
         for (final ItineraryAssignment ia : sol.getAssignments()) {
             for (final Node waitPoint : ia.getRoute().getWaitPoints()) {
                 moves.add(new WaitTimeAssignmentMove(ia, waitPoint, null));
-                for (int i = 1; i <= 10; i++) { // plan to the minute
+                int i = 1;
+                for (; i < 10; i++) { // plan to the minute
                     moves.add(new WaitTimeAssignmentMove(ia, waitPoint, WaitTime.getWaitTime(i)));
                 }
-                for (int i = 1; i < RAS2012Solution.PLANNING_HORIZON_MINUTES; i += 10) { // rougher plan
+                for (; i < (RAS2012Solution.PLANNING_HORIZON_MINUTES / 4); i += 5) {
+                    moves.add(new WaitTimeAssignmentMove(ia, waitPoint, WaitTime.getWaitTime(i)));
+                }
+                for (; i < (2 * (RAS2012Solution.PLANNING_HORIZON_MINUTES / 2)); i += 10) {
+                    moves.add(new WaitTimeAssignmentMove(ia, waitPoint, WaitTime.getWaitTime(i)));
+                }
+                for (; i <= (RAS2012Solution.PLANNING_HORIZON_MINUTES); i += 25) {
                     moves.add(new WaitTimeAssignmentMove(ia, waitPoint, WaitTime.getWaitTime(i)));
                 }
             }
