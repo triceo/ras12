@@ -102,7 +102,7 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
         if (i.getTrain().getType().adhereToSchedule()) {
             final Map<Long, Long> sa = i.getScheduleAdherenceStatus();
             for (final Map.Entry<Long, Long> entry : sa.entrySet()) {
-                if (!this.isInPlanningHorizon(entry.getKey().longValue() * 1000)) {
+                if (!this.isInPlanningHorizon(entry.getKey())) {
                     // difference occured past the planning horizon; we don't care about it
                     continue;
                 }
