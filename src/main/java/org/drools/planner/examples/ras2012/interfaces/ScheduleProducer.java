@@ -27,10 +27,10 @@ public interface ScheduleProducer {
      * Get every arc that the train is occupying at a given length of time. Arc is either occupied or free, there is no concept
      * of partially-occupied.
      * 
-     * @param time Number in minutes, specifying the time since the beginning of world.
+     * @param time Number in milliseconds, specifying the time since the beginning of world.
      * @return Currently occupied arcs, each once.
      */
-    public Collection<Arc> getCurrentlyOccupiedArcs(BigDecimal time);
+    public Collection<Arc> getCurrentlyOccupiedArcs(long time);
 
     /**
      * Retrieve the route that this itinerary relates to.
@@ -56,12 +56,12 @@ public interface ScheduleProducer {
     public Map<Long, Long> getScheduleAdherenceStatus();
 
     /**
-     * Retrieve the time in minutes that the train has spent on unpreferred tracks.
+     * Retrieve the time that the train has spent on unpreferred tracks.
      * 
-     * @param time Time in minutes.
+     * @param time Time in milliseconds.
      * @return Number of milliseconds spent on unpreferred tracks.
      */
-    public long getTimeSpentOnUnpreferredTracks(BigDecimal time);
+    public long getTimeSpentOnUnpreferredTracks(long time);
 
     /**
      * Retrieve the train that this itinerary relates to.

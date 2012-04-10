@@ -1,6 +1,5 @@
 package org.drools.planner.examples.ras2012;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedMap;
@@ -37,14 +36,13 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
     private int getConflicts(final RAS2012Solution solution) {
         int conflicts = 0;
         // insert the number of conflicts for the given assignments
-        for (double minutes = 0; minutes <= RAS2012Solution.PLANNING_HORIZON_MINUTES; minutes += RAS2012Solution.PLANNING_TIME_DIVISION_MINUTES) {
-            final BigDecimal time = new BigDecimal(minutes);
+        for (long milliseconds = 0; milliseconds <= RAS2012Solution.PLANNING_HORIZON_MINUTES * 60 * 1000; milliseconds += 30000) {
             // for each point in time...
             final Map<Arc, Integer> arcConflicts = new HashMap<Arc, Integer>();
             for (final ItineraryAssignment ia : solution.getAssignments()) {
                 // ... and each assignment...
                 final ScheduleProducer i = ia.getItinerary();
-                for (final Arc a : i.getCurrentlyOccupiedArcs(time)) {
+                for (final Arc a : i.getCurrentlyOccupiedArcs(milliseconds)) {
                     // ... find out how many times an arc has been used
                     if (arcConflicts.containsKey(a)) {
                         arcConflicts.put(a, arcConflicts.get(a) + 1);
@@ -75,8 +73,9 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
         /*
          * calculate time spent on unpreferred tracks
          */
-        penalty += this.roundMillisecondsToWholeHours(i.getTimeSpentOnUnpreferredTracks(BigDecimal
-                .valueOf(RAS2012Solution.PLANNING_HORIZON_MINUTES))) * 50;
+        penalty += this
+                .roundMillisecondsToWholeHours(i
+                        .getTimeSpentOnUnpreferredTracks(RAS2012Solution.PLANNING_HORIZON_MINUTES * 60 * 1000)) * 50;
         /*
          * calculate penalty for delays on the route
          */
@@ -153,7 +152,7 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
     }
 
     private boolean isInPlanningHorizon(final long time) {
-        long horizon = RAS2012Solution.PLANNING_HORIZON_MINUTES * 1000;
+        long horizon = RAS2012Solution.PLANNING_HORIZON_MINUTES * 60 * 1000;
         return (time < horizon);
     }
 

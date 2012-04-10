@@ -130,7 +130,8 @@ public final class Itinerary implements ScheduleProducer {
     }
 
     @Override
-    public Collection<Arc> getCurrentlyOccupiedArcs(final BigDecimal timeInMinutes) {
+    public Collection<Arc> getCurrentlyOccupiedArcs(final long time) {
+        BigDecimal timeInMinutes = convertNewValueToOld(time);
         if (!this.currentlyOccupied.containsKey(timeInMinutes)) {
             final Collection<Arc> a = this.getCurrentlyOccupiedArcsUncached(timeInMinutes);
             this.currentlyOccupied.put(timeInMinutes, a);
@@ -279,7 +280,8 @@ public final class Itinerary implements ScheduleProducer {
     }
 
     @Override
-    public long getTimeSpentOnUnpreferredTracks(final BigDecimal time) {
+    public long getTimeSpentOnUnpreferredTracks(final long time) {
+        final BigDecimal convertedTime = convertNewValueToOld(time);
         final SortedMap<Long, Node> nodeEntryTimes = this.getSchedule();
         final SortedMap<Long, Arc> arcEntryTimes = new TreeMap<Long, Arc>();
         for (final SortedMap.Entry<Long, Node> entry : nodeEntryTimes.entrySet()) {
@@ -290,7 +292,7 @@ public final class Itinerary implements ScheduleProducer {
             arcEntryTimes.put(entry.getKey(), a);
         }
         BigDecimal spentTime = BigDecimal.ZERO;
-        final Arc leadingArc = this.getLeadingArc(time);
+        final Arc leadingArc = this.getLeadingArc(convertedTime);
         /*
          * the time spent in between the nodes is calculated as a difference of their entry times; if we calculated just the
          * time spent traversing the arc, we would have missed wait times and MOWs.
@@ -299,7 +301,7 @@ public final class Itinerary implements ScheduleProducer {
         Arc previousArc = null;
         for (final SortedMap.Entry<Long, Arc> entry : arcEntryTimes.entrySet()) {
             final BigDecimal currentTimeOfEntry = convertNewValueToOld(entry.getKey());
-            final int comparison = currentTimeOfEntry.compareTo(time);
+            final int comparison = currentTimeOfEntry.compareTo(convertedTime);
             if (comparison > 0) {
                 // we're not interested in values that are beyong the specified time
                 continue;
@@ -308,7 +310,7 @@ public final class Itinerary implements ScheduleProducer {
             if (previousArc != null && !previousArc.isPreferred(this.getTrain())) {
                 if (previousArc == leadingArc) {
                     // include the time spent on this track so far
-                    spentTime = spentTime.add(time.subtract(currentTimeOfEntry));
+                    spentTime = spentTime.add(convertedTime.subtract(currentTimeOfEntry));
                 }
                 // include the whole time spent on previous
                 spentTime = spentTime.add(currentTimeOfEntry.subtract(previousTimeOfEntry));
