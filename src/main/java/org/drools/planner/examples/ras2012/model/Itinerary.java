@@ -13,6 +13,7 @@ import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.drools.planner.examples.ras2012.interfaces.ScheduleProducer;
+import org.drools.planner.examples.ras2012.util.Converter;
 
 public final class Itinerary implements ScheduleProducer {
 
@@ -151,8 +152,8 @@ public final class Itinerary implements ScheduleProducer {
     }
 
     private Collection<Arc> getCurrentlyOccupiedArcsUncached(final long time) {
-        final BigDecimal timeInMinutes = convertNewValueToOld(time);
-        final Arc leadingArc = this.getLeadingArc(timeInMinutes);
+        final BigDecimal timeInMinutes = Converter.convertNewValueToOld(time);
+        final Arc leadingArc = this.getLeadingArc(time);
         if (leadingArc == null) {
             // train not in the network
             // FIXME train should leave the network gradually, not at once when it reaches destination
@@ -166,7 +167,7 @@ public final class Itinerary implements ScheduleProducer {
         BigDecimal timeArcEntered = null;
         for (final SortedMap.Entry<Long, Node> entry : nodeEntryTimes.entrySet()) {
             if (entry.getValue() == beginningOfLeadingArc) {
-                timeArcEntered = convertNewValueToOld(entry.getKey());
+                timeArcEntered = Converter.convertNewValueToOld(entry.getKey());
                 break;
             }
         }
@@ -196,18 +197,18 @@ public final class Itinerary implements ScheduleProducer {
         return occupiedArcs;
     }
 
-    protected Arc getLeadingArc(final BigDecimal timeInMinutes) {
-        if (timeInMinutes.compareTo(convertNewValueToOld(this.trainEntryTime)) == -1) {
+    protected Arc getLeadingArc(final long time) {
+        if (time < this.trainEntryTime) {
             return null;
         }
         Node previousNode = null;
         for (final SortedMap.Entry<Long, Node> entry : this.getSchedule().entrySet()) {
-            final int comparison = timeInMinutes.compareTo(convertNewValueToOld(entry.getKey()));
+            final long timeOfArrival = entry.getKey();
             final Node currentNode = entry.getValue();
-            if (comparison > 0) {
+            if (time > timeOfArrival) {
                 previousNode = currentNode;
                 continue;
-            } else if (comparison == 0) {
+            } else if (time == timeOfArrival) {
                 return this.getArcPerStartingNode(currentNode);
             } else {
                 return this.getArcPerStartingNode(previousNode);
@@ -235,10 +236,11 @@ public final class Itinerary implements ScheduleProducer {
                 BigDecimal time = BigDecimal.ZERO;
                 if (i == 0) {
                     // first item needs to be augmented by the train entry time
-                    time = time.add(convertNewValueToOld(this.trainEntryTime));
+                    time = time.add(Converter.convertNewValueToOld(this.trainEntryTime));
                 } else {
                     // otherwise we need to convert a relative time to an absolute time by adding the previous node's time
-                    time = previousArc.getTravellingTimeInMinutes(this.getTrain());
+                    time = Converter.convertNewValueToOld(previousArc
+                            .getTravellingTimeInMilliseconds(this.getTrain()));
                     time = time.add(previousTime);
                 }
                 // now adjust for node wait time, should there be any
@@ -251,20 +253,20 @@ public final class Itinerary implements ScheduleProducer {
                 if (this.maintenances.containsKey(n)) {
                     // there is a maintenance registered for the next node
                     final Itinerary.Window w = this.maintenances.get(n);
-                    if (w.isInside(convertOldValueToNew(time))) {
+                    if (w.isInside(Converter.convertOldValueToNew(time))) {
                         // the maintenance is ongoing, we have to wait
-                        time = convertNewValueToOld(w.getEnd());
+                        time = Converter.convertNewValueToOld(w.getEnd());
                     }
                 }
                 // and store
-                this.scheduleCache.put(convertOldValueToNew(time), n);
+                this.scheduleCache.put(Converter.convertOldValueToNew(time), n);
                 previousTime = time;
                 previousArc = currentArc;
                 i++;
             }
-            this.scheduleCache.put(convertOldValueToNew(previousTime.add(previousArc
-                    .getTravellingTimeInMinutes(this.getTrain()))), previousArc.getEndingNode(this
-                    .getTrain()));
+            this.scheduleCache.put(Converter.convertOldValueToNew(previousTime.add(Converter
+                    .convertNewValueToOld(previousArc.getTravellingTimeInMilliseconds(this
+                            .getTrain())))), previousArc.getEndingNode(this.getTrain()));
             this.scheduleCacheValid.set(true);
         }
         return Collections.unmodifiableSortedMap(this.scheduleCache);
@@ -292,7 +294,7 @@ public final class Itinerary implements ScheduleProducer {
 
     @Override
     public long getTimeSpentOnUnpreferredTracks(final long time) {
-        final BigDecimal convertedTime = convertNewValueToOld(time);
+        final BigDecimal convertedTime = Converter.convertNewValueToOld(time);
         final SortedMap<Long, Node> nodeEntryTimes = this.getSchedule();
         final SortedMap<Long, Arc> arcEntryTimes = new TreeMap<Long, Arc>();
         for (final SortedMap.Entry<Long, Node> entry : nodeEntryTimes.entrySet()) {
@@ -303,7 +305,7 @@ public final class Itinerary implements ScheduleProducer {
             arcEntryTimes.put(entry.getKey(), a);
         }
         BigDecimal spentTime = BigDecimal.ZERO;
-        final Arc leadingArc = this.getLeadingArc(convertedTime);
+        final Arc leadingArc = this.getLeadingArc(time);
         /*
          * the time spent in between the nodes is calculated as a difference of their entry times; if we calculated just the
          * time spent traversing the arc, we would have missed wait times and MOWs.
@@ -311,7 +313,7 @@ public final class Itinerary implements ScheduleProducer {
         BigDecimal previousTimeOfEntry = BigDecimal.ZERO;
         Arc previousArc = null;
         for (final SortedMap.Entry<Long, Arc> entry : arcEntryTimes.entrySet()) {
-            final BigDecimal currentTimeOfEntry = convertNewValueToOld(entry.getKey());
+            final BigDecimal currentTimeOfEntry = Converter.convertNewValueToOld(entry.getKey());
             final int comparison = currentTimeOfEntry.compareTo(convertedTime);
             if (comparison > 0) {
                 // we're not interested in values that are beyong the specified time
@@ -329,7 +331,7 @@ public final class Itinerary implements ScheduleProducer {
             previousTimeOfEntry = currentTimeOfEntry;
             previousArc = a;
         }
-        return convertOldValueToNew(spentTime);
+        return Converter.convertOldValueToNew(spentTime);
     }
 
     @Override
@@ -340,15 +342,6 @@ public final class Itinerary implements ScheduleProducer {
     @Override
     public WaitTime getWaitTime(final Node n) {
         return this.nodeWaitTimes.get(n);
-    }
-
-    private static long convertOldValueToNew(BigDecimal time) {
-        return time.multiply(BigDecimal.valueOf(1000)).longValue();
-    }
-
-    private static BigDecimal convertNewValueToOld(long time) {
-        return BigDecimal.valueOf(time).divide(BigDecimal.valueOf(1000), 10,
-                BigDecimal.ROUND_HALF_EVEN);
     }
 
     @Override

@@ -166,11 +166,12 @@ public class Arc {
         return this.trackType;
     }
 
-    public BigDecimal getTravellingTimeInMinutes(final Train t) {
+    public long getTravellingTimeInMilliseconds(final Train t) {
         final BigDecimal milesPerHour = BigDecimal.valueOf(t.getMaximumSpeed(this.getTrackType()));
         final BigDecimal hours = this.getLengthInMiles().divide(milesPerHour, 5,
                 BigDecimal.ROUND_HALF_DOWN);
-        return hours.multiply(BigDecimal.valueOf(60));
+        final BigDecimal sixty = BigDecimal.valueOf(60);
+        return hours.multiply(sixty).multiply(sixty).multiply(BigDecimal.valueOf(1000)).longValue();
     }
 
     public Node getWestNode() {

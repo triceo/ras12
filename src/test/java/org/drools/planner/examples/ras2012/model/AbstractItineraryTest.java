@@ -14,6 +14,7 @@ import java.util.TreeSet;
 
 import org.drools.planner.examples.ras2012.RAS2012Solution;
 import org.drools.planner.examples.ras2012.model.Train.TrainType;
+import org.drools.planner.examples.ras2012.util.Converter;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -194,7 +195,8 @@ public abstract class AbstractItineraryTest {
                             Itinerary.BIGDECIMAL_ROUNDING);
                 }
                 expecteds.put(totalTime, currentArc); // immediately after entering the node
-                final BigDecimal arcTravellingTime = currentArc.getTravellingTimeInMinutes(t);
+                final BigDecimal arcTravellingTime = Converter.convertNewValueToOld(currentArc
+                        .getTravellingTimeInMilliseconds(t));
                 final BigDecimal arcTravellingTimeThird = arcTravellingTime.divide(
                         BigDecimal.valueOf(3), 5, BigDecimal.ROUND_HALF_DOWN);
                 expecteds.put(totalTime.add(arcTravellingTimeThird), currentArc); // one third into the node
@@ -210,7 +212,7 @@ public abstract class AbstractItineraryTest {
                 }
                 Assert.assertEquals("Train " + t.getName() + " on route " + r.getId() + " at time "
                         + entry.getKey() + " isn't where it's supposed to be.", entry.getValue(),
-                        i.getLeadingArc(entry.getKey()));
+                        i.getLeadingArc(Converter.convertOldValueToNew(entry.getKey())));
             }
         }
     }
