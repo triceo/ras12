@@ -3,7 +3,6 @@ package org.drools.planner.examples.ras2012.model;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -24,46 +23,48 @@ import org.slf4j.LoggerFactory;
  */
 public class Network implements Visualizable {
 
-    private static final Logger                         logger     = LoggerFactory
-                                                                           .getLogger(Network.class);
+    private static final Logger     logger     = LoggerFactory.getLogger(Network.class);
 
-    private final GraphVisualizer                       visualizer;
-    private final SortedMap<Integer, Node>              nodes      = new TreeMap<Integer, Node>();
-    private final Node                                  eastDepo;
-    private final Node                                  westDepo;
-    private final SortedMap<Node, SortedMap<Node, Arc>> eastboundConnections;
-    private final SortedMap<Node, SortedMap<Node, Arc>> westboundConnections;
-    private final Collection<Route>                     westboundRoutes;
-    private final Collection<Route>                     eastboundRoutes;
-    private final Map<Train, Route>                     bestRoutes = new HashMap<Train, Route>();
+    private final GraphVisualizer   visualizer;
+    private final Collection<Route> westboundRoutes;
+    private final Collection<Route> eastboundRoutes;
+    private final Map<Train, Route> bestRoutes = new HashMap<Train, Route>();
 
     public Network(final Collection<Node> nodes, final Collection<Arc> edges) {
         this.visualizer = new GraphVisualizer(edges);
-        for (final Node n : nodes) {
-            this.nodes.put(n.getId(), n);
-        }
         // now map every connection node
-        final SortedMap<Node, SortedMap<Node, Arc>> tmpEastboundConnections = new TreeMap<Node, SortedMap<Node, Arc>>();
-        final SortedMap<Node, SortedMap<Node, Arc>> tmpWestboundConnections = new TreeMap<Node, SortedMap<Node, Arc>>();
+        final SortedMap<Node, SortedMap<Node, Arc>> eastboundConnections = new TreeMap<Node, SortedMap<Node, Arc>>();
+        final SortedMap<Node, SortedMap<Node, Arc>> westboundConnections = new TreeMap<Node, SortedMap<Node, Arc>>();
         for (final Arc a : edges) {
-            if (tmpEastboundConnections.get(a.getWestNode()) == null) {
-                tmpEastboundConnections.put(a.getWestNode(), new TreeMap<Node, Arc>());
+            if (eastboundConnections.get(a.getWestNode()) == null) {
+                eastboundConnections.put(a.getWestNode(), new TreeMap<Node, Arc>());
             }
-            tmpEastboundConnections.get(a.getWestNode()).put(a.getEastNode(), a);
-            if (tmpWestboundConnections.get(a.getEastNode()) == null) {
-                tmpWestboundConnections.put(a.getEastNode(), new TreeMap<Node, Arc>());
+            eastboundConnections.get(a.getWestNode()).put(a.getEastNode(), a);
+            if (westboundConnections.get(a.getEastNode()) == null) {
+                westboundConnections.put(a.getEastNode(), new TreeMap<Node, Arc>());
             }
-            tmpWestboundConnections.get(a.getEastNode()).put(a.getWestNode(), a);
+            westboundConnections.get(a.getEastNode()).put(a.getWestNode(), a);
         }
-        this.eastboundConnections = Collections.unmodifiableSortedMap(tmpEastboundConnections);
-        this.westboundConnections = Collections.unmodifiableSortedMap(tmpWestboundConnections);
-        this.eastDepo = this.locateEastboundDepo();
-        this.westDepo = this.locateWestboundDepo();
+        Node eastDepo = null;
+        for (final Node n : nodes) {
+            if (!eastboundConnections.containsKey(n)) {
+                eastDepo = n;
+                break;
+            }
+        }
+        Node westDepo = null;
+        for (final Node n : nodes) {
+            if (!westboundConnections.containsKey(n)) {
+                westDepo = n;
+                break;
+            }
+        }
+
         Route.resetRouteCounter();
         this.eastboundRoutes = this.getAllRoutes(new Route(Direction.EASTBOUND),
-                this.eastboundConnections, this.westDepo);
+                eastboundConnections, westDepo);
         this.westboundRoutes = this.getAllRoutes(new Route(Direction.WESTBOUND),
-                this.westboundConnections, this.eastDepo);
+                westboundConnections, eastDepo);
     }
 
     public synchronized Collection<Route> getAllEastboundRoutes() {
@@ -128,24 +129,6 @@ public class Network implements Visualizable {
 
     public Collection<Route> getWestboundRoutes() {
         return this.westboundRoutes;
-    }
-
-    private Node locateEastboundDepo() {
-        for (final Node n : this.nodes.values()) {
-            if (!this.eastboundConnections.containsKey(n)) {
-                return n;
-            }
-        }
-        return null;
-    }
-
-    private Node locateWestboundDepo() {
-        for (final Node n : this.nodes.values()) {
-            if (!this.westboundConnections.containsKey(n)) {
-                return n;
-            }
-        }
-        return null;
     }
 
     @Override
