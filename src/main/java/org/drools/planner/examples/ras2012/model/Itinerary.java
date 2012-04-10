@@ -248,7 +248,7 @@ public final class Itinerary implements ScheduleProducer {
                 final Node n = currentArc.getStartingNode(this.getTrain());
                 final WaitTime wt = this.nodeWaitTimes.get(n);
                 if (wt != null) {
-                    time += wt.getMinutesWaitFor();
+                    time += wt.getMillisWaitFor();
                 }
                 // check for maintenance windows
                 if (this.maintenances.containsKey(n)) {

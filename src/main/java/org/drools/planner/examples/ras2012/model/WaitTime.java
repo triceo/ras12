@@ -19,19 +19,23 @@ public class WaitTime {
         return WaitTime.waitTimes.get(i);
     }
 
-    private final int minutesWaitFor;
+    private final long millisWaitFor;
 
     private WaitTime(final int minutes) {
-        this.minutesWaitFor = minutes;
+        this.millisWaitFor = minutes * 60 * 1000;
     }
 
-    public int getMinutesWaitFor() {
-        return this.minutesWaitFor;
+    public long getMillisWaitFor() {
+        return this.millisWaitFor;
+    }
+
+    public long getMinutesWaitFor() {
+        return this.millisWaitFor / 1000 / 60;
     }
 
     @Override
     public String toString() {
-        return "WaitTime [" + this.minutesWaitFor + " min.]";
+        return "WaitTime [" + this.getMinutesWaitFor() + " min.]";
     }
 
 }
