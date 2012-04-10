@@ -1,6 +1,5 @@
 package org.drools.planner.examples.ras2012.interfaces;
 
-import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Map;
 import java.util.SortedMap;
@@ -13,15 +12,6 @@ import org.drools.planner.examples.ras2012.model.WaitTime;
 
 // FIXME make visualizable
 public interface ScheduleProducer {
-
-    /**
-     * Default scale to use for BigDecimals returned by the methods of this interface.
-     */
-    public static final int BIGDECIMAL_SCALE    = 5;
-    /**
-     * Default rounding to use for BigDecimals returned by the methods of this interface.
-     */
-    public static final int BIGDECIMAL_ROUNDING = BigDecimal.ROUND_DOWN;
 
     /**
      * Get every arc that the train is occupying at a given length of time. Arc is either occupied or free, there is no concept
