@@ -25,18 +25,20 @@ public class WaitTimeAssignmentMoveFactory extends AbstractMoveFactory {
                 for (; i < 10; i++) { // plan to the minute
                     moves.add(new WaitTimeAssignmentMove(ia, waitPoint, WaitTime.getWaitTime(i)));
                 }
-                for (; i < (RAS2012Solution.PLANNING_HORIZON_MINUTES / 4); i += 5) {
+                for (; i < (RAS2012Solution.PLANNING_HORIZON_MINUTES / 8); i += 5) {
                     moves.add(new WaitTimeAssignmentMove(ia, waitPoint, WaitTime.getWaitTime(i)));
                 }
-                for (; i < (2 * (RAS2012Solution.PLANNING_HORIZON_MINUTES / 2)); i += 10) {
+                for (; i < (RAS2012Solution.PLANNING_HORIZON_MINUTES / 4); i += 10) {
                     moves.add(new WaitTimeAssignmentMove(ia, waitPoint, WaitTime.getWaitTime(i)));
                 }
-                for (; i <= (RAS2012Solution.PLANNING_HORIZON_MINUTES); i += 25) {
+                for (; i < (RAS2012Solution.PLANNING_HORIZON_MINUTES / 2); i += 20) {
+                    moves.add(new WaitTimeAssignmentMove(ia, waitPoint, WaitTime.getWaitTime(i)));
+                }
+                for (; i <= (RAS2012Solution.PLANNING_HORIZON_MINUTES); i += 30) {
                     moves.add(new WaitTimeAssignmentMove(ia, waitPoint, WaitTime.getWaitTime(i)));
                 }
             }
         }
         return moves;
     }
-
 }
