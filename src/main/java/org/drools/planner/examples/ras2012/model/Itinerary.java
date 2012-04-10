@@ -18,22 +18,33 @@ public final class Itinerary implements ScheduleProducer {
 
     public static final class Window {
 
-        private final BigDecimal start, end;
+        private final long start, end;
 
         public Window(final int start, final int end) {
-            this.start = BigDecimal.valueOf(start);
-            this.end = BigDecimal.valueOf(end);
+            this.start = start * 1000;
+            this.end = start * 1000;
         }
 
-        public BigDecimal getEnd() {
+        /**
+         * Get end of this window.
+         * 
+         * @return Value in milliseconds since the beginning of time.
+         */
+        public long getEnd() {
             return this.end;
         }
 
-        public boolean isInside(final BigDecimal time) {
-            if (this.start.compareTo(time) > 0) {
+        /**
+         * Whether or not the give time is inside the window.
+         * 
+         * @param time Time in milliseconds.
+         * @return
+         */
+        public boolean isInside(final long time) {
+            if (start > time) {
                 return false; // window didn't start yet
             }
-            if (this.end.compareTo(time) < 0) {
+            if (end < time) {
                 return false; // window is already over
             }
             return true;
@@ -49,27 +60,27 @@ public final class Itinerary implements ScheduleProducer {
         return milesPerMinute.multiply(time);
     }
 
-    private final Route                            route;
+    private final Route                       route;
 
-    private final Train                            train;
+    private final Train                       train;
 
-    private final AtomicBoolean                    scheduleCacheValid = new AtomicBoolean(false);
+    private final AtomicBoolean               scheduleCacheValid = new AtomicBoolean(false);
 
-    private final SortedMap<Long, Node>            scheduleCache      = new TreeMap<Long, Node>();
+    private final SortedMap<Long, Node>       scheduleCache      = new TreeMap<Long, Node>();
 
-    private final BigDecimal                       trainEntryTime;
-    private final List<Arc>                        arcProgression     = new LinkedList<Arc>();
-    private final Map<Node, Arc>                   arcPerStartNode    = new HashMap<Node, Arc>();
-    private final Map<Node, WaitTime>              nodeWaitTimes      = new HashMap<Node, WaitTime>();
+    private final long                        trainEntryTime;
+    private final List<Arc>                   arcProgression     = new LinkedList<Arc>();
+    private final Map<Node, Arc>              arcPerStartNode    = new HashMap<Node, Arc>();
+    private final Map<Node, WaitTime>         nodeWaitTimes      = new HashMap<Node, WaitTime>();
     // FIXME only one window per node; multiple different windows with same node will get lost
-    private final Map<Node, Itinerary.Window>      maintenances       = new HashMap<Node, Itinerary.Window>();
-    private final Map<BigDecimal, Collection<Arc>> currentlyOccupied  = new HashMap<BigDecimal, Collection<Arc>>();
+    private final Map<Node, Itinerary.Window> maintenances       = new HashMap<Node, Itinerary.Window>();
+    private final Map<Long, Collection<Arc>>  occupiedArcsCache  = new HashMap<Long, Collection<Arc>>();
 
     public Itinerary(final Route r, final Train t,
             final Collection<MaintenanceWindow> maintenanceWindows) {
         this.route = r;
         this.train = t;
-        this.trainEntryTime = BigDecimal.valueOf(t.getEntryTime());
+        this.trainEntryTime = t.getEntryTime() * 1000;
         // assemble the node-traversal information
         Arc currentArc = null;
         while ((currentArc = this.route.getNextArc(currentArc)) != null) {
@@ -131,16 +142,16 @@ public final class Itinerary implements ScheduleProducer {
 
     @Override
     public Collection<Arc> getCurrentlyOccupiedArcs(final long time) {
-        BigDecimal timeInMinutes = convertNewValueToOld(time);
-        if (!this.currentlyOccupied.containsKey(timeInMinutes)) {
-            final Collection<Arc> a = this.getCurrentlyOccupiedArcsUncached(timeInMinutes);
-            this.currentlyOccupied.put(timeInMinutes, a);
+        if (!this.occupiedArcsCache.containsKey(time)) {
+            final Collection<Arc> a = this.getCurrentlyOccupiedArcsUncached(time);
+            this.occupiedArcsCache.put(time, a);
             return a;
         }
-        return this.currentlyOccupied.get(timeInMinutes);
+        return this.occupiedArcsCache.get(time);
     }
 
-    private Collection<Arc> getCurrentlyOccupiedArcsUncached(final BigDecimal timeInMinutes) {
+    private Collection<Arc> getCurrentlyOccupiedArcsUncached(final long time) {
+        final BigDecimal timeInMinutes = convertNewValueToOld(time);
         final Arc leadingArc = this.getLeadingArc(timeInMinutes);
         if (leadingArc == null) {
             // train not in the network
@@ -186,7 +197,7 @@ public final class Itinerary implements ScheduleProducer {
     }
 
     protected Arc getLeadingArc(final BigDecimal timeInMinutes) {
-        if (timeInMinutes.compareTo(this.trainEntryTime) == -1) {
+        if (timeInMinutes.compareTo(convertNewValueToOld(this.trainEntryTime)) == -1) {
             return null;
         }
         Node previousNode = null;
@@ -224,7 +235,7 @@ public final class Itinerary implements ScheduleProducer {
                 BigDecimal time = BigDecimal.ZERO;
                 if (i == 0) {
                     // first item needs to be augmented by the train entry time
-                    time = time.add(this.trainEntryTime);
+                    time = time.add(convertNewValueToOld(this.trainEntryTime));
                 } else {
                     // otherwise we need to convert a relative time to an absolute time by adding the previous node's time
                     time = previousArc.getTravellingTimeInMinutes(this.getTrain());
@@ -240,9 +251,9 @@ public final class Itinerary implements ScheduleProducer {
                 if (this.maintenances.containsKey(n)) {
                     // there is a maintenance registered for the next node
                     final Itinerary.Window w = this.maintenances.get(n);
-                    if (w.isInside(time)) {
+                    if (w.isInside(convertOldValueToNew(time))) {
                         // the maintenance is ongoing, we have to wait
-                        time = w.getEnd();
+                        time = convertNewValueToOld(w.getEnd());
                     }
                 }
                 // and store
@@ -363,7 +374,7 @@ public final class Itinerary implements ScheduleProducer {
     }
 
     private synchronized void invalidateCaches() {
-        this.currentlyOccupied.clear();
+        this.occupiedArcsCache.clear();
         this.scheduleCache.clear();
     }
 

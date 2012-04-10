@@ -187,8 +187,11 @@ public abstract class AbstractItineraryTest {
                 // account for possible maintenance windows
                 final Node n = currentArc.getStartingNode(r);
                 if (i.getMaintenances().containsKey(n)
-                        && i.getMaintenances().get(n).isInside(totalTime)) {
-                    totalTime = i.getMaintenances().get(n).getEnd();
+                        && i.getMaintenances().get(n)
+                                .isInside(totalTime.multiply(BigDecimal.valueOf(1000)).longValue())) {
+                    totalTime = BigDecimal.valueOf(i.getMaintenances().get(n).getEnd()).divide(
+                            BigDecimal.valueOf(1000), Itinerary.BIGDECIMAL_SCALE,
+                            Itinerary.BIGDECIMAL_ROUNDING);
                 }
                 expecteds.put(totalTime, currentArc); // immediately after entering the node
                 final BigDecimal arcTravellingTime = currentArc.getTravellingTimeInMinutes(t);
