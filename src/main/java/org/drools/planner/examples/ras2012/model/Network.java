@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -22,17 +24,18 @@ import org.slf4j.LoggerFactory;
  */
 public class Network implements Visualizable {
 
-    private static final Logger                         logger = LoggerFactory
-                                                                       .getLogger(Network.class);
+    private static final Logger                         logger     = LoggerFactory
+                                                                           .getLogger(Network.class);
 
     private final GraphVisualizer                       visualizer;
-    private final SortedMap<Integer, Node>              nodes  = new TreeMap<Integer, Node>();
+    private final SortedMap<Integer, Node>              nodes      = new TreeMap<Integer, Node>();
     private final Node                                  eastDepo;
     private final Node                                  westDepo;
     private final SortedMap<Node, SortedMap<Node, Arc>> eastboundConnections;
     private final SortedMap<Node, SortedMap<Node, Arc>> westboundConnections;
     private final Collection<Route>                     westboundRoutes;
     private final Collection<Route>                     eastboundRoutes;
+    private final Map<Train, Route>                     bestRoutes = new HashMap<Train, Route>();
 
     public Network(final Collection<Node> nodes, final Collection<Arc> edges) {
         this.visualizer = new GraphVisualizer(edges);
@@ -105,19 +108,22 @@ public class Network implements Visualizable {
     }
 
     public Route getBestRoute(final Train t) {
-        final SortedSet<Route> routes = new TreeSet<Route>();
-        Collection<Route> allRoutes;
-        if (t.isEastbound()) {
-            allRoutes = this.getAllEastboundRoutes();
-        } else {
-            allRoutes = this.getAllWestboundRoutes();
-        }
-        for (final Route r : allRoutes) {
-            if (r.isPossibleForTrain(t)) {
-                routes.add(r);
+        if (!this.bestRoutes.containsKey(t)) {
+            final SortedSet<Route> routes = new TreeSet<Route>();
+            Collection<Route> allRoutes;
+            if (t.isEastbound()) {
+                allRoutes = this.getAllEastboundRoutes();
+            } else {
+                allRoutes = this.getAllWestboundRoutes();
             }
+            for (final Route r : allRoutes) {
+                if (r.isPossibleForTrain(t)) {
+                    routes.add(r);
+                }
+            }
+            this.bestRoutes.put(t, routes.last());
         }
-        return routes.last();
+        return this.bestRoutes.get(t);
     }
 
     public Collection<Route> getWestboundRoutes() {
