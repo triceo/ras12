@@ -109,7 +109,7 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
         if (i.getTrain().getType().adhereToSchedule()) {
             final Map<BigDecimal, BigDecimal> sa = i.getScheduleAdherenceStatus();
             for (final Map.Entry<BigDecimal, BigDecimal> entry : sa.entrySet()) {
-                if (!this.isInPlanningHorizon(entry.getKey())) {
+                if (!this.isInPlanningHorizon(entry.getKey().longValue() * 1000)) {
                     // difference occured past the planning horizon; we don't care about it
                     continue;
                 }
@@ -128,21 +128,21 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
 
     private int getWantTimePenalty(final ScheduleProducer i, final RAS2012Solution solution) {
         int penalty = 0;
-        int hourlyDifference = 0;
-        final Map<BigDecimal, BigDecimal> wantTimeDifferences = i.getWantTimeDifference();
-        for (final Map.Entry<BigDecimal, BigDecimal> entry : wantTimeDifferences.entrySet()) {
+        final Map<Long, Long> wantTimeDifferences = i.getWantTimeDifference();
+        for (final Map.Entry<Long, Long> entry : wantTimeDifferences.entrySet()) {
+            int hourlyDifference = 0;
             if (!this.isInPlanningHorizon(entry.getKey())) {
                 // difference occured past the planning horizon; we don't care about it
                 continue;
             }
-            final BigDecimal wantTimeDifference = entry.getValue();
-            if (wantTimeDifference.signum() > 0) {
-                final int hours = this.roundMinutesToWholeHours(wantTimeDifference);
+            final long wantTimeDifference = entry.getValue();
+            if (wantTimeDifference > 0) {
+                final int hours = this.roundMillisecondsToWholeHours(wantTimeDifference);
                 if (hours > 3) {
                     hourlyDifference = hours - 3;
                 }
-            } else if (wantTimeDifference.signum() < 0) {
-                final int hours = this.roundMinutesToWholeHours(wantTimeDifference);
+            } else if (wantTimeDifference < 0) {
+                final int hours = this.roundMillisecondsToWholeHours(wantTimeDifference);
                 if (hours < -1) {
                     hourlyDifference = Math.abs(hours + 1);
                 }
@@ -152,8 +152,9 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
         return penalty;
     }
 
-    private boolean isInPlanningHorizon(final BigDecimal time) {
-        return time.compareTo(BigDecimal.valueOf(RAS2012Solution.PLANNING_HORIZON_MINUTES)) <= 0;
+    private boolean isInPlanningHorizon(final long time) {
+        long horizon = RAS2012Solution.PLANNING_HORIZON_MINUTES * 1000;
+        return (time < horizon);
     }
 
     // TODO make static
@@ -164,7 +165,7 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
         return result;
     }
 
-    private long roundMillisecondsToWholeHours(final long milliseconds) {
-        return (long) Math.ceil(milliseconds / 1000.0 / 60.0);
+    private int roundMillisecondsToWholeHours(final long milliseconds) {
+        return (int) Math.ceil(milliseconds / 1000.0 / 60.0);
     }
 }

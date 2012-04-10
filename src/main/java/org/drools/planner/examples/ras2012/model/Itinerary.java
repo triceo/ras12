@@ -316,7 +316,7 @@ public final class Itinerary implements ScheduleProducer {
             previousTimeOfEntry = currentTimeOfEntry;
             previousArc = a;
         }
-        return spentTime.multiply(BigDecimal.valueOf(1000)).longValue();
+        return convertOldValueToNew(spentTime);
     }
 
     @Override
@@ -329,14 +329,23 @@ public final class Itinerary implements ScheduleProducer {
         return this.nodeWaitTimes.get(n);
     }
 
+    private static long convertOldValueToNew(BigDecimal time) {
+        return time.multiply(BigDecimal.valueOf(1000)).longValue();
+    }
+
+    private static BigDecimal convertNewValueToOld(long time) {
+        return BigDecimal.valueOf(time).divide(BigDecimal.valueOf(1000), 10,
+                BigDecimal.ROUND_HALF_EVEN);
+    }
+
     @Override
-    public Map<BigDecimal, BigDecimal> getWantTimeDifference() {
-        final Map<BigDecimal, BigDecimal> result = new HashMap<BigDecimal, BigDecimal>();
+    public Map<Long, Long> getWantTimeDifference() {
+        final Map<Long, Long> result = new HashMap<Long, Long>();
         for (final SortedMap.Entry<BigDecimal, Node> entry : this.getSchedule().entrySet()) {
             if (entry.getValue() == this.getTrain().getDestination()) {
                 final BigDecimal difference = entry.getKey().subtract(
                         BigDecimal.valueOf(this.getTrain().getWantTime()));
-                result.put(entry.getKey(), difference);
+                result.put(convertOldValueToNew(entry.getKey()), convertOldValueToNew(difference));
             }
         }
         return result;

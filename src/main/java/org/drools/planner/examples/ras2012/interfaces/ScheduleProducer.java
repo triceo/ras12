@@ -81,10 +81,10 @@ public interface ScheduleProducer {
     /**
      * Retrieve the difference between the train's want time and the actual time of arrival.
      * 
-     * @return Only contains one entry. Key is the tim of arrival at the destination node, value is the difference. Positive
-     *         when there's been a delay, negative when the train is ahead of schedule.
+     * @return Only contains one entry. Key is the time of arrival at the destination node in milliseconds, value is the
+     *         difference in milliseconds. Positive when there's been a delay, negative when the train is ahead of schedule.
      */
-    public Map<BigDecimal, BigDecimal> getWantTimeDifference();
+    public Map<Long, Long> getWantTimeDifference();
 
     /**
      * Remove all previously set wait times.
