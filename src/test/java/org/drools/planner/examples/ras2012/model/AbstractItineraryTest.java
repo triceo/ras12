@@ -177,7 +177,7 @@ public abstract class AbstractItineraryTest {
             if (t.getEntryTime() > 0) {
                 // the train shouldn't be on the route before its time of entry
                 expecteds.put((long) 0, null);
-                expecteds.put((long) ((t.getEntryTime() * 60 * 1000) / 2), null);
+                expecteds.put((long) (t.getEntryTime() * 60 * 1000 / 2), null);
             }
             long totalTime = t.getEntryTime() * 60 * 1000;
             while ((currentArc = r.getNextArc(currentArc)) != null) {
@@ -196,7 +196,7 @@ public abstract class AbstractItineraryTest {
             }
             // and now validate against reality
             for (final Map.Entry<Long, Arc> entry : expecteds.entrySet()) {
-                if (entry.getKey() > (RAS2012Solution.PLANNING_HORIZON_MINUTES * 60 * 1000)) {
+                if (entry.getKey() > RAS2012Solution.PLANNING_HORIZON_MINUTES * 60 * 1000) {
                     // don't measure beyond the planning horizon
                     break;
                 }

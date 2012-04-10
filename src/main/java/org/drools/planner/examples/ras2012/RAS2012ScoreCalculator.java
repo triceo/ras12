@@ -152,8 +152,8 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
     }
 
     private boolean isInPlanningHorizon(final long time) {
-        long horizon = RAS2012Solution.PLANNING_HORIZON_MINUTES * 60 * 1000;
-        return (time < horizon);
+        final long horizon = RAS2012Solution.PLANNING_HORIZON_MINUTES * 60 * 1000;
+        return time < horizon;
     }
 
     private int roundMillisecondsToWholeHours(final long milliseconds) {

@@ -41,10 +41,10 @@ public final class Itinerary implements ScheduleProducer {
          * @return
          */
         public boolean isInside(final long time) {
-            if (start > time) {
+            if (this.start > time) {
                 return false; // window didn't start yet
             }
-            if (end < time) {
+            if (this.end < time) {
                 return false; // window is already over
             }
             return true;
@@ -322,10 +322,10 @@ public final class Itinerary implements ScheduleProducer {
             if (previousArc != null && !previousArc.isPreferred(this.getTrain())) {
                 if (previousArc == leadingArc) {
                     // include the time spent on this track so far
-                    spentTime += (time - currentTimeOfEntry);
+                    spentTime += time - currentTimeOfEntry;
                 }
                 // include the whole time spent on previous
-                spentTime += (currentTimeOfEntry - previousTimeOfEntry);
+                spentTime += currentTimeOfEntry - previousTimeOfEntry;
             }
             previousTimeOfEntry = currentTimeOfEntry;
             previousArc = a;

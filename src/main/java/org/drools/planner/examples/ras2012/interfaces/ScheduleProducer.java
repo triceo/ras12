@@ -14,6 +14,11 @@ import org.drools.planner.examples.ras2012.model.WaitTime;
 public interface ScheduleProducer {
 
     /**
+     * Retrieve all the existing wait times.
+     */
+    public Map<Node, WaitTime> getAllWaitTimes();
+
+    /**
      * Get every arc that the train is occupying at a given length of time. Arc is either occupied or free, there is no concept
      * of partially-occupied.
      * 
@@ -80,11 +85,6 @@ public interface ScheduleProducer {
      * Remove all previously set wait times.
      */
     public void removeAllWaitTimes();
-
-    /**
-     * Retrieve all the existing wait times.
-     */
-    public Map<Node, WaitTime> getAllWaitTimes();
 
     /**
      * Specify that a train shouldn't wait at a given node.
