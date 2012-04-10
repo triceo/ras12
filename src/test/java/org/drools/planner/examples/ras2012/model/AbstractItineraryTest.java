@@ -1,7 +1,6 @@
 package org.drools.planner.examples.ras2012.model;
 
 import java.io.File;
-import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -14,7 +13,6 @@ import java.util.TreeSet;
 
 import org.drools.planner.examples.ras2012.RAS2012Solution;
 import org.drools.planner.examples.ras2012.model.Train.TrainType;
-import org.drools.planner.examples.ras2012.util.Converter;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -172,47 +170,39 @@ public abstract class AbstractItineraryTest {
     public void testGetLeadingArc() {
         for (final Itinerary i : this.getItineraries()) {
             // assemble a list of "checkpoint" where the train should be at which times
-            final Map<BigDecimal, Arc> expecteds = new HashMap<BigDecimal, Arc>();
+            final Map<Long, Arc> expecteds = new HashMap<Long, Arc>();
             final Route r = i.getRoute();
             final Train t = i.getTrain();
             Arc currentArc = null;
             if (t.getEntryTime() > 0) {
                 // the train shouldn't be on the route before its time of entry
-                expecteds.put(BigDecimal.ZERO, null);
-                expecteds.put(
-                        BigDecimal.valueOf(t.getEntryTime()).divide(BigDecimal.valueOf(2), 5,
-                                BigDecimal.ROUND_HALF_DOWN), null);
+                expecteds.put((long) 0, null);
+                expecteds.put((long) ((t.getEntryTime() * 60 * 1000) / 2), null);
             }
-            BigDecimal totalTime = BigDecimal.valueOf(t.getEntryTime());
+            long totalTime = t.getEntryTime() * 60 * 1000;
             while ((currentArc = r.getNextArc(currentArc)) != null) {
                 // account for possible maintenance windows
                 final Node n = currentArc.getStartingNode(r);
                 if (i.getMaintenances().containsKey(n)
-                        && i.getMaintenances().get(n)
-                                .isInside(totalTime.multiply(BigDecimal.valueOf(1000)).longValue())) {
-                    totalTime = BigDecimal.valueOf(i.getMaintenances().get(n).getEnd()).divide(
-                            BigDecimal.valueOf(1000), Itinerary.BIGDECIMAL_SCALE,
-                            Itinerary.BIGDECIMAL_ROUNDING);
+                        && i.getMaintenances().get(n).isInside(totalTime)) {
+                    totalTime = i.getMaintenances().get(n).getEnd();
                 }
                 expecteds.put(totalTime, currentArc); // immediately after entering the node
-                final BigDecimal arcTravellingTime = Converter.convertNewValueToOld(currentArc
-                        .getTravellingTimeInMilliseconds(t));
-                final BigDecimal arcTravellingTimeThird = arcTravellingTime.divide(
-                        BigDecimal.valueOf(3), 5, BigDecimal.ROUND_HALF_DOWN);
-                expecteds.put(totalTime.add(arcTravellingTimeThird), currentArc); // one third into the node
-                totalTime = totalTime.add(arcTravellingTime);
-                expecteds.put(totalTime.subtract(arcTravellingTimeThird), currentArc); // two thirds into the node
+                final long arcTravellingTime = currentArc.getTravellingTimeInMilliseconds(t);
+                final long arcTravellingTimeThird = arcTravellingTime / 3;
+                expecteds.put(totalTime + arcTravellingTimeThird, currentArc); // one third into the node
+                totalTime += arcTravellingTime;
+                expecteds.put(totalTime - arcTravellingTimeThird, currentArc); // two thirds into the node
             }
             // and now validate against reality
-            for (final Map.Entry<BigDecimal, Arc> entry : expecteds.entrySet()) {
-                if (entry.getKey().compareTo(
-                        BigDecimal.valueOf(RAS2012Solution.PLANNING_HORIZON_MINUTES)) > 0) {
+            for (final Map.Entry<Long, Arc> entry : expecteds.entrySet()) {
+                if (entry.getKey() > (RAS2012Solution.PLANNING_HORIZON_MINUTES * 60 * 1000)) {
                     // don't measure beyond the planning horizon
                     break;
                 }
                 Assert.assertEquals("Train " + t.getName() + " on route " + r.getId() + " at time "
                         + entry.getKey() + " isn't where it's supposed to be.", entry.getValue(),
-                        i.getLeadingArc(Converter.convertOldValueToNew(entry.getKey())));
+                        i.getLeadingArc(entry.getKey()));
             }
         }
     }

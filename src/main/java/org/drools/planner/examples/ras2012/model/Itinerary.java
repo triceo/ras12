@@ -13,7 +13,6 @@ import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.drools.planner.examples.ras2012.interfaces.ScheduleProducer;
-import org.drools.planner.examples.ras2012.util.Converter;
 
 public final class Itinerary implements ScheduleProducer {
 
@@ -55,11 +54,14 @@ public final class Itinerary implements ScheduleProducer {
 
     private static BigDecimal getDistanceInMilesFromSpeedAndTime(final int speedInMPH,
             final long timeInMilliseconds) {
-        final BigDecimal time = Converter.convertNewValueToOld(timeInMilliseconds);
+        final BigDecimal timeInSeconds = BigDecimal.valueOf(timeInMilliseconds).divide(
+                BigDecimal.valueOf(1000), 10, BigDecimal.ROUND_HALF_EVEN);
+        final BigDecimal timeInMinutes = timeInSeconds.divide(BigDecimal.valueOf(60), 10,
+                BigDecimal.ROUND_HALF_EVEN);
         final BigDecimal milesPerHour = BigDecimal.valueOf(speedInMPH);
         final BigDecimal milesPerMinute = milesPerHour.divide(BigDecimal.valueOf(60), 10,
                 BigDecimal.ROUND_HALF_EVEN);
-        return milesPerMinute.multiply(time);
+        return milesPerMinute.multiply(timeInMinutes);
     }
 
     private final Route                       route;
