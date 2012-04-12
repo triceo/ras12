@@ -35,23 +35,28 @@ public class RAS2012ProblemIO implements ProblemIO {
 
     private static final Logger logger = LoggerFactory.getLogger(RAS2012ProblemIO.class);
 
+    private static BigDecimal convertMillisToSeconds(final long time) {
+        return BigDecimal.valueOf(time)
+                .divide(BigDecimal.valueOf(1000), 10, BigDecimal.ROUND_HALF_EVEN)
+                .setScale(3, BigDecimal.ROUND_HALF_EVEN);
+    }
+
     private static TrackType getArcType(final Token t) {
         final String value = RAS2012ProblemIO.tokenToString(t);
-        switch (value) {
-            case "0":
-                return TrackType.MAIN_0;
-            case "1":
-                return TrackType.MAIN_1;
-            case "2":
-                return TrackType.MAIN_2;
-            case "SW":
-                return TrackType.SWITCH;
-            case "S":
-                return TrackType.SIDING;
-            case "C":
-                return TrackType.CROSSOVER;
-            default:
-                throw new IllegalArgumentException("Invalid value for track type: " + value);
+        if (value.equals("0")) {
+            return TrackType.MAIN_0;
+        } else if (value.equals("1")) {
+            return TrackType.MAIN_1;
+        } else if (value.equals("2")) {
+            return TrackType.MAIN_2;
+        } else if (value.equals("SW")) {
+            return TrackType.SWITCH;
+        } else if (value.equals("S")) {
+            return TrackType.SIDING;
+        } else if (value.equals("C")) {
+            return TrackType.CROSSOVER;
+        } else {
+            throw new IllegalArgumentException("Invalid value for track type: " + value);
         }
     }
 
@@ -69,6 +74,40 @@ public class RAS2012ProblemIO implements ProblemIO {
 
     private static String tokenToString(final Token t) {
         return t.toString();
+    }
+
+    private static final void writeTrain(final Train t, final RAS2012Solution solution,
+            final BufferedWriter w) throws IOException {
+        w.write("\t\t<train id='" + t.getName() + "'>");
+        w.newLine();
+        w.write("\t\t\t<movements>");
+        w.newLine();
+        for (final Map.Entry<Long, Arc> entry : solution.getAssignment(t).getItinerary()
+                .getScheduleWithArcs().entrySet()) {
+            final Arc arc = entry.getValue();
+            if (entry.getKey() > RAS2012Solution.PLANNING_HORIZON_MINUTES * 60 * 1000) {
+                continue;
+            }
+            final BigDecimal timeInSeconds = RAS2012ProblemIO
+                    .convertMillisToSeconds(entry.getKey());
+            if (arc != null) {
+                final BigDecimal travellingTime = RAS2012ProblemIO.convertMillisToSeconds(arc
+                        .getTravellingTimeInMilliseconds(t));
+                final BigDecimal leaveTime = timeInSeconds.add(travellingTime).subtract(
+                        new BigDecimal("0.5"));
+                w.write("\t\t\t\t<movement arc='(" + arc.getStartingNode(t).getId() + ","
+                        + arc.getEndingNode(t).getId() + ")' entry='" + timeInSeconds + "' exit='"
+                        + leaveTime + "' />");
+                w.newLine();
+            } else {
+                w.write("\t\t\t\t<destination entry='" + timeInSeconds + "' />");
+                w.newLine();
+            }
+        }
+        w.write("\t\t\t</movements>");
+        w.newLine();
+        w.write("\t\t</train>");
+        w.newLine();
     }
 
     private Map<Integer, Node> nodes;
@@ -199,82 +238,62 @@ public class RAS2012ProblemIO implements ProblemIO {
 
     @Override
     public RAS2012Solution read(final File inputSolutionFile) {
-        try (InputStream is = new FileInputStream(inputSolutionFile)) {
+        InputStream is = null;
+        try {
+            is = new FileInputStream(inputSolutionFile);
             final DataSetParser p = new DataSetParser(is);
             p.parse();
             return this.createSolution(p);
         } catch (final FileNotFoundException e) {
             throw new IllegalArgumentException("Solution file doesn't exist: " + inputSolutionFile,
                     e);
-        } catch (final IOException e) {
-            throw new IllegalArgumentException("Problem reading solution file: "
-                    + inputSolutionFile, e);
         } catch (final ParseException e) {
             throw new IllegalArgumentException("Problem parsing solution file: "
                     + inputSolutionFile, e);
-        }
-    }
-
-    private static BigDecimal convertMillisToSeconds(long time) {
-        return BigDecimal.valueOf(time)
-                .divide(BigDecimal.valueOf(1000), 10, BigDecimal.ROUND_HALF_EVEN)
-                .setScale(3, BigDecimal.ROUND_HALF_EVEN);
-    }
-
-    private static final void writeTrain(Train t, RAS2012Solution solution, BufferedWriter w)
-            throws IOException {
-        w.write("\t\t<train id='" + t.getName() + "'>");
-        w.newLine();
-        w.write("\t\t\t<movements>");
-        w.newLine();
-        for (Map.Entry<Long, Arc> entry : solution.getAssignment(t).getItinerary()
-                .getScheduleWithArcs().entrySet()) {
-            Arc arc = entry.getValue();
-            if (entry.getKey() > (RAS2012Solution.PLANNING_HORIZON_MINUTES * 60 * 1000)) {
-                continue;
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (final IOException e) {
+                    // nothing to do here
+                }
             }
-            BigDecimal timeInSeconds = convertMillisToSeconds(entry.getKey());
-            if (arc != null) {
-                BigDecimal travellingTime = convertMillisToSeconds(arc
-                        .getTravellingTimeInMilliseconds(t));
-                BigDecimal leaveTime = timeInSeconds.add(travellingTime).subtract(
-                        new BigDecimal("0.5"));
-                w.write("\t\t\t\t<movement arc='(" + arc.getStartingNode(t).getId() + ","
-                        + arc.getEndingNode(t).getId() + ")' entry='" + timeInSeconds + "' exit='"
-                        + leaveTime + "' />");
-                w.newLine();
-            } else {
-                w.write("\t\t\t\t<destination entry='" + timeInSeconds + "' />");
-                w.newLine();
-            }
+
         }
-        w.write("\t\t\t</movements>");
-        w.newLine();
-        w.write("\t\t</train>");
-        w.newLine();
     }
 
     @Override
     public void write(@SuppressWarnings("rawtypes") final Solution solution,
             final File outputSolutionFile) {
         final RAS2012Solution sol = (RAS2012Solution) solution;
-        try (BufferedWriter w = new BufferedWriter(new FileWriter(outputSolutionFile))) {
+        BufferedWriter w = null;
+        try {
+            w = new BufferedWriter(new FileWriter(outputSolutionFile));
             w.write("###########################################################################");
             w.newLine();
             w.write("<solution territory='" + sol.getName() + "'>");
             w.newLine();
             w.write("\t<trains>");
             w.newLine();
-            for (Train t : sol.getTrains()) {
-                writeTrain(t, sol, w);
+            for (final Train t : sol.getTrains()) {
+                RAS2012ProblemIO.writeTrain(t, sol, w);
             }
             w.write("\t</trains>");
             w.newLine();
             w.write("</solution>");
             w.newLine();
             w.write("###########################################################################");
-        } catch (IOException e) {
-            logger.error("Failed writing solution into file: " + outputSolutionFile, e);
+        } catch (final IOException e) {
+            RAS2012ProblemIO.logger.error("Failed writing solution into file: "
+                    + outputSolutionFile, e);
+        } finally {
+            if (w != null) {
+                try {
+                    w.close();
+                } catch (final IOException e) {
+                    // nothing to do here
+                }
+            }
         }
     }
 }
