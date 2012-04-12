@@ -136,7 +136,7 @@
                 <!-- ignore the one logback class -->
                 <exclude>ch/qos/logback/**/*.class</exclude>
                 <!-- exclude app files -->
-                <exclude>org/drools/planner/examples/ras2012/App.class</exclude>
+                <exclude>org/drools/planner/examples/ras2012/App*.class</exclude>
                 <exclude>org/drools/planner/examples/ras2012/Benchmark.class</exclude>
                 <exclude>org/drools/planner/examples/ras2012/interfaces/**/*.class</exclude>
                 <!-- exclude most generated parser files -->
