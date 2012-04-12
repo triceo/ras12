@@ -101,10 +101,10 @@ public class GraphVisualizer {
     }
 
     public void visualize(final OutputStream visualize) throws IOException {
-        final Layout<Node, Arc> layout = new ISOMLayout<>(this.formGraph());
+        final Layout<Node, Arc> layout = new ISOMLayout<Node, Arc>(this.formGraph());
         layout.setSize(new Dimension(GraphVisualizer.GRAPH_WIDTH, GraphVisualizer.GRAPH_HEIGHT));
-        final VisualizationImageServer<Node, Arc> server = new VisualizationImageServer<>(layout,
-                layout.getSize());
+        final VisualizationImageServer<Node, Arc> server = new VisualizationImageServer<Node, Arc>(
+                layout, layout.getSize());
         server.getRenderContext().setLabelOffset(30);
         server.getRenderContext().setEdgeLabelTransformer(new ArcLabeller());
         server.getRenderContext().setVertexLabelTransformer(new NodeLabeller());
