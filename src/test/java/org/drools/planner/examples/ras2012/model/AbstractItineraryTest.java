@@ -153,8 +153,8 @@ public abstract class AbstractItineraryTest {
                 folder.mkdirs();
             }
             this.getSolution().getNetwork().visualize(new File(folder, "network.png"));
-            for (Set<Route> routes : this.testedRoutes.values()) {
-                for (Route route : routes) {
+            for (final Set<Route> routes : this.testedRoutes.values()) {
+                for (final Route route : routes) {
                     route.visualize(new File(folder, "route" + route.getId() + ".png"));
                 }
             }
@@ -183,7 +183,7 @@ public abstract class AbstractItineraryTest {
             if (t.getEntryTime() > 0) {
                 // the train shouldn't be on the route before its time of entry
                 expecteds.put((long) 0, null);
-                expecteds.put((long) (t.getEntryTime() * 60 * 1000 / 2), null);
+                expecteds.put(t.getEntryTime() * 60 * 1000 / 2, null);
             }
             long totalTime = t.getEntryTime() * 60 * 1000;
             while ((currentArc = r.getNextArc(currentArc)) != null) {

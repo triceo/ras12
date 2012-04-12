@@ -343,7 +343,7 @@ public class Route implements Comparable<Route>, Visualizable {
             if (os != null) {
                 try {
                     os.close();
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     // nothing to do here
                 }
             }

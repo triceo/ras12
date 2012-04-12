@@ -3,10 +3,9 @@ package org.drools.planner.examples.ras2012;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import org.drools.planner.examples.ras2012.model.ItineraryAssignment;
-
 import org.drools.planner.benchmark.api.PlannerBenchmark;
 import org.drools.planner.benchmark.config.XmlPlannerBenchmarkFactory;
+import org.drools.planner.examples.ras2012.model.ItineraryAssignment;
 
 /**
  * Hello world!

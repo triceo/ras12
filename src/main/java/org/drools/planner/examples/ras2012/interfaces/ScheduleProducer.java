@@ -43,20 +43,20 @@ public interface ScheduleProducer {
     public SortedMap<Long, Node> getSchedule();
 
     /**
-     * Retrieve the schedule for the given train on the given route. The schedule takes into account all the maintenance windows
-     * and halt points.
-     * 
-     * @return Map, where the key is the time (in milliseconds) and the value is the arc reached at that time.
-     */
-    public SortedMap<Long, Arc> getScheduleWithArcs();
-
-    /**
      * Retrieve the difference between the train's schedule and the reality.
      * 
      * @return Key is the time of arrival at the SA checkpoint, value is the difference. Positive when there's been a delay,
      *         negative when the train is ahead of schedule. Both times are in milliseconds.
      */
     public Map<Long, Long> getScheduleAdherenceStatus();
+
+    /**
+     * Retrieve the schedule for the given train on the given route. The schedule takes into account all the maintenance windows
+     * and halt points.
+     * 
+     * @return Map, where the key is the time (in milliseconds) and the value is the arc reached at that time.
+     */
+    public SortedMap<Long, Arc> getScheduleWithArcs();
 
     /**
      * Retrieve the time that the train has spent on unpreferred tracks.

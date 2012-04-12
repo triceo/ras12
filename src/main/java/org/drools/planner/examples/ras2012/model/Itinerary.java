@@ -294,6 +294,15 @@ public final class Itinerary implements ScheduleProducer {
     }
 
     @Override
+    public SortedMap<Long, Arc> getScheduleWithArcs() {
+        final SortedMap<Long, Arc> entries = new TreeMap<Long, Arc>();
+        for (final SortedMap.Entry<Long, Node> entry : this.getSchedule().entrySet()) {
+            entries.put(entry.getKey(), this.getArcPerStartingNode(entry.getValue()));
+        }
+        return Collections.unmodifiableSortedMap(entries);
+    }
+
+    @Override
     public long getTimeSpentOnUnpreferredTracks(final long time) {
         final SortedMap<Long, Node> nodeEntryTimes = this.getSchedule();
         final SortedMap<Long, Arc> arcEntryTimes = new TreeMap<Long, Arc>();
@@ -417,14 +426,5 @@ public final class Itinerary implements ScheduleProducer {
         }
         sb.append(".");
         return sb.toString();
-    }
-
-    @Override
-    public SortedMap<Long, Arc> getScheduleWithArcs() {
-        SortedMap<Long, Arc> entries = new TreeMap<Long, Arc>();
-        for (SortedMap.Entry<Long, Node> entry : this.getSchedule().entrySet()) {
-            entries.put(entry.getKey(), this.getArcPerStartingNode(entry.getValue()));
-        }
-        return Collections.unmodifiableSortedMap(entries);
     }
 }

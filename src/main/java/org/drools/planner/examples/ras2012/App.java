@@ -110,11 +110,10 @@ public class App {
         solver.setPlanningProblem(sol);
         solver.solve();
         // output the solution
-        File targetFolder = new File("data/solutions");
+        final File targetFolder = new File("data/solutions");
         if (!targetFolder.exists()) {
             targetFolder.mkdirs();
         }
-        new RAS2012ProblemIO().write(solver.getBestSolution(), new File(targetFolder,
-                "RDS3.txt"));
+        new RAS2012ProblemIO().write(solver.getBestSolution(), new File(targetFolder, "RDS3.txt"));
     }
 }

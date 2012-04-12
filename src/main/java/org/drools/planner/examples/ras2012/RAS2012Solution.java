@@ -91,13 +91,13 @@ public class RAS2012Solution implements Solution<HardAndSoftScore> {
         return true;
     }
 
+    public ItineraryAssignment getAssignment(final Train t) {
+        return this.assignments.get(t);
+    }
+
     @PlanningEntityCollectionProperty
     public Collection<ItineraryAssignment> getAssignments() {
         return this.assignments.values();
-    }
-
-    public ItineraryAssignment getAssignment(Train t) {
-        return this.assignments.get(t);
     }
 
     public Collection<MaintenanceWindow> getMaintenances() {

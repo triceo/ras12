@@ -3,12 +3,11 @@ package org.drools.planner.examples.ras2012.move;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.drools.planner.examples.ras2012.model.ItineraryAssignment;
-
 import org.drools.planner.core.move.Move;
 import org.drools.planner.core.move.factory.AbstractMoveFactory;
 import org.drools.planner.core.solution.Solution;
 import org.drools.planner.examples.ras2012.RAS2012Solution;
+import org.drools.planner.examples.ras2012.model.ItineraryAssignment;
 import org.drools.planner.examples.ras2012.model.Node;
 import org.drools.planner.examples.ras2012.model.WaitTime;
 
@@ -26,16 +25,16 @@ public class WaitTimeAssignmentMoveFactory extends AbstractMoveFactory {
                 for (; i < 10; i++) { // plan to the minute
                     moves.add(new WaitTimeAssignmentMove(ia, waitPoint, WaitTime.getWaitTime(i)));
                 }
-                for (; i < (RAS2012Solution.PLANNING_HORIZON_MINUTES / 8); i += 5) {
+                for (; i < RAS2012Solution.PLANNING_HORIZON_MINUTES / 8; i += 5) {
                     moves.add(new WaitTimeAssignmentMove(ia, waitPoint, WaitTime.getWaitTime(i)));
                 }
-                for (; i < (RAS2012Solution.PLANNING_HORIZON_MINUTES / 4); i += 10) {
+                for (; i < RAS2012Solution.PLANNING_HORIZON_MINUTES / 4; i += 10) {
                     moves.add(new WaitTimeAssignmentMove(ia, waitPoint, WaitTime.getWaitTime(i)));
                 }
-                for (; i < (RAS2012Solution.PLANNING_HORIZON_MINUTES / 2); i += 20) {
+                for (; i < RAS2012Solution.PLANNING_HORIZON_MINUTES / 2; i += 20) {
                     moves.add(new WaitTimeAssignmentMove(ia, waitPoint, WaitTime.getWaitTime(i)));
                 }
-                for (; i <= (RAS2012Solution.PLANNING_HORIZON_MINUTES); i += 30) {
+                for (; i <= RAS2012Solution.PLANNING_HORIZON_MINUTES; i += 30) {
                     moves.add(new WaitTimeAssignmentMove(ia, waitPoint, WaitTime.getWaitTime(i)));
                 }
             }
