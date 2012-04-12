@@ -1,8 +1,10 @@
 package org.drools.planner.examples.ras2012;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -26,8 +28,12 @@ import org.drools.planner.examples.ras2012.parser.DataSetParser;
 import org.drools.planner.examples.ras2012.parser.DataSetParser.ParsedTrain;
 import org.drools.planner.examples.ras2012.parser.ParseException;
 import org.drools.planner.examples.ras2012.parser.Token;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RAS2012ProblemIO implements ProblemIO {
+
+    private static final Logger logger = LoggerFactory.getLogger(RAS2012ProblemIO.class);
 
     private static TrackType getArcType(final Token t) {
         final String value = RAS2012ProblemIO.tokenToString(t);
@@ -209,10 +215,66 @@ public class RAS2012ProblemIO implements ProblemIO {
         }
     }
 
+    private static BigDecimal convertMillisToSeconds(long time) {
+        return BigDecimal.valueOf(time)
+                .divide(BigDecimal.valueOf(1000), 10, BigDecimal.ROUND_HALF_EVEN)
+                .setScale(3, BigDecimal.ROUND_HALF_EVEN);
+    }
+
+    private static final void writeTrain(Train t, RAS2012Solution solution, BufferedWriter w)
+            throws IOException {
+        w.write("\t\t<train id='" + t.getName() + "'>");
+        w.newLine();
+        w.write("\t\t\t<movements>");
+        w.newLine();
+        for (Map.Entry<Long, Arc> entry : solution.getAssignment(t).getItinerary()
+                .getScheduleWithArcs().entrySet()) {
+            Arc arc = entry.getValue();
+            if (entry.getKey() > (RAS2012Solution.PLANNING_HORIZON_MINUTES * 60 * 1000)) {
+                continue;
+            }
+            BigDecimal timeInSeconds = convertMillisToSeconds(entry.getKey());
+            if (arc != null) {
+                BigDecimal travellingTime = convertMillisToSeconds(arc
+                        .getTravellingTimeInMilliseconds(t));
+                BigDecimal leaveTime = timeInSeconds.add(travellingTime).subtract(
+                        new BigDecimal("0.5"));
+                w.write("\t\t\t\t<movement arc='(" + arc.getStartingNode(t).getId() + ","
+                        + arc.getEndingNode(t).getId() + ")' entry='" + timeInSeconds + "' exit='"
+                        + leaveTime + "' />");
+                w.newLine();
+            } else {
+                w.write("\t\t\t\t<destination entry='" + timeInSeconds + "' />");
+                w.newLine();
+            }
+        }
+        w.write("\t\t\t</movements>");
+        w.newLine();
+        w.write("\t\t</train>");
+        w.newLine();
+    }
+
     @Override
     public void write(@SuppressWarnings("rawtypes") final Solution solution,
             final File outputSolutionFile) {
-        // FIXME implement this
+        final RAS2012Solution sol = (RAS2012Solution) solution;
+        try (BufferedWriter w = new BufferedWriter(new FileWriter(outputSolutionFile))) {
+            w.write("###########################################################################");
+            w.newLine();
+            w.write("<solution territory='" + sol.getName() + "'>");
+            w.newLine();
+            w.write("\t<trains>");
+            w.newLine();
+            for (Train t : sol.getTrains()) {
+                writeTrain(t, sol, w);
+            }
+            w.write("\t</trains>");
+            w.newLine();
+            w.write("</solution>");
+            w.newLine();
+            w.write("###########################################################################");
+        } catch (IOException e) {
+            logger.error("Failed writing solution into file: " + outputSolutionFile, e);
+        }
     }
-
 }

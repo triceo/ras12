@@ -13,26 +13,26 @@ public class Itinerary1Test extends AbstractItineraryTest {
 
     private static final String TRAIN1        = "F1";
     private static final String TRAIN2        = "E1";
-    private static final String TRAIN3        = "D3";
-    private static final String TRAIN4        = "C2";
-    private static final String TRAIN5        = "B3";
+    private static final String TRAIN3        = "D1";
+    private static final String TRAIN4        = "C1";
+    private static final String TRAIN5        = "B2";
     private static final String TRAIN6        = "B1";
-    private static final String TRAIN7        = "A2";
+    private static final String TRAIN7        = "A1";
 
-    private static final int    TRAIN1_ROUTE0 = 2519;
-    private static final int    TRAIN1_ROUTE1 = 4705;
-    private static final int    TRAIN2_ROUTE0 = 50;
-    private static final int    TRAIN2_ROUTE1 = 2446;
+    private static final int    TRAIN1_ROUTE0 = 3096;
+    private static final int    TRAIN1_ROUTE1 = 4798;
+    private static final int    TRAIN2_ROUTE0 = 220;
+    private static final int    TRAIN2_ROUTE1 = 2320;
     private static final int    TRAIN3_ROUTE0 = 2612;
     private static final int    TRAIN3_ROUTE1 = 4128;
-    private static final int    TRAIN4_ROUTE0 = 198;
-    private static final int    TRAIN4_ROUTE1 = 2468;
-    private static final int    TRAIN5_ROUTE0 = 72;
-    private static final int    TRAIN5_ROUTE1 = 2298;
-    private static final int    TRAIN6_ROUTE0 = 3096;
-    private static final int    TRAIN6_ROUTE1 = 4798;
-    private static final int    TRAIN7_ROUTE0 = 220;
-    private static final int    TRAIN7_ROUTE1 = 2320;
+    private static final int    TRAIN4_ROUTE0 = 72;
+    private static final int    TRAIN4_ROUTE1 = 2298;
+    private static final int    TRAIN5_ROUTE0 = 198;
+    private static final int    TRAIN5_ROUTE1 = 2468;
+    private static final int    TRAIN6_ROUTE0 = 2519;
+    private static final int    TRAIN6_ROUTE1 = 4705;
+    private static final int    TRAIN7_ROUTE0 = 50;
+    private static final int    TRAIN7_ROUTE1 = 2446;
 
     @Override
     protected RAS2012Solution fetchSolution() {

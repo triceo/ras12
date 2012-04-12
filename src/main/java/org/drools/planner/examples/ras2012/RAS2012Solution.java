@@ -1,7 +1,9 @@
 package org.drools.planner.examples.ras2012;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -23,7 +25,7 @@ public class RAS2012Solution implements Solution<HardAndSoftScore> {
     private final String                          name;
     private final Network                         network;
     private final Collection<MaintenanceWindow>   maintenances;
-    private final Collection<ItineraryAssignment> assignments                    = new LinkedList<ItineraryAssignment>();
+    private final Map<Train, ItineraryAssignment> assignments                    = new HashMap<Train, ItineraryAssignment>();
 
     private final Collection<Train>               trains;
     private HardAndSoftScore                      score;
@@ -42,7 +44,7 @@ public class RAS2012Solution implements Solution<HardAndSoftScore> {
         for (final Train t : this.getTrains()) {
             final ItineraryAssignment ia = new ItineraryAssignment(t, maintenances);
             ia.setRoute(this.getNetwork().getBestRoute(t));
-            this.assignments.add(ia);
+            this.assignments.put(t, ia);
         }
         this.setScore(new RAS2012ScoreCalculator().calculateScore(this));
     }
@@ -56,7 +58,7 @@ public class RAS2012Solution implements Solution<HardAndSoftScore> {
         this.trains = trains;
         // clone assignments
         for (final ItineraryAssignment a : assignments) {
-            this.assignments.add(a.clone());
+            this.assignments.put(a.getTrain(), a.clone());
         }
         this.setScore(new RAS2012ScoreCalculator().calculateScore(this));
     }
@@ -64,7 +66,7 @@ public class RAS2012Solution implements Solution<HardAndSoftScore> {
     @Override
     public Solution<HardAndSoftScore> cloneSolution() {
         return new RAS2012Solution(this.name, this.network, this.maintenances, this.trains,
-                this.assignments);
+                this.getAssignments());
     }
 
     @Override
@@ -91,7 +93,11 @@ public class RAS2012Solution implements Solution<HardAndSoftScore> {
 
     @PlanningEntityCollectionProperty
     public Collection<ItineraryAssignment> getAssignments() {
-        return this.assignments;
+        return this.assignments.values();
+    }
+
+    public ItineraryAssignment getAssignment(Train t) {
+        return this.assignments.get(t);
     }
 
     public Collection<MaintenanceWindow> getMaintenances() {

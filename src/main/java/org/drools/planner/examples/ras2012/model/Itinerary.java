@@ -418,4 +418,13 @@ public final class Itinerary implements ScheduleProducer {
         sb.append(".");
         return sb.toString();
     }
+
+    @Override
+    public SortedMap<Long, Arc> getScheduleWithArcs() {
+        SortedMap<Long, Arc> entries = new TreeMap<Long, Arc>();
+        for (SortedMap.Entry<Long, Node> entry : this.getSchedule().entrySet()) {
+            entries.put(entry.getKey(), this.getArcPerStartingNode(entry.getValue()));
+        }
+        return Collections.unmodifiableSortedMap(entries);
+    }
 }

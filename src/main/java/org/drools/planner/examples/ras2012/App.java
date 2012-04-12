@@ -109,6 +109,12 @@ public class App {
         final Solver solver = configurer.buildSolver();
         solver.setPlanningProblem(sol);
         solver.solve();
-        System.out.println(solver.getBestSolution());
+        // output the solution
+        File targetFolder = new File("data/solutions");
+        if (!targetFolder.exists()) {
+            targetFolder.mkdirs();
+        }
+        new RAS2012ProblemIO().write(solver.getBestSolution(), new File(targetFolder,
+                "RDS3.txt"));
     }
 }
