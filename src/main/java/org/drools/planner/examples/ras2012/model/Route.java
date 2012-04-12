@@ -2,6 +2,8 @@ package org.drools.planner.examples.ras2012.model;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -322,19 +324,29 @@ public class Route implements Comparable<Route>, Visualizable {
 
     @Override
     public boolean visualize(final File target) {
-        try (FileOutputStream fos = new FileOutputStream(target)) {
+        OutputStream os = null;
+        try {
+            os = new FileOutputStream(target);
             final Collection<Node> nodes = new HashSet<Node>();
             for (final Arc a : this.parts) {
                 nodes.add(a.getStartingNode(this));
                 nodes.add(a.getEndingNode(this));
             }
             Route.logger.info("Starting visualizing route: " + this.getId());
-            new GraphVisualizer(this.parts, this.getDirection()).visualize(fos);
+            new GraphVisualizer(this.parts, this.getDirection()).visualize(os);
             Route.logger.info("Route visualization finished: " + this.getId());
             return true;
         } catch (final Exception ex) {
             Route.logger.error("Visualizing route " + this.getId() + " failed.", ex);
             return false;
+        } finally {
+            if (os != null) {
+                try {
+                    os.close();
+                } catch (IOException e) {
+                    // nothing to do here
+                }
+            }
         }
     }
 }
