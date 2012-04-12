@@ -21,7 +21,7 @@ public class WaitTime {
 
     private final long millisWaitFor;
 
-    private WaitTime(final int minutes) {
+    private WaitTime(final long minutes) {
         this.millisWaitFor = minutes * 60 * 1000;
     }
 

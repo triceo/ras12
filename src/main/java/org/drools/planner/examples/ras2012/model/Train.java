@@ -41,7 +41,7 @@ public class Train implements Comparable<Train> {
     private final int                                tob;
     private final Node                               origin;
     private final Node                               destination;
-    private final int                                entryTime;
+    private final long                               entryTime;
     private final int                                wantTime;
     private final int                                originalDelay;
     private final List<ScheduleAdherenceRequirement> scheduleAdherenceRequirements;
@@ -49,7 +49,7 @@ public class Train implements Comparable<Train> {
     private final boolean                            isWestbound;
 
     public Train(final String name, final BigDecimal length, final BigDecimal speedMultiplier,
-            final int tob, final Node origin, final Node destination, final int entryTime,
+            final int tob, final Node origin, final Node destination, final long entryTime,
             final int wantTime, final int originalScheduleAdherence,
             final List<ScheduleAdherenceRequirement> sars, final boolean hazmat,
             final boolean isWestbound) {
@@ -131,7 +131,7 @@ public class Train implements Comparable<Train> {
         return this.destination;
     }
 
-    public int getEntryTime() {
+    public long getEntryTime() {
         return this.entryTime;
     }
 

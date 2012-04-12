@@ -30,11 +30,43 @@ public class Node implements Comparable<Node> {
 
     @Override
     public int compareTo(final Node arg0) {
-        return Integer.valueOf(this.getId()).compareTo(arg0.getId());
+        if (this.getId() > arg0.getId()) {
+            return 1;
+        } else if (this.getId() == arg0.getId()) {
+            return 0;
+        } else {
+            return -1;
+        }
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof Node)) {
+            return false;
+        }
+        final Node other = (Node) obj;
+        if (this.id != other.id) {
+            return false;
+        }
+        return true;
     }
 
     public int getId() {
         return this.id;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + this.id;
+        return result;
     }
 
     @Override

@@ -20,7 +20,7 @@ public final class Itinerary implements ScheduleProducer {
 
         private final long start, end;
 
-        public Window(final int start, final int end) {
+        public Window(final long start, final long end) {
             this.start = start * 1000;
             this.end = start * 1000;
         }
@@ -339,7 +339,7 @@ public final class Itinerary implements ScheduleProducer {
     }
 
     @Override
-    public WaitTime getWaitTime(final Node n) {
+    public synchronized WaitTime getWaitTime(final Node n) {
         return this.nodeWaitTimes.get(n);
     }
 

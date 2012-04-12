@@ -9,7 +9,7 @@ import org.drools.planner.api.domain.variable.ValueRangeType;
 import org.drools.planner.examples.ras2012.interfaces.ScheduleProducer;
 
 @PlanningEntity
-public class ItineraryAssignment implements Cloneable {
+public final class ItineraryAssignment implements Cloneable {
 
     private final Train                         train;
 

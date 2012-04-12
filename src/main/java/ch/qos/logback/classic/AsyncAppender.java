@@ -293,7 +293,7 @@ public class AsyncAppender<E> extends UnsynchronizedAppenderBase<E> implements
             }
 
             // Initialize event queue
-            if (this.queueCapacity < 1 || this.queueCapacity > Integer.MAX_VALUE) {
+            if (this.queueCapacity < 1) {
                 this.addError("Invalid queue capacity of " + this.queueCapacity);
                 return;
             }
