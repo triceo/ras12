@@ -105,7 +105,7 @@ public abstract class AbstractItineraryTest {
     }
 
     protected File getTargetDataFolder() {
-        return new File("data/", this.getClass().getName());
+        return new File("data/tests/", this.getClass().getName());
     }
 
     /**
@@ -151,6 +151,12 @@ public abstract class AbstractItineraryTest {
             final File folder = this.getTargetDataFolder();
             if (!folder.exists()) {
                 folder.mkdirs();
+            }
+            this.getSolution().getNetwork().visualize(new File(folder, "network.png"));
+            for (Set<Route> routes : this.testedRoutes.values()) {
+                for (Route route : routes) {
+                    route.visualize(new File(folder, "route" + route.getId() + ".png"));
+                }
             }
         }
         return this.testedRoutes;
