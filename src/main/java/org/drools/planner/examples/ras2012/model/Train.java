@@ -165,22 +165,22 @@ public class Train implements Comparable<Train> {
     }
 
     public TrainType getType() {
-        final String firstCharOfName = this.name.substring(0, 1);
-        switch (firstCharOfName) {
-            case "A":
+        final char[] chars = this.name.toCharArray();
+        switch (chars[0]) {
+            case 'A':
                 return TrainType.A;
-            case "B":
+            case 'B':
                 return TrainType.B;
-            case "C":
+            case 'C':
                 return TrainType.C;
-            case "D":
+            case 'D':
                 return TrainType.D;
-            case "E":
+            case 'E':
                 return TrainType.E;
-            case "F":
+            case 'F':
                 return TrainType.F;
             default:
-                throw new IllegalArgumentException("Invalid train type: " + firstCharOfName);
+                throw new IllegalArgumentException("Invalid train type: " + chars[0]);
         }
     }
 
