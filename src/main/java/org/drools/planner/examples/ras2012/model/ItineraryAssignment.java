@@ -1,4 +1,4 @@
-package org.drools.planner.examples.ras2012.model.planner;
+package org.drools.planner.examples.ras2012.model;
 
 import java.util.Collection;
 
@@ -7,10 +7,6 @@ import org.drools.planner.api.domain.variable.PlanningVariable;
 import org.drools.planner.api.domain.variable.ValueRange;
 import org.drools.planner.api.domain.variable.ValueRangeType;
 import org.drools.planner.examples.ras2012.interfaces.ScheduleProducer;
-import org.drools.planner.examples.ras2012.model.Itinerary;
-import org.drools.planner.examples.ras2012.model.MaintenanceWindow;
-import org.drools.planner.examples.ras2012.model.Route;
-import org.drools.planner.examples.ras2012.model.Train;
 
 @PlanningEntity
 public class ItineraryAssignment implements Cloneable {

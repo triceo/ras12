@@ -13,7 +13,7 @@
     </problemBenchmarks>
     <solver>
       <solutionClass>org.drools.planner.examples.ras2012.RAS2012Solution</solutionClass>
-      <planningEntityClass>org.drools.planner.examples.ras2012.model.planner.ItineraryAssignment</planningEntityClass>
+      <planningEntityClass>org.drools.planner.examples.ras2012.model.ItineraryAssignment</planningEntityClass>
       <scoreDirectorFactory>
         <scoreDefinitionType>HARD_AND_SOFT</scoreDefinitionType>
         <simpleScoreCalculatorClass>org.drools.planner.examples.ras2012.RAS2012ScoreCalculator</simpleScoreCalculatorClass>

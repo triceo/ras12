@@ -4,12 +4,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
+import org.drools.planner.examples.ras2012.model.ItineraryAssignment;
+
 import org.drools.planner.core.move.Move;
 import org.drools.planner.core.score.director.ScoreDirector;
 import org.drools.planner.examples.ras2012.model.Node;
 import org.drools.planner.examples.ras2012.model.Route;
 import org.drools.planner.examples.ras2012.model.WaitTime;
-import org.drools.planner.examples.ras2012.model.planner.ItineraryAssignment;
 
 public class RouteReassignmentUndoMove implements Move {
 

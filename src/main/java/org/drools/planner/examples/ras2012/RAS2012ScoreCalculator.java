@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeSet;
 
+import org.drools.planner.examples.ras2012.model.ItineraryAssignment;
+
 import org.drools.planner.core.score.buildin.hardandsoft.DefaultHardAndSoftScore;
 import org.drools.planner.core.score.buildin.hardandsoft.HardAndSoftScore;
 import org.drools.planner.core.score.director.simple.SimpleScoreCalculator;
@@ -13,7 +15,6 @@ import org.drools.planner.examples.ras2012.model.Arc;
 import org.drools.planner.examples.ras2012.model.Itinerary;
 import org.drools.planner.examples.ras2012.model.Node;
 import org.drools.planner.examples.ras2012.model.Route;
-import org.drools.planner.examples.ras2012.model.planner.ItineraryAssignment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
