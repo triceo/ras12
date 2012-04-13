@@ -81,6 +81,7 @@ public final class Itinerary implements ScheduleProducer {
     private final AtomicBoolean               scheduleCacheValid = new AtomicBoolean(false);
 
     private final SortedMap<Long, Node>       scheduleCache      = new TreeMap<Long, Node>();
+    private final Map<Node, Long>             delayCache         = new HashMap<Node, Long>();
     private final long                        trainEntryTime;
     private final List<Arc>                   arcProgression     = new LinkedList<Arc>();
     private final Map<Node, Arc>              arcPerStartNode    = new HashMap<Node, Arc>();
@@ -209,6 +210,12 @@ public final class Itinerary implements ScheduleProducer {
         return occupiedArcs;
     }
 
+    @Override
+    public synchronized Map<Node, Long> getDelays() {
+        this.getSchedule(); // just to make sure the delay cache is fresh
+        return Collections.unmodifiableMap(this.delayCache);
+    }
+
     protected Arc getLeadingArc(final long time) {
         if (time < this.trainEntryTime) {
             return null;
@@ -258,14 +265,21 @@ public final class Itinerary implements ScheduleProducer {
                 final Node n = currentArc.getStartingNode(this.getTrain());
                 final WaitTime wt = this.nodeWaitTimes.get(n);
                 if (wt != null) {
+                    this.delayCache.put(n, wt.getMillisWaitFor());
                     time += wt.getMillisWaitFor();
                 }
                 // check for maintenance windows
                 if (this.maintenances.containsKey(n)) {
                     // there is a maintenance registered for the next node
                     final Itinerary.Window w = this.maintenances.get(n);
-                    if (w.isInside(time)) {
-                        // the maintenance is ongoing, we have to wait
+                    if (w.isInside(time)) { // the maintenance is ongoing, we have to wait
+                        // make sure the delay cache has been updated
+                        long difference = w.getEnd() - time;
+                        if (this.delayCache.containsKey(n)) {
+                            difference += this.delayCache.get(n);
+                        }
+                        this.delayCache.put(n, difference);
+                        // and adjust total node entry time
                         time = w.getEnd();
                     }
                 }
@@ -393,6 +407,7 @@ public final class Itinerary implements ScheduleProducer {
     private synchronized void invalidateCaches() {
         this.occupiedArcsCache.clear();
         this.scheduleCache.clear();
+        this.delayCache.clear();
     }
 
     @Override

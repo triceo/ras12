@@ -27,6 +27,13 @@ public interface ScheduleProducer extends Visualizable {
     public Collection<Arc> getCurrentlyOccupiedArcs(long time);
 
     /**
+     * Retrieve delays (WaitTimes + possible stops for MOWs) at specific nodes.
+     * 
+     * @return Map, where the key is the node and the value is delay in milliseconds caused by that node.
+     */
+    public Map<Node, Long> getDelays();
+
+    /**
      * Retrieve the route that this itinerary relates to.
      * 
      * @return The route, never null.

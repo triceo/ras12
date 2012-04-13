@@ -2,7 +2,6 @@ package org.drools.planner.examples.ras2012;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.SortedMap;
 
 import org.drools.planner.core.score.buildin.hardandsoft.DefaultHardAndSoftScore;
 import org.drools.planner.core.score.buildin.hardandsoft.HardAndSoftScore;
@@ -11,7 +10,6 @@ import org.drools.planner.examples.ras2012.interfaces.ScheduleProducer;
 import org.drools.planner.examples.ras2012.model.Arc;
 import org.drools.planner.examples.ras2012.model.ItineraryAssignment;
 import org.drools.planner.examples.ras2012.model.Node;
-import org.drools.planner.examples.ras2012.model.WaitTime;
 
 public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solution> {
 
@@ -73,17 +71,16 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
 
     private int getDelayPenalty(final ScheduleProducer i, final RAS2012Solution solution) {
         long delay = 0;
-        for (final SortedMap.Entry<Long, Node> entry : i.getSchedule().entrySet()) {
+        final Map<Node, Long> delays = i.getDelays();
+        if (i.getTrain().getName().equals("A1")) {
+            System.out.println("---");
+        }
+        for (final Map.Entry<Long, Node> entry : i.getSchedule().entrySet()) {
             if (!this.isInPlanningHorizon(entry.getKey())) {
                 // outside planning horizon
                 break;
             }
-            final WaitTime wt = i.getWaitTime(entry.getValue());
-            if (wt == null) {
-                // no delay in the node
-                continue;
-            }
-            delay += wt.getMillisWaitFor();
+            delay += delays.containsKey(entry.getValue()) ? delays.get(entry.getValue()) : 0;
         }
         final int hoursDelay = this.roundMillisecondsToWholeHours(delay);
         return Math.max(0, hoursDelay) * i.getTrain().getType().getDelayPenalty();
@@ -143,7 +140,7 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
     }
 
     private int roundMillisecondsToWholeHours(final long milliseconds) {
-        int result = (int) Math.ceil(Math.abs(milliseconds) / 1000.0 / 60.0 / 60.0);
+        final int result = (int) Math.ceil(Math.abs(milliseconds) / 1000.0 / 60.0 / 60.0);
         if (milliseconds < 0) {
             return -result;
         } else {
