@@ -10,8 +10,7 @@ import org.drools.planner.examples.ras2012.model.Route;
 import org.drools.planner.examples.ras2012.model.Train;
 import org.drools.planner.examples.ras2012.model.WaitTime;
 
-// FIXME make visualizable
-public interface ScheduleProducer {
+public interface ScheduleProducer extends Visualizable {
 
     /**
      * Retrieve all the existing wait times.

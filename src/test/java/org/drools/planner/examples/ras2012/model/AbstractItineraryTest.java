@@ -94,7 +94,11 @@ public abstract class AbstractItineraryTest {
     }
 
     protected Itinerary getItinerary(final Train t, final Route r) {
-        return new Itinerary(r, t, this.getSolution().getMaintenances());
+        File f = new File(this.getTargetDataFolder(), "route" + r.getId() + "_train" + t.getName()
+                + ".png");
+        Itinerary i = new Itinerary(r, t, this.getSolution().getMaintenances());
+        i.visualize(f);
+        return i;
     }
 
     protected synchronized RAS2012Solution getSolution() {

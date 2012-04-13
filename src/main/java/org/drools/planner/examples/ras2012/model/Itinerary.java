@@ -1,5 +1,9 @@
 package org.drools.planner.examples.ras2012.model;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
@@ -13,6 +17,9 @@ import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.drools.planner.examples.ras2012.interfaces.ScheduleProducer;
+import org.drools.planner.examples.ras2012.util.ItineraryVisualizer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class Itinerary implements ScheduleProducer {
 
@@ -52,6 +59,8 @@ public final class Itinerary implements ScheduleProducer {
 
     }
 
+    private static final Logger logger = LoggerFactory.getLogger(Itinerary.class);
+
     private static BigDecimal getDistanceInMilesFromSpeedAndTime(final int speedInMPH,
             final long timeInMilliseconds) {
         final BigDecimal timeInSeconds = BigDecimal.valueOf(timeInMilliseconds).divide(
@@ -71,13 +80,13 @@ public final class Itinerary implements ScheduleProducer {
     private final AtomicBoolean               scheduleCacheValid = new AtomicBoolean(false);
 
     private final SortedMap<Long, Node>       scheduleCache      = new TreeMap<Long, Node>();
-
     private final long                        trainEntryTime;
     private final List<Arc>                   arcProgression     = new LinkedList<Arc>();
     private final Map<Node, Arc>              arcPerStartNode    = new HashMap<Node, Arc>();
     private final Map<Node, WaitTime>         nodeWaitTimes      = new HashMap<Node, WaitTime>();
     // FIXME only one window per node; multiple different windows with same node will get lost
     private final Map<Node, Itinerary.Window> maintenances       = new HashMap<Node, Itinerary.Window>();
+
     private final Map<Long, Collection<Arc>>  occupiedArcsCache  = new HashMap<Long, Collection<Arc>>();
 
     public Itinerary(final Route r, final Train t,
@@ -426,5 +435,28 @@ public final class Itinerary implements ScheduleProducer {
         }
         sb.append(".");
         return sb.toString();
+    }
+
+    @Override
+    public boolean visualize(final File target) {
+        OutputStream os = null;
+        try {
+            os = new FileOutputStream(target);
+            Itinerary.logger.info("Starting visualizing itinerary: " + this);
+            new ItineraryVisualizer(this).visualize(os);
+            Itinerary.logger.info("Itinerary visualization finished: " + this);
+            return true;
+        } catch (final Exception ex) {
+            Itinerary.logger.error("Visualizing itinerary " + this + " failed.", ex);
+            return false;
+        } finally {
+            if (os != null) {
+                try {
+                    os.close();
+                } catch (final IOException e) {
+                    // nothing to do here
+                }
+            }
+        }
     }
 }
