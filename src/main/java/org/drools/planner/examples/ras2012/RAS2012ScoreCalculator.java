@@ -3,23 +3,17 @@ package org.drools.planner.examples.ras2012;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedMap;
-import java.util.TreeSet;
 
 import org.drools.planner.core.score.buildin.hardandsoft.DefaultHardAndSoftScore;
 import org.drools.planner.core.score.buildin.hardandsoft.HardAndSoftScore;
 import org.drools.planner.core.score.director.simple.SimpleScoreCalculator;
 import org.drools.planner.examples.ras2012.interfaces.ScheduleProducer;
 import org.drools.planner.examples.ras2012.model.Arc;
-import org.drools.planner.examples.ras2012.model.Itinerary;
 import org.drools.planner.examples.ras2012.model.ItineraryAssignment;
 import org.drools.planner.examples.ras2012.model.Node;
-import org.drools.planner.examples.ras2012.model.Route;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.drools.planner.examples.ras2012.model.WaitTime;
 
 public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solution> {
-
-    private static final Logger logger = LoggerFactory.getLogger(RAS2012ScoreCalculator.class);
 
     @Override
     public HardAndSoftScore calculateScore(final RAS2012Solution solution) {
@@ -78,22 +72,20 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
     }
 
     private int getDelayPenalty(final ScheduleProducer i, final RAS2012Solution solution) {
-        final Route bestRoute = solution.getNetwork().getBestRoute(i.getTrain());
-        final SortedMap<Long, Node> idealSchedule = new Itinerary(bestRoute, i.getTrain(),
-                solution.getMaintenances()).getSchedule();
-        final SortedMap<Long, Node> actualSchedule = i.getSchedule();
-        final long idealArrival = new TreeSet<Long>(idealSchedule.keySet()).last();
-        final long actualArrival = new TreeSet<Long>(actualSchedule.keySet()).last();
-        final int hoursDelay = this.roundMillisecondsToWholeHours(actualArrival - idealArrival);
-        if (hoursDelay < 0) {
-            // FIXME fuck!
-            RAS2012ScoreCalculator.logger
-                    .debug("Delay for "
-                            + i.getTrain().getName()
-                            + " on route "
-                            + i.getRoute().getId()
-                            + " was negative! The optimal route probably hit a maintenance window that the actual route avoided.");
+        long delay = 0;
+        for (SortedMap.Entry<Long, Node> entry : i.getSchedule().entrySet()) {
+            if (entry.getKey() >= (RAS2012Solution.PLANNING_HORIZON_MINUTES * 60 * 1000)) {
+                // outside planning horizon
+                continue;
+            }
+            WaitTime wt = i.getWaitTime(entry.getValue());
+            if (wt == null) {
+                // no delay in the node
+                continue;
+            }
+            delay += wt.getMillisWaitFor();
         }
+        final int hoursDelay = this.roundMillisecondsToWholeHours(delay);
         return Math.max(0, hoursDelay) * i.getTrain().getType().getDelayPenalty();
     }
 
