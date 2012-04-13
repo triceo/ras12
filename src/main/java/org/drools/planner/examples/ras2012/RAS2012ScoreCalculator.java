@@ -48,7 +48,7 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
     private int getConflicts(final RAS2012Solution solution) {
         int conflicts = 0;
         // insert the number of conflicts for the given assignments
-        for (long milliseconds = 0; milliseconds <= RAS2012Solution.PLANNING_HORIZON_MINUTES * 60 * 1000; milliseconds += 30000) {
+        for (long milliseconds = 0; this.isInPlanningHorizon(milliseconds); milliseconds += 30000) {
             // for each point in time...
             final Map<Arc, Integer> arcConflicts = new HashMap<Arc, Integer>();
             for (final ItineraryAssignment ia : solution.getAssignments()) {
