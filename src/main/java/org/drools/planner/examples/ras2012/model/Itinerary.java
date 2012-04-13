@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -80,6 +81,7 @@ public final class Itinerary implements ScheduleProducer {
 
     private final AtomicBoolean               scheduleCacheValid = new AtomicBoolean(false);
 
+    private final Set<Node>                   nodesEnRoute       = new HashSet<Node>();
     private final SortedMap<Long, Node>       scheduleCache      = new TreeMap<Long, Node>();
     private final Map<Node, Long>             delayCache         = new HashMap<Node, Long>();
     private final long                        trainEntryTime;
@@ -97,10 +99,21 @@ public final class Itinerary implements ScheduleProducer {
         this.train = t;
         this.trainEntryTime = t.getEntryTime() * 60 * 1000;
         // assemble the node-traversal information
+        boolean journeyOngoing = false;
         Arc currentArc = null;
         while ((currentArc = this.route.getNextArc(currentArc)) != null) {
+            if (currentArc.getStartingNode(this.train) == this.train.getOrigin()) {
+                journeyOngoing = true;
+            }
             this.arcProgression.add(currentArc);
             this.arcPerStartNode.put(currentArc.getStartingNode(this.getRoute()), currentArc);
+            if (journeyOngoing) {
+                this.nodesEnRoute.add(currentArc.getEastNode());
+                this.nodesEnRoute.add(currentArc.getWestNode());
+            }
+            if (currentArc.getEndingNode(this.train) == this.train.getDestination()) {
+                journeyOngoing = false;
+            }
         }
         // initialize the maintenance windows
         for (final MaintenanceWindow mow : maintenanceWindows) {
@@ -412,6 +425,11 @@ public final class Itinerary implements ScheduleProducer {
     }
 
     @Override
+    public boolean isNodeOnRoute(final Node n) {
+        return this.nodesEnRoute.contains(n);
+    }
+
+    @Override
     public void removeAllWaitTimes() {
         if (this.nodeWaitTimes.size() > 0) {
             this.invalidateCaches();
@@ -433,6 +451,9 @@ public final class Itinerary implements ScheduleProducer {
     public synchronized WaitTime setWaitTime(final WaitTime w, final Node n) {
         if (w == null) {
             return this.removeWaitTime(n);
+        }
+        if (!this.isNodeOnRoute(n)) {
+            throw new IllegalArgumentException(n + " not in the itinerary: " + this);
         }
         if (this.getRoute().getWaitPoints().contains(n)) {
             this.invalidateCaches();

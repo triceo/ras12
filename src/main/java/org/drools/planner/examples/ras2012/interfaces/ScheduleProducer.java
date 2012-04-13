@@ -96,6 +96,14 @@ public interface ScheduleProducer extends Visualizable {
     public Map<Long, Long> getWantTimeDifference();
 
     /**
+     * Whether or not a given node is on the route, ie. in between train origin and destination (incl.).
+     * 
+     * @param n Node to ask for.
+     * @return
+     */
+    public boolean isNodeOnRoute(Node n);
+
+    /**
      * Remove all previously set wait times.
      */
     public void removeAllWaitTimes();
