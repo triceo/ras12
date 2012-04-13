@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Paint;
 import java.awt.Stroke;
 
+import edu.uci.ics.jung.visualization.RenderContext;
 import edu.uci.ics.jung.visualization.VisualizationImageServer;
 import org.apache.commons.collections15.Transformer;
 import org.drools.planner.examples.ras2012.model.Arc;
@@ -26,8 +27,7 @@ public class RouteVisualizer extends GraphVisualizer {
             if (input.isPreferred(this.route)) {
                 return new BasicStroke();
             } else {
-                return new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f,
-                        new float[] { 10.0f }, 0.0f);
+                return RenderContext.DOTTED;
             }
         }
     }
