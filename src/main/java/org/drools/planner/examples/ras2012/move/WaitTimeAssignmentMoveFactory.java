@@ -19,22 +19,26 @@ public class WaitTimeAssignmentMoveFactory extends AbstractMoveFactory {
         final List<Move> moves = new ArrayList<Move>();
         final RAS2012Solution sol = (RAS2012Solution) solution;
         for (final ItineraryAssignment ia : sol.getAssignments()) {
+            // when train entered X minutes after start of world, don't generate wait times to cover those X minutes.
+            long planningHorizon = RAS2012Solution.PLANNING_HORIZON_MINUTES
+                    - ia.getTrain().getEntryTime();
+            int allFirstX = 10;
             for (final Node waitPoint : ia.getRoute().getWaitPoints()) {
                 moves.add(new WaitTimeAssignmentMove(ia, waitPoint, null));
                 int i = 1;
-                for (; i < 10; i++) { // plan to the minute
+                for (; i < allFirstX; i++) { // plan to the minute
                     moves.add(new WaitTimeAssignmentMove(ia, waitPoint, WaitTime.getWaitTime(i)));
                 }
-                for (; i < RAS2012Solution.PLANNING_HORIZON_MINUTES / 8; i += 5) {
+                for (i = allFirstX; i < planningHorizon / 8; i += 5) {
                     moves.add(new WaitTimeAssignmentMove(ia, waitPoint, WaitTime.getWaitTime(i)));
                 }
-                for (; i < RAS2012Solution.PLANNING_HORIZON_MINUTES / 4; i += 10) {
+                for (; i < planningHorizon / 4; i += 10) {
                     moves.add(new WaitTimeAssignmentMove(ia, waitPoint, WaitTime.getWaitTime(i)));
                 }
-                for (; i < RAS2012Solution.PLANNING_HORIZON_MINUTES / 2; i += 20) {
+                for (; i < planningHorizon / 2; i += 20) {
                     moves.add(new WaitTimeAssignmentMove(ia, waitPoint, WaitTime.getWaitTime(i)));
                 }
-                for (; i <= RAS2012Solution.PLANNING_HORIZON_MINUTES; i += 30) {
+                for (; i <= planningHorizon; i += 30) {
                     moves.add(new WaitTimeAssignmentMove(ia, waitPoint, WaitTime.getWaitTime(i)));
                 }
             }
