@@ -143,6 +143,11 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
     }
 
     private int roundMillisecondsToWholeHours(final long milliseconds) {
-        return (int) Math.ceil(milliseconds / 1000.0 / 60.0 / 60.0);
+        int result = (int) Math.ceil(Math.abs(milliseconds) / 1000.0 / 60.0 / 60.0);
+        if (milliseconds < 0) {
+            return -result;
+        } else {
+            return result;
+        }
     }
 }
