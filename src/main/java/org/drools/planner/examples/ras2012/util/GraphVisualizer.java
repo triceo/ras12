@@ -76,7 +76,7 @@ public class GraphVisualizer {
         this(edges, null);
     }
 
-    public GraphVisualizer(final Collection<Arc> edges, final Direction direction) {
+    protected GraphVisualizer(final Collection<Arc> edges, final Direction direction) {
         this.edges = edges;
         this.direction = direction;
     }
@@ -100,14 +100,23 @@ public class GraphVisualizer {
         return g;
     }
 
-    public void visualize(final OutputStream visualize) throws IOException {
+    protected Layout<Node, Arc> getLayout() {
         final Layout<Node, Arc> layout = new ISOMLayout<Node, Arc>(this.formGraph());
         layout.setSize(new Dimension(GraphVisualizer.GRAPH_WIDTH, GraphVisualizer.GRAPH_HEIGHT));
+        return layout;
+    }
+
+    protected VisualizationImageServer<Node, Arc> getServer() {
         final VisualizationImageServer<Node, Arc> server = new VisualizationImageServer<Node, Arc>(
-                layout, layout.getSize());
+                this.getLayout(), this.getLayout().getSize());
         server.getRenderContext().setLabelOffset(30);
         server.getRenderContext().setEdgeLabelTransformer(new ArcLabeller());
         server.getRenderContext().setVertexLabelTransformer(new NodeLabeller());
+        return server;
+    }
+
+    public void visualize(final OutputStream visualize) throws IOException {
+        final VisualizationImageServer<Node, Arc> server = this.getServer();
         Image i = null;
         GraphVisualizer.l.lock();
         try {
@@ -115,7 +124,7 @@ public class GraphVisualizer {
              * the call to getImage() causes trouble when running in multiple threads; keep other threads out using a lock.
              */
             i = server.getImage(new Point2D.Double(GraphVisualizer.GRAPH_WIDTH / 2,
-                    GraphVisualizer.GRAPH_HEIGHT / 2), layout.getSize());
+                    GraphVisualizer.GRAPH_HEIGHT / 2), server.getSize());
         } finally {
             GraphVisualizer.l.unlock();
         }

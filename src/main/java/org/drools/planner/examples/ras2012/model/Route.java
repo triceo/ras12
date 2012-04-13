@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.drools.planner.examples.ras2012.interfaces.Visualizable;
 import org.drools.planner.examples.ras2012.model.Arc.TrackType;
-import org.drools.planner.examples.ras2012.util.GraphVisualizer;
+import org.drools.planner.examples.ras2012.util.RouteVisualizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +38,7 @@ public class Route implements Comparable<Route>, Visualizable {
         return Route.idGenerator.getAndSet(0);
     }
 
-    private final List<Arc>           parts                   = new LinkedList<Arc>();
+    private final List<Arc>           arcs                    = new LinkedList<Arc>();
 
     private final Direction           direction;
 
@@ -57,7 +57,7 @@ public class Route implements Comparable<Route>, Visualizable {
     private Route(final Direction d, final Arc... e) {
         this(d);
         for (final Arc a : e) {
-            this.parts.add(a);
+            this.arcs.add(a);
         }
     }
 
@@ -86,7 +86,7 @@ public class Route implements Comparable<Route>, Visualizable {
     }
 
     public boolean contains(final Arc e) {
-        return this.parts.contains(e);
+        return this.arcs.contains(e);
     }
 
     @Override
@@ -111,13 +111,17 @@ public class Route implements Comparable<Route>, Visualizable {
         if (add == null) {
             throw new IllegalArgumentException("Cannot extend route with a null arc!");
         }
-        if (this.parts.contains(add)) {
+        if (this.arcs.contains(add)) {
             throw new IllegalArgumentException("Cannot extend route with the same arc twice!");
         }
-        final Collection<Arc> newParts = new ArrayList<Arc>(this.parts);
+        final Collection<Arc> newParts = new ArrayList<Arc>(this.arcs);
         newParts.add(add);
         final Arc[] result = newParts.toArray(new Arc[newParts.size()]);
         return new Route(this.getDirection(), result);
+    }
+
+    public List<Arc> getArcs() {
+        return this.arcs;
     }
 
     public Direction getDirection() {
@@ -133,8 +137,8 @@ public class Route implements Comparable<Route>, Visualizable {
          * get the first and last arc inserted; some arc should have the west node == 0, it is the west-most arc; the other is
          * by definition the east-most arc
          */
-        final Arc one = this.parts.get(0);
-        final Arc two = this.parts.get(this.parts.size() - 1);
+        final Arc one = this.arcs.get(0);
+        final Arc two = this.arcs.get(this.arcs.size() - 1);
         if (one.getWestNode().getId() == 0) {
             // one is west-most
             return this.direction == Direction.WESTBOUND ? two : one;
@@ -145,19 +149,19 @@ public class Route implements Comparable<Route>, Visualizable {
     }
 
     public int getLengthInArcs() {
-        return this.parts.size();
+        return this.arcs.size();
     }
 
     public BigDecimal getLengthInMiles() {
         BigDecimal result = BigDecimal.ZERO;
-        for (final Arc a : this.parts) {
+        for (final Arc a : this.arcs) {
             result = result.add(a.getLengthInMiles());
         }
         return result;
     }
 
     public Arc getNextArc(final Arc a) {
-        if (this.parts.isEmpty()) {
+        if (this.arcs.isEmpty()) {
             throw new IllegalArgumentException("There is no next arc in an empty route.");
         }
         if (a == null) {
@@ -168,7 +172,7 @@ public class Route implements Comparable<Route>, Visualizable {
         }
         if (this.direction == Direction.WESTBOUND) {
             final Node n = a.getWestNode();
-            for (final Arc a2 : this.parts) {
+            for (final Arc a2 : this.arcs) {
                 if (a2.getEastNode() == n) {
                     return a2;
                 }
@@ -176,7 +180,7 @@ public class Route implements Comparable<Route>, Visualizable {
             return null;
         } else {
             final Node n = a.getEastNode();
-            for (final Arc a2 : this.parts) {
+            for (final Arc a2 : this.arcs) {
                 if (a2.getWestNode() == n) {
                     return a2;
                 }
@@ -188,7 +192,7 @@ public class Route implements Comparable<Route>, Visualizable {
     private int getNumberOfPreferredTracks() {
         if (this.numberOfPreferredTracks == -1) {
             int i = 0;
-            for (final Arc a : this.parts) {
+            for (final Arc a : this.arcs) {
                 if (a.isPreferred(this)) {
                     i++;
                 }
@@ -199,8 +203,8 @@ public class Route implements Comparable<Route>, Visualizable {
     }
 
     public Arc getTerminalArc() {
-        final Arc one = this.parts.get(0);
-        final Arc two = this.parts.get(this.parts.size() - 1);
+        final Arc one = this.arcs.get(0);
+        final Arc two = this.arcs.get(this.arcs.size() - 1);
         final Arc initial = this.getInitialArc();
         if (one == initial) {
             return two;
@@ -212,7 +216,7 @@ public class Route implements Comparable<Route>, Visualizable {
     private BigDecimal getTravellingTimeInMinutes() {
         if (this.travellingTimeInMinutes == null) {
             BigDecimal result = BigDecimal.ZERO;
-            for (final Arc a : this.parts) {
+            for (final Arc a : this.arcs) {
                 final BigDecimal length = a.getLengthInMiles();
                 final int speed = this.direction == Direction.EASTBOUND ? a.getTrackType()
                         .getSpeedEastbound() : a.getTrackType().getSpeedWestbound();
@@ -235,7 +239,7 @@ public class Route implements Comparable<Route>, Visualizable {
             waitPoints.add(firstArc.getEastNode());
         }
         // other wait points depend on the type of the track
-        for (final Arc a : this.parts) {
+        for (final Arc a : this.arcs) {
             if (a.getTrackType() == TrackType.SIDING) {
                 // on sidings, wait before leaving them through a switch
                 if (this.direction == Direction.EASTBOUND) {
@@ -279,7 +283,7 @@ public class Route implements Comparable<Route>, Visualizable {
         if (!(bothEastbound || bothWestbound)) {
             return false;
         }
-        for (final Arc a : this.parts) {
+        for (final Arc a : this.arcs) {
             if (a.getTrackType() == TrackType.SIDING) {
                 if (t.isHeavy()) {
                     /*
@@ -303,7 +307,7 @@ public class Route implements Comparable<Route>, Visualizable {
         for (final ScheduleAdherenceRequirement sar : t.getScheduleAdherenceRequirements()) {
             final Node requestedNode = sar.getDestination();
             boolean found = false;
-            for (final Arc a : this.parts) {
+            for (final Arc a : this.arcs) {
                 if (a.getStartingNode(t) == requestedNode) {
                     found = true;
                     break;
@@ -318,7 +322,7 @@ public class Route implements Comparable<Route>, Visualizable {
 
     @Override
     public String toString() {
-        return "Route [id=" + this.id + ", direction=" + this.direction + ", parts=" + this.parts
+        return "Route [id=" + this.id + ", direction=" + this.direction + ", parts=" + this.arcs
                 + "]";
     }
 
@@ -328,12 +332,12 @@ public class Route implements Comparable<Route>, Visualizable {
         try {
             os = new FileOutputStream(target);
             final Collection<Node> nodes = new HashSet<Node>();
-            for (final Arc a : this.parts) {
+            for (final Arc a : this.arcs) {
                 nodes.add(a.getStartingNode(this));
                 nodes.add(a.getEndingNode(this));
             }
             Route.logger.info("Starting visualizing route: " + this.getId());
-            new GraphVisualizer(this.parts, this.getDirection()).visualize(os);
+            new RouteVisualizer(this).visualize(os);
             Route.logger.info("Route visualization finished: " + this.getId());
             return true;
         } catch (final Exception ex) {
