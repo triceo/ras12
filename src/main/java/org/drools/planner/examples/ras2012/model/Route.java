@@ -283,7 +283,11 @@ public class Route implements Comparable<Route>, Visualizable {
         if (!(bothEastbound || bothWestbound)) {
             return false;
         }
+        boolean containsOrigin = false;
+        boolean containsDestination = false;
         for (final Arc a : this.arcs) {
+            containsOrigin = containsOrigin || (a.getStartingNode(t) == t.getOrigin());
+            containsDestination = containsDestination || (a.getEndingNode(t) == t.getDestination());
             if (a.getTrackType() == TrackType.SIDING) {
                 if (t.isHeavy()) {
                     /*
@@ -302,6 +306,13 @@ public class Route implements Comparable<Route>, Visualizable {
                     return false;
                 }
             }
+        }
+        /*
+         * some trains don't enter the world at depots. we must make sure that their origin/destination is actually part of this
+         * route
+         */
+        if (!containsOrigin || !containsDestination) {
+            return false;
         }
         // make sure that the train traverses through everywhere it's expected to
         for (final ScheduleAdherenceRequirement sar : t.getScheduleAdherenceRequirements()) {

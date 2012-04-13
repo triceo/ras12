@@ -72,9 +72,6 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
     private int getDelayPenalty(final ScheduleProducer i, final RAS2012Solution solution) {
         long delay = 0;
         final Map<Node, Long> delays = i.getDelays();
-        if (i.getTrain().getName().equals("A1")) {
-            System.out.println("---");
-        }
         for (final Map.Entry<Long, Node> entry : i.getSchedule().entrySet()) {
             if (!this.isInPlanningHorizon(entry.getKey())) {
                 // outside planning horizon
@@ -136,7 +133,7 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
 
     private boolean isInPlanningHorizon(final long time) {
         final long horizon = RAS2012Solution.PLANNING_HORIZON_MINUTES * 60 * 1000;
-        return time < horizon;
+        return time <= horizon;
     }
 
     private int roundMillisecondsToWholeHours(final long milliseconds) {

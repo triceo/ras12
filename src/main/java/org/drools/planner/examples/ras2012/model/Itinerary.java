@@ -251,7 +251,16 @@ public final class Itinerary implements ScheduleProducer {
             int i = 0;
             long previousTime = 0;
             Arc previousArc = null;
+            boolean seekingStart = true;
             for (final Arc currentArc : this.arcProgression) {
+                // arc progression begins with the start of the route; the train doesn't necessarily start there
+                if (seekingStart) {
+                    if (currentArc.getStartingNode(this.getTrain()) != this.getTrain().getOrigin()) {
+                        continue;
+                    } else {
+                        seekingStart = false;
+                    }
+                }
                 long time = 0;
                 if (i == 0) {
                     // first item needs to be augmented by the train entry time
@@ -331,15 +340,7 @@ public final class Itinerary implements ScheduleProducer {
 
     @Override
     public long getTimeSpentOnUnpreferredTracks(final long time) {
-        final SortedMap<Long, Node> nodeEntryTimes = this.getSchedule();
-        final SortedMap<Long, Arc> arcEntryTimes = new TreeMap<Long, Arc>();
-        for (final SortedMap.Entry<Long, Node> entry : nodeEntryTimes.entrySet()) {
-            final Arc a = this.getArcPerStartingNode(entry.getValue());
-            if (a == null) {
-                continue;
-            }
-            arcEntryTimes.put(entry.getKey(), a);
-        }
+        final SortedMap<Long, Arc> arcEntryTimes = this.getScheduleWithArcs();
         long spentTime = 0;
         final Arc leadingArc = this.getLeadingArc(time);
         /*
