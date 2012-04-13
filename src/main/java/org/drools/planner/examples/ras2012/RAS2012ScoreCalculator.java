@@ -73,12 +73,12 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
 
     private int getDelayPenalty(final ScheduleProducer i, final RAS2012Solution solution) {
         long delay = 0;
-        for (SortedMap.Entry<Long, Node> entry : i.getSchedule().entrySet()) {
-            if (entry.getKey() >= (RAS2012Solution.PLANNING_HORIZON_MINUTES * 60 * 1000)) {
+        for (final SortedMap.Entry<Long, Node> entry : i.getSchedule().entrySet()) {
+            if (!this.isInPlanningHorizon(entry.getKey())) {
                 // outside planning horizon
-                continue;
+                break;
             }
-            WaitTime wt = i.getWaitTime(entry.getValue());
+            final WaitTime wt = i.getWaitTime(entry.getValue());
             if (wt == null) {
                 // no delay in the node
                 continue;
