@@ -292,7 +292,10 @@ public final class Itinerary implements ScheduleProducer {
             final int expectedTime = sa.getTimeSinceStartOfWorld() * 60 * 1000;
             for (final SortedMap.Entry<Long, Node> entry : this.getSchedule().entrySet()) {
                 if (entry.getValue() == pointOnRoute) {
-                    final long difference = entry.getKey() - expectedTime;
+                    // make sure we only include the time within the planning horizon
+                    final long actualTime = Math.min(entry.getKey(),
+                            RAS2012Solution.PLANNING_HORIZON_MINUTES * 60 * 1000);
+                    final long difference = actualTime - expectedTime;
                     result.put(entry.getKey(), difference);
                 }
             }
