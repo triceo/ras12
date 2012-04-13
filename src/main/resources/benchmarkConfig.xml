@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plannerBenchmark>
-  <benchmarkDirectory>data/</benchmarkDirectory>
+  <benchmarkDirectory>data/benchmarks/</benchmarkDirectory>
   <warmUpSecondsSpend>30</warmUpSecondsSpend>
   <inheritedSolverBenchmark>
     <problemBenchmarks>
