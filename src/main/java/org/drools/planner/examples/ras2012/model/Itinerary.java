@@ -16,6 +16,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.drools.planner.examples.ras2012.RAS2012Solution;
 import org.drools.planner.examples.ras2012.interfaces.ScheduleProducer;
 import org.drools.planner.examples.ras2012.util.ItineraryVisualizer;
 import org.slf4j.Logger;
@@ -366,7 +367,10 @@ public final class Itinerary implements ScheduleProducer {
         final Map<Long, Long> result = new HashMap<Long, Long>();
         for (final SortedMap.Entry<Long, Node> entry : this.getSchedule().entrySet()) {
             if (entry.getValue() == this.getTrain().getDestination()) {
-                final long difference = entry.getKey() - this.getTrain().getWantTime();
+                // make sure we only include the time within the planning horizon
+                final long actualTime = Math.min(entry.getKey(),
+                        RAS2012Solution.PLANNING_HORIZON_MINUTES * 60 * 1000);
+                final long difference = actualTime - this.getTrain().getWantTime();
                 result.put(entry.getKey(), difference);
             }
         }
