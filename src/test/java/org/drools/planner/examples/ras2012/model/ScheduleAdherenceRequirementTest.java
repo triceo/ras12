@@ -8,6 +8,10 @@ public class ScheduleAdherenceRequirementTest {
     @Test
     public void testEqualsObject() {
         final ScheduleAdherenceRequirement s1 = new ScheduleAdherenceRequirement(Node.getNode(0), 1);
+        Assert.assertFalse(
+                "ScheduleAdherenceRequirement shouldn't equal non-ScheduleAdherenceRequirement.",
+                s1.equals(new String()));
+        Assert.assertFalse("ScheduleAdherenceRequirement shouldn't equal null.", s1.equals(null));
         Assert.assertEquals("ScheduleAdherenceRequirement should equal itself.", s1, s1);
         final ScheduleAdherenceRequirement s2 = new ScheduleAdherenceRequirement(Node.getNode(0), 1);
         Assert.assertEquals("ScheduleAdherenceRequirement should equal others with the same data.",

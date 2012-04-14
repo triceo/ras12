@@ -26,11 +26,7 @@ public class ScheduleAdherenceRequirement {
             return false;
         }
         final ScheduleAdherenceRequirement other = (ScheduleAdherenceRequirement) obj;
-        if (this.destination == null) {
-            if (other.destination != null) {
-                return false;
-            }
-        } else if (!this.destination.equals(other.destination)) {
+        if (!this.destination.equals(other.destination)) {
             return false;
         }
         if (this.timeSinceStartOfWorld != other.timeSinceStartOfWorld) {
