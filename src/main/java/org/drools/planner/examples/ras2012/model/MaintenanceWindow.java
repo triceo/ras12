@@ -7,8 +7,8 @@ public class MaintenanceWindow {
     private final long start;
     private final long end;
 
-    public MaintenanceWindow(final Node westNode, final Node eastNode, final int time1,
-            final int time2) {
+    public MaintenanceWindow(final Node westNode, final Node eastNode, final long time1,
+            final long time2) {
         if (eastNode == null || westNode == null) {
             throw new IllegalArgumentException("Neither node can be null.");
         }
