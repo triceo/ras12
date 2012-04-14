@@ -21,13 +21,12 @@ public class Arc {
         private static final Map<TrackType, Integer> speedsEastbound = new HashMap<TrackType, Integer>();
 
         public static void setSpeed(final TrackType t, final int speed) {
-            TrackType.setSpeedEastbound(t, speed);
-            TrackType.setSpeedWestbound(t, speed);
+            TrackType.setSpeed(t, speed, speed);
         }
 
         public static void setSpeed(final TrackType t, final int speedEastbound,
                 final int speedWestbound) {
-            if (!t.isMainTrack()) {
+            if (!t.isMainTrack() && speedEastbound != speedWestbound) {
                 throw new IllegalArgumentException(
                         "Speeds only differ based on direction when we're on a main track!");
             }
@@ -126,6 +125,7 @@ public class Arc {
         return this.eastNode;
     }
 
+    // TODO move this to Route
     public Node getEndingNode(final Route r) {
         if (r.getDirection() == Direction.EASTBOUND) {
             return this.eastNode;
@@ -134,6 +134,7 @@ public class Arc {
         }
     }
 
+    // TODO move this to Train
     public Node getEndingNode(final Train t) {
         if (t.isEastbound()) {
             return this.eastNode;
@@ -146,6 +147,7 @@ public class Arc {
         return this.lengthInMiles;
     }
 
+    // TODO move this to Route
     public Node getStartingNode(final Route r) {
         if (r.getDirection() == Direction.EASTBOUND) {
             return this.westNode;
@@ -154,6 +156,7 @@ public class Arc {
         }
     }
 
+    // TODO move this to Train
     public Node getStartingNode(final Train t) {
         if (t.isEastbound()) {
             return this.westNode;

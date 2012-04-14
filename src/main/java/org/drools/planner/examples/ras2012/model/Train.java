@@ -129,7 +129,7 @@ public class Train implements Comparable<Train> {
 
     public long getArcTravellingTimeInMilliseconds(final Arc a) {
         final BigDecimal milesPerHour = BigDecimal.valueOf(this.getMaximumSpeed(a.getTrackType()));
-        final BigDecimal hours = a.getLengthInMiles().divide(milesPerHour, 5,
+        final BigDecimal hours = a.getLengthInMiles().divide(milesPerHour, 10,
                 BigDecimal.ROUND_HALF_DOWN);
         final BigDecimal sixty = BigDecimal.valueOf(60);
         return hours.multiply(sixty).multiply(sixty).multiply(BigDecimal.valueOf(1000)).longValue();
