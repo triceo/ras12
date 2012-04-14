@@ -37,6 +37,8 @@ public class NodeTest {
         Assert.assertEquals("Node should equal other nodes with the same ID.", n1, n2);
         final Node n3 = Node.getNode(1);
         Assert.assertFalse("Node shouldn't equal nodes with different IDs.", n1.equals(n3));
+        Assert.assertFalse("Node shouldn't equal null.", n1.equals(null));
+        Assert.assertFalse("Node shouldn't equal non-Node.", n1.equals(new String()));
     }
 
     @Test(expected = IllegalArgumentException.class)
