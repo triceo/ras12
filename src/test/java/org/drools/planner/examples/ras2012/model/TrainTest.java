@@ -10,7 +10,6 @@ import junit.framework.Assert;
 import org.drools.planner.examples.ras2012.model.Arc.TrackType;
 import org.drools.planner.examples.ras2012.model.Train.TrainType;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class TrainTest {
@@ -25,37 +24,7 @@ public class TrainTest {
         TrackType.setSpeed(TrackType.CROSSOVER, 45);
     }
 
-    @Test
-    @Ignore
-    public void testConstructor() {
-        // TODO
-    }
-
-    @Test
-    public void testDirection() {
-        final Train east = new Train("EB", BigDecimal.ONE, BigDecimal.ONE, 90, Node.getNode(0),
-                Node.getNode(1), 0, 1, 0, Collections.<ScheduleAdherenceRequirement> emptyList(),
-                true, false);
-        Assert.assertTrue(east.isEastbound());
-        Assert.assertFalse(east.isWestbound());
-        final Train west = new Train("WB", BigDecimal.ONE, BigDecimal.ONE, 90, Node.getNode(0),
-                Node.getNode(1), 0, 1, 0, Collections.<ScheduleAdherenceRequirement> emptyList(),
-                true, true);
-        Assert.assertTrue(west.isWestbound());
-        Assert.assertFalse(west.isEastbound());
-    }
-
-    @Test
-    @Ignore
-    public void testEqualsObject() {
-        // TODO
-    }
-
-    @Test
-    public void testGetArcTravellingTimeInMilliseconds() {
-        final Node n1 = Node.getNode(0);
-        final Node n2 = Node.getNode(1);
-        final BigDecimal length = new BigDecimal("1.5");
+    private Arc[] getArcs(final Node n1, final Node n2, final BigDecimal length) {
         // prepare arcs, all of the same length
         final Arc mainArc0 = new Arc(TrackType.MAIN_0, length, n1, n2);
         final Arc mainArc1 = new Arc(TrackType.MAIN_0, length, n1, n2);
@@ -63,51 +32,189 @@ public class TrainTest {
         final Arc sidingArc = new Arc(TrackType.SIDING, length, n1, n2);
         final Arc switchArc = new Arc(TrackType.SWITCH, length, n1, n2);
         final Arc crossoverArc = new Arc(TrackType.CROSSOVER, length, n1, n2);
-        final Arc[] arcs = new Arc[] { mainArc0, mainArc1, mainArc2, sidingArc, switchArc,
-                crossoverArc };
+        return new Arc[] { mainArc0, mainArc1, mainArc2, sidingArc, switchArc, crossoverArc };
+    }
+
+    private Train[] getTrains(final Node n1, final Node n2) {
         // now prepare various trains
         final Random rand = new Random(0); // speed multipliers will be random, but with a fixed seed, so repeatable
         final Train aTrainWest = new Train("A1", BigDecimal.ONE, BigDecimal.valueOf(rand
-                .nextDouble()), 90, n2, n1, 0, 0, 0,
-                Collections.<ScheduleAdherenceRequirement> emptyList(), true, true);
+                .nextDouble()), 90, n2, n1, 0, 0, 0, null, true, true);
         final Train bTrainWest = new Train("B1", BigDecimal.ONE, BigDecimal.valueOf(rand
-                .nextDouble()), 90, n2, n1, 0, 0, 0,
-                Collections.<ScheduleAdherenceRequirement> emptyList(), true, true);
+                .nextDouble()), 90, n2, n1, 0, 0, 0, null, true, true);
         final Train cTrainWest = new Train("C1", BigDecimal.ONE, BigDecimal.valueOf(rand
-                .nextDouble()), 90, n2, n1, 0, 0, 0,
-                Collections.<ScheduleAdherenceRequirement> emptyList(), true, true);
+                .nextDouble()), 90, n2, n1, 0, 0, 0, null, true, true);
         final Train dTrainWest = new Train("D1", BigDecimal.ONE, BigDecimal.valueOf(rand
-                .nextDouble()), 90, n2, n1, 0, 0, 0,
-                Collections.<ScheduleAdherenceRequirement> emptyList(), true, true);
+                .nextDouble()), 90, n2, n1, 0, 0, 0, null, true, true);
         final Train eTrainWest = new Train("E1", BigDecimal.ONE, BigDecimal.valueOf(rand
-                .nextDouble()), 90, n2, n1, 0, 0, 0,
-                Collections.<ScheduleAdherenceRequirement> emptyList(), true, true);
+                .nextDouble()), 90, n2, n1, 0, 0, 0, null, true, true);
         final Train fTrainWest = new Train("F1", BigDecimal.ONE, BigDecimal.valueOf(rand
-                .nextDouble()), 90, n2, n1, 0, 0, 0,
-                Collections.<ScheduleAdherenceRequirement> emptyList(), true, true);
+                .nextDouble()), 90, n2, n1, 0, 0, 0, null, true, true);
         final Train aTrainEast = new Train("A2", BigDecimal.ONE, BigDecimal.valueOf(rand
-                .nextDouble()), 90, n1, n2, 0, 0, 0,
-                Collections.<ScheduleAdherenceRequirement> emptyList(), true, false);
+                .nextDouble()), 90, n1, n2, 0, 0, 0, null, true, false);
         final Train bTrainEast = new Train("B2", BigDecimal.ONE, BigDecimal.valueOf(rand
-                .nextDouble()), 90, n1, n2, 0, 0, 0,
-                Collections.<ScheduleAdherenceRequirement> emptyList(), true, false);
+                .nextDouble()), 90, n1, n2, 0, 0, 0, null, true, false);
         final Train cTrainEast = new Train("C2", BigDecimal.ONE, BigDecimal.valueOf(rand
-                .nextDouble()), 90, n1, n2, 0, 0, 0,
-                Collections.<ScheduleAdherenceRequirement> emptyList(), true, false);
+                .nextDouble()), 90, n1, n2, 0, 0, 0, null, true, false);
         final Train dTrainEast = new Train("D2", BigDecimal.ONE, BigDecimal.valueOf(rand
-                .nextDouble()), 90, n1, n2, 0, 0, 0,
-                Collections.<ScheduleAdherenceRequirement> emptyList(), true, false);
+                .nextDouble()), 90, n1, n2, 0, 0, 0, null, true, false);
         final Train eTrainEast = new Train("E2", BigDecimal.ONE, BigDecimal.valueOf(rand
-                .nextDouble()), 90, n1, n2, 0, 0, 0,
-                Collections.<ScheduleAdherenceRequirement> emptyList(), true, false);
+                .nextDouble()), 90, n1, n2, 0, 0, 0, null, true, false);
         final Train fTrainEast = new Train("F2", BigDecimal.ONE, BigDecimal.ONE, 90, n1, n2, 0, 0,
-                0, Collections.<ScheduleAdherenceRequirement> emptyList(), true, false);
-        final Train[] trains = new Train[] { aTrainWest, bTrainWest, cTrainWest, dTrainWest,
-                eTrainWest, fTrainWest, aTrainEast, bTrainEast, cTrainEast, dTrainEast, eTrainEast,
-                fTrainEast };
-        // and now test all against all
-        for (final Arc a : arcs) {
-            for (final Train t : trains) {
+                0, null, true, false);
+        return new Train[] { aTrainWest, bTrainWest, cTrainWest, dTrainWest, eTrainWest,
+                fTrainWest, aTrainEast, bTrainEast, cTrainEast, dTrainEast, eTrainEast, fTrainEast };
+    }
+
+    @Test
+    public void testCompareTo() {
+        final Node n1 = Node.getNode(0);
+        final Node n2 = Node.getNode(1);
+        final Train aTrain2 = new Train("A2", BigDecimal.ONE, BigDecimal.ONE, 90, n2, n1, 0, 0, 0,
+                null, true, true);
+        final Train aTrain110 = new Train("A110", BigDecimal.TEN, BigDecimal.TEN, 100, n1, n2, 0,
+                0, 0, null, false, false);
+        final Train bTrain1 = new Train("B1", BigDecimal.TEN, BigDecimal.TEN, 100, n1, n2, 0, 0, 0,
+                null, false, false);
+        // test ordering by the first letter
+        Assert.assertEquals("Trains should be ordered alphabetically.", 0,
+                aTrain2.compareTo(aTrain2));
+        Assert.assertEquals("Trains should be ordered alphabetically.", -1,
+                aTrain110.compareTo(bTrain1));
+        Assert.assertEquals("Trains should be ordered alphabetically.", 1,
+                bTrain1.compareTo(aTrain110));
+        // test ordering by the number
+        Assert.assertEquals(
+                "Trains should be ordered alphabetically by first letter, then numerically.", -1,
+                aTrain2.compareTo(aTrain110));
+        Assert.assertEquals(
+                "Trains should be ordered alphabetically by first letter, then numerically.", 1,
+                aTrain110.compareTo(aTrain2));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorEntryTime() {
+        new Train("A1", BigDecimal.ONE, BigDecimal.ONE, 90, Node.getNode(0), Node.getNode(1), -1,
+                1, 0, null, true, false);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorLengthNull() {
+        new Train("A1", null, BigDecimal.ONE, 90, Node.getNode(0), Node.getNode(1), 0, 1, 0, null,
+                true, false);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorLengthZero() {
+        new Train("A1", BigDecimal.ZERO, BigDecimal.ONE, 90, Node.getNode(0), Node.getNode(1), 0,
+                1, 0, null, true, false);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorMultiplierNull() {
+        new Train("A1", BigDecimal.ONE, null, 90, Node.getNode(0), Node.getNode(1), 0, 1, 0, null,
+                true, false);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorMultiplierZero() {
+        new Train("A1", BigDecimal.ONE, BigDecimal.ZERO, 90, Node.getNode(0), Node.getNode(1), 0,
+                1, 0, null, true, false);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorNullNode1() {
+        new Train("A1", BigDecimal.ONE, BigDecimal.ONE, 0, null, Node.getNode(0), 0, 1, 0, null,
+                true, false);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorNullNode2() {
+        new Train("A1", BigDecimal.ONE, BigDecimal.ONE, 0, Node.getNode(0), null, 0, 1, 0, null,
+                true, false);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorSameNodes() {
+        new Train("A1", BigDecimal.ONE, BigDecimal.ONE, 0, Node.getNode(0), Node.getNode(0), 0, 1,
+                0, null, true, false);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorTOB() {
+        new Train("A1", BigDecimal.ONE, BigDecimal.ONE, 0, Node.getNode(0), Node.getNode(1), 0, 1,
+                0, null, true, false);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorTrainNameNegativeNumber() {
+        new Train("C-1", BigDecimal.ONE, BigDecimal.ONE, 90, Node.getNode(0), Node.getNode(1), 0,
+                1, 0, null, true, false);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorTrainNameNotNumber() {
+        new Train("BX", BigDecimal.ONE, BigDecimal.ONE, 90, Node.getNode(0), Node.getNode(1), 0, 1,
+                0, null, true, false);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorTrainNameNull() {
+        new Train(null, BigDecimal.ONE, BigDecimal.ONE, 90, Node.getNode(0), Node.getNode(1), 0, 1,
+                0, null, true, false);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorTrainNameWrongLetter() {
+        new Train("X1", BigDecimal.ONE, BigDecimal.ONE, 90, Node.getNode(0), Node.getNode(1), 0, 1,
+                0, null, true, false);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorWantTime() {
+        new Train("A1", BigDecimal.ONE, BigDecimal.ONE, 90, Node.getNode(0), Node.getNode(1), 0,
+                -1, 0, null, true, false);
+    }
+
+    @Test
+    public void testDirection() {
+        final Train east = new Train("A1", BigDecimal.ONE, BigDecimal.ONE, 90, Node.getNode(0),
+                Node.getNode(1), 0, 1, 0, null, true, false);
+        Assert.assertTrue(east.isEastbound());
+        Assert.assertFalse(east.isWestbound());
+        final Train west = new Train("A2", BigDecimal.ONE, BigDecimal.ONE, 90, Node.getNode(0),
+                Node.getNode(1), 0, 1, 0, null, true, true);
+        Assert.assertTrue(west.isWestbound());
+        Assert.assertFalse(west.isEastbound());
+    }
+
+    @Test
+    public void testEqualsObject() {
+        final Node n1 = Node.getNode(0);
+        final Node n2 = Node.getNode(1);
+        final Train aTrain = new Train("A1", BigDecimal.ONE, BigDecimal.ONE, 90, n2, n1, 0, 0, 0,
+                null, true, true);
+        final Train aTrain2 = new Train("A1", BigDecimal.TEN, BigDecimal.TEN, 100, n1, n2, 0, 0, 0,
+                null, false, false);
+        Assert.assertFalse("Train shouldn't equal non-train.", aTrain.equals(new String()));
+        Assert.assertFalse("Train shouldn't equal null.", aTrain.equals(null));
+        Assert.assertEquals("Train should equal itself.", aTrain, aTrain);
+        Assert.assertEquals("Trains with same name should equal.", aTrain, aTrain2);
+        Assert.assertEquals("Trains with same name should equal reflexively.", aTrain2, aTrain);
+        final Train bTrain = new Train("B1", BigDecimal.ONE, BigDecimal.ONE, 90, n2, n1, 0, 0, 0,
+                null, true, true);
+        Assert.assertFalse("Trains with different names shouldn't equal.", aTrain.equals(bTrain));
+        Assert.assertFalse("Trains with different names shouldn't equal reflexively.",
+                bTrain.equals(aTrain));
+    }
+
+    @Test
+    public void testGetArcTravellingTimeInMilliseconds() {
+        final Node n1 = Node.getNode(0);
+        final Node n2 = Node.getNode(1);
+        final BigDecimal length = new BigDecimal("1.5");
+        for (final Arc a : this.getArcs(n1, n2, length)) {
+            for (final Train t : this.getTrains(n1, n2)) {
                 final BigDecimal distanceInMiles = a.getLengthInMiles();
                 final int trainSpeedInMph = t.getMaximumSpeed(a.getTrackType());
                 final BigDecimal timeInHours = distanceInMiles.divide(
@@ -122,9 +229,28 @@ public class TrainTest {
     }
 
     @Test
-    @Ignore
     public void testGetMaximumSpeed() {
-        // TODO
+        final Node n1 = Node.getNode(0);
+        final Node n2 = Node.getNode(1);
+        final BigDecimal length = new BigDecimal("1.5");
+        for (final Arc a : this.getArcs(n1, n2, length)) {
+            for (final Train t : this.getTrains(n1, n2)) {
+                final Integer arcSpeed = t.isEastbound() ? a.getTrackType().getSpeedEastbound() : a
+                        .getTrackType().getSpeedWestbound();
+                if (a.getTrackType().isMainTrack()) {
+                    final BigDecimal multiplier = t.getSpeedMultiplier();
+                    final Integer expectedSpeed = multiplier.multiply(BigDecimal.valueOf(arcSpeed))
+                            .intValue();
+                    Assert.assertEquals(
+                            "Outside main tracks, the train max speed should equal (arc speed)x(train speed multiplier).",
+                            expectedSpeed, t.getMaximumSpeed(a.getTrackType()));
+                } else {
+                    Assert.assertEquals(
+                            "Outside main tracks, the train max speed should equal arc speed.",
+                            arcSpeed, t.getMaximumSpeed(a.getTrackType()));
+                }
+            }
+        }
     }
 
     @Test
@@ -138,7 +264,7 @@ public class TrainTest {
         types.put("F", TrainType.F);
         final Random rand = new Random();
         for (final Map.Entry<String, TrainType> e : types.entrySet()) {
-            final String name = e.getKey() + rand.nextInt();
+            final String name = e.getKey() + Math.max(1, rand.nextInt());
             final Train t = new Train(name, BigDecimal.ONE, BigDecimal.ONE, 90, Node.getNode(0),
                     Node.getNode(1), 0, 1, 0,
                     Collections.<ScheduleAdherenceRequirement> emptyList(), true, false);
@@ -148,13 +274,11 @@ public class TrainTest {
 
     @Test
     public void testIsHeavy() {
-        final Train heavy = new Train("EB", BigDecimal.ONE, BigDecimal.ONE, 110, Node.getNode(0),
-                Node.getNode(1), 0, 1, 0, Collections.<ScheduleAdherenceRequirement> emptyList(),
-                true, false);
+        final Train heavy = new Train("A1", BigDecimal.ONE, BigDecimal.ONE, 110, Node.getNode(0),
+                Node.getNode(1), 0, 1, 0, null, true, false);
         Assert.assertTrue(heavy.isHeavy());
-        final Train light = new Train("EB", BigDecimal.ONE, BigDecimal.ONE, 90, Node.getNode(0),
-                Node.getNode(1), 0, 1, 0, Collections.<ScheduleAdherenceRequirement> emptyList(),
-                true, true);
+        final Train light = new Train("A2", BigDecimal.ONE, BigDecimal.ONE, 90, Node.getNode(0),
+                Node.getNode(1), 0, 1, 0, null, true, true);
         Assert.assertFalse(light.isHeavy());
     }
 

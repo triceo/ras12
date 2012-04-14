@@ -317,9 +317,9 @@ public class RouteTest {
         Route r = new Route(this.originalDirection);
         r = r.extend(a);
         // prepare trains
-        final Train eastbound = new Train("EB", BigDecimal.ONE, BigDecimal.ONE, 90, n1, n2, 0, 1,
+        final Train eastbound = new Train("A1", BigDecimal.ONE, BigDecimal.ONE, 90, n1, n2, 0, 1,
                 0, Collections.<ScheduleAdherenceRequirement> emptyList(), true, false);
-        final Train westbound = new Train("WB", BigDecimal.ONE, BigDecimal.ONE, 90, n2, n1, 0, 1,
+        final Train westbound = new Train("A2", BigDecimal.ONE, BigDecimal.ONE, 90, n2, n1, 0, 1,
                 0, Collections.<ScheduleAdherenceRequirement> emptyList(), true, true);
         if (r.getDirection() == Direction.WESTBOUND) {
             Assert.assertTrue("Westbound train should be possible on westbound route.",
@@ -345,24 +345,24 @@ public class RouteTest {
         final boolean isWestbound = this.originalDirection == Direction.WESTBOUND;
         final Node originNode = isWestbound ? n2 : n1;
         final Node destinationNode = isWestbound ? n1 : n2;
-        final Train shortTrain = new Train("WB", BigDecimal.ONE, BigDecimal.ONE, 90, originNode,
+        final Train shortTrain = new Train("A1", BigDecimal.ONE, BigDecimal.ONE, 90, originNode,
                 destinationNode, 0, 1, 0, Collections.<ScheduleAdherenceRequirement> emptyList(),
                 false, isWestbound);
         Assert.assertTrue("Train shorter than the siding won't be let through.",
                 r.isPossibleForTrain(shortTrain));
-        final Train longTrain = new Train("EB", BigDecimal.ONE.add(BigDecimal.ONE), BigDecimal.ONE,
+        final Train longTrain = new Train("A2", BigDecimal.ONE.add(BigDecimal.ONE), BigDecimal.ONE,
                 90, originNode, destinationNode, 0, 1, 0,
                 Collections.<ScheduleAdherenceRequirement> emptyList(), false, isWestbound);
         Assert.assertFalse("Train longer than the siding will be let through.",
                 r.isPossibleForTrain(longTrain));
-        final Train hazmatTrain = new Train("Hazard", BigDecimal.ONE, BigDecimal.ONE, 90,
-                originNode, destinationNode, 0, 1, 0,
-                Collections.<ScheduleAdherenceRequirement> emptyList(), true, isWestbound);
+        final Train hazmatTrain = new Train("A3", BigDecimal.ONE, BigDecimal.ONE, 90, originNode,
+                destinationNode, 0, 1, 0, Collections.<ScheduleAdherenceRequirement> emptyList(),
+                true, isWestbound);
         Assert.assertFalse("Train with hazardous materials will be let through.",
                 r.isPossibleForTrain(hazmatTrain));
-        final Train heavyTrain = new Train("Heavy", BigDecimal.ONE, BigDecimal.ONE, 110,
-                originNode, destinationNode, 0, 1, 0,
-                Collections.<ScheduleAdherenceRequirement> emptyList(), false, isWestbound);
+        final Train heavyTrain = new Train("A4", BigDecimal.ONE, BigDecimal.ONE, 110, originNode,
+                destinationNode, 0, 1, 0, Collections.<ScheduleAdherenceRequirement> emptyList(),
+                false, isWestbound);
         Assert.assertFalse("Heavy train will be let through.", r.isPossibleForTrain(heavyTrain));
         // FIXME test for trains leaving/entering somewhere else than depots
     }

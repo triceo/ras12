@@ -32,12 +32,31 @@ public class Train implements Comparable<Train> {
         }
     }
 
+    private static TrainType determineType(final String name) {
+        final char[] chars = name.toCharArray();
+        switch (chars[0]) {
+            case 'A':
+                return TrainType.A;
+            case 'B':
+                return TrainType.B;
+            case 'C':
+                return TrainType.C;
+            case 'D':
+                return TrainType.D;
+            case 'E':
+                return TrainType.E;
+            case 'F':
+                return TrainType.F;
+            default:
+                throw new IllegalArgumentException("Invalid train type: " + chars[0]);
+        }
+    }
+
     private final String                             name;
 
     private final BigDecimal                         length;
-
     private final BigDecimal                         speedMultiplier;
-
+    private final TrainType                          type;
     private final int                                tob;
     private final Node                               origin;
     private final Node                               destination;
@@ -46,6 +65,7 @@ public class Train implements Comparable<Train> {
     private final int                                originalDelay;
     private final List<ScheduleAdherenceRequirement> scheduleAdherenceRequirements;
     private final boolean                            carriesHazardousMaterials;
+
     private final boolean                            isWestbound;
 
     public Train(final String name, final BigDecimal length, final BigDecimal speedMultiplier,
@@ -53,36 +73,44 @@ public class Train implements Comparable<Train> {
             final int wantTime, final int originalScheduleAdherence,
             final List<ScheduleAdherenceRequirement> sars, final boolean hazmat,
             final boolean isWestbound) {
-        // FIXME validate train name of [A-F][num]
-        if (name == null || name.trim().length() == 0) {
+        if (name == null) {
             throw new IllegalArgumentException("Train name must be a non-empty String.");
         }
+        this.type = Train.determineType(name);
+        try {
+            if (Integer.valueOf(name.substring(1)) < 0) {
+                throw new NumberFormatException("Negative numbers not allowed!");
+            }
+        } catch (final NumberFormatException ex) {
+            throw new IllegalArgumentException("Train names must be in format of [A-F][0-9]+: "
+                    + name);
+        }
+        this.name = name;
         if (length == null || length.compareTo(BigDecimal.ZERO) != 1) {
             throw new IllegalArgumentException("Train must have a length greater than 0.");
         }
+        this.length = length;
         if (speedMultiplier == null || speedMultiplier.compareTo(BigDecimal.ZERO) != 1) {
             throw new IllegalArgumentException("Train must have a speed multiplier greater than 0.");
         }
+        this.speedMultiplier = speedMultiplier;
         if (tob < 1) {
             throw new IllegalArgumentException("Train must have TOB > 0.");
         }
+        this.tob = tob;
         if (origin == null || destination == null || origin.equals(destination)) {
             throw new IllegalArgumentException(
                     "Train origin and destination must be two different valid nodes.");
         }
+        this.origin = origin;
+        this.destination = destination;
         if (entryTime < 0) {
             throw new IllegalArgumentException("Train entry time may not be negative.");
         }
+        this.entryTime = entryTime;
         if (wantTime < 0) {
             throw new IllegalArgumentException("Train want time may not be negative.");
         }
-        this.name = name;
-        this.length = length;
-        this.speedMultiplier = speedMultiplier;
-        this.tob = tob;
-        this.origin = origin;
-        this.destination = destination;
-        this.entryTime = entryTime;
         this.wantTime = wantTime;
         this.originalDelay = originalScheduleAdherence;
         this.scheduleAdherenceRequirements = sars == null ? Collections
@@ -96,13 +124,20 @@ public class Train implements Comparable<Train> {
     }
 
     /**
-     * Trains are compared by their names as strings.
+     * Trains are compared by their first letter as strings, then by their number as integers. For example, A2 < B1 and A2 <
+     * A11.
      * 
      * @return String.compareTo(String)
      */
     @Override
     public int compareTo(final Train arg0) {
-        return this.getName().compareTo(arg0.getName());
+        if (this.getName().charAt(0) == arg0.getName().charAt(0)) {
+            final Integer thisId = Integer.valueOf(this.getName().substring(1));
+            final Integer otherId = Integer.valueOf(arg0.getName().substring(1));
+            return thisId.compareTo(otherId);
+        } else {
+            return this.getName().compareTo(arg0.getName());
+        }
     }
 
     @Override
@@ -117,14 +152,7 @@ public class Train implements Comparable<Train> {
             return false;
         }
         final Train other = (Train) obj;
-        if (this.name == null) {
-            if (other.name != null) {
-                return false;
-            }
-        } else if (!this.name.equals(other.name)) {
-            return false;
-        }
-        return true;
+        return this.name.equals(other.name);
     }
 
     public long getArcTravellingTimeInMilliseconds(final Arc a) {
@@ -172,24 +200,12 @@ public class Train implements Comparable<Train> {
         return this.scheduleAdherenceRequirements;
     }
 
+    protected BigDecimal getSpeedMultiplier() {
+        return this.speedMultiplier;
+    }
+
     public TrainType getType() {
-        final char[] chars = this.name.toCharArray();
-        switch (chars[0]) {
-            case 'A':
-                return TrainType.A;
-            case 'B':
-                return TrainType.B;
-            case 'C':
-                return TrainType.C;
-            case 'D':
-                return TrainType.D;
-            case 'E':
-                return TrainType.E;
-            case 'F':
-                return TrainType.F;
-            default:
-                throw new IllegalArgumentException("Invalid train type: " + chars[0]);
-        }
+        return this.type;
     }
 
     public int getWantTime() {
