@@ -198,6 +198,9 @@ public abstract class AbstractItineraryTest {
             while ((currentArc = r.getNextArc(currentArc)) != null) {
                 // account for possible maintenance windows
                 final Node n = currentArc.getStartingNode(r);
+                if (!i.isNodeOnRoute(n)) { // sometimes a train doesn't start at the beginning of a route
+                    continue;
+                }
                 if (i.getMaintenances().containsKey(n)
                         && i.getMaintenances().get(n).isInside(totalTime)) {
                     totalTime = i.getMaintenances().get(n).getEnd();
