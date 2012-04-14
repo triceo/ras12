@@ -170,23 +170,13 @@ public class Route implements Comparable<Route>, Visualizable {
         if (!this.contains(a)) {
             throw new IllegalArgumentException("The route doesn't contain the arc.");
         }
-        if (this.direction == Direction.WESTBOUND) {
-            final Node n = a.getWestNode();
-            for (final Arc a2 : this.arcs) {
-                if (a2.getEastNode() == n) {
-                    return a2;
-                }
+        final Node n = a.getEndingNode(this);
+        for (final Arc a2 : this.arcs) {
+            if (a2.getStartingNode(this) == n) {
+                return a2;
             }
-            return null;
-        } else {
-            final Node n = a.getEastNode();
-            for (final Arc a2 : this.arcs) {
-                if (a2.getWestNode() == n) {
-                    return a2;
-                }
-            }
-            return null;
         }
+        return null;
     }
 
     private int getNumberOfPreferredTracks() {
@@ -200,6 +190,25 @@ public class Route implements Comparable<Route>, Visualizable {
             this.numberOfPreferredTracks = i;
         }
         return this.numberOfPreferredTracks;
+    }
+
+    public Arc getPreviousArc(final Arc a) {
+        if (this.arcs.isEmpty()) {
+            throw new IllegalArgumentException("There is no previous arc in an empty route.");
+        }
+        if (a == null) {
+            return this.getTerminalArc();
+        }
+        if (!this.contains(a)) {
+            throw new IllegalArgumentException("The route doesn't contain the arc.");
+        }
+        final Node n = a.getStartingNode(this);
+        for (final Arc a2 : this.arcs) {
+            if (a2.getEndingNode(this) == n) {
+                return a2;
+            }
+        }
+        return null;
     }
 
     public Arc getTerminalArc() {
@@ -286,8 +295,8 @@ public class Route implements Comparable<Route>, Visualizable {
         boolean containsOrigin = false;
         boolean containsDestination = false;
         for (final Arc a : this.arcs) {
-            containsOrigin = containsOrigin || (a.getStartingNode(t) == t.getOrigin());
-            containsDestination = containsDestination || (a.getEndingNode(t) == t.getDestination());
+            containsOrigin = containsOrigin || a.getStartingNode(t) == t.getOrigin();
+            containsDestination = containsDestination || a.getEndingNode(t) == t.getDestination();
             if (a.getTrackType() == TrackType.SIDING) {
                 if (t.isHeavy()) {
                     /*

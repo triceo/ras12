@@ -186,24 +186,22 @@ public class Arc {
         return result;
     }
 
-    private boolean isPreferred(final Direction d) {
+    public boolean isPreferred(final Route r) {
         if (this.trackType == TrackType.MAIN_0) {
             return true;
-        } else if (d == Direction.EASTBOUND && this.trackType == TrackType.MAIN_2) {
-            return true;
-        } else if (d == Direction.WESTBOUND && this.trackType == TrackType.MAIN_1) {
-            return true;
+        } else if (this.trackType == TrackType.MAIN_2) {
+            return (r.getDirection() == Direction.EASTBOUND);
+        } else if (this.trackType == TrackType.MAIN_1) {
+            return (r.getDirection() == Direction.WESTBOUND);
         } else {
-            return false;
+            // preference of SIDING/SWITCH/CROSSOVER is based on which track are those coming off of
+            Arc previousArc = r.getPreviousArc(this);
+            if (previousArc == null) {
+                return true;
+            } else {
+                return previousArc.isPreferred(r);
+            }
         }
-    }
-
-    public boolean isPreferred(final Route r) {
-        return this.isPreferred(r.getDirection());
-    }
-
-    public boolean isPreferred(final Train t) {
-        return this.isPreferred(t.isEastbound() ? Direction.EASTBOUND : Direction.WESTBOUND);
     }
 
     @Override
