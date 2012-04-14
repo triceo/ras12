@@ -373,7 +373,7 @@ public final class Itinerary implements ScheduleProducer {
                 continue;
             }
             final Arc a = entry.getValue();
-            if (previousArc != null && !previousArc.isPreferred(this.getRoute())) {
+            if (previousArc != null && !this.getRoute().isArcPreferred(previousArc)) {
                 if (previousArc == leadingArc) {
                     // include the time spent on this track so far
                     spentTime += time - currentTimeOfEntry;

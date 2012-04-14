@@ -183,7 +183,7 @@ public class Route implements Comparable<Route>, Visualizable {
         if (this.numberOfPreferredTracks == -1) {
             int i = 0;
             for (final Arc a : this.arcs) {
-                if (a.isPreferred(this)) {
+                if (this.isArcPreferred(a)) {
                     i++;
                 }
             }
@@ -276,6 +276,24 @@ public class Route implements Comparable<Route>, Visualizable {
         int result = 1;
         result = prime * result + this.id;
         return result;
+    }
+
+    public boolean isArcPreferred(final Arc a) {
+        if (a.getTrackType() == TrackType.MAIN_0) {
+            return true;
+        } else if (a.getTrackType() == TrackType.MAIN_2) {
+            return this.getDirection() == Direction.EASTBOUND;
+        } else if (a.getTrackType() == TrackType.MAIN_1) {
+            return this.getDirection() == Direction.WESTBOUND;
+        } else {
+            // preference of SIDING/SWITCH/CROSSOVER is based on which track are those coming off of
+            final Arc previousArc = this.getPreviousArc(a);
+            if (previousArc == null) {
+                return true;
+            } else {
+                return this.isArcPreferred(previousArc);
+            }
+        }
     }
 
     public boolean isPossibleForTrain(final Train t) {
