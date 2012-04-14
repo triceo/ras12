@@ -284,7 +284,7 @@ public final class Itinerary implements ScheduleProducer {
                     time += this.trainEntryTime;
                 } else {
                     // otherwise we need to convert a relative time to an absolute time by adding the previous node's time
-                    time = previousArc.getTravellingTimeInMilliseconds(this.getTrain());
+                    time = this.getTrain().getArcTravellingTimeInMilliseconds(previousArc);
                     time += previousTime;
                 }
                 // now adjust for node wait time, should there be any
@@ -315,8 +315,8 @@ public final class Itinerary implements ScheduleProducer {
                 previousArc = currentArc;
                 i++;
             }
-            this.scheduleCache.put(
-                    previousTime + previousArc.getTravellingTimeInMilliseconds(this.getTrain()),
+            this.scheduleCache.put(previousTime
+                    + this.getTrain().getArcTravellingTimeInMilliseconds(previousArc),
                     previousArc.getEndingNode(this.getTrain()));
             this.scheduleCacheValid.set(true);
         }

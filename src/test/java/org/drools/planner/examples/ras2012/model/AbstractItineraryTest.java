@@ -206,7 +206,7 @@ public abstract class AbstractItineraryTest {
                     totalTime = i.getMaintenances().get(n).getEnd();
                 }
                 expecteds.put(totalTime, currentArc); // immediately after entering the node
-                final long arcTravellingTime = currentArc.getTravellingTimeInMilliseconds(t);
+                final long arcTravellingTime = t.getArcTravellingTimeInMilliseconds(currentArc);
                 final long arcTravellingTimeThird = arcTravellingTime / 3;
                 expecteds.put(totalTime + arcTravellingTimeThird, currentArc); // one third into the node
                 totalTime += arcTravellingTime;

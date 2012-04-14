@@ -91,8 +91,8 @@ public class RAS2012ProblemIO implements ProblemIO {
             final BigDecimal timeInSeconds = RAS2012ProblemIO
                     .convertMillisToSeconds(entry.getKey());
             if (arc != null) {
-                final BigDecimal travellingTime = RAS2012ProblemIO.convertMillisToSeconds(arc
-                        .getTravellingTimeInMilliseconds(t));
+                final BigDecimal travellingTime = RAS2012ProblemIO.convertMillisToSeconds(t
+                        .getArcTravellingTimeInMilliseconds(arc));
                 final BigDecimal leaveTime = timeInSeconds.add(travellingTime).subtract(
                         new BigDecimal("0.5"));
                 if (leaveTime.intValue() > RAS2012Solution.PLANNING_HORIZON_MINUTES * 60) {

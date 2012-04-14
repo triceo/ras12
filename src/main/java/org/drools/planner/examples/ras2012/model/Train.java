@@ -127,6 +127,14 @@ public class Train implements Comparable<Train> {
         return true;
     }
 
+    public long getArcTravellingTimeInMilliseconds(final Arc a) {
+        final BigDecimal milesPerHour = BigDecimal.valueOf(this.getMaximumSpeed(a.getTrackType()));
+        final BigDecimal hours = a.getLengthInMiles().divide(milesPerHour, 5,
+                BigDecimal.ROUND_HALF_DOWN);
+        final BigDecimal sixty = BigDecimal.valueOf(60);
+        return hours.multiply(sixty).multiply(sixty).multiply(BigDecimal.valueOf(1000)).longValue();
+    }
+
     public Node getDestination() {
         return this.destination;
     }
