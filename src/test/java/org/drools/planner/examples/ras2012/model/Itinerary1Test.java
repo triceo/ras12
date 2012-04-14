@@ -20,13 +20,13 @@ public class Itinerary1Test extends AbstractItineraryTest {
     private static final String TRAIN7        = "A1";
 
     private static final int    TRAIN1_ROUTE0 = 3096;
-    private static final int    TRAIN1_ROUTE1 = 4798;
+    private static final int    TRAIN1_ROUTE1 = 4128;
     private static final int    TRAIN2_ROUTE0 = 220;
-    private static final int    TRAIN2_ROUTE1 = 2320;
+    private static final int    TRAIN2_ROUTE1 = 2298;
     private static final int    TRAIN3_ROUTE0 = 2612;
-    private static final int    TRAIN3_ROUTE1 = 4128;
+    private static final int    TRAIN3_ROUTE1 = 3288;
     private static final int    TRAIN4_ROUTE0 = 72;
-    private static final int    TRAIN4_ROUTE1 = 2298;
+    private static final int    TRAIN4_ROUTE1 = 1834;
     private static final int    TRAIN5_ROUTE0 = 198;
     private static final int    TRAIN5_ROUTE1 = 2468;
     private static final int    TRAIN6_ROUTE0 = 2519;

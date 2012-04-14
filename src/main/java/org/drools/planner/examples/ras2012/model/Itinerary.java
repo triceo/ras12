@@ -95,6 +95,10 @@ public final class Itinerary implements ScheduleProducer {
 
     public Itinerary(final Route r, final Train t,
             final Collection<MaintenanceWindow> maintenanceWindows) {
+        if (!r.isPossibleForTrain(t)) {
+            throw new IllegalArgumentException("Route " + r.getId() + " impossible for train "
+                    + t.getName() + ".");
+        }
         this.route = r;
         this.train = t;
         this.trainEntryTime = t.getEntryTime() * 60 * 1000;

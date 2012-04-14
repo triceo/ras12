@@ -54,8 +54,13 @@ public abstract class AbstractItineraryTest {
             }
             // get all available routes for the train
             final Collection<Route> routes = t.isEastbound() ? eastboundRoutes : westboundRoutes;
-            // take only the equivalent ones
-            final SortedSet<Route> routeSet = new TreeSet<Route>(routes);
+            // take only the equivalent and possible ones
+            final SortedSet<Route> routeSet = new TreeSet<Route>();
+            for (Route r : routes) {
+                if (r.isPossibleForTrain(t)) {
+                    routeSet.add(r);
+                }
+            }
             // and pick the best and worst of those
             final SortedSet<Route> result = new TreeSet<Route>();
             result.add(routeSet.first());
