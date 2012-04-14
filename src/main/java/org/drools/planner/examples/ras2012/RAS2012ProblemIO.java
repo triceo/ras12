@@ -95,7 +95,7 @@ public class RAS2012ProblemIO implements ProblemIO {
                         .getTravellingTimeInMilliseconds(t));
                 final BigDecimal leaveTime = timeInSeconds.add(travellingTime).subtract(
                         new BigDecimal("0.5"));
-                if (leaveTime.intValue() > (RAS2012Solution.PLANNING_HORIZON_MINUTES * 60)) {
+                if (leaveTime.intValue() > RAS2012Solution.PLANNING_HORIZON_MINUTES * 60) {
                     continue;
                 }
                 w.write("\t\t\t\t<movement arc='(" + arc.getStartingNode(t).getId() + ","

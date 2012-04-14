@@ -20,9 +20,9 @@ public class WaitTimeAssignmentMoveFactory extends AbstractMoveFactory {
         final RAS2012Solution sol = (RAS2012Solution) solution;
         for (final ItineraryAssignment ia : sol.getAssignments()) {
             // when train entered X minutes after start of world, don't generate wait times to cover those X minutes.
-            long planningHorizon = RAS2012Solution.PLANNING_HORIZON_MINUTES
+            final long planningHorizon = RAS2012Solution.PLANNING_HORIZON_MINUTES
                     - ia.getTrain().getEntryTime();
-            int allFirstX = 10;
+            final int allFirstX = 10;
             for (final Node waitPoint : ia.getRoute().getWaitPoints()) {
                 moves.add(new WaitTimeAssignmentMove(ia, waitPoint, null));
                 int i = 1;

@@ -56,7 +56,7 @@ public abstract class AbstractItineraryTest {
             final Collection<Route> routes = t.isEastbound() ? eastboundRoutes : westboundRoutes;
             // take only the equivalent and possible ones
             final SortedSet<Route> routeSet = new TreeSet<Route>();
-            for (Route r : routes) {
+            for (final Route r : routes) {
                 if (r.isPossibleForTrain(t)) {
                     routeSet.add(r);
                 }
@@ -99,9 +99,9 @@ public abstract class AbstractItineraryTest {
     }
 
     protected Itinerary getItinerary(final Train t, final Route r) {
-        File f = new File(this.getTargetDataFolder(), "route" + r.getId() + "_train" + t.getName()
-                + ".png");
-        Itinerary i = new Itinerary(r, t, this.getSolution().getMaintenances());
+        final File f = new File(this.getTargetDataFolder(), "route" + r.getId() + "_train"
+                + t.getName() + ".png");
+        final Itinerary i = new Itinerary(r, t, this.getSolution().getMaintenances());
         i.visualize(f);
         return i;
     }
