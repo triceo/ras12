@@ -25,42 +25,6 @@ import org.slf4j.LoggerFactory;
 
 public final class Itinerary implements ScheduleProducer {
 
-    public static final class Window {
-
-        private final long start, end;
-
-        public Window(final long start, final long end) {
-            this.start = start * 1000;
-            this.end = start * 1000;
-        }
-
-        /**
-         * Get end of this window.
-         * 
-         * @return Value in milliseconds since the beginning of time.
-         */
-        public long getEnd() {
-            return this.end;
-        }
-
-        /**
-         * Whether or not the give time is inside the window.
-         * 
-         * @param time Time in milliseconds.
-         * @return
-         */
-        public boolean isInside(final long time) {
-            if (this.start > time) {
-                return false; // window didn't start yet
-            }
-            if (this.end < time) {
-                return false; // window is already over
-            }
-            return true;
-        }
-
-    }
-
     private static final Logger logger = LoggerFactory.getLogger(Itinerary.class);
 
     private static BigDecimal getDistanceInMilesFromSpeedAndTime(final int speedInMPH,
@@ -75,23 +39,23 @@ public final class Itinerary implements ScheduleProducer {
         return milesPerMinute.multiply(timeInMinutes);
     }
 
-    private final Route                       route;
+    private final Route                        route;
 
-    private final Train                       train;
+    private final Train                        train;
 
-    private final AtomicBoolean               scheduleCacheValid = new AtomicBoolean(false);
+    private final AtomicBoolean                scheduleCacheValid = new AtomicBoolean(false);
 
-    private final Set<Node>                   nodesEnRoute       = new HashSet<Node>();
-    private final SortedMap<Long, Node>       scheduleCache      = new TreeMap<Long, Node>();
-    private final Map<Node, Long>             delayCache         = new HashMap<Node, Long>();
-    private final long                        trainEntryTime;
-    private final List<Arc>                   arcProgression     = new LinkedList<Arc>();
-    private final Map<Node, Arc>              arcPerStartNode    = new HashMap<Node, Arc>();
-    private final Map<Node, WaitTime>         nodeWaitTimes      = new HashMap<Node, WaitTime>();
+    private final Set<Node>                    nodesEnRoute       = new HashSet<Node>();
+    private final SortedMap<Long, Node>        scheduleCache      = new TreeMap<Long, Node>();
+    private final Map<Node, Long>              delayCache         = new HashMap<Node, Long>();
+    private final long                         trainEntryTime;
+    private final List<Arc>                    arcProgression     = new LinkedList<Arc>();
+    private final Map<Node, Arc>               arcPerStartNode    = new HashMap<Node, Arc>();
+    private final Map<Node, WaitTime>          nodeWaitTimes      = new HashMap<Node, WaitTime>();
     // FIXME only one window per node; multiple different windows with same node will get lost
-    private final Map<Node, Itinerary.Window> maintenances       = new HashMap<Node, Itinerary.Window>();
+    private final Map<Node, MaintenanceWindow> maintenances       = new HashMap<Node, MaintenanceWindow>();
 
-    private final Map<Long, Collection<Arc>>  occupiedArcsCache  = new HashMap<Long, Collection<Arc>>();
+    private final Map<Long, Collection<Arc>>   occupiedArcsCache  = new HashMap<Long, Collection<Arc>>();
 
     public Itinerary(final Route r, final Train t,
             final Collection<MaintenanceWindow> maintenanceWindows) {
@@ -122,8 +86,7 @@ public final class Itinerary implements ScheduleProducer {
         // initialize the maintenance windows
         for (final MaintenanceWindow mow : maintenanceWindows) {
             final Node n = t.isEastbound() ? mow.getWestNode() : mow.getEastNode();
-            final Itinerary.Window w = new Window(mow.getStartingMinute(), mow.getEndingMinute());
-            this.maintenances.put(n, w);
+            this.maintenances.put(n, mow);
         }
     }
 
@@ -253,7 +216,7 @@ public final class Itinerary implements ScheduleProducer {
         return null;
     }
 
-    public Map<Node, Itinerary.Window> getMaintenances() {
+    public Map<Node, MaintenanceWindow> getMaintenances() {
         return this.maintenances;
     }
 
@@ -297,7 +260,7 @@ public final class Itinerary implements ScheduleProducer {
                 // check for maintenance windows
                 if (this.maintenances.containsKey(n)) {
                     // there is a maintenance registered for the next node
-                    final Itinerary.Window w = this.maintenances.get(n);
+                    final MaintenanceWindow w = this.maintenances.get(n);
                     if (w.isInside(time)) { // the maintenance is ongoing, we have to wait
                         // make sure the delay cache has been updated
                         long difference = w.getEnd() - time;

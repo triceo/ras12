@@ -5,6 +5,19 @@ import org.junit.Test;
 
 public class MaintenanceWindowTest {
 
+    @Test()
+    public void testConstructor() {
+        final Node EAST = Node.getNode(0);
+        final Node WEST = Node.getNode(1);
+        final int START = 10;
+        final int END = 20;
+        final MaintenanceWindow mw = new MaintenanceWindow(WEST, EAST, START, END);
+        Assert.assertSame(EAST, mw.getEastNode());
+        Assert.assertSame(WEST, mw.getWestNode());
+        Assert.assertEquals(START * 60 * 1000, mw.getStart());
+        Assert.assertEquals(END * 60 * 1000, mw.getEnd());
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorNegativeTime1() {
         new MaintenanceWindow(Node.getNode(0), Node.getNode(1), -1, 1);
@@ -25,27 +38,20 @@ public class MaintenanceWindowTest {
         new MaintenanceWindow(Node.getNode(0), null, 0, 1);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorSame() {
+        new MaintenanceWindow(Node.getNode(1), Node.getNode(1), 0, 1);
+    }
+
     @Test
-    public void testEqualsObject() {
-        final Node n1 = Node.getNode(0);
-        final Node n2 = Node.getNode(1);
-        final Node n3 = Node.getNode(2);
-        final MaintenanceWindow m1 = new MaintenanceWindow(n1, n2, 0, 2);
-        Assert.assertTrue("MaintenanceWindow should equal itself.", m1.equals(m1));
-        final MaintenanceWindow m2 = new MaintenanceWindow(n1, n2, 0, 2);
-        Assert.assertTrue("MaintenanceWindow should equal another with the same parameters.",
-                m1.equals(m2));
-        final MaintenanceWindow m3 = new MaintenanceWindow(n1, n3, 0, 2);
-        Assert.assertFalse("MaintenanceWindow shouldn't equal another with different parameters.",
-                m1.equals(m3));
-        final MaintenanceWindow m4 = new MaintenanceWindow(n3, n2, 0, 2);
-        Assert.assertFalse("MaintenanceWindow shouldn't equal another with different parameters.",
-                m1.equals(m4));
-        final MaintenanceWindow m5 = new MaintenanceWindow(n1, n2, 1, 2);
-        Assert.assertFalse("MaintenanceWindow shouldn't equal another with different parameters.",
-                m1.equals(m5));
-        final MaintenanceWindow m6 = new MaintenanceWindow(n1, n2, 0, 1);
-        Assert.assertFalse("MaintenanceWindow shouldn't equal another with different parameters.",
-                m1.equals(m6));
+    public void testIsInside() {
+        final int MOW_START = 50;
+        final int MOW_END = 51;
+        final MaintenanceWindow mow = new MaintenanceWindow(Node.getNode(0), Node.getNode(1),
+                MOW_START, MOW_END);
+        Assert.assertFalse(mow.isInside(49 * 60 * 1000));
+        Assert.assertTrue(mow.isInside(50 * 60 * 1000));
+        Assert.assertTrue(mow.isInside(51 * 60 * 1000));
+        Assert.assertFalse(mow.isInside(52 * 60 * 1000));
     }
 }
