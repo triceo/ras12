@@ -7,6 +7,12 @@ public class WaitTime {
 
     private static final Map<Integer, WaitTime> waitTimes = new HashMap<Integer, WaitTime>();
 
+    /**
+     * Get WaitTime instance with specified wait time.
+     * 
+     * @param i How many minutes of waiting should this WaitTime inflict.
+     * @return
+     */
     public static synchronized WaitTime getWaitTime(final int i) {
         if (i < 1) {
             throw new IllegalArgumentException("Wait time must be bigger than zero.");

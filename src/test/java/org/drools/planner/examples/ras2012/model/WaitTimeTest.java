@@ -6,6 +6,13 @@ import org.junit.Test;
 public class WaitTimeTest {
 
     @Test
+    public void testAccuracy() {
+        final WaitTime wt = WaitTime.getWaitTime(30);
+        Assert.assertEquals(30, wt.getMinutesWaitFor());
+        Assert.assertEquals(30 * 60 * 1000, wt.getMillisWaitFor());
+    }
+
+    @Test
     public void testEqualsObject() {
         final WaitTime wt1 = WaitTime.getWaitTime(1);
         Assert.assertEquals("WaitTime should equal itself.", wt1, wt1);
