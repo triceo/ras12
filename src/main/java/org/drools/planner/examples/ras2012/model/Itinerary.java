@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.drools.planner.examples.ras2012.RAS2012Solution;
@@ -65,7 +66,7 @@ public final class Itinerary implements ScheduleProducer {
         }
         this.route = r;
         this.train = t;
-        this.trainEntryTime = t.getEntryTime() * 60 * 1000;
+        this.trainEntryTime = TimeUnit.MINUTES.toMillis(t.getEntryTime());
         // assemble the node-traversal information
         boolean journeyOngoing = false;
         Arc currentArc = null;
@@ -163,7 +164,7 @@ public final class Itinerary implements ScheduleProducer {
                 break;
             }
         }
-        if (timeArcEntered < (this.getTrain().getEntryTime() * 60 * 1000)) {
+        if (timeArcEntered < TimeUnit.MINUTES.toMillis(this.getTrain().getEntryTime())) {
             throw new IllegalStateException(
                     "Proper arc cannot be found! Possibly a bug in the algoritm.");
         }
@@ -287,12 +288,12 @@ public final class Itinerary implements ScheduleProducer {
         for (final ScheduleAdherenceRequirement sa : this.getTrain()
                 .getScheduleAdherenceRequirements()) {
             final Node pointOnRoute = sa.getDestination();
-            final int expectedTime = sa.getTimeSinceStartOfWorld() * 60 * 1000;
+            final long expectedTime = TimeUnit.MINUTES.toMillis(sa.getTimeSinceStartOfWorld());
             for (final SortedMap.Entry<Long, Node> entry : this.getSchedule().entrySet()) {
                 if (entry.getValue() == pointOnRoute) {
                     // make sure we only include the time within the planning horizon
                     final long actualTime = Math.min(entry.getKey(),
-                            RAS2012Solution.PLANNING_HORIZON_MINUTES * 60 * 1000);
+                            TimeUnit.MINUTES.toMillis(RAS2012Solution.PLANNING_HORIZON_MINUTES));
                     final long difference = actualTime - expectedTime;
                     result.put(entry.getKey(), difference);
                 }
@@ -362,8 +363,9 @@ public final class Itinerary implements ScheduleProducer {
             if (entry.getValue() == this.getTrain().getDestination()) {
                 // make sure we only include the time within the planning horizon
                 final long actualTime = Math.min(entry.getKey(),
-                        RAS2012Solution.PLANNING_HORIZON_MINUTES * 60 * 1000);
-                final long difference = actualTime - this.getTrain().getWantTime();
+                        TimeUnit.MINUTES.toMillis(RAS2012Solution.PLANNING_HORIZON_MINUTES));
+                final long difference = actualTime
+                        - TimeUnit.MINUTES.toMillis(this.getTrain().getWantTime());
                 result.put(entry.getKey(), difference);
             }
         }

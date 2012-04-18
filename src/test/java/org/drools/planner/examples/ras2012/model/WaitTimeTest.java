@@ -1,5 +1,7 @@
 package org.drools.planner.examples.ras2012.model;
 
+import java.util.concurrent.TimeUnit;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -9,7 +11,7 @@ public class WaitTimeTest {
     public void testAccuracy() {
         final WaitTime wt = WaitTime.getWaitTime(30);
         Assert.assertEquals(30, wt.getMinutesWaitFor());
-        Assert.assertEquals(30 * 60 * 1000, wt.getMillisWaitFor());
+        Assert.assertEquals(TimeUnit.MINUTES.toMillis(30), wt.getMillisWaitFor());
     }
 
     @Test

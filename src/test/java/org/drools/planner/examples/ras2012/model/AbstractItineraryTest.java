@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.concurrent.TimeUnit;
 
 import org.drools.planner.examples.ras2012.RAS2012Solution;
 import org.drools.planner.examples.ras2012.model.Train.TrainType;
@@ -188,13 +189,13 @@ public abstract class AbstractItineraryTest {
             final Map<Long, Arc> expecteds = new HashMap<Long, Arc>();
             final Route r = i.getRoute();
             final Train t = i.getTrain();
+            long totalTime = TimeUnit.MINUTES.toMillis(t.getEntryTime());
             Arc currentArc = null;
-            if (t.getEntryTime() > 0) {
+            if (totalTime > 0) {
                 // the train shouldn't be on the route before its time of entry
                 expecteds.put((long) 0, null);
-                expecteds.put(t.getEntryTime() * 60 * 1000 / 2, null);
+                expecteds.put(totalTime / 2, null);
             }
-            long totalTime = t.getEntryTime() * 60 * 1000;
             while ((currentArc = r.getNextArc(currentArc)) != null) {
                 // account for possible maintenance windows
                 final Node n = currentArc.getStartingNode(r);
@@ -214,7 +215,8 @@ public abstract class AbstractItineraryTest {
             }
             // and now validate against reality
             for (final Map.Entry<Long, Arc> entry : expecteds.entrySet()) {
-                if (entry.getKey() > RAS2012Solution.PLANNING_HORIZON_MINUTES * 60 * 1000) {
+                if (entry.getKey() > TimeUnit.MINUTES
+                        .toMillis(RAS2012Solution.PLANNING_HORIZON_MINUTES)) {
                     // don't measure beyond the planning horizon
                     break;
                 }

@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 
 import org.drools.planner.benchmark.api.ProblemIO;
 import org.drools.planner.core.solution.Solution;
@@ -85,7 +86,8 @@ public class RAS2012ProblemIO implements ProblemIO {
         for (final Map.Entry<Long, Arc> entry : solution.getAssignment(t).getItinerary()
                 .getScheduleWithArcs().entrySet()) {
             final Arc arc = entry.getValue();
-            if (entry.getKey() >= RAS2012Solution.PLANNING_HORIZON_MINUTES * 60 * 1000) {
+            if (entry.getKey() >= TimeUnit.MINUTES
+                    .toMillis(RAS2012Solution.PLANNING_HORIZON_MINUTES)) {
                 continue;
             }
             final BigDecimal timeInSeconds = RAS2012ProblemIO
@@ -95,7 +97,8 @@ public class RAS2012ProblemIO implements ProblemIO {
                         .getArcTravellingTimeInMilliseconds(arc));
                 final BigDecimal leaveTime = timeInSeconds.add(travellingTime).subtract(
                         new BigDecimal("0.5"));
-                if (leaveTime.intValue() > RAS2012Solution.PLANNING_HORIZON_MINUTES * 60) {
+                if (leaveTime.intValue() > TimeUnit.MINUTES
+                        .toMillis(RAS2012Solution.PLANNING_HORIZON_MINUTES)) {
                     continue;
                 }
                 w.write("\t\t\t\t<movement arc='(" + arc.getStartingNode(t).getId() + ","

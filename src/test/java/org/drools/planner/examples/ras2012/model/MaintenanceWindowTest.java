@@ -1,5 +1,7 @@
 package org.drools.planner.examples.ras2012.model;
 
+import java.util.concurrent.TimeUnit;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -49,9 +51,9 @@ public class MaintenanceWindowTest {
         final int MOW_END = 51;
         final MaintenanceWindow mow = new MaintenanceWindow(Node.getNode(0), Node.getNode(1),
                 MOW_START, MOW_END);
-        Assert.assertFalse(mow.isInside(49 * 60 * 1000));
-        Assert.assertTrue(mow.isInside(50 * 60 * 1000));
-        Assert.assertTrue(mow.isInside(51 * 60 * 1000));
-        Assert.assertFalse(mow.isInside(52 * 60 * 1000));
+        Assert.assertFalse(mow.isInside(TimeUnit.MINUTES.toMillis(49)));
+        Assert.assertTrue(mow.isInside(TimeUnit.MINUTES.toMillis(MOW_START)));
+        Assert.assertTrue(mow.isInside(TimeUnit.MINUTES.toMillis(MOW_END)));
+        Assert.assertFalse(mow.isInside(TimeUnit.MINUTES.toMillis(52)));
     }
 }

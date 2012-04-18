@@ -2,6 +2,7 @@ package org.drools.planner.examples.ras2012;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.drools.planner.core.score.buildin.hardandsoft.DefaultHardAndSoftScore;
 import org.drools.planner.core.score.buildin.hardandsoft.HardAndSoftScore;
@@ -32,7 +33,7 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
              */
             penalty += this.roundMillisecondsToWholeHours(ia.getItinerary()
                     .getTimeSpentOnUnpreferredTracks(
-                            RAS2012Solution.PLANNING_HORIZON_MINUTES * 60 * 1000)) * 50;
+                            TimeUnit.MINUTES.toMillis(RAS2012Solution.PLANNING_HORIZON_MINUTES))) * 50;
             /*
              * calculate penalty for delays on the route
              */
@@ -132,7 +133,7 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
     }
 
     private boolean isInPlanningHorizon(final long time) {
-        final long horizon = RAS2012Solution.PLANNING_HORIZON_MINUTES * 60 * 1000;
+        final long horizon = TimeUnit.MINUTES.toMillis(RAS2012Solution.PLANNING_HORIZON_MINUTES);
         return time <= horizon;
     }
 

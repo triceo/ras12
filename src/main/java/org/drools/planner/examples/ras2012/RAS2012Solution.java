@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.concurrent.TimeUnit;
 
 import org.drools.planner.api.domain.solution.PlanningEntityCollectionProperty;
 import org.drools.planner.core.score.buildin.hardandsoft.HardAndSoftScore;
@@ -18,14 +19,13 @@ import org.drools.planner.examples.ras2012.model.Train;
 
 public class RAS2012Solution implements Solution<HardAndSoftScore> {
 
-    public static final long                      PLANNING_HORIZON_MINUTES       = 12 * 60;
-
-    public static final double                    PLANNING_TIME_DIVISION_MINUTES = 0.5;
+    public static final long                      PLANNING_HORIZON_MINUTES = TimeUnit.HOURS
+                                                                                   .toMinutes(12);
 
     private final String                          name;
     private final Network                         network;
     private final Collection<MaintenanceWindow>   maintenances;
-    private final Map<Train, ItineraryAssignment> assignments                    = new HashMap<Train, ItineraryAssignment>();
+    private final Map<Train, ItineraryAssignment> assignments              = new HashMap<Train, ItineraryAssignment>();
 
     private final Collection<Train>               trains;
     private HardAndSoftScore                      score;
