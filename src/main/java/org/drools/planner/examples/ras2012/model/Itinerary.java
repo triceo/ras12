@@ -155,14 +155,17 @@ public final class Itinerary implements ScheduleProducer {
         final List<Arc> occupiedArcs = new LinkedList<Arc>();
         occupiedArcs.add(leadingArc);
         // calculate how far are we into the leading arc
-        final Node beginningOfLeadingArc = leadingArc.getStartingNode(this.getTrain());
-        final SortedMap<Long, Node> nodeEntryTimes = this.getSchedule();
-        long timeArcEntered = -1; // FIXME make sure this never stays -1
-        for (final SortedMap.Entry<Long, Node> entry : nodeEntryTimes.entrySet()) {
-            if (entry.getValue() == beginningOfLeadingArc) {
+        final SortedMap<Long, Arc> nodeEntryTimes = this.getScheduleWithArcs();
+        long timeArcEntered = -1;
+        for (final SortedMap.Entry<Long, Arc> entry : nodeEntryTimes.entrySet()) {
+            if (entry.getValue() == leadingArc) {
                 timeArcEntered = entry.getKey();
                 break;
             }
+        }
+        if (timeArcEntered < (this.getTrain().getEntryTime() * 60 * 1000)) {
+            throw new IllegalStateException(
+                    "Proper arc cannot be found! Possibly a bug in the algoritm.");
         }
         final long timeTravelledInLeadingArc = time - timeArcEntered;
         final BigDecimal travelledInLeadingArc = Itinerary.getDistanceInMilesFromSpeedAndTime(this
@@ -171,21 +174,13 @@ public final class Itinerary implements ScheduleProducer {
                 .subtract(travelledInLeadingArc);
         // and now add any preceding arcs for as long as the remaining train length > 0
         Arc currentlyProcessedArc = leadingArc;
-        while (remainingLengthOfTrain.compareTo(BigDecimal.ZERO) > 0) {
-            Arc previousArc = this.getRoute().getInitialArc();
-            for (final Arc a : this.arcProgression) {
-                if (a == currentlyProcessedArc) {
-                    break;
-                } else {
-                    previousArc = a;
-                }
+        while ((currentlyProcessedArc = this.getRoute().getPreviousArc(currentlyProcessedArc)) != null) {
+            occupiedArcs.add(currentlyProcessedArc);
+            remainingLengthOfTrain = remainingLengthOfTrain.subtract(currentlyProcessedArc
+                    .getLengthInMiles());
+            if (remainingLengthOfTrain.compareTo(BigDecimal.ZERO) < 0) {
+                break;
             }
-            if (!occupiedArcs.contains(previousArc)) { // each arc only once
-                occupiedArcs.add(previousArc);
-            }
-            remainingLengthOfTrain = remainingLengthOfTrain
-                    .subtract(previousArc.getLengthInMiles());
-            currentlyProcessedArc = previousArc;
         }
         return occupiedArcs;
     }
