@@ -2,6 +2,7 @@ package org.drools.planner.examples.ras2012;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.concurrent.TimeUnit;
 
 import org.drools.planner.core.score.buildin.hardandsoft.DefaultHardAndSoftScore;
@@ -39,9 +40,29 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
              */
             penalty += this.getDelayPenalty(ia.getItinerary(), solution);
         }
-        final HardAndSoftScore score = DefaultHardAndSoftScore.valueOf(
-                -this.getConflicts(solution), -penalty);
-        return score;
+        int conflicts = this.getConflicts(solution);
+        if (conflicts > 0) {
+            return DefaultHardAndSoftScore.valueOf(-conflicts, -penalty);
+        } else {
+            return DefaultHardAndSoftScore.valueOf(countTrainsThatArrived(solution), -penalty);
+        }
+    }
+
+    private int countTrainsThatArrived(final RAS2012Solution solution) {
+        int numTrains = 0;
+        for (ItineraryAssignment ia : solution.getAssignments()) {
+            SortedMap<Long, Node> nodes = ia.getItinerary().getSchedule();
+            for (SortedMap.Entry<Long, Node> entry : nodes.entrySet()) {
+                if (!this.isInPlanningHorizon(entry.getKey())) {
+                    continue;
+                }
+                if (entry.getValue() == ia.getTrain().getDestination()) {
+                    numTrains++;
+                    break;
+                }
+            }
+        }
+        return numTrains;
     }
 
     private int getConflicts(final RAS2012Solution solution) {
