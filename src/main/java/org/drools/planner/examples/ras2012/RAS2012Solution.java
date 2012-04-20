@@ -46,7 +46,6 @@ public class RAS2012Solution implements Solution<HardAndSoftScore> {
             ia.setRoute(this.getNetwork().getBestRoute(t));
             this.assignments.put(t, ia);
         }
-        this.setScore(new RAS2012ScoreCalculator().calculateScore(this));
     }
 
     private RAS2012Solution(final String name, final Network net,
@@ -60,13 +59,14 @@ public class RAS2012Solution implements Solution<HardAndSoftScore> {
         for (final ItineraryAssignment a : assignments) {
             this.assignments.put(a.getTrain(), a.clone());
         }
-        this.setScore(new RAS2012ScoreCalculator().calculateScore(this));
     }
 
     @Override
     public Solution<HardAndSoftScore> cloneSolution() {
-        return new RAS2012Solution(this.name, this.network, this.maintenances, this.trains,
-                this.getAssignments());
+        final RAS2012Solution solution = new RAS2012Solution(this.name, this.network,
+                this.maintenances, this.trains, this.getAssignments());
+        solution.setScore(this.getScore());
+        return solution;
     }
 
     @Override
@@ -149,11 +149,18 @@ public class RAS2012Solution implements Solution<HardAndSoftScore> {
 
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("RAS2012Solution [name=").append(this.name).append(", net=")
-                .append(this.network).append(", maintenances=").append(this.maintenances)
-                .append(", trains=").append(this.trains).append(", score=").append(this.score)
-                .append("]");
+        StringBuilder builder = new StringBuilder();
+        builder.append("RAS2012Solution [name=");
+        builder.append(name);
+        builder.append(", network=");
+        builder.append(network);
+        builder.append(", maintenances=");
+        builder.append(maintenances);
+        builder.append(", assignments=");
+        builder.append(assignments);
+        builder.append(", score=");
+        builder.append(score);
+        builder.append("]");
         return builder.toString();
     }
 

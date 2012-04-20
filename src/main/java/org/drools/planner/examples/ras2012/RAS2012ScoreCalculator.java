@@ -7,68 +7,137 @@ import java.util.concurrent.TimeUnit;
 
 import org.drools.planner.core.score.buildin.hardandsoft.DefaultHardAndSoftScore;
 import org.drools.planner.core.score.buildin.hardandsoft.HardAndSoftScore;
-import org.drools.planner.core.score.director.simple.SimpleScoreCalculator;
+import org.drools.planner.core.score.director.incremental.AbstractIncrementalScoreCalculator;
 import org.drools.planner.examples.ras2012.interfaces.ScheduleProducer;
 import org.drools.planner.examples.ras2012.model.Arc;
 import org.drools.planner.examples.ras2012.model.ItineraryAssignment;
 import org.drools.planner.examples.ras2012.model.Node;
+import org.drools.planner.examples.ras2012.model.Train;
 
-public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solution> {
+public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<RAS2012Solution> {
 
-    @Override
-    public HardAndSoftScore calculateScore(final RAS2012Solution solution) {
-        // count the number of conflicts
-        int penalty = 0;
-        for (final ItineraryAssignment ia : solution.getAssignments()) {
-            /*
-             * want time penalties are only counted when the train arrives on hour before or three hours after the want time
-             */
-            penalty += this.getWantTimePenalty(ia.getItinerary(), solution);
-            /*
-             * calculate hot schedule adherence penalties, given that the train needs to adhere and that the delay is more than
-             * 2 hours
-             */
-            penalty += this.getScheduleAdherencePenalty(ia.getItinerary(), solution);
-            /*
-             * calculate time spent on unpreferred tracks
-             */
-            penalty += this.roundMillisecondsToWholeHours(ia.getItinerary()
-                    .getTimeSpentOnUnpreferredTracks(
-                            TimeUnit.MINUTES.toMillis(RAS2012Solution.PLANNING_HORIZON_MINUTES))) * 50;
-            /*
-             * calculate penalty for delays on the route
-             */
-            penalty += this.getDelayPenalty(ia.getItinerary(), solution);
-        }
-        int conflicts = this.getConflicts(solution);
-        if (conflicts > 0) {
-            return DefaultHardAndSoftScore.valueOf(-conflicts, -penalty);
+    private static boolean isInPlanningHorizon(final long time) {
+        final long horizon = TimeUnit.MINUTES.toMillis(RAS2012Solution.PLANNING_HORIZON_MINUTES);
+        return time <= horizon;
+    }
+
+    private static int roundMillisecondsToWholeHours(final long milliseconds) {
+        final int result = (int) Math.ceil(Math.abs(milliseconds) / 1000.0 / 60.0 / 60.0);
+        if (milliseconds < 0) {
+            return -result;
         } else {
-            return DefaultHardAndSoftScore.valueOf(countTrainsThatArrived(solution), -penalty);
+            return result;
         }
     }
 
-    private int countTrainsThatArrived(final RAS2012Solution solution) {
-        int numTrains = 0;
-        for (ItineraryAssignment ia : solution.getAssignments()) {
-            SortedMap<Long, Node> nodes = ia.getItinerary().getSchedule();
-            for (SortedMap.Entry<Long, Node> entry : nodes.entrySet()) {
-                if (!this.isInPlanningHorizon(entry.getKey())) {
-                    continue;
-                }
-                if (entry.getValue() == ia.getTrain().getDestination()) {
-                    numTrains++;
-                    break;
-                }
+    private RAS2012Solution           solution                   = null;
+
+    private final Map<Train, Boolean> didTrainArrive             = new HashMap<Train, Boolean>();
+
+    private final Map<Train, Integer> wantTimePenalties          = new HashMap<Train, Integer>();
+
+    private final Map<Train, Integer> delayPenalties             = new HashMap<Train, Integer>();
+
+    private final Map<Train, Integer> scheduleAdherencePenalties = new HashMap<Train, Integer>();
+
+    private final Map<Train, Integer> unpreferredTracksPenalties = new HashMap<Train, Integer>();
+
+    @Override
+    public void afterAllVariablesChanged(final Object entity) {
+        if (entity instanceof ItineraryAssignment) {
+            this.insert((ItineraryAssignment) entity);
+        }
+    }
+
+    @Override
+    public void afterEntityAdded(final Object entity) {
+        if (entity instanceof ItineraryAssignment) {
+            this.insert((ItineraryAssignment) entity);
+        }
+    }
+
+    @Override
+    public void afterEntityRemoved(final Object entity) {
+        // do nothing
+    }
+
+    @Override
+    public void afterVariableChanged(final Object entity, final String variableName) {
+        if (entity instanceof ItineraryAssignment) {
+            this.insert((ItineraryAssignment) entity);
+        }
+    }
+
+    @Override
+    public void beforeAllVariablesChanged(final Object entity) {
+        if (entity instanceof ItineraryAssignment) {
+            this.retract((ItineraryAssignment) entity);
+        }
+    }
+
+    @Override
+    public void beforeEntityAdded(final Object entity) {
+        // do nothing
+    }
+
+    @Override
+    public void beforeEntityRemoved(final Object entity) {
+        if (entity instanceof ItineraryAssignment) {
+            this.retract((ItineraryAssignment) entity);
+        }
+    }
+
+    @Override
+    public void beforeVariableChanged(final Object entity, final String variableName) {
+        if (entity instanceof ItineraryAssignment) {
+            this.retract((ItineraryAssignment) entity);
+        }
+    }
+
+    @Override
+    public HardAndSoftScore calculateScore() {
+        int penalty = 0;
+        for (final Train t : this.solution.getTrains()) {
+            penalty += this.wantTimePenalties.containsKey(t) ? this.wantTimePenalties.get(t) : 0;
+            penalty += this.delayPenalties.containsKey(t) ? this.delayPenalties.get(t) : 0;
+            penalty += this.scheduleAdherencePenalties.containsKey(t) ? this.scheduleAdherencePenalties
+                    .get(t) : 0;
+            penalty += this.unpreferredTracksPenalties.containsKey(t) ? this.unpreferredTracksPenalties
+                    .get(t) : 0;
+        }
+        final int conflicts = this.getConflicts(this.solution);
+        if (conflicts > 0) {
+            return DefaultHardAndSoftScore.valueOf(-conflicts, -penalty);
+        } else {
+            return DefaultHardAndSoftScore.valueOf(this.getHowManyTrainsArrived(), -penalty);
+        }
+    }
+
+    private void clearEveryCache() {
+        this.wantTimePenalties.clear();
+        this.unpreferredTracksPenalties.clear();
+        this.scheduleAdherencePenalties.clear();
+        this.delayPenalties.clear();
+        this.didTrainArrive.clear();
+    }
+
+    private boolean didTrainArrive(final ScheduleProducer producer) {
+        final SortedMap<Long, Node> nodes = producer.getSchedule();
+        for (final SortedMap.Entry<Long, Node> entry : nodes.entrySet()) {
+            if (!RAS2012ScoreCalculator.isInPlanningHorizon(entry.getKey())) {
+                continue;
+            }
+            if (entry.getValue() == producer.getTrain().getDestination()) {
+                return true;
             }
         }
-        return numTrains;
+        return false;
     }
 
     private int getConflicts(final RAS2012Solution solution) {
         int conflicts = 0;
         // insert the number of conflicts for the given assignments
-        for (long milliseconds = 0; this.isInPlanningHorizon(milliseconds); milliseconds += 30000) {
+        for (long milliseconds = 0; RAS2012ScoreCalculator.isInPlanningHorizon(milliseconds); milliseconds += 30000) {
             // for each point in time...
             final Map<Arc, Integer> arcConflicts = new HashMap<Arc, Integer>();
             for (final ItineraryAssignment ia : solution.getAssignments()) {
@@ -95,14 +164,24 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
         long delay = 0;
         final Map<Node, Long> delays = i.getDelays();
         for (final Map.Entry<Long, Node> entry : i.getSchedule().entrySet()) {
-            if (!this.isInPlanningHorizon(entry.getKey())) {
+            if (!RAS2012ScoreCalculator.isInPlanningHorizon(entry.getKey())) {
                 // outside planning horizon
                 break;
             }
             delay += delays.containsKey(entry.getValue()) ? delays.get(entry.getValue()) : 0;
         }
-        final int hoursDelay = this.roundMillisecondsToWholeHours(delay);
+        final int hoursDelay = RAS2012ScoreCalculator.roundMillisecondsToWholeHours(delay);
         return Math.max(0, hoursDelay) * i.getTrain().getType().getDelayPenalty();
+    }
+
+    private int getHowManyTrainsArrived() {
+        int num = 0;
+        for (final Map.Entry<Train, Boolean> entry : this.didTrainArrive.entrySet()) {
+            if (entry.getValue()) {
+                num++;
+            }
+        }
+        return num;
     }
 
     private int getScheduleAdherencePenalty(final ScheduleProducer i, final RAS2012Solution solution) {
@@ -110,7 +189,7 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
         if (i.getTrain().getType().adhereToSchedule()) {
             final Map<Long, Long> sa = i.getScheduleAdherenceStatus();
             for (final Map.Entry<Long, Long> entry : sa.entrySet()) {
-                if (!this.isInPlanningHorizon(entry.getKey())) {
+                if (!RAS2012ScoreCalculator.isInPlanningHorizon(entry.getKey())) {
                     // difference occured past the planning horizon; we don't care about it
                     continue;
                 }
@@ -118,7 +197,8 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
                 if (difference < 1) {
                     continue;
                 }
-                final int hourlyDifference = this.roundMillisecondsToWholeHours(difference);
+                final int hourlyDifference = RAS2012ScoreCalculator
+                        .roundMillisecondsToWholeHours(difference);
                 if (hourlyDifference > 2) {
                     penalty += (hourlyDifference - 2) * 200;
                 }
@@ -132,18 +212,20 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
         final Map<Long, Long> wantTimeDifferences = i.getWantTimeDifference();
         for (final Map.Entry<Long, Long> entry : wantTimeDifferences.entrySet()) {
             int hourlyDifference = 0;
-            if (!this.isInPlanningHorizon(entry.getKey())) {
+            if (!RAS2012ScoreCalculator.isInPlanningHorizon(entry.getKey())) {
                 // difference occured past the planning horizon; we don't care about it
                 continue;
             }
             final long wantTimeDifference = entry.getValue();
             if (wantTimeDifference > 0) {
-                final int hours = this.roundMillisecondsToWholeHours(wantTimeDifference);
+                final int hours = RAS2012ScoreCalculator
+                        .roundMillisecondsToWholeHours(wantTimeDifference);
                 if (hours > 3) {
                     hourlyDifference = hours - 3;
                 }
             } else if (wantTimeDifference < 0) {
-                final int hours = this.roundMillisecondsToWholeHours(wantTimeDifference);
+                final int hours = RAS2012ScoreCalculator
+                        .roundMillisecondsToWholeHours(wantTimeDifference);
                 if (hours < -1) {
                     hourlyDifference = Math.abs(hours + 1);
                 }
@@ -153,17 +235,33 @@ public class RAS2012ScoreCalculator implements SimpleScoreCalculator<RAS2012Solu
         return penalty;
     }
 
-    private boolean isInPlanningHorizon(final long time) {
-        final long horizon = TimeUnit.MINUTES.toMillis(RAS2012Solution.PLANNING_HORIZON_MINUTES);
-        return time <= horizon;
+    private void insert(final ItineraryAssignment ia) {
+        final Train t = ia.getTrain();
+        final ScheduleProducer p = ia.getItinerary();
+        this.wantTimePenalties.put(t, this.getWantTimePenalty(p, this.solution));
+        this.unpreferredTracksPenalties.put(t, RAS2012ScoreCalculator
+                .roundMillisecondsToWholeHours(p.getTimeSpentOnUnpreferredTracks(TimeUnit.MINUTES
+                        .toMillis(RAS2012Solution.PLANNING_HORIZON_MINUTES)) * 50));
+        this.scheduleAdherencePenalties.put(t, this.getScheduleAdherencePenalty(p, this.solution));
+        this.delayPenalties.put(t, this.getDelayPenalty(p, this.solution));
+        this.didTrainArrive.put(t, this.didTrainArrive(p));
     }
 
-    private int roundMillisecondsToWholeHours(final long milliseconds) {
-        final int result = (int) Math.ceil(Math.abs(milliseconds) / 1000.0 / 60.0 / 60.0);
-        if (milliseconds < 0) {
-            return -result;
-        } else {
-            return result;
+    @Override
+    public void resetWorkingSolution(final RAS2012Solution workingSolution) {
+        this.clearEveryCache();
+        this.solution = workingSolution;
+        for (final ItineraryAssignment ia : this.solution.getAssignments()) {
+            this.insert(ia);
         }
+    }
+
+    private void retract(final ItineraryAssignment ia) {
+        final Train t = ia.getTrain();
+        this.wantTimePenalties.remove(t);
+        this.unpreferredTracksPenalties.remove(t);
+        this.scheduleAdherencePenalties.remove(t);
+        this.delayPenalties.remove(t);
+        this.didTrainArrive.remove(t);
     }
 }

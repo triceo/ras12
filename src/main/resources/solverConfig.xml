@@ -4,19 +4,18 @@
   <planningEntityClass>org.drools.planner.examples.ras2012.model.ItineraryAssignment</planningEntityClass>
   <scoreDirectorFactory>
     <scoreDefinitionType>HARD_AND_SOFT</scoreDefinitionType>
-    <simpleScoreCalculatorClass>org.drools.planner.examples.ras2012.RAS2012ScoreCalculator</simpleScoreCalculatorClass>
+    <incrementalScoreCalculatorClass>org.drools.planner.examples.ras2012.RAS2012ScoreCalculator</incrementalScoreCalculatorClass>
   </scoreDirectorFactory>
   <localSearch>
     <termination>
       <terminationCompositionStyle>OR</terminationCompositionStyle>
-      <maximumMinutesSpend>1</maximumMinutesSpend>
-      <scoreAttained>0hard/0soft</scoreAttained>
+      <maximumMinutesSpend>5</maximumMinutesSpend>
     </termination> 
     <acceptor>
-      <simulatedAnnealingStartingTemperature>0hard/100soft</simulatedAnnealingStartingTemperature>
+      <simulatedAnnealingStartingTemperature>15hard/2000soft</simulatedAnnealingStartingTemperature>
     </acceptor>
     <forager>
-      <minimalAcceptedSelection>4</minimalAcceptedSelection>
+      <minimalAcceptedSelection>8</minimalAcceptedSelection>
     </forager>    
     <selector>
       <selector>

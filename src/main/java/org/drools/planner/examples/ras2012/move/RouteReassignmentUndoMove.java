@@ -33,10 +33,12 @@ public class RouteReassignmentUndoMove implements Move {
 
     @Override
     public void doMove(final ScoreDirector scoreDirector) {
+        scoreDirector.beforeVariableChanged(this.assignment, "route");
         this.assignment.setRoute(this.originalRoute);
         for (final Map.Entry<Node, WaitTime> entry : this.originalWaitTimes.entrySet()) {
             this.assignment.getItinerary().setWaitTime(entry.getValue(), entry.getKey());
         }
+        scoreDirector.afterVariableChanged(this.assignment, "route");
     }
 
     @Override

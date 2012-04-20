@@ -31,7 +31,9 @@ public class WaitTimeAssignmentMove implements Move {
 
     @Override
     public void doMove(final ScoreDirector scoreDirector) {
+        scoreDirector.beforeVariableChanged(this.assignment, "waitTime");
         this.assignment.getItinerary().setWaitTime(this.waitTime, this.node);
+        scoreDirector.afterVariableChanged(this.assignment, "waitTime");
     }
 
     @Override
