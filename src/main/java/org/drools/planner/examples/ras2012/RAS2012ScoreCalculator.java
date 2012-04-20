@@ -33,17 +33,21 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
         }
     }
 
-    private RAS2012Solution           solution                   = null;
+    private RAS2012Solution                              solution                   = null;
 
-    private final Map<Train, Boolean> didTrainArrive             = new HashMap<Train, Boolean>();
+    private final Map<Train, Boolean>                    didTrainArrive             = new HashMap<Train, Boolean>();
 
-    private final Map<Train, Integer> wantTimePenalties          = new HashMap<Train, Integer>();
+    private final Map<Train, Integer>                    wantTimePenalties          = new HashMap<Train, Integer>();
 
-    private final Map<Train, Integer> delayPenalties             = new HashMap<Train, Integer>();
+    private final Map<Train, Integer>                    delayPenalties             = new HashMap<Train, Integer>();
 
-    private final Map<Train, Integer> scheduleAdherencePenalties = new HashMap<Train, Integer>();
+    private final Map<Train, Integer>                    scheduleAdherencePenalties = new HashMap<Train, Integer>();
 
-    private final Map<Train, Integer> unpreferredTracksPenalties = new HashMap<Train, Integer>();
+    private final Map<Train, Integer>                    unpreferredTracksPenalties = new HashMap<Train, Integer>();
+
+    private HardAndSoftScore                             cache                      = null;
+
+    private final Map<Long, Map<Train, Collection<Arc>>> occupiedArcs               = new HashMap<Long, Map<Train, Collection<Arc>>>();
 
     @Override
     public void afterAllVariablesChanged(final Object entity) {
@@ -97,25 +101,15 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
         }
     }
 
-    private int getConflicts() {
-        int conflicts = 0;
-        for (Map<Train, Collection<Arc>> entry : this.occupiedArcs.values()) {
-            Set<Arc> conflictingArcs = new HashSet<Arc>();
-            for (Collection<Arc> arcsOccupiedByTrain : entry.values()) {
-                for (Arc a : arcsOccupiedByTrain) {
-                    if (conflictingArcs.contains(a)) {
-                        conflicts++;
-                    } else {
-                        conflictingArcs.add(a);
-                    }
-                }
-            }
+    @Override
+    public synchronized HardAndSoftScore calculateScore() {
+        if (this.cache == null) {
+            this.cache = this.calculateScoreUncached();
         }
-        return conflicts;
+        return this.cache;
     }
 
-    @Override
-    public HardAndSoftScore calculateScore() {
+    private HardAndSoftScore calculateScoreUncached() {
         int penalty = 0;
         for (final Train t : this.solution.getTrains()) {
             penalty += this.wantTimePenalties.containsKey(t) ? this.wantTimePenalties.get(t) : 0;
@@ -129,11 +123,12 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
         if (conflicts > 0) {
             return DefaultHardAndSoftScore.valueOf(-conflicts, -penalty);
         } else {
-            return DefaultHardAndSoftScore.valueOf(this.getHowManyTrainsArrived(), -penalty);
+            return DefaultHardAndSoftScore.valueOf(this.getTrainArrivalMetrics(), -penalty);
         }
     }
 
     private void clearEveryCache() {
+        this.cache = null;
         this.wantTimePenalties.clear();
         this.unpreferredTracksPenalties.clear();
         this.scheduleAdherencePenalties.clear();
@@ -155,17 +150,21 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
         return false;
     }
 
-    private final Map<Long, Map<Train, Collection<Arc>>> occupiedArcs = new HashMap<Long, Map<Train, Collection<Arc>>>();
-
-    private void refreshOccupiedArcs(final ItineraryAssignment ia) {
-        // insert the number of conflicts for the given assignments
-        for (long milliseconds = 0; RAS2012ScoreCalculator.isInPlanningHorizon(milliseconds); milliseconds += 30000) {
-            if (!occupiedArcs.containsKey(milliseconds)) {
-                occupiedArcs.put(milliseconds, new HashMap<Train, Collection<Arc>>());
+    private int getConflicts() {
+        int conflicts = 0;
+        for (final Map<Train, Collection<Arc>> entry : this.occupiedArcs.values()) {
+            final Set<Arc> conflictingArcs = new HashSet<Arc>();
+            for (final Collection<Arc> arcsOccupiedByTrain : entry.values()) {
+                for (final Arc a : arcsOccupiedByTrain) {
+                    if (conflictingArcs.contains(a)) {
+                        conflicts++;
+                    } else {
+                        conflictingArcs.add(a);
+                    }
+                }
             }
-            Map<Train, Collection<Arc>> arcs = occupiedArcs.get(milliseconds);
-            arcs.put(ia.getTrain(), ia.getItinerary().getCurrentlyOccupiedArcs(milliseconds));
         }
+        return conflicts;
     }
 
     private int getDelayPenalty(final ScheduleProducer i, final RAS2012Solution solution) {
@@ -180,16 +179,6 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
         }
         final int hoursDelay = RAS2012ScoreCalculator.roundMillisecondsToWholeHours(delay);
         return Math.max(0, hoursDelay) * i.getTrain().getType().getDelayPenalty();
-    }
-
-    private int getHowManyTrainsArrived() {
-        int num = 0;
-        for (final Map.Entry<Train, Boolean> entry : this.didTrainArrive.entrySet()) {
-            if (entry.getValue()) {
-                num++;
-            }
-        }
-        return num;
     }
 
     private int getScheduleAdherencePenalty(final ScheduleProducer i, final RAS2012Solution solution) {
@@ -213,6 +202,17 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
             }
         }
         return penalty;
+    }
+
+    private int getTrainArrivalMetrics() {
+        int num = 0;
+        for (final Map.Entry<Train, Boolean> entry : this.didTrainArrive.entrySet()) {
+            if (entry.getValue()) {
+                final Train t = entry.getKey();
+                num += Math.ceil(t.getType().getDelayPenalty() / 100.0);
+            }
+        }
+        return num;
     }
 
     private int getWantTimePenalty(final ScheduleProducer i, final RAS2012Solution solution) {
@@ -253,7 +253,18 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
         this.scheduleAdherencePenalties.put(t, this.getScheduleAdherencePenalty(p, this.solution));
         this.delayPenalties.put(t, this.getDelayPenalty(p, this.solution));
         this.didTrainArrive.put(t, this.didTrainArrive(p));
-        this.refreshOccupiedArcs(ia);
+        this.recalculateOccupiedArcs(ia);
+    }
+
+    private void recalculateOccupiedArcs(final ItineraryAssignment ia) {
+        // insert the number of conflicts for the given assignments
+        for (long milliseconds = 0; RAS2012ScoreCalculator.isInPlanningHorizon(milliseconds); milliseconds += 30000) {
+            if (!this.occupiedArcs.containsKey(milliseconds)) {
+                this.occupiedArcs.put(milliseconds, new HashMap<Train, Collection<Arc>>());
+            }
+            final Map<Train, Collection<Arc>> arcs = this.occupiedArcs.get(milliseconds);
+            arcs.put(ia.getTrain(), ia.getItinerary().getCurrentlyOccupiedArcs(milliseconds));
+        }
     }
 
     @Override
@@ -267,12 +278,14 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
 
     private void retract(final ItineraryAssignment ia) {
         final Train t = ia.getTrain();
+        this.cache = null;
         this.wantTimePenalties.remove(t);
         this.unpreferredTracksPenalties.remove(t);
         this.scheduleAdherencePenalties.remove(t);
         this.delayPenalties.remove(t);
         this.didTrainArrive.remove(t);
-        for (Map.Entry<Long, Map<Train, Collection<Arc>>> entry : this.occupiedArcs.entrySet()) {
+        for (final Map.Entry<Long, Map<Train, Collection<Arc>>> entry : this.occupiedArcs
+                .entrySet()) {
             entry.getValue().remove(ia.getTrain());
         }
     }
