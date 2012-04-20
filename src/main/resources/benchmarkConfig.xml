@@ -26,118 +26,11 @@
   </inheritedSolverBenchmark>
 
   <solverBenchmark>
-    <name>Sol 0/50</name>
-    <solver>
-      <localSearch>
-        <forager>
-          <minimalAcceptedSelection>4</minimalAcceptedSelection>
-        </forager>
-        <acceptor>
-          <simulatedAnnealingStartingTemperature>0hard/50soft</simulatedAnnealingStartingTemperature>
-        </acceptor>
-    <selector>
-      <selector>
-        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
-      </selector>
-      <selector>
-        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
-      </selector>
-    </selector>
-      </localSearch>
-    </solver>
-  </solverBenchmark>
-  <solverBenchmark>
-    <name>Sol 0/100</name>
-    <solver>
-      <localSearch>
-        <forager>
-          <minimalAcceptedSelection>4</minimalAcceptedSelection>
-        </forager>
-        <acceptor>
-          <simulatedAnnealingStartingTemperature>0hard/100soft</simulatedAnnealingStartingTemperature>
-        </acceptor>
-    <selector>
-      <selector>
-        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
-      </selector>
-      <selector>
-        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
-      </selector>
-    </selector>
-      </localSearch>
-    </solver>
-  </solverBenchmark>
-  <solverBenchmark>
-    <name>Sol 0/500</name>
-    <solver>
-      <localSearch>
-        <forager>
-          <minimalAcceptedSelection>4</minimalAcceptedSelection>
-        </forager>
-        <acceptor>
-          <simulatedAnnealingStartingTemperature>0hard/500soft</simulatedAnnealingStartingTemperature>
-        </acceptor>
-    <selector>
-      <selector>
-        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
-      </selector>
-      <selector>
-        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
-      </selector>
-    </selector>
-      </localSearch>
-    </solver>
-  </solverBenchmark>
-  <solverBenchmark>
-    <name>Sol 0/1000</name>
-    <solver>
-      <localSearch>
-        <forager>
-          <minimalAcceptedSelection>4</minimalAcceptedSelection>
-        </forager>
-        <acceptor>
-          <simulatedAnnealingStartingTemperature>0hard/1000soft</simulatedAnnealingStartingTemperature>
-        </acceptor>
-    <selector>
-      <selector>
-        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
-      </selector>
-      <selector>
-        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
-      </selector>
-    </selector>
-      </localSearch>
-    </solver>
-  </solverBenchmark>
-  <solverBenchmark>
-    <name>Sol 0/2000</name>
-    <solver>
-      <localSearch>
-        <forager>
-          <minimalAcceptedSelection>4</minimalAcceptedSelection>
-        </forager>
-        <acceptor>
-          <simulatedAnnealingStartingTemperature>0hard/2000soft</simulatedAnnealingStartingTemperature>
-        </acceptor>
-    <selector>
-      <selector>
-        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
-      </selector>
-      <selector>
-        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
-      </selector>
-    </selector>
-      </localSearch>
-    </solver>
-  </solverBenchmark>
-
-
-  <solverBenchmark>
     <name>Sol 5/50</name>
     <solver>
       <localSearch>
         <forager>
-          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+          <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>5hard/50soft</simulatedAnnealingStartingTemperature>
@@ -158,7 +51,7 @@
     <solver>
       <localSearch>
         <forager>
-          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+          <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>5hard/100soft</simulatedAnnealingStartingTemperature>
@@ -179,7 +72,7 @@
     <solver>
       <localSearch>
         <forager>
-          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+          <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>5hard/500soft</simulatedAnnealingStartingTemperature>
@@ -200,7 +93,7 @@
     <solver>
       <localSearch>
         <forager>
-          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+          <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>5hard/1000soft</simulatedAnnealingStartingTemperature>
@@ -221,7 +114,7 @@
     <solver>
       <localSearch>
         <forager>
-          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+          <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>5hard/2000soft</simulatedAnnealingStartingTemperature>
@@ -243,7 +136,7 @@
     <solver>
       <localSearch>
         <forager>
-          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+          <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>10hard/50soft</simulatedAnnealingStartingTemperature>
@@ -264,7 +157,7 @@
     <solver>
       <localSearch>
         <forager>
-          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+          <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>10hard/100soft</simulatedAnnealingStartingTemperature>
@@ -285,7 +178,7 @@
     <solver>
       <localSearch>
         <forager>
-          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+          <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>10hard/500soft</simulatedAnnealingStartingTemperature>
@@ -306,7 +199,7 @@
     <solver>
       <localSearch>
         <forager>
-          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+          <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>10hard/1000soft</simulatedAnnealingStartingTemperature>
@@ -327,7 +220,7 @@
     <solver>
       <localSearch>
         <forager>
-          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+          <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>10hard/2000soft</simulatedAnnealingStartingTemperature>
@@ -349,7 +242,7 @@
     <solver>
       <localSearch>
         <forager>
-          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+          <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>15hard/50soft</simulatedAnnealingStartingTemperature>
@@ -370,7 +263,7 @@
     <solver>
       <localSearch>
         <forager>
-          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+          <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>15hard/100soft</simulatedAnnealingStartingTemperature>
@@ -391,7 +284,7 @@
     <solver>
       <localSearch>
         <forager>
-          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+          <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>15hard/500soft</simulatedAnnealingStartingTemperature>
@@ -412,7 +305,7 @@
     <solver>
       <localSearch>
         <forager>
-          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+          <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>15hard/1000soft</simulatedAnnealingStartingTemperature>
@@ -433,7 +326,7 @@
     <solver>
       <localSearch>
         <forager>
-          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+          <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>15hard/2000soft</simulatedAnnealingStartingTemperature>
@@ -455,7 +348,7 @@
     <solver>
       <localSearch>
         <forager>
-          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+          <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>20hard/50soft</simulatedAnnealingStartingTemperature>
@@ -476,7 +369,7 @@
     <solver>
       <localSearch>
         <forager>
-          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+          <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>20hard/100soft</simulatedAnnealingStartingTemperature>
@@ -497,7 +390,7 @@
     <solver>
       <localSearch>
         <forager>
-          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+          <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>20hard/500soft</simulatedAnnealingStartingTemperature>
@@ -518,7 +411,7 @@
     <solver>
       <localSearch>
         <forager>
-          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+          <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>20hard/1000soft</simulatedAnnealingStartingTemperature>
@@ -539,7 +432,7 @@
     <solver>
       <localSearch>
         <forager>
-          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+          <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>20hard/2000soft</simulatedAnnealingStartingTemperature>
@@ -561,7 +454,7 @@
     <solver>
       <localSearch>
         <forager>
-          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+          <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>50hard/50soft</simulatedAnnealingStartingTemperature>
@@ -582,7 +475,7 @@
     <solver>
       <localSearch>
         <forager>
-          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+          <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>50hard/100soft</simulatedAnnealingStartingTemperature>
@@ -603,7 +496,7 @@
     <solver>
       <localSearch>
         <forager>
-          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+          <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>50hard/500soft</simulatedAnnealingStartingTemperature>
@@ -624,7 +517,7 @@
     <solver>
       <localSearch>
         <forager>
-          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+          <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>50hard/1000soft</simulatedAnnealingStartingTemperature>
@@ -645,7 +538,7 @@
     <solver>
       <localSearch>
         <forager>
-          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+          <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>50hard/2000soft</simulatedAnnealingStartingTemperature>
