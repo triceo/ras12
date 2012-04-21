@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.drools.planner.examples.ras2012.interfaces.Visualizable;
@@ -239,7 +240,7 @@ public class Route implements Comparable<Route>, Visualizable {
     }
 
     public Collection<Node> getWaitPoints() {
-        final Collection<Node> waitPoints = new HashSet<Node>();
+        final Collection<Node> waitPoints = new TreeSet<Node>();
         // we want to be able to hold the train before it enters the network
         final Arc firstArc = this.getInitialArc();
         if (this.direction == Direction.EASTBOUND) {
