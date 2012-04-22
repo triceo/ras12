@@ -188,6 +188,7 @@ public final class Itinerary implements ScheduleProducer {
 
     @Override
     public synchronized Map<Node, Long> getDelays() {
+        // FIXME make this work based on actual delays (actual arrival times vs. straight non-stop max-speed arrival times)
         this.getSchedule(); // just to make sure the delay cache is fresh
         return Collections.unmodifiableMap(this.delayCache);
     }
@@ -284,6 +285,7 @@ public final class Itinerary implements ScheduleProducer {
 
     @Override
     public Map<Long, Long> getScheduleAdherenceStatus() {
+        // FIXME make this work based on actual delays (actual arrival times vs. straight non-stop max-speed arrival times)
         final Map<Long, Long> result = new HashMap<Long, Long>();
         for (final ScheduleAdherenceRequirement sa : this.getTrain()
                 .getScheduleAdherenceRequirements()) {
