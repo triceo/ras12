@@ -3,6 +3,7 @@ package org.drools.planner.examples.ras2012.model;
 import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -41,8 +42,7 @@ public abstract class AbstractItineraryTest {
         final RAS2012Solution sol = this.getSolution();
         TrainType lastUsedWestboundTrainType = null;
         TrainType lastUsedEastboundTrainType = null;
-        final Collection<Route> westboundRoutes = sol.getNetwork().getAllWestboundRoutes();
-        final Collection<Route> eastboundRoutes = sol.getNetwork().getAllEastboundRoutes();
+        final Collection<Route> routes = new LinkedHashSet<Route>(sol.getNetwork().getAllRoutes());
         for (final Train t : sol.getTrains()) {
             /*
              * pick only one train for every train type and direction; depends on the assumption that the trains are sorted by
@@ -53,12 +53,10 @@ public abstract class AbstractItineraryTest {
             if (t.getType() == lastUsedTrainType) {
                 continue;
             }
-            // get all available routes for the train
-            final Collection<Route> routes = t.isEastbound() ? eastboundRoutes : westboundRoutes;
-            // take only the equivalent and possible ones
+            // take only the possible routes that are yet unused
             final SortedSet<Route> routeSet = new TreeSet<Route>();
-            for (final Route r : routes) {
-                if (r.isPossibleForTrain(t)) {
+            for (final Route r : sol.getNetwork().getRoutes(t)) {
+                if (routes.contains(r)) {
                     routeSet.add(r);
                 }
             }

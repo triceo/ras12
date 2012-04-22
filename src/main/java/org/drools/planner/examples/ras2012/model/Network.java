@@ -5,7 +5,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.SortedMap;
@@ -69,8 +71,11 @@ public class Network implements Visualizable {
                 westboundConnections, eastDepo);
     }
 
-    public synchronized Collection<Route> getAllEastboundRoutes() {
-        return this.eastboundRoutes;
+    public Collection<Route> getAllRoutes() {
+        final Collection<Route> routes = new LinkedList<Route>();
+        routes.addAll(this.eastboundRoutes);
+        routes.addAll(this.westboundRoutes);
+        return Collections.unmodifiableCollection(routes);
     }
 
     /**
@@ -106,31 +111,24 @@ public class Network implements Visualizable {
         return routes;
     }
 
-    public synchronized Collection<Route> getAllWestboundRoutes() {
-        return this.westboundRoutes;
-    }
-
     public Route getBestRoute(final Train t) {
         if (!this.bestRoutes.containsKey(t)) {
-            final SortedSet<Route> routes = new TreeSet<Route>();
-            Collection<Route> allRoutes;
-            if (t.isEastbound()) {
-                allRoutes = this.getAllEastboundRoutes();
-            } else {
-                allRoutes = this.getAllWestboundRoutes();
-            }
-            for (final Route r : allRoutes) {
-                if (r.isPossibleForTrain(t)) {
-                    routes.add(r);
-                }
-            }
+            final SortedSet<Route> routes = new TreeSet<Route>(this.getRoutes(t));
             this.bestRoutes.put(t, routes.last());
         }
         return this.bestRoutes.get(t);
     }
 
-    public Collection<Route> getWestboundRoutes() {
-        return this.westboundRoutes;
+    public synchronized Collection<Route> getRoutes(final Train t) {
+        final Collection<Route> routes = t.isEastbound() ? this.eastboundRoutes
+                : this.westboundRoutes;
+        final Collection<Route> properRoutes = new LinkedHashSet<Route>(routes);
+        for (final Route r : routes) {
+            if (!r.isPossibleForTrain(t)) {
+                properRoutes.remove(r);
+            }
+        }
+        return Collections.unmodifiableCollection(properRoutes);
     }
 
     @Override

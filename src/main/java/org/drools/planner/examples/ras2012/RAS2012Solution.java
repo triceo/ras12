@@ -14,7 +14,6 @@ import org.drools.planner.core.solution.Solution;
 import org.drools.planner.examples.ras2012.model.ItineraryAssignment;
 import org.drools.planner.examples.ras2012.model.MaintenanceWindow;
 import org.drools.planner.examples.ras2012.model.Network;
-import org.drools.planner.examples.ras2012.model.Route;
 import org.drools.planner.examples.ras2012.model.Train;
 
 public class RAS2012Solution implements Solution<HardAndSoftScore> {
@@ -116,13 +115,6 @@ public class RAS2012Solution implements Solution<HardAndSoftScore> {
     public Collection<? extends Object> getProblemFacts() {
         final Collection<Object> allFacts = new LinkedList<Object>();
         return allFacts;
-    }
-
-    public Collection<Route> getRoutes() {
-        final Collection<Route> r = new LinkedList<Route>();
-        r.addAll(this.getNetwork().getAllEastboundRoutes());
-        r.addAll(this.getNetwork().getAllWestboundRoutes());
-        return r;
     }
 
     @Override

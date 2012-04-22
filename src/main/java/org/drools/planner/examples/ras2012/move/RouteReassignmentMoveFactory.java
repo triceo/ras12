@@ -17,10 +17,8 @@ public class RouteReassignmentMoveFactory extends CachedMoveFactory {
         final List<Move> moves = new ArrayList<Move>();
         final RAS2012Solution sol = (RAS2012Solution) solution;
         for (final Train t : sol.getTrains()) {
-            for (final Route r : sol.getRoutes()) {
-                if (r.isPossibleForTrain(t)) {
-                    moves.add(new RouteReassignmentMove(t, r));
-                }
+            for (final Route r : sol.getNetwork().getRoutes(t)) {
+                moves.add(new RouteReassignmentMove(t, r));
             }
         }
         return moves;
