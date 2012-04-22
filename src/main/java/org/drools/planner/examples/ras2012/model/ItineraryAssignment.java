@@ -75,9 +75,6 @@ public final class ItineraryAssignment implements Cloneable {
     }
 
     public synchronized void setRoute(final Route route) {
-        if (!route.isPossibleForTrain(this.train)) {
-            throw new IllegalArgumentException(route + " not possible for " + this.train);
-        }
         this.route = route;
         this.itinerary = new Itinerary(this.route, this.train, this.maintenances);
     }
