@@ -6,32 +6,36 @@ import java.util.Map;
 
 import org.drools.planner.core.move.Move;
 import org.drools.planner.core.score.director.ScoreDirector;
+import org.drools.planner.examples.ras2012.RAS2012Solution;
 import org.drools.planner.examples.ras2012.model.ItineraryAssignment;
 import org.drools.planner.examples.ras2012.model.Node;
 import org.drools.planner.examples.ras2012.model.Route;
+import org.drools.planner.examples.ras2012.model.Train;
 import org.drools.planner.examples.ras2012.model.WaitTime;
 
 public class RouteReassignmentMove implements Move {
 
-    private final ItineraryAssignment assignment;
-    private final Map<Node, WaitTime> previousWaitTimes;
-    private final Route               route, previousRoute;
+    private ItineraryAssignment assignment;
+    private final Train         train;
+    private Map<Node, WaitTime> previousWaitTimes;
+    private final Route         route;
+    private Route               previousRoute;
 
-    public RouteReassignmentMove(final ItineraryAssignment ia, final Route r) {
-        this.assignment = ia;
+    public RouteReassignmentMove(final Train t, final Route r) {
+        this.train = t;
         this.route = r;
-        this.previousRoute = ia.getRoute();
-        this.previousWaitTimes = ia.getItinerary().getAllWaitTimes();
     }
 
     @Override
     public Move createUndoMove(final ScoreDirector scoreDirector) {
-        return new RouteReassignmentUndoMove(this.assignment, this.route, this.previousRoute,
+        initializeMove(scoreDirector);
+        return new RouteReassignmentUndoMove(this.train, this.route, this.previousRoute,
                 this.previousWaitTimes);
     }
 
     @Override
     public void doMove(final ScoreDirector scoreDirector) {
+        this.assignment = this.initializeMove(scoreDirector);
         scoreDirector.beforeVariableChanged(this.assignment, "route");
         this.assignment.setRoute(this.route);
         scoreDirector.afterVariableChanged(this.assignment, "route");
@@ -45,17 +49,10 @@ public class RouteReassignmentMove implements Move {
         if (obj == null) {
             return false;
         }
-        if (this.getClass() != obj.getClass()) {
+        if (!(obj instanceof RouteReassignmentMove)) {
             return false;
         }
         final RouteReassignmentMove other = (RouteReassignmentMove) obj;
-        if (this.assignment == null) {
-            if (other.assignment != null) {
-                return false;
-            }
-        } else if (!this.assignment.equals(other.assignment)) {
-            return false;
-        }
         if (this.route == null) {
             if (other.route != null) {
                 return false;
@@ -63,11 +60,21 @@ public class RouteReassignmentMove implements Move {
         } else if (!this.route.equals(other.route)) {
             return false;
         }
+        if (this.train == null) {
+            if (other.train != null) {
+                return false;
+            }
+        } else if (!this.train.equals(other.train)) {
+            return false;
+        }
         return true;
     }
 
     @Override
     public Collection<? extends Object> getPlanningEntities() {
+        if (this.assignment == null) {
+            throw new IllegalStateException("Move not yet initialized!");
+        }
         return Collections.singletonList(this.assignment);
     }
 
@@ -80,21 +87,30 @@ public class RouteReassignmentMove implements Move {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (this.assignment == null ? 0 : this.assignment.hashCode());
         result = prime * result + (this.route == null ? 0 : this.route.hashCode());
+        result = prime * result + (this.train == null ? 0 : this.train.hashCode());
         return result;
+    }
+
+    private ItineraryAssignment initializeMove(final ScoreDirector scoreDirector) {
+        this.assignment = ((RAS2012Solution) scoreDirector.getWorkingSolution())
+                .getAssignment(this.train);
+        this.previousRoute = this.assignment.getRoute();
+        this.previousWaitTimes = this.assignment.getItinerary().getAllWaitTimes();
+        return this.assignment;
     }
 
     @Override
     public boolean isMoveDoable(final ScoreDirector scoreDirector) {
-        return this.route.isPossibleForTrain(this.assignment.getTrain());
+        this.initializeMove(scoreDirector);
+        return this.route != this.previousRoute;
     }
 
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
         builder.append("RouteReassignmentMove [train=");
-        builder.append(this.assignment.getTrain().getName());
+        builder.append(this.train.getName());
         builder.append(", ");
         builder.append(this.previousRoute.getId());
         builder.append(" -> ");
