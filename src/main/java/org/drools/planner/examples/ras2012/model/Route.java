@@ -347,7 +347,7 @@ public class Route implements Comparable<Route>, Visualizable {
             final Node requestedNode = sar.getDestination();
             boolean found = false;
             for (final Arc a : this.arcs) {
-                if (a.getStartingNode(t) == requestedNode) {
+                if (a.getStartingNode(t) == requestedNode || a.getEndingNode(t) == requestedNode) {
                     found = true;
                     break;
                 }

@@ -128,6 +128,10 @@ public class Network implements Visualizable {
                 properRoutes.remove(r);
             }
         }
+        if (properRoutes.size() == 0) {
+            // this is most probably a bug in the algorithm
+            throw new IllegalStateException("No routes for train: " + t.getName());
+        }
         return Collections.unmodifiableCollection(properRoutes);
     }
 

@@ -188,9 +188,9 @@ public class Arc {
 
     private String toStringInternal() {
         final StringBuilder builder = new StringBuilder();
-        builder.append("Arc [").append(this.westNode).append("->").append(this.eastNode)
-                .append(", miles=").append(this.lengthInMiles).append(", type=")
-                .append(this.trackType).append("]");
+        builder.append("Arc [").append(this.westNode.getId()).append("->")
+                .append(this.eastNode.getId()).append(", miles=").append(this.lengthInMiles)
+                .append(", type=").append(this.trackType).append("]");
         return builder.toString();
     }
 
