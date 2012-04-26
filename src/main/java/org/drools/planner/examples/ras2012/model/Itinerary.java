@@ -19,12 +19,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.drools.planner.examples.ras2012.RAS2012Solution;
-import org.drools.planner.examples.ras2012.interfaces.ScheduleProducer;
 import org.drools.planner.examples.ras2012.util.ItineraryVisualizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class Itinerary implements ScheduleProducer {
+public final class Itinerary {
 
     private static final Logger logger = LoggerFactory.getLogger(Itinerary.class);
 
@@ -126,7 +125,6 @@ public final class Itinerary implements ScheduleProducer {
         return true;
     }
 
-    @Override
     public Map<Node, WaitTime> getAllWaitTimes() {
         return Collections.unmodifiableMap(this.nodeWaitTimes);
     }
@@ -135,7 +133,6 @@ public final class Itinerary implements ScheduleProducer {
         return this.arcPerStartNode.get(n);
     }
 
-    @Override
     public Collection<Arc> getCurrentlyOccupiedArcs(final long time) {
         if (!this.occupiedArcsCache.containsKey(time)) {
             final Collection<Arc> a = this.getCurrentlyOccupiedArcsUncached(time);
@@ -209,12 +206,10 @@ public final class Itinerary implements ScheduleProducer {
         return this.maintenances;
     }
 
-    @Override
     public Route getRoute() {
         return this.route;
     }
 
-    @Override
     public synchronized SortedMap<Long, Node> getSchedule() {
         if (!this.scheduleCacheValid.get() || this.scheduleCache.size() == 0) {
             int i = 0;
@@ -268,7 +263,6 @@ public final class Itinerary implements ScheduleProducer {
         return Collections.unmodifiableSortedMap(this.scheduleCache);
     }
 
-    @Override
     public SortedMap<Long, Arc> getScheduleWithArcs() {
         final SortedMap<Long, Arc> entries = new TreeMap<Long, Arc>();
         for (final SortedMap.Entry<Long, Node> entry : this.getSchedule().entrySet()) {
@@ -277,7 +271,6 @@ public final class Itinerary implements ScheduleProducer {
         return Collections.unmodifiableSortedMap(entries);
     }
 
-    @Override
     public long getTimeSpentOnUnpreferredTracks(final long time) {
         final SortedMap<Long, Arc> arcEntryTimes = this.getScheduleWithArcs();
         long spentTime = 0;
@@ -309,17 +302,14 @@ public final class Itinerary implements ScheduleProducer {
         return spentTime;
     }
 
-    @Override
     public Train getTrain() {
         return this.train;
     }
 
-    @Override
     public synchronized WaitTime getWaitTime(final Node n) {
         return this.nodeWaitTimes.get(n);
     }
 
-    @Override
     public Map<Long, Long> getWantTimeDifference() {
         final Map<Long, Long> result = new HashMap<Long, Long>();
         for (final SortedMap.Entry<Long, Node> entry : this.getSchedule().entrySet()) {
@@ -335,7 +325,6 @@ public final class Itinerary implements ScheduleProducer {
         return result;
     }
 
-    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -350,12 +339,10 @@ public final class Itinerary implements ScheduleProducer {
         this.scheduleCache.clear();
     }
 
-    @Override
     public boolean isNodeOnRoute(final Node n) {
         return this.nodesEnRoute.contains(n);
     }
 
-    @Override
     public void removeAllWaitTimes() {
         if (this.nodeWaitTimes.size() > 0) {
             this.invalidateCaches();
@@ -363,7 +350,6 @@ public final class Itinerary implements ScheduleProducer {
         this.nodeWaitTimes.clear();
     }
 
-    @Override
     public WaitTime removeWaitTime(final Node n) {
         if (this.nodeWaitTimes.containsKey(n)) {
             this.invalidateCaches();
@@ -373,7 +359,6 @@ public final class Itinerary implements ScheduleProducer {
         }
     }
 
-    @Override
     public synchronized WaitTime setWaitTime(final WaitTime w, final Node n) {
         if (w == null) {
             return this.removeWaitTime(n);
@@ -391,7 +376,6 @@ public final class Itinerary implements ScheduleProducer {
         }
     }
 
-    @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append("Itinerary (");
@@ -407,7 +391,6 @@ public final class Itinerary implements ScheduleProducer {
         return sb.toString();
     }
 
-    @Override
     public boolean visualize(final File target) {
         OutputStream os = null;
         try {
@@ -430,13 +413,11 @@ public final class Itinerary implements ScheduleProducer {
         }
     }
 
-    @Override
     public long getDelay() {
         // TODO Auto-generated method stub
         return 0;
     }
 
-    @Override
     public Map<Node, Long> getScheduleAdherenceStatus() {
         // TODO Auto-generated method stub
         return null;

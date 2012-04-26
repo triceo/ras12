@@ -6,7 +6,6 @@ import org.drools.planner.api.domain.entity.PlanningEntity;
 import org.drools.planner.api.domain.variable.PlanningVariable;
 import org.drools.planner.api.domain.variable.ValueRange;
 import org.drools.planner.api.domain.variable.ValueRangeType;
-import org.drools.planner.examples.ras2012.interfaces.ScheduleProducer;
 
 @PlanningEntity
 public final class ItineraryAssignment implements Cloneable {
@@ -14,7 +13,7 @@ public final class ItineraryAssignment implements Cloneable {
     private final Train                         train;
 
     private Route                               route;
-    private ScheduleProducer                    itinerary;
+    private Itinerary                           itinerary;
     private final Collection<MaintenanceWindow> maintenances;
 
     public ItineraryAssignment(final Train t, final Collection<MaintenanceWindow> maintenances) {
@@ -52,7 +51,7 @@ public final class ItineraryAssignment implements Cloneable {
         return true;
     }
 
-    public ScheduleProducer getItinerary() {
+    public Itinerary getItinerary() {
         return this.itinerary;
     }
 

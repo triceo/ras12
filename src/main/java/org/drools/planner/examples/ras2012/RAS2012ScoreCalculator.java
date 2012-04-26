@@ -11,8 +11,8 @@ import java.util.concurrent.TimeUnit;
 import org.drools.planner.core.score.buildin.hardandsoft.DefaultHardAndSoftScore;
 import org.drools.planner.core.score.buildin.hardandsoft.HardAndSoftScore;
 import org.drools.planner.core.score.director.incremental.AbstractIncrementalScoreCalculator;
-import org.drools.planner.examples.ras2012.interfaces.ScheduleProducer;
 import org.drools.planner.examples.ras2012.model.Arc;
+import org.drools.planner.examples.ras2012.model.Itinerary;
 import org.drools.planner.examples.ras2012.model.ItineraryAssignment;
 import org.drools.planner.examples.ras2012.model.Node;
 import org.drools.planner.examples.ras2012.model.Train;
@@ -137,7 +137,7 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
         this.occupiedArcs.clear();
     }
 
-    private boolean didTrainArrive(final ScheduleProducer producer) {
+    private boolean didTrainArrive(final Itinerary producer) {
         final SortedMap<Long, Node> nodes = producer.getSchedule();
         for (final SortedMap.Entry<Long, Node> entry : nodes.entrySet()) {
             if (!RAS2012ScoreCalculator.isInPlanningHorizon(entry.getKey())) {
@@ -167,13 +167,13 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
         return conflicts;
     }
 
-    private int getDelayPenalty(final ScheduleProducer i, final RAS2012Solution solution) {
+    private int getDelayPenalty(final Itinerary i, final RAS2012Solution solution) {
         final long delay = i.getDelay();
         final int hoursDelay = RAS2012ScoreCalculator.roundMillisecondsToWholeHours(delay);
         return Math.max(0, hoursDelay) * i.getTrain().getType().getDelayPenalty();
     }
 
-    private int getScheduleAdherencePenalty(final ScheduleProducer i, final RAS2012Solution solution) {
+    private int getScheduleAdherencePenalty(final Itinerary i, final RAS2012Solution solution) {
         int penalty = 0;
         if (i.getTrain().getType().adhereToSchedule()) {
             for (final long difference : i.getScheduleAdherenceStatus().values()) {
@@ -201,7 +201,7 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
         return num;
     }
 
-    private int getWantTimePenalty(final ScheduleProducer i, final RAS2012Solution solution) {
+    private int getWantTimePenalty(final Itinerary i, final RAS2012Solution solution) {
         int penalty = 0;
         final Map<Long, Long> wantTimeDifferences = i.getWantTimeDifference();
         for (final Map.Entry<Long, Long> entry : wantTimeDifferences.entrySet()) {
@@ -231,14 +231,14 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
 
     private void insert(final ItineraryAssignment ia) {
         final Train t = ia.getTrain();
-        final ScheduleProducer p = ia.getItinerary();
-        this.wantTimePenalties.put(t, this.getWantTimePenalty(p, this.solution));
+        final Itinerary i = ia.getItinerary();
+        this.wantTimePenalties.put(t, this.getWantTimePenalty(i, this.solution));
         this.unpreferredTracksPenalties.put(t, RAS2012ScoreCalculator
-                .roundMillisecondsToWholeHours(p.getTimeSpentOnUnpreferredTracks(TimeUnit.MINUTES
+                .roundMillisecondsToWholeHours(i.getTimeSpentOnUnpreferredTracks(TimeUnit.MINUTES
                         .toMillis(RAS2012Solution.PLANNING_HORIZON_MINUTES)) * 50));
-        this.scheduleAdherencePenalties.put(t, this.getScheduleAdherencePenalty(p, this.solution));
-        this.delayPenalties.put(t, this.getDelayPenalty(p, this.solution));
-        this.didTrainArrive.put(t, this.didTrainArrive(p));
+        this.scheduleAdherencePenalties.put(t, this.getScheduleAdherencePenalty(i, this.solution));
+        this.delayPenalties.put(t, this.getDelayPenalty(i, this.solution));
+        this.didTrainArrive.put(t, this.didTrainArrive(i));
         this.recalculateOccupiedArcs(ia);
     }
 
