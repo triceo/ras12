@@ -27,11 +27,11 @@ public interface ScheduleProducer extends Visualizable {
     public Collection<Arc> getCurrentlyOccupiedArcs(long time);
 
     /**
-     * Retrieve delays (WaitTimes + possible stops for MOWs) at specific nodes.
+     * Retrieve delay at the end of the planning horizon.
      * 
-     * @return Map, where the key is the node and the value is delay in milliseconds caused by that node.
+     * @return Time in milliseconds.
      */
-    public Map<Node, Long> getDelays();
+    public long getDelay();
 
     /**
      * Retrieve the route that this itinerary relates to.
@@ -51,10 +51,10 @@ public interface ScheduleProducer extends Visualizable {
     /**
      * Retrieve the difference between the train's schedule and the reality.
      * 
-     * @return Key is the time of arrival at the SA checkpoint, value is the difference. Positive when there's been a delay,
-     *         negative when the train is ahead of schedule. Both times are in milliseconds.
+     * @return Key is the SA checkpoint, value is the difference. Positive when there's been a delay, negative when the train is
+     *         ahead of schedule. The time is in milliseconds.
      */
-    public Map<Long, Long> getScheduleAdherenceStatus();
+    public Map<Node, Long> getScheduleAdherenceStatus();
 
     /**
      * Retrieve the schedule for the given train on the given route. The schedule takes into account all the maintenance windows

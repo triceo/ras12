@@ -168,15 +168,7 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
     }
 
     private int getDelayPenalty(final ScheduleProducer i, final RAS2012Solution solution) {
-        long delay = 0;
-        final Map<Node, Long> delays = i.getDelays();
-        for (final Map.Entry<Long, Node> entry : i.getSchedule().entrySet()) {
-            if (!RAS2012ScoreCalculator.isInPlanningHorizon(entry.getKey())) {
-                // outside planning horizon
-                break;
-            }
-            delay += delays.containsKey(entry.getValue()) ? delays.get(entry.getValue()) : 0;
-        }
+        final long delay = i.getDelay();
         final int hoursDelay = RAS2012ScoreCalculator.roundMillisecondsToWholeHours(delay);
         return Math.max(0, hoursDelay) * i.getTrain().getType().getDelayPenalty();
     }
@@ -184,13 +176,7 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
     private int getScheduleAdherencePenalty(final ScheduleProducer i, final RAS2012Solution solution) {
         int penalty = 0;
         if (i.getTrain().getType().adhereToSchedule()) {
-            final Map<Long, Long> sa = i.getScheduleAdherenceStatus();
-            for (final Map.Entry<Long, Long> entry : sa.entrySet()) {
-                if (!RAS2012ScoreCalculator.isInPlanningHorizon(entry.getKey())) {
-                    // difference occured past the planning horizon; we don't care about it
-                    continue;
-                }
-                final long difference = entry.getValue();
+            for (final long difference : i.getScheduleAdherenceStatus().values()) {
                 if (difference < 1) {
                     continue;
                 }

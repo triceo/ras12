@@ -48,7 +48,6 @@ public final class Itinerary implements ScheduleProducer {
 
     private final Set<Node>                    nodesEnRoute       = new HashSet<Node>();
     private final SortedMap<Long, Node>        scheduleCache      = new TreeMap<Long, Node>();
-    private final Map<Node, Long>              delayCache         = new HashMap<Node, Long>();
     private final long                         trainEntryTime;
     private final List<Arc>                    arcProgression     = new LinkedList<Arc>();
     private final Map<Node, Arc>               arcPerStartNode    = new HashMap<Node, Arc>();
@@ -186,13 +185,6 @@ public final class Itinerary implements ScheduleProducer {
         return occupiedArcs;
     }
 
-    @Override
-    public synchronized Map<Node, Long> getDelays() {
-        // FIXME make this work based on actual delays (actual arrival times vs. straight non-stop max-speed arrival times)
-        this.getSchedule(); // just to make sure the delay cache is fresh
-        return Collections.unmodifiableMap(this.delayCache);
-    }
-
     protected Arc getLeadingArc(final long time) {
         if (time < this.trainEntryTime) {
             return null;
@@ -251,7 +243,6 @@ public final class Itinerary implements ScheduleProducer {
                 final Node n = currentArc.getStartingNode(this.getTrain());
                 final WaitTime wt = this.nodeWaitTimes.get(n);
                 if (wt != null) {
-                    this.delayCache.put(n, wt.getMillisWaitFor());
                     time += wt.getMillisWaitFor();
                 }
                 // check for maintenance windows
@@ -259,12 +250,6 @@ public final class Itinerary implements ScheduleProducer {
                     // there is a maintenance registered for the next node
                     final MaintenanceWindow w = this.maintenances.get(n);
                     if (w.isInside(time)) { // the maintenance is ongoing, we have to wait
-                        // make sure the delay cache has been updated
-                        long difference = w.getEnd() - time;
-                        if (this.delayCache.containsKey(n)) {
-                            difference += this.delayCache.get(n);
-                        }
-                        this.delayCache.put(n, difference);
                         // and adjust total node entry time
                         time = w.getEnd();
                     }
@@ -281,30 +266,6 @@ public final class Itinerary implements ScheduleProducer {
             this.scheduleCacheValid.set(true);
         }
         return Collections.unmodifiableSortedMap(this.scheduleCache);
-    }
-
-    @Override
-    public Map<Long, Long> getScheduleAdherenceStatus() {
-        // FIXME make this work based on actual delays (actual arrival times vs. straight non-stop max-speed arrival times)
-        final Map<Long, Long> result = new HashMap<Long, Long>();
-        for (final ScheduleAdherenceRequirement sa : this.getTrain()
-                .getScheduleAdherenceRequirements()) {
-            final Node pointOnRoute = sa.getDestination();
-            final long expectedTime = TimeUnit.MINUTES.toMillis(sa.getTimeSinceStartOfWorld());
-            for (final SortedMap.Entry<Long, Node> entry : this.getSchedule().entrySet()) {
-                if (entry.getValue() == pointOnRoute) {
-                    // make sure we only include the time within the planning horizon
-                    final long actualTime = Math.min(entry.getKey(),
-                            TimeUnit.MINUTES.toMillis(RAS2012Solution.PLANNING_HORIZON_MINUTES));
-                    final long difference = actualTime - expectedTime;
-                    result.put(entry.getKey(), difference);
-                }
-            }
-        }
-        if (result.size() != this.getTrain().getScheduleAdherenceRequirements().size()) {
-            throw new IllegalStateException("Failed acquiring SA status!");
-        }
-        return result;
     }
 
     @Override
@@ -387,7 +348,6 @@ public final class Itinerary implements ScheduleProducer {
     private synchronized void invalidateCaches() {
         this.occupiedArcsCache.clear();
         this.scheduleCache.clear();
-        this.delayCache.clear();
     }
 
     @Override
@@ -468,5 +428,17 @@ public final class Itinerary implements ScheduleProducer {
                 }
             }
         }
+    }
+
+    @Override
+    public long getDelay() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public Map<Node, Long> getScheduleAdherenceStatus() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }
