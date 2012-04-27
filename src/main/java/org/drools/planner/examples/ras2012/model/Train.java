@@ -175,6 +175,10 @@ public class Train implements Comparable<Train> {
         return this.length;
     }
 
+    public Integer getMaximumSpeed() {
+        return this.getMaximumSpeed(TrackType.MAIN_0);
+    }
+
     public Integer getMaximumSpeed(final TrackType t) {
         final int coreSpeed = this.isWestbound() ? t.getSpeedWestbound() : t.getSpeedEastbound();
         if (t.isMainTrack()) {

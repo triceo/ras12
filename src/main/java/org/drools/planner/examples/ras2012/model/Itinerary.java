@@ -39,18 +39,23 @@ public final class Itinerary {
         return milesPerMinute.multiply(timeInMinutes);
     }
 
+    private static long getTimeFromSpeedAndDistance(final int speedInMPH, final BigDecimal distance) {
+        return distance.divide(BigDecimal.valueOf(speedInMPH), 10, BigDecimal.ROUND_HALF_EVEN)
+                .multiply(BigDecimal.valueOf(3600000)).longValue();
+    }
+
     private final Route                        route;
 
     private final Train                        train;
 
     private final AtomicBoolean                scheduleCacheValid = new AtomicBoolean(false);
-
     private final Set<Node>                    nodesEnRoute       = new HashSet<Node>();
     private final SortedMap<Long, Node>        scheduleCache      = new TreeMap<Long, Node>();
     private final long                         trainEntryTime;
     private final List<Arc>                    arcProgression     = new LinkedList<Arc>();
     private final Map<Node, Arc>               arcPerStartNode    = new HashMap<Node, Arc>();
     private final Map<Node, WaitTime>          nodeWaitTimes      = new HashMap<Node, WaitTime>();
+
     // FIXME only one window per node; multiple different windows with same node will get lost
     private final Map<Node, MaintenanceWindow> maintenances       = new HashMap<Node, MaintenanceWindow>();
 
@@ -182,6 +187,35 @@ public final class Itinerary {
         return occupiedArcs;
     }
 
+    public long getDelay() {
+        return this.getDelay(TimeUnit.MINUTES.toMillis(RAS2012Solution.PLANNING_HORIZON_MINUTES));
+    }
+
+    private long getDelay(final long horizon) {
+        if (this.trainEntryTime > horizon) {
+            // train not en route yet, delay must be zero
+            return 0;
+        }
+        final long originalDelay = TimeUnit.MINUTES.toMillis(this.getTrain().getOriginalDelay());
+        final SortedMap<Long, Node> schedule = this.getSchedule();
+        final SortedMap<Long, Node> scheduleInHorizon = schedule.headMap(horizon);
+        if (scheduleInHorizon.size() == 0) {
+            // train is not in the network at the time
+            if (this.trainEntryTime < horizon) {
+                // however, it should be; origin node possibly has some wait time
+                return horizon - this.trainEntryTime + originalDelay;
+            } else {
+                // otherwise it's alright, there is only the original delay
+                return originalDelay;
+            }
+        }
+        final long actualArrivalTime = scheduleInHorizon.lastKey();
+        final long optimalArrivalTime = this.trainEntryTime
+                + Itinerary.getTimeFromSpeedAndDistance(this.getTrain().getMaximumSpeed(),
+                        this.getTravellingDistance(this.getTrain().getDestination()));
+        return actualArrivalTime - optimalArrivalTime;
+    }
+
     protected Arc getLeadingArc(final long time) {
         if (time < this.trainEntryTime) {
             return null;
@@ -263,6 +297,40 @@ public final class Itinerary {
         return Collections.unmodifiableSortedMap(this.scheduleCache);
     }
 
+    public Map<Node, Long> getScheduleAdherenceStatus() {
+        final long horizon = TimeUnit.MINUTES.toMillis(RAS2012Solution.PLANNING_HORIZON_MINUTES);
+        SortedMap<Long, Node> schedule = this.getSchedule();
+        SortedMap<Long, Node> scheduleInteresting = schedule.headMap(horizon);
+        Map<Node, Long> result = new HashMap<Node, Long>();
+        for (ScheduleAdherenceRequirement sa : this.getTrain().getScheduleAdherenceRequirements()) {
+            final long expectedArrival = TimeUnit.MINUTES.toMillis(sa.getTimeSinceStartOfWorld());
+            final Node expectedDestination = sa.getDestination();
+            if (expectedArrival <= horizon) {
+                // arrival expected inside the planning horizon
+                if (scheduleInteresting.values().contains(expectedDestination)) {
+                    int numResults = result.size();
+                    // arrival actually inside the planning horizon; we know the exact delay
+                    for (SortedMap.Entry<Long, Node> entry : scheduleInteresting.entrySet()) {
+                        if (entry.getValue() == expectedDestination) {
+                            result.put(expectedDestination, expectedArrival - entry.getKey());
+                        }
+                    }
+                    if (result.size() != (numResults + 1)) {
+                        throw new IllegalStateException(
+                                "Cannot find scheduled node. This must be a bug in the algorithm.");
+                    }
+                } else {
+                    // arrival unfortunately outside the planning horizon
+                    result.put(expectedDestination, this.getDelay());
+                }
+            } else {
+                // arrival expected outside the horizon, only count the delay before the horizon
+                result.put(expectedDestination, this.getDelay());
+            }
+        }
+        return Collections.unmodifiableMap(result);
+    }
+
     public SortedMap<Long, Arc> getScheduleWithArcs() {
         final SortedMap<Long, Arc> entries = new TreeMap<Long, Arc>();
         for (final SortedMap.Entry<Long, Node> entry : this.getSchedule().entrySet()) {
@@ -306,6 +374,17 @@ public final class Itinerary {
         return this.train;
     }
 
+    private BigDecimal getTravellingDistance(final Node target) {
+        BigDecimal distance = BigDecimal.ZERO;
+        for (final Arc a : this.arcProgression) {
+            distance = distance.add(a.getLengthInMiles());
+            if (a.getEndingNode(this.getTrain()) == target) {
+                break;
+            }
+        }
+        return distance;
+    }
+
     public synchronized WaitTime getWaitTime(final Node n) {
         return this.nodeWaitTimes.get(n);
     }
@@ -325,6 +404,7 @@ public final class Itinerary {
         return result;
     }
 
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -376,6 +456,7 @@ public final class Itinerary {
         }
     }
 
+    @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append("Itinerary (");
@@ -411,15 +492,5 @@ public final class Itinerary {
                 }
             }
         }
-    }
-
-    public long getDelay() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    public Map<Node, Long> getScheduleAdherenceStatus() {
-        // TODO Auto-generated method stub
-        return null;
     }
 }
