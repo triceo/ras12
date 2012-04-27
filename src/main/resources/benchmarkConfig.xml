@@ -20,7 +20,6 @@
       </scoreDirectorFactory>
       <termination>
         <terminationCompositionStyle>OR</terminationCompositionStyle>
-        <maximumMinutesSpend>1</maximumMinutesSpend>
       </termination>
     </solver>
   </inheritedSolverBenchmark>
@@ -29,6 +28,9 @@
     <name>Sol 5/50</name>
     <solver>
       <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+        </termination>
         <forager>
           <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
@@ -50,6 +52,9 @@
     <name>Sol 5/100</name>
     <solver>
       <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+        </termination>
         <forager>
           <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
@@ -71,6 +76,9 @@
     <name>Sol 5/500</name>
     <solver>
       <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+        </termination>
         <forager>
           <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
@@ -92,6 +100,9 @@
     <name>Sol 5/1000</name>
     <solver>
       <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+        </termination>
         <forager>
           <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
@@ -113,6 +124,9 @@
     <name>Sol 5/2000</name>
     <solver>
       <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+        </termination>
         <forager>
           <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
@@ -135,6 +149,9 @@
     <name>Sol 10/50</name>
     <solver>
       <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+        </termination>
         <forager>
           <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
@@ -156,6 +173,9 @@
     <name>Sol 10/100</name>
     <solver>
       <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+        </termination>
         <forager>
           <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
@@ -177,6 +197,9 @@
     <name>Sol 10/500</name>
     <solver>
       <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+        </termination>
         <forager>
           <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
@@ -198,6 +221,9 @@
     <name>Sol 10/1000</name>
     <solver>
       <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+        </termination>
         <forager>
           <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
@@ -219,6 +245,9 @@
     <name>Sol 10/2000</name>
     <solver>
       <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+        </termination>
         <forager>
           <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
@@ -241,6 +270,9 @@
     <name>Sol 15/50</name>
     <solver>
       <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+        </termination>
         <forager>
           <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
@@ -262,6 +294,9 @@
     <name>Sol 15/100</name>
     <solver>
       <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+        </termination>
         <forager>
           <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
@@ -283,6 +318,9 @@
     <name>Sol 15/500</name>
     <solver>
       <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+        </termination>
         <forager>
           <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
@@ -304,6 +342,9 @@
     <name>Sol 15/1000</name>
     <solver>
       <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+        </termination>
         <forager>
           <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
@@ -325,6 +366,9 @@
     <name>Sol 15/2000</name>
     <solver>
       <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+        </termination>
         <forager>
           <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
@@ -347,6 +391,9 @@
     <name>Sol 20/50</name>
     <solver>
       <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+        </termination>
         <forager>
           <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
@@ -368,6 +415,9 @@
     <name>Sol 20/100</name>
     <solver>
       <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+        </termination>
         <forager>
           <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
@@ -389,6 +439,9 @@
     <name>Sol 20/500</name>
     <solver>
       <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+        </termination>
         <forager>
           <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
@@ -410,6 +463,9 @@
     <name>Sol 20/1000</name>
     <solver>
       <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+        </termination>
         <forager>
           <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
@@ -431,6 +487,9 @@
     <name>Sol 20/2000</name>
     <solver>
       <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+        </termination>
         <forager>
           <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
@@ -453,6 +512,9 @@
     <name>Sol 50/50</name>
     <solver>
       <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+        </termination>
         <forager>
           <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
@@ -474,6 +536,9 @@
     <name>Sol 50/100</name>
     <solver>
       <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+        </termination>
         <forager>
           <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
@@ -495,6 +560,9 @@
     <name>Sol 50/500</name>
     <solver>
       <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+        </termination>
         <forager>
           <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
@@ -516,6 +584,9 @@
     <name>Sol 50/1000</name>
     <solver>
       <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+        </termination>
         <forager>
           <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
@@ -537,6 +608,9 @@
     <name>Sol 50/2000</name>
     <solver>
       <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+        </termination>
         <forager>
           <minimalAcceptedSelection>16</minimalAcceptedSelection>
         </forager>
