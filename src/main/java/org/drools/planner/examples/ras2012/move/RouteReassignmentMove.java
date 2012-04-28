@@ -28,7 +28,7 @@ public class RouteReassignmentMove implements Move {
 
     @Override
     public Move createUndoMove(final ScoreDirector scoreDirector) {
-        initializeMove(scoreDirector);
+        this.initializeMove(scoreDirector);
         return new RouteReassignmentUndoMove(this.train, this.route, this.previousRoute,
                 this.previousWaitTimes);
     }

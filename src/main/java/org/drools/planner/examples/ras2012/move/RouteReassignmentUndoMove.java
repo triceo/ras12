@@ -36,7 +36,7 @@ public class RouteReassignmentUndoMove implements Move {
 
     @Override
     public void doMove(final ScoreDirector scoreDirector) {
-        initializeMove(scoreDirector);
+        this.initializeMove(scoreDirector);
         scoreDirector.beforeVariableChanged(this.assignment, "route");
         this.assignment.setRoute(this.originalRoute);
         for (final Map.Entry<Node, WaitTime> entry : this.originalWaitTimes.entrySet()) {
@@ -46,24 +46,31 @@ public class RouteReassignmentUndoMove implements Move {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object obj) {
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (!(obj instanceof RouteReassignmentUndoMove))
+        }
+        if (!(obj instanceof RouteReassignmentUndoMove)) {
             return false;
-        RouteReassignmentUndoMove other = (RouteReassignmentUndoMove) obj;
-        if (routeToUndo == null) {
-            if (other.routeToUndo != null)
+        }
+        final RouteReassignmentUndoMove other = (RouteReassignmentUndoMove) obj;
+        if (this.routeToUndo == null) {
+            if (other.routeToUndo != null) {
                 return false;
-        } else if (!routeToUndo.equals(other.routeToUndo))
+            }
+        } else if (!this.routeToUndo.equals(other.routeToUndo)) {
             return false;
-        if (train == null) {
-            if (other.train != null)
+        }
+        if (this.train == null) {
+            if (other.train != null) {
                 return false;
-        } else if (!train.equals(other.train))
+            }
+        } else if (!this.train.equals(other.train)) {
             return false;
+        }
         return true;
     }
 
@@ -81,8 +88,8 @@ public class RouteReassignmentUndoMove implements Move {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((routeToUndo == null) ? 0 : routeToUndo.hashCode());
-        result = prime * result + ((train == null) ? 0 : train.hashCode());
+        result = prime * result + (this.routeToUndo == null ? 0 : this.routeToUndo.hashCode());
+        result = prime * result + (this.train == null ? 0 : this.train.hashCode());
         return result;
     }
 

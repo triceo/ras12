@@ -231,7 +231,7 @@ public class TrainTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetArcTravellingTimeInMillisecondsWithNullArc() {
-        Train t = this.getTrains(Node.getNode(0), Node.getNode(1))[0];
+        final Train t = this.getTrains(Node.getNode(0), Node.getNode(1))[0];
         t.getArcTravellingTime(null, TimeUnit.MILLISECONDS);
     }
 
