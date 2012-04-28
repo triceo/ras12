@@ -19,7 +19,7 @@ import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.UndirectedOrderedSparseMultigraph;
 import edu.uci.ics.jung.visualization.VisualizationImageServer;
 import org.apache.commons.collections15.Transformer;
-import org.drools.planner.examples.ras2012.model.Route.Direction;
+import org.drools.planner.examples.ras2012.model.Route;
 import org.drools.planner.examples.ras2012.model.original.Arc;
 import org.drools.planner.examples.ras2012.model.original.Node;
 
@@ -68,7 +68,7 @@ public class GraphVisualizer {
     private static final int      GRAPH_HEIGHT = 1080;
 
     private final Collection<Arc> edges;
-    private final Direction       direction;
+    private final Route           route;
 
     private static final Lock     l            = new ReentrantLock();
 
@@ -76,14 +76,14 @@ public class GraphVisualizer {
         this(edges, null);
     }
 
-    protected GraphVisualizer(final Collection<Arc> edges, final Direction direction) {
+    protected GraphVisualizer(final Collection<Arc> edges, final Route r) {
         this.edges = edges;
-        this.direction = direction;
+        this.route = r;
     }
 
     private Graph<Node, Arc> formGraph() {
         Graph<Node, Arc> g = null;
-        if (this.direction != null) {
+        if (this.route != null) {
             g = new DirectedOrderedSparseMultigraph<Node, Arc>();
         } else {
             g = new UndirectedOrderedSparseMultigraph<Node, Arc>();
@@ -91,7 +91,7 @@ public class GraphVisualizer {
         for (final Arc a : this.edges) {
             g.addVertex(a.getEastNode());
             g.addVertex(a.getWestNode());
-            if (this.direction == null || this.direction == Direction.EASTBOUND) {
+            if (this.route == null || this.route.isEastbound()) {
                 g.addEdge(a, a.getWestNode(), a.getEastNode());
             } else {
                 g.addEdge(a, a.getEastNode(), a.getWestNode());

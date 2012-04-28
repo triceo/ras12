@@ -5,8 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.drools.planner.examples.ras2012.model.Route;
-import org.drools.planner.examples.ras2012.model.Route.Direction;
+import org.drools.planner.examples.ras2012.interfaces.Directed;
 
 public class Arc {
 
@@ -126,18 +125,8 @@ public class Arc {
         return this.eastNode;
     }
 
-    // TODO move this to Route
-    public Node getEndingNode(final Route r) {
-        if (r.getDirection() == Direction.EASTBOUND) {
-            return this.eastNode;
-        } else {
-            return this.westNode;
-        }
-    }
-
-    // TODO move this to Train
-    public Node getEndingNode(final Train t) {
-        if (t.isEastbound()) {
+    public Node getEndingNode(final Directed d) {
+        if (d.isEastbound()) {
             return this.eastNode;
         } else {
             return this.westNode;
@@ -148,18 +137,8 @@ public class Arc {
         return this.lengthInMiles;
     }
 
-    // TODO move this to Route
-    public Node getStartingNode(final Route r) {
-        if (r.getDirection() == Direction.EASTBOUND) {
-            return this.westNode;
-        } else {
-            return this.eastNode;
-        }
-    }
-
-    // TODO move this to Train
-    public Node getStartingNode(final Train t) {
-        if (t.isEastbound()) {
+    public Node getStartingNode(final Directed d) {
+        if (d.isEastbound()) {
             return this.westNode;
         } else {
             return this.eastNode;

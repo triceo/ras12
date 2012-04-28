@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.drools.planner.examples.ras2012.interfaces.Directed;
 import org.drools.planner.examples.ras2012.interfaces.Visualizable;
 import org.drools.planner.examples.ras2012.model.original.Arc;
 import org.drools.planner.examples.ras2012.model.original.Arc.TrackType;
@@ -29,11 +30,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Note: this class has a natural ordering that is inconsistent with equals.
  */
-public class Route implements Comparable<Route>, Visualizable {
-
-    public static enum Direction {
-        EASTBOUND, WESTBOUND
-    }
+public class Route implements Comparable<Route>, Directed, Visualizable {
 
     private static final Logger        logger      = LoggerFactory.getLogger(Route.class);
 
@@ -45,7 +42,7 @@ public class Route implements Comparable<Route>, Visualizable {
 
     private final List<Arc>           arcs                    = new LinkedList<Arc>();
 
-    private final Direction           direction;
+    private final boolean             isEastbound;
 
     private final int                 id                      = Route.idGenerator.getAndIncrement();
 
@@ -55,12 +52,12 @@ public class Route implements Comparable<Route>, Visualizable {
 
     private final Map<Train, Boolean> routePossibilitiesCache = new HashMap<Train, Boolean>();
 
-    public Route(final Direction d) {
-        this.direction = d;
+    public Route(final boolean isEastbound) {
+        this.isEastbound = isEastbound;
     }
 
-    private Route(final Direction d, final Arc... e) {
-        this(d);
+    private Route(final boolean isEastbound, final Arc... e) {
+        this(isEastbound);
         for (final Arc a : e) {
             this.arcs.add(a);
         }
@@ -68,7 +65,7 @@ public class Route implements Comparable<Route>, Visualizable {
 
     @Override
     public int compareTo(final Route o) {
-        if (this.direction == o.direction) { // less tracks = better
+        if (this.isEastbound == o.isEastbound) { // less tracks = better
             final int comparison = o.getLengthInArcs() - this.getLengthInArcs();
             if (comparison == 0) { // shorter = better
                 final int comparison2 = o.getTravellingTimeInMinutes().compareTo(
@@ -82,7 +79,7 @@ public class Route implements Comparable<Route>, Visualizable {
                 return comparison;
             }
         } else {
-            if (this.direction == Direction.EASTBOUND) {
+            if (this.isEastbound()) {
                 return -1;
             } else {
                 return 1;
@@ -122,15 +119,11 @@ public class Route implements Comparable<Route>, Visualizable {
         final Collection<Arc> newParts = new ArrayList<Arc>(this.arcs);
         newParts.add(add);
         final Arc[] result = newParts.toArray(new Arc[newParts.size()]);
-        return new Route(this.getDirection(), result);
+        return new Route(this.isEastbound(), result);
     }
 
     public List<Arc> getArcs() {
         return this.arcs;
-    }
-
-    public Direction getDirection() {
-        return this.direction;
     }
 
     public int getId() {
@@ -146,10 +139,10 @@ public class Route implements Comparable<Route>, Visualizable {
         final Arc two = this.arcs.get(this.arcs.size() - 1);
         if (one.getWestNode().getId() == 0) {
             // one is west-most
-            return this.direction == Direction.WESTBOUND ? two : one;
+            return this.isWestbound() ? two : one;
         } else {
             // one is east-most
-            return this.direction == Direction.WESTBOUND ? one : two;
+            return this.isWestbound() ? one : two;
         }
     }
 
@@ -232,8 +225,8 @@ public class Route implements Comparable<Route>, Visualizable {
             BigDecimal result = BigDecimal.ZERO;
             for (final Arc a : this.arcs) {
                 final BigDecimal length = a.getLengthInMiles();
-                final int speed = this.direction == Direction.EASTBOUND ? a.getTrackType()
-                        .getSpeedEastbound() : a.getTrackType().getSpeedWestbound();
+                final int speed = this.isEastbound() ? a.getTrackType().getSpeedEastbound() : a
+                        .getTrackType().getSpeedWestbound();
                 final BigDecimal timeInHours = length.divide(BigDecimal.valueOf(speed), 2,
                         BigDecimal.ROUND_HALF_DOWN);
                 result = result.add(timeInHours.multiply(BigDecimal.valueOf(60)));
@@ -247,7 +240,7 @@ public class Route implements Comparable<Route>, Visualizable {
         final Collection<Node> waitPoints = new TreeSet<Node>();
         // we want to be able to hold the train before it enters the network
         final Arc firstArc = this.getInitialArc();
-        if (this.direction == Direction.EASTBOUND) {
+        if (this.isEastbound()) {
             waitPoints.add(firstArc.getWestNode());
         } else {
             waitPoints.add(firstArc.getEastNode());
@@ -256,14 +249,14 @@ public class Route implements Comparable<Route>, Visualizable {
         for (final Arc a : this.arcs) {
             if (a.getTrackType() == TrackType.SIDING) {
                 // on sidings, wait before leaving them through a switch
-                if (this.direction == Direction.EASTBOUND) {
+                if (this.isEastbound()) {
                     waitPoints.add(a.getEastNode());
                 } else {
                     waitPoints.add(a.getWestNode());
                 }
             } else if (!a.getTrackType().isMainTrack()) {
                 // on crossovers and switches, wait before joining them
-                if (this.direction == Direction.EASTBOUND) {
+                if (this.isEastbound()) {
                     waitPoints.add(a.getWestNode());
                 } else {
                     waitPoints.add(a.getEastNode());
@@ -287,9 +280,9 @@ public class Route implements Comparable<Route>, Visualizable {
         if (a.getTrackType() == TrackType.MAIN_0) {
             return true;
         } else if (a.getTrackType() == TrackType.MAIN_2) {
-            return this.getDirection() == Direction.EASTBOUND;
+            return this.isEastbound();
         } else if (a.getTrackType() == TrackType.MAIN_1) {
-            return this.getDirection() == Direction.WESTBOUND;
+            return this.isWestbound();
         } else {
             // preference of SIDING/SWITCH/CROSSOVER is based on which track are those coming off of
             final Arc previousArc = this.getPreviousArc(a);
@@ -301,6 +294,11 @@ public class Route implements Comparable<Route>, Visualizable {
         }
     }
 
+    @Override
+    public boolean isEastbound() {
+        return this.isEastbound;
+    }
+
     public boolean isPossibleForTrain(final Train t) {
         if (!this.routePossibilitiesCache.containsKey(t)) {
             this.routePossibilitiesCache.put(t, this.isPossibleForTrainUncached(t));
@@ -310,8 +308,8 @@ public class Route implements Comparable<Route>, Visualizable {
 
     private boolean isPossibleForTrainUncached(final Train t) {
         // make sure both the route and the train are in the same direction
-        final boolean bothEastbound = t.isEastbound() && this.getDirection() == Direction.EASTBOUND;
-        final boolean bothWestbound = t.isWestbound() && this.getDirection() == Direction.WESTBOUND;
+        final boolean bothEastbound = t.isEastbound() && this.isEastbound();
+        final boolean bothWestbound = t.isWestbound() && this.isWestbound();
         if (!(bothEastbound || bothWestbound)) {
             return false;
         }
@@ -364,9 +362,24 @@ public class Route implements Comparable<Route>, Visualizable {
     }
 
     @Override
+    public boolean isWestbound() {
+        return !this.isEastbound();
+    }
+
+    @Override
     public String toString() {
-        return "Route [id=" + this.id + ", direction=" + this.direction + ", parts=" + this.arcs
-                + "]";
+        final StringBuilder builder = new StringBuilder();
+        builder.append("Route [id=");
+        builder.append(this.id);
+        builder.append(", isEastbound=");
+        builder.append(this.isEastbound);
+        builder.append(", ");
+        if (this.arcs != null) {
+            builder.append("arcs=");
+            builder.append(this.arcs);
+        }
+        builder.append("]");
+        return builder.toString();
     }
 
     @Override

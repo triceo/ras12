@@ -16,7 +16,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.drools.planner.examples.ras2012.interfaces.Visualizable;
-import org.drools.planner.examples.ras2012.model.Route.Direction;
 import org.drools.planner.examples.ras2012.model.original.Arc;
 import org.drools.planner.examples.ras2012.model.original.Node;
 import org.drools.planner.examples.ras2012.model.original.Train;
@@ -64,10 +63,8 @@ public class Network implements Visualizable {
         }
 
         Route.resetRouteCounter();
-        this.eastboundRoutes = this.getAllRoutes(new Route(Direction.EASTBOUND),
-                eastboundConnections, westDepo);
-        this.westboundRoutes = this.getAllRoutes(new Route(Direction.WESTBOUND),
-                westboundConnections, eastDepo);
+        this.eastboundRoutes = this.getAllRoutes(new Route(true), eastboundConnections, westDepo);
+        this.westboundRoutes = this.getAllRoutes(new Route(false), westboundConnections, eastDepo);
     }
 
     public Collection<Route> getAllRoutes() {

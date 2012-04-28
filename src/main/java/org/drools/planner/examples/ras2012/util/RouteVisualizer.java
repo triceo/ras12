@@ -57,7 +57,7 @@ public class RouteVisualizer extends GraphVisualizer {
     private final Route route;
 
     public RouteVisualizer(final Route r) {
-        super(r.getArcs(), r.getDirection());
+        super(r.getArcs(), r);
         this.route = r;
     }
 

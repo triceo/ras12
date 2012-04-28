@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.Collections;
 
 import org.drools.planner.examples.ras2012.model.Route;
-import org.drools.planner.examples.ras2012.model.Route.Direction;
 import org.drools.planner.examples.ras2012.model.original.Arc.TrackType;
 import org.junit.Assert;
 import org.junit.Test;
@@ -79,8 +78,8 @@ public class ArcTest {
         final BigDecimal length = new BigDecimal("1.5");
         final Arc a = new Arc(TrackType.MAIN_0, length, n1, n2);
         // prepare routes, one eastbound and one westbound
-        final Route eastbound = new Route(Direction.EASTBOUND).extend(a);
-        final Route westbound = new Route(Direction.WESTBOUND).extend(a);
+        final Route eastbound = new Route(true).extend(a);
+        final Route westbound = new Route(false).extend(a);
         // and validate their starting and ending nodes
         Assert.assertSame(a.getWestNode(), a.getStartingNode(eastbound));
         Assert.assertSame(a.getEastNode(), a.getEndingNode(eastbound));
