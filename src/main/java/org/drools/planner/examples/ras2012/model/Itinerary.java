@@ -25,7 +25,9 @@ import org.slf4j.LoggerFactory;
 
 public final class Itinerary {
 
-    private static final Logger logger = LoggerFactory.getLogger(Itinerary.class);
+    private static final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.MILLISECONDS;
+
+    private static final Logger   logger            = LoggerFactory.getLogger(Itinerary.class);
 
     private static BigDecimal getDistanceInMilesFromSpeedAndTime(final int speedInMPH,
             final long timeInMilliseconds) {
@@ -69,7 +71,7 @@ public final class Itinerary {
         }
         this.route = r;
         this.train = t;
-        this.trainEntryTime = TimeUnit.MINUTES.toMillis(t.getEntryTime());
+        this.trainEntryTime = t.getEntryTime(Itinerary.DEFAULT_TIME_UNIT);
         // assemble the node-traversal information
         boolean journeyOngoing = false;
         Arc currentArc = null;
@@ -165,7 +167,7 @@ public final class Itinerary {
                 break;
             }
         }
-        if (timeArcEntered < TimeUnit.MINUTES.toMillis(this.getTrain().getEntryTime())) {
+        if (timeArcEntered < this.trainEntryTime) {
             throw new IllegalStateException(
                     "Proper arc cannot be found! Possibly a bug in the algoritm.");
         }
@@ -188,7 +190,7 @@ public final class Itinerary {
     }
 
     public long getDelay() {
-        return this.getDelay(TimeUnit.MINUTES.toMillis(RAS2012Solution.PLANNING_HORIZON_MINUTES));
+        return this.getDelay(RAS2012Solution.getPlanningHorizon(Itinerary.DEFAULT_TIME_UNIT));
     }
 
     private long getDelay(final long horizon) {
@@ -196,7 +198,7 @@ public final class Itinerary {
             // train not en route yet, delay must be zero
             return 0;
         }
-        final long originalDelay = TimeUnit.MINUTES.toMillis(this.getTrain().getOriginalDelay());
+        final long originalDelay = this.getTrain().getOriginalDelay(Itinerary.DEFAULT_TIME_UNIT);
         final SortedMap<Long, Node> schedule = this.getSchedule();
         final SortedMap<Long, Node> scheduleInHorizon = schedule.headMap(horizon);
         if (scheduleInHorizon.size() == 0) {
@@ -265,22 +267,23 @@ public final class Itinerary {
                     time += this.trainEntryTime;
                 } else {
                     // otherwise we need to convert a relative time to an absolute time by adding the previous node's time
-                    time = this.getTrain().getArcTravellingTimeInMilliseconds(previousArc);
+                    time = this.getTrain().getArcTravellingTime(previousArc,
+                            Itinerary.DEFAULT_TIME_UNIT);
                     time += previousTime;
                 }
                 // now adjust for node wait time, should there be any
                 final Node n = currentArc.getStartingNode(this.getTrain());
                 final WaitTime wt = this.nodeWaitTimes.get(n);
                 if (wt != null) {
-                    time += wt.getMillisWaitFor();
+                    time += wt.getWaitFor(Itinerary.DEFAULT_TIME_UNIT);
                 }
                 // check for maintenance windows
                 if (this.maintenances.containsKey(n)) {
                     // there is a maintenance registered for the next node
                     final MaintenanceWindow w = this.maintenances.get(n);
-                    if (w.isInside(time)) { // the maintenance is ongoing, we have to wait
+                    if (w.isInside(time, Itinerary.DEFAULT_TIME_UNIT)) { // the maintenance is ongoing, we have to wait
                         // and adjust total node entry time
-                        time = w.getEnd();
+                        time = w.getEnd(Itinerary.DEFAULT_TIME_UNIT);
                     }
                 }
                 // and store
@@ -289,8 +292,10 @@ public final class Itinerary {
                 previousArc = currentArc;
                 i++;
             }
-            this.scheduleCache.put(previousTime
-                    + this.getTrain().getArcTravellingTimeInMilliseconds(previousArc),
+            this.scheduleCache.put(
+                    previousTime
+                            + this.getTrain().getArcTravellingTime(previousArc,
+                                    Itinerary.DEFAULT_TIME_UNIT),
                     previousArc.getEndingNode(this.getTrain()));
             this.scheduleCacheValid.set(true);
         }
@@ -298,24 +303,25 @@ public final class Itinerary {
     }
 
     public Map<Node, Long> getScheduleAdherenceStatus() {
-        final long horizon = TimeUnit.MINUTES.toMillis(RAS2012Solution.PLANNING_HORIZON_MINUTES);
-        SortedMap<Long, Node> schedule = this.getSchedule();
-        SortedMap<Long, Node> scheduleInteresting = schedule.headMap(horizon);
-        Map<Node, Long> result = new HashMap<Node, Long>();
-        for (ScheduleAdherenceRequirement sa : this.getTrain().getScheduleAdherenceRequirements()) {
-            final long expectedArrival = TimeUnit.MINUTES.toMillis(sa.getTimeSinceStartOfWorld());
+        final long horizon = RAS2012Solution.getPlanningHorizon(Itinerary.DEFAULT_TIME_UNIT);
+        final SortedMap<Long, Node> schedule = this.getSchedule();
+        final SortedMap<Long, Node> scheduleInteresting = schedule.headMap(horizon);
+        final Map<Node, Long> result = new HashMap<Node, Long>();
+        for (final ScheduleAdherenceRequirement sa : this.getTrain()
+                .getScheduleAdherenceRequirements()) {
+            final long expectedArrival = sa.getTimeSinceStartOfWorld(Itinerary.DEFAULT_TIME_UNIT);
             final Node expectedDestination = sa.getDestination();
             if (expectedArrival <= horizon) {
                 // arrival expected inside the planning horizon
                 if (scheduleInteresting.values().contains(expectedDestination)) {
-                    int numResults = result.size();
+                    final int numResults = result.size();
                     // arrival actually inside the planning horizon; we know the exact delay
-                    for (SortedMap.Entry<Long, Node> entry : scheduleInteresting.entrySet()) {
+                    for (final SortedMap.Entry<Long, Node> entry : scheduleInteresting.entrySet()) {
                         if (entry.getValue() == expectedDestination) {
                             result.put(expectedDestination, expectedArrival - entry.getKey());
                         }
                     }
-                    if (result.size() != (numResults + 1)) {
+                    if (result.size() != numResults + 1) {
                         throw new IllegalStateException(
                                 "Cannot find scheduled node. This must be a bug in the algorithm.");
                     }
@@ -395,9 +401,9 @@ public final class Itinerary {
             if (entry.getValue() == this.getTrain().getDestination()) {
                 // make sure we only include the time within the planning horizon
                 final long actualTime = Math.min(entry.getKey(),
-                        TimeUnit.MINUTES.toMillis(RAS2012Solution.PLANNING_HORIZON_MINUTES));
+                        RAS2012Solution.getPlanningHorizon(Itinerary.DEFAULT_TIME_UNIT));
                 final long difference = actualTime
-                        - TimeUnit.MINUTES.toMillis(this.getTrain().getWantTime());
+                        - this.getTrain().getWantTime(Itinerary.DEFAULT_TIME_UNIT);
                 result.put(entry.getKey(), difference);
             }
         }

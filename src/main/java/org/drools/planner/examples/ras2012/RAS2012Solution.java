@@ -18,13 +18,14 @@ import org.drools.planner.examples.ras2012.model.Train;
 
 public class RAS2012Solution implements Solution<HardAndSoftScore> {
 
-    public static final long                      PLANNING_HORIZON_MINUTES = TimeUnit.HOURS
-                                                                                   .toMinutes(12);
+    public static long getPlanningHorizon(final TimeUnit unit) {
+        return unit.convert(12, TimeUnit.HOURS);
+    }
 
     private final String                          name;
     private final Network                         network;
     private final Collection<MaintenanceWindow>   maintenances;
-    private final Map<Train, ItineraryAssignment> assignments              = new HashMap<Train, ItineraryAssignment>();
+    private final Map<Train, ItineraryAssignment> assignments = new HashMap<Train, ItineraryAssignment>();
 
     private final Collection<Train>               trains;
     private HardAndSoftScore                      score;
@@ -141,17 +142,17 @@ public class RAS2012Solution implements Solution<HardAndSoftScore> {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append("RAS2012Solution [name=");
-        builder.append(name);
+        builder.append(this.name);
         builder.append(", network=");
-        builder.append(network);
+        builder.append(this.network);
         builder.append(", maintenances=");
-        builder.append(maintenances);
+        builder.append(this.maintenances);
         builder.append(", assignments=");
-        builder.append(assignments);
+        builder.append(this.assignments);
         builder.append(", score=");
-        builder.append(score);
+        builder.append(this.score);
         builder.append("]");
         return builder.toString();
     }

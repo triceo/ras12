@@ -10,8 +10,8 @@ public class WaitTimeTest {
     @Test
     public void testAccuracy() {
         final WaitTime wt = WaitTime.getWaitTime(30);
-        Assert.assertEquals(30, wt.getMinutesWaitFor());
-        Assert.assertEquals(TimeUnit.MINUTES.toMillis(30), wt.getMillisWaitFor());
+        Assert.assertEquals(30, wt.getWaitFor(TimeUnit.MINUTES));
+        Assert.assertEquals(TimeUnit.MINUTES.toMillis(30), wt.getWaitFor(TimeUnit.MILLISECONDS));
     }
 
     @Test

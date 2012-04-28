@@ -1,17 +1,22 @@
 package org.drools.planner.examples.ras2012.model;
 
+import java.util.concurrent.TimeUnit;
+
 public class ScheduleAdherenceRequirement {
 
-    private final Node destination;
+    private static final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.MILLISECONDS;
 
-    private final int  timeSinceStartOfWorld;
+    private final Node            destination;
+
+    private final long            timeSinceStartOfWorld;
 
     public ScheduleAdherenceRequirement(final Node where, final int when) {
         if (where == null) {
             throw new IllegalArgumentException("Node cannot be null.");
         }
         this.destination = where;
-        this.timeSinceStartOfWorld = when;
+        this.timeSinceStartOfWorld = ScheduleAdherenceRequirement.DEFAULT_TIME_UNIT.convert(when,
+                TimeUnit.MINUTES);
     }
 
     @Override
@@ -22,11 +27,11 @@ public class ScheduleAdherenceRequirement {
         if (obj == null) {
             return false;
         }
-        if (this.getClass() != obj.getClass()) {
+        if (!(obj instanceof ScheduleAdherenceRequirement)) {
             return false;
         }
         final ScheduleAdherenceRequirement other = (ScheduleAdherenceRequirement) obj;
-        if (!this.destination.equals(other.destination)) {
+        if (this.destination != other.destination) {
             return false;
         }
         if (this.timeSinceStartOfWorld != other.timeSinceStartOfWorld) {
@@ -39,8 +44,9 @@ public class ScheduleAdherenceRequirement {
         return this.destination;
     }
 
-    public int getTimeSinceStartOfWorld() {
-        return this.timeSinceStartOfWorld;
+    public long getTimeSinceStartOfWorld(final TimeUnit unit) {
+        return unit.convert(this.timeSinceStartOfWorld,
+                ScheduleAdherenceRequirement.DEFAULT_TIME_UNIT);
     }
 
     @Override
@@ -48,7 +54,8 @@ public class ScheduleAdherenceRequirement {
         final int prime = 31;
         int result = 1;
         result = prime * result + (this.destination == null ? 0 : this.destination.hashCode());
-        result = prime * result + this.timeSinceStartOfWorld;
+        result = prime * result
+                + (int) (this.timeSinceStartOfWorld ^ this.timeSinceStartOfWorld >>> 32);
         return result;
     }
 

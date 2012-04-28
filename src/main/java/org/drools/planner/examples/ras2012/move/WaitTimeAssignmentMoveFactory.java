@@ -2,6 +2,7 @@ package org.drools.planner.examples.ras2012.move;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.drools.planner.core.move.Move;
 import org.drools.planner.core.move.factory.AbstractMoveFactory;
@@ -20,8 +21,8 @@ public class WaitTimeAssignmentMoveFactory extends AbstractMoveFactory {
         final RAS2012Solution sol = (RAS2012Solution) solution;
         for (final ItineraryAssignment ia : sol.getAssignments()) {
             // when train entered X minutes after start of world, don't generate wait times to cover those X minutes.
-            final long planningHorizon = RAS2012Solution.PLANNING_HORIZON_MINUTES
-                    - ia.getTrain().getEntryTime();
+            final long planningHorizon = RAS2012Solution.getPlanningHorizon(TimeUnit.MINUTES)
+                    - ia.getTrain().getEntryTime(TimeUnit.MINUTES);
             final int allFirstX = 10;
             for (final Node waitPoint : ia.getRoute().getWaitPoints()) {
                 moves.add(new WaitTimeAssignmentMove(ia, waitPoint, null));

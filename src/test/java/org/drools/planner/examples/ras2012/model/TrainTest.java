@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import junit.framework.Assert;
 import org.drools.planner.examples.ras2012.model.Arc.TrackType;
@@ -223,7 +224,7 @@ public class TrainTest {
                         .multiply(BigDecimal.valueOf(60)).multiply(BigDecimal.valueOf(1000));
                 final long result = timeInMilliseconds.longValue();
                 Assert.assertEquals(t + " didn't travel " + a + " in expected time.", result,
-                        t.getArcTravellingTimeInMilliseconds(a));
+                        t.getArcTravellingTime(a, TimeUnit.MILLISECONDS));
             }
         }
     }
@@ -231,7 +232,7 @@ public class TrainTest {
     @Test(expected = IllegalArgumentException.class)
     public void testGetArcTravellingTimeInMillisecondsWithNullArc() {
         Train t = this.getTrains(Node.getNode(0), Node.getNode(1))[0];
-        t.getArcTravellingTimeInMilliseconds(null);
+        t.getArcTravellingTime(null, TimeUnit.MILLISECONDS);
     }
 
     @Test

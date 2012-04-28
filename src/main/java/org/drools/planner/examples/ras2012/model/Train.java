@@ -3,6 +3,7 @@ package org.drools.planner.examples.ras2012.model;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.drools.planner.examples.ras2012.model.Arc.TrackType;
 
@@ -32,6 +33,8 @@ public class Train implements Comparable<Train> {
         }
     }
 
+    private static final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.MILLISECONDS;
+
     private static TrainType determineType(final String name) {
         final char[] chars = name.toCharArray();
         switch (chars[0]) {
@@ -60,9 +63,9 @@ public class Train implements Comparable<Train> {
     private final int                                tob;
     private final Node                               origin;
     private final Node                               destination;
-    private final int                                entryTime;
-    private final int                                wantTime;
-    private final int                                originalDelay;
+    private final long                               entryTime;
+    private final long                               wantTime;
+    private final long                               originalDelay;
     private final List<ScheduleAdherenceRequirement> scheduleAdherenceRequirements;
     private final boolean                            carriesHazardousMaterials;
 
@@ -107,12 +110,13 @@ public class Train implements Comparable<Train> {
         if (entryTime < 0) {
             throw new IllegalArgumentException("Train entry time may not be negative.");
         }
-        this.entryTime = entryTime;
+        this.entryTime = Train.DEFAULT_TIME_UNIT.convert(entryTime, TimeUnit.MINUTES);
         if (wantTime < 0) {
             throw new IllegalArgumentException("Train want time may not be negative.");
         }
-        this.wantTime = wantTime;
-        this.originalDelay = originalScheduleAdherence;
+        this.wantTime = Train.DEFAULT_TIME_UNIT.convert(wantTime, TimeUnit.MINUTES);
+        this.originalDelay = Train.DEFAULT_TIME_UNIT.convert(originalScheduleAdherence,
+                TimeUnit.MINUTES);
         this.scheduleAdherenceRequirements = sars == null ? Collections
                 .<ScheduleAdherenceRequirement> emptyList() : Collections.unmodifiableList(sars);
         this.carriesHazardousMaterials = hazmat;
@@ -155,7 +159,7 @@ public class Train implements Comparable<Train> {
         return this.name.equals(other.name);
     }
 
-    public long getArcTravellingTimeInMilliseconds(final Arc a) {
+    public long getArcTravellingTime(final Arc a, final TimeUnit unit) {
         if (a == null) {
             throw new IllegalArgumentException("Arc cannot be null!");
         }
@@ -163,15 +167,17 @@ public class Train implements Comparable<Train> {
         final BigDecimal hours = a.getLengthInMiles().divide(milesPerHour, 10,
                 BigDecimal.ROUND_HALF_DOWN);
         final BigDecimal sixty = BigDecimal.valueOf(60);
-        return hours.multiply(sixty).multiply(sixty).multiply(BigDecimal.valueOf(1000)).longValue();
+        final long millis = hours.multiply(sixty).multiply(sixty)
+                .multiply(BigDecimal.valueOf(1000)).longValue();
+        return unit.convert(millis, TimeUnit.MILLISECONDS);
     }
 
     public Node getDestination() {
         return this.destination;
     }
 
-    public int getEntryTime() {
-        return this.entryTime;
+    public long getEntryTime(final TimeUnit unit) {
+        return unit.convert(this.entryTime, Train.DEFAULT_TIME_UNIT);
     }
 
     public BigDecimal getLength() {
@@ -199,8 +205,8 @@ public class Train implements Comparable<Train> {
         return this.origin;
     }
 
-    public int getOriginalDelay() {
-        return this.originalDelay;
+    public long getOriginalDelay(final TimeUnit unit) {
+        return unit.convert(this.originalDelay, Train.DEFAULT_TIME_UNIT);
     }
 
     public List<ScheduleAdherenceRequirement> getScheduleAdherenceRequirements() {
@@ -215,8 +221,8 @@ public class Train implements Comparable<Train> {
         return this.type;
     }
 
-    public int getWantTime() {
-        return this.wantTime;
+    public long getWantTime(final TimeUnit unit) {
+        return unit.convert(this.wantTime, Train.DEFAULT_TIME_UNIT);
     }
 
     @Override

@@ -187,7 +187,7 @@ public abstract class AbstractItineraryTest {
             final Map<Long, Arc> expecteds = new HashMap<Long, Arc>();
             final Route r = i.getRoute();
             final Train t = i.getTrain();
-            long totalTime = TimeUnit.MINUTES.toMillis(t.getEntryTime());
+            long totalTime = t.getEntryTime(TimeUnit.MILLISECONDS);
             Arc currentArc = null;
             if (totalTime > 0) {
                 // the train shouldn't be on the route before its time of entry
@@ -201,11 +201,12 @@ public abstract class AbstractItineraryTest {
                     continue;
                 }
                 if (i.getMaintenances().containsKey(n)
-                        && i.getMaintenances().get(n).isInside(totalTime)) {
-                    totalTime = i.getMaintenances().get(n).getEnd();
+                        && i.getMaintenances().get(n).isInside(totalTime, TimeUnit.MILLISECONDS)) {
+                    totalTime = i.getMaintenances().get(n).getEnd(TimeUnit.MILLISECONDS);
                 }
                 expecteds.put(totalTime, currentArc); // immediately after entering the node
-                final long arcTravellingTime = t.getArcTravellingTimeInMilliseconds(currentArc);
+                final long arcTravellingTime = t.getArcTravellingTime(currentArc,
+                        TimeUnit.MILLISECONDS);
                 final long arcTravellingTimeThird = arcTravellingTime / 3;
                 expecteds.put(totalTime + arcTravellingTimeThird, currentArc); // one third into the node
                 totalTime += arcTravellingTime;
@@ -213,8 +214,7 @@ public abstract class AbstractItineraryTest {
             }
             // and now validate against reality
             for (final Map.Entry<Long, Arc> entry : expecteds.entrySet()) {
-                if (entry.getKey() > TimeUnit.MINUTES
-                        .toMillis(RAS2012Solution.PLANNING_HORIZON_MINUTES)) {
+                if (entry.getKey() > RAS2012Solution.getPlanningHorizon(TimeUnit.MILLISECONDS)) {
                     // don't measure beyond the planning horizon
                     break;
                 }

@@ -2,6 +2,7 @@ package org.drools.planner.examples.ras2012.move;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.concurrent.TimeUnit;
 
 import org.drools.planner.core.move.Move;
 import org.drools.planner.core.score.director.ScoreDirector;
@@ -106,13 +107,13 @@ public class WaitTimeAssignmentMove implements Move {
         if (this.previousWaitTime == null) {
             builder.append(0);
         } else {
-            builder.append(this.previousWaitTime.getMinutesWaitFor());
+            builder.append(this.previousWaitTime.getWaitFor(TimeUnit.MINUTES));
         }
         builder.append("->");
         if (this.waitTime == null) {
             builder.append(0);
         } else {
-            builder.append(this.waitTime.getMinutesWaitFor());
+            builder.append(this.waitTime.getWaitFor(TimeUnit.MINUTES));
         }
         builder.append("]");
         return builder.toString();

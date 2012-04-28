@@ -16,8 +16,8 @@ public class MaintenanceWindowTest {
         final MaintenanceWindow mw = new MaintenanceWindow(WEST, EAST, START, END);
         Assert.assertSame(EAST, mw.getEastNode());
         Assert.assertSame(WEST, mw.getWestNode());
-        Assert.assertEquals(START * 60 * 1000, mw.getStart());
-        Assert.assertEquals(END * 60 * 1000, mw.getEnd());
+        Assert.assertEquals(TimeUnit.MINUTES.toMillis(START), mw.getStart(TimeUnit.MILLISECONDS));
+        Assert.assertEquals(TimeUnit.MINUTES.toMillis(END), mw.getEnd(TimeUnit.MILLISECONDS));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -51,9 +51,9 @@ public class MaintenanceWindowTest {
         final int MOW_END = 51;
         final MaintenanceWindow mow = new MaintenanceWindow(Node.getNode(0), Node.getNode(1),
                 MOW_START, MOW_END);
-        Assert.assertFalse(mow.isInside(TimeUnit.MINUTES.toMillis(49)));
-        Assert.assertTrue(mow.isInside(TimeUnit.MINUTES.toMillis(MOW_START)));
-        Assert.assertTrue(mow.isInside(TimeUnit.MINUTES.toMillis(MOW_END)));
-        Assert.assertFalse(mow.isInside(TimeUnit.MINUTES.toMillis(52)));
+        Assert.assertFalse(mow.isInside(MOW_START - 1, TimeUnit.MINUTES));
+        Assert.assertTrue(mow.isInside(MOW_START, TimeUnit.MINUTES));
+        Assert.assertTrue(mow.isInside(MOW_END, TimeUnit.MINUTES));
+        Assert.assertFalse(mow.isInside(MOW_END + 1, TimeUnit.MINUTES));
     }
 }

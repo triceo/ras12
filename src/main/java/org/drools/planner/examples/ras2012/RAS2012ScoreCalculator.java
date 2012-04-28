@@ -20,8 +20,7 @@ import org.drools.planner.examples.ras2012.model.Train;
 public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<RAS2012Solution> {
 
     private static boolean isInPlanningHorizon(final long time) {
-        final long horizon = TimeUnit.MINUTES.toMillis(RAS2012Solution.PLANNING_HORIZON_MINUTES);
-        return time <= horizon;
+        return time <= RAS2012Solution.getPlanningHorizon(TimeUnit.MILLISECONDS);
     }
 
     private static int roundMillisecondsToWholeHours(final long milliseconds) {
@@ -234,8 +233,8 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
         final Itinerary i = ia.getItinerary();
         this.wantTimePenalties.put(t, this.getWantTimePenalty(i, this.solution));
         this.unpreferredTracksPenalties.put(t, RAS2012ScoreCalculator
-                .roundMillisecondsToWholeHours(i.getTimeSpentOnUnpreferredTracks(TimeUnit.MINUTES
-                        .toMillis(RAS2012Solution.PLANNING_HORIZON_MINUTES)) * 50));
+                .roundMillisecondsToWholeHours(i.getTimeSpentOnUnpreferredTracks(RAS2012Solution
+                        .getPlanningHorizon(TimeUnit.MILLISECONDS)) * 50));
         this.scheduleAdherencePenalties.put(t, this.getScheduleAdherencePenalty(i, this.solution));
         this.delayPenalties.put(t, this.getDelayPenalty(i, this.solution));
         this.didTrainArrive.put(t, this.didTrainArrive(i));

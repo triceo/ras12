@@ -39,34 +39,8 @@ public class Node implements Comparable<Node> {
         }
     }
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (!(obj instanceof Node)) {
-            return false;
-        }
-        final Node other = (Node) obj;
-        if (this.id != other.id) {
-            return false;
-        }
-        return true;
-    }
-
     public int getId() {
         return this.id;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + this.id;
-        return result;
     }
 
     @Override

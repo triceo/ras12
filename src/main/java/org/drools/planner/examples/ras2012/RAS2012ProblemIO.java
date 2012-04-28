@@ -86,19 +86,18 @@ public class RAS2012ProblemIO implements ProblemIO {
         for (final Map.Entry<Long, Arc> entry : solution.getAssignment(t).getItinerary()
                 .getScheduleWithArcs().entrySet()) {
             final Arc arc = entry.getValue();
-            if (entry.getKey() >= TimeUnit.MINUTES
-                    .toMillis(RAS2012Solution.PLANNING_HORIZON_MINUTES)) {
+            if (entry.getKey() >= RAS2012Solution.getPlanningHorizon(TimeUnit.MILLISECONDS)) {
                 continue;
             }
             final BigDecimal timeInSeconds = RAS2012ProblemIO
                     .convertMillisToSeconds(entry.getKey());
             if (arc != null) {
                 final BigDecimal travellingTime = RAS2012ProblemIO.convertMillisToSeconds(t
-                        .getArcTravellingTimeInMilliseconds(arc));
+                        .getArcTravellingTime(arc, TimeUnit.MILLISECONDS));
                 final BigDecimal leaveTime = timeInSeconds.add(travellingTime).subtract(
                         new BigDecimal("0.5"));
-                if (leaveTime.intValue() > TimeUnit.MINUTES
-                        .toMillis(RAS2012Solution.PLANNING_HORIZON_MINUTES)) {
+                if (leaveTime.intValue() > RAS2012Solution
+                        .getPlanningHorizon(TimeUnit.MILLISECONDS)) {
                     continue;
                 }
                 w.write("\t\t\t\t<movement arc='(" + arc.getStartingNode(t).getId() + ","
