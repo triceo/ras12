@@ -42,9 +42,9 @@ public class RouteVisualizer extends GraphVisualizer {
 
         @Override
         public Paint transform(final Node input) {
-            if (input == this.route.getInitialArc().getStartingNode(this.route)) {
+            if (input == this.route.getInitialArc().getTerminalNode(this.route)) {
                 return Color.GREEN;
-            } else if (input == this.route.getTerminalArc().getEndingNode(this.route)) {
+            } else if (input == this.route.getTerminalArc().getInitialNode(this.route)) {
                 return Color.RED;
             } else if (this.route.getWaitPoints().contains(input)) {
                 return Color.BLUE;

@@ -1,14 +1,12 @@
 package org.drools.planner.examples.ras2012.model.original;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 
-import org.drools.planner.examples.ras2012.model.Route;
 import org.drools.planner.examples.ras2012.model.original.Arc.TrackType;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class ArcTest {
+public class ArcTest extends AbstractSectionTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorNegativeLength() {
@@ -70,39 +68,23 @@ public class ArcTest {
                 a1.equals(a2));
     }
 
-    @Test
-    public void testStartEndNodesOnRoute() {
+    @Override
+    public void testInitialAndTerminalNodesOnRoute() {
         // prepare arc to be tested
         final Node n1 = Node.getNode(0);
         final Node n2 = Node.getNode(1);
         final BigDecimal length = new BigDecimal("1.5");
         final Arc a = new Arc(TrackType.MAIN_0, length, n1, n2);
-        // prepare routes, one eastbound and one westbound
-        final Route eastbound = new Route(true).extend(a);
-        final Route westbound = new Route(false).extend(a);
-        // and validate their starting and ending nodes
-        Assert.assertSame(a.getWestNode(), a.getStartingNode(eastbound));
-        Assert.assertSame(a.getEastNode(), a.getEndingNode(eastbound));
-        Assert.assertSame(a.getEastNode(), a.getStartingNode(westbound));
-        Assert.assertSame(a.getWestNode(), a.getEndingNode(westbound));
+        super.actuallyTestInitialAndTerminalNodesOnRoute(a);
     }
 
-    @Test
-    public void testStartEndNodesOnTrain() {
+    @Override
+    public void testInitialAndTerminalNodesOnTrain() {
         // prepare arc to be tested
         final Node n1 = Node.getNode(0);
         final Node n2 = Node.getNode(1);
         final BigDecimal length = new BigDecimal("1.5");
         final Arc a = new Arc(TrackType.MAIN_0, length, n1, n2);
-        // prepare routes, one eastbound and one westbound
-        final Train westbound = new Train("A1", BigDecimal.ONE, length, 90, n2, n1, 0, 0, 0,
-                Collections.<ScheduleAdherenceRequirement> emptyList(), true, true);
-        final Train eastbound = new Train("A2", BigDecimal.ONE, length, 90, n1, n2, 0, 0, 0,
-                Collections.<ScheduleAdherenceRequirement> emptyList(), true, false);
-        // and validate their starting and ending nodes
-        Assert.assertSame(a.getWestNode(), a.getStartingNode(eastbound));
-        Assert.assertSame(a.getEastNode(), a.getEndingNode(eastbound));
-        Assert.assertSame(a.getEastNode(), a.getStartingNode(westbound));
-        Assert.assertSame(a.getWestNode(), a.getEndingNode(westbound));
+        super.actuallyTestInitialAndTerminalNodesOnTrain(a);
     }
 }

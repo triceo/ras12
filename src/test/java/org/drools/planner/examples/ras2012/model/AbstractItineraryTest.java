@@ -199,7 +199,7 @@ public abstract class AbstractItineraryTest {
             }
             while ((currentArc = r.getNextArc(currentArc)) != null) {
                 // account for possible maintenance windows
-                final Node n = currentArc.getStartingNode(r);
+                final Node n = currentArc.getTerminalNode(r);
                 if (!i.isNodeOnRoute(n)) { // sometimes a train doesn't start at the beginning of a route
                     continue;
                 }

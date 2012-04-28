@@ -2,36 +2,23 @@ package org.drools.planner.examples.ras2012.model.original;
 
 import java.util.concurrent.TimeUnit;
 
-public class MaintenanceWindow {
+public class MaintenanceWindow extends Section {
 
     private static final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.MILLISECONDS;
 
-    private final Node            westNode;
-    private final Node            eastNode;
     private final long            start;
     private final long            end;
 
     public MaintenanceWindow(final Node westNode, final Node eastNode, final long time1,
             final long time2) {
-        if (eastNode == null || westNode == null) {
-            throw new IllegalArgumentException("Neither node can be null.");
-        }
-        if (eastNode == westNode) {
-            throw new IllegalArgumentException("MOW must be an arc, not a single node.");
-        }
+        super(westNode, eastNode);
         if (time1 < 0 || time2 < 0) {
             throw new IllegalArgumentException("Neither time can be less than zero.");
         }
-        this.westNode = westNode;
-        this.eastNode = eastNode;
         this.start = MaintenanceWindow.DEFAULT_TIME_UNIT.convert(Math.min(time1, time2),
                 TimeUnit.MINUTES);
         this.end = MaintenanceWindow.DEFAULT_TIME_UNIT.convert(Math.max(time1, time2),
                 TimeUnit.MINUTES);
-    }
-
-    public Node getEastNode() {
-        return this.eastNode;
     }
 
     /**
@@ -54,10 +41,6 @@ public class MaintenanceWindow {
         return unit.convert(this.start, MaintenanceWindow.DEFAULT_TIME_UNIT);
     }
 
-    public Node getWestNode() {
-        return this.westNode;
-    }
-
     /**
      * Whether or not the give time is inside the window.
      * 
@@ -78,10 +61,9 @@ public class MaintenanceWindow {
 
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("MaintenanceWindow [startNode=").append(this.westNode).append(", endNode=")
-                .append(this.eastNode).append(", startingMinute=").append(this.start)
-                .append(", endingMinute=").append(this.end).append("]");
+        StringBuilder builder = new StringBuilder();
+        builder.append("MaintenanceWindow [start=").append(start).append(", end=").append(end)
+                .append("]");
         return builder.toString();
     }
 

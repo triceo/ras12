@@ -5,9 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.drools.planner.examples.ras2012.interfaces.Directed;
-
-public class Arc {
+public class Arc extends Section {
 
     // TODO rework so that speeds aren't static
     public enum TrackType {
@@ -81,25 +79,19 @@ public class Arc {
 
     private final BigDecimal           lengthInMiles;
 
-    private final Node                 westNode;
-    private final Node                 eastNode;
     private final String               asString;
 
     public Arc(final TrackType t, final BigDecimal lengthInMiles, final Node westNode,
             final Node eastNode) {
-        if (t == null || lengthInMiles == null || westNode == null || eastNode == null) {
+        super(westNode, eastNode);
+        if (t == null || lengthInMiles == null) {
             throw new IllegalArgumentException("Neither of the arguments can be null.");
-        }
-        if (westNode.equals(eastNode)) {
-            throw new IllegalArgumentException("Arcs must be between two different nodes.");
         }
         if (BigDecimal.ZERO.compareTo(lengthInMiles) > -1) {
             throw new IllegalArgumentException("Arc length must be greater than zero.");
         }
         this.trackType = t;
         this.lengthInMiles = lengthInMiles;
-        this.westNode = westNode;
-        this.eastNode = eastNode;
         this.asString = this.toStringInternal();
     }
 
@@ -121,36 +113,12 @@ public class Arc {
         return true;
     }
 
-    public Node getEastNode() {
-        return this.eastNode;
-    }
-
-    public Node getEndingNode(final Directed d) {
-        if (d.isEastbound()) {
-            return this.eastNode;
-        } else {
-            return this.westNode;
-        }
-    }
-
     public BigDecimal getLengthInMiles() {
         return this.lengthInMiles;
     }
 
-    public Node getStartingNode(final Directed d) {
-        if (d.isEastbound()) {
-            return this.westNode;
-        } else {
-            return this.eastNode;
-        }
-    }
-
     public TrackType getTrackType() {
         return this.trackType;
-    }
-
-    public Node getWestNode() {
-        return this.westNode;
     }
 
     @Override
@@ -168,8 +136,8 @@ public class Arc {
 
     private String toStringInternal() {
         final StringBuilder builder = new StringBuilder();
-        builder.append("Arc [").append(this.westNode.getId()).append("->")
-                .append(this.eastNode.getId()).append(", miles=").append(this.lengthInMiles)
+        builder.append("Arc [").append(this.getWestNode().getId()).append("->")
+                .append(this.getEastNode().getId()).append(", miles=").append(this.lengthInMiles)
                 .append(", type=").append(this.trackType).append("]");
         return builder.toString();
     }

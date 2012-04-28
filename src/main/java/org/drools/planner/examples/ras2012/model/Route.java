@@ -168,9 +168,9 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
         if (!this.contains(a)) {
             throw new IllegalArgumentException("The route doesn't contain the arc.");
         }
-        final Node n = a.getEndingNode(this);
+        final Node n = a.getInitialNode(this);
         for (final Arc a2 : this.arcs) {
-            if (a2.getStartingNode(this) == n) {
+            if (a2.getTerminalNode(this) == n) {
                 return a2;
             }
         }
@@ -200,9 +200,9 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
         if (!this.contains(a)) {
             throw new IllegalArgumentException("The route doesn't contain the arc.");
         }
-        final Node n = a.getStartingNode(this);
+        final Node n = a.getTerminalNode(this);
         for (final Arc a2 : this.arcs) {
-            if (a2.getEndingNode(this) == n) {
+            if (a2.getInitialNode(this) == n) {
                 return a2;
             }
         }
@@ -316,8 +316,8 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
         boolean containsOrigin = false;
         boolean containsDestination = false;
         for (final Arc a : this.arcs) {
-            containsOrigin = containsOrigin || a.getStartingNode(t) == t.getOrigin();
-            containsDestination = containsDestination || a.getEndingNode(t) == t.getDestination();
+            containsOrigin = containsOrigin || a.getTerminalNode(t) == t.getOrigin();
+            containsDestination = containsDestination || a.getInitialNode(t) == t.getDestination();
             if (a.getTrackType() == TrackType.SIDING) {
                 if (t.isHeavy()) {
                     /*
@@ -349,7 +349,7 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
             final Node requestedNode = sar.getDestination();
             boolean found = false;
             for (final Arc a : this.arcs) {
-                if (a.getStartingNode(t) == requestedNode || a.getEndingNode(t) == requestedNode) {
+                if (a.getTerminalNode(t) == requestedNode || a.getInitialNode(t) == requestedNode) {
                     found = true;
                     break;
                 }
@@ -389,8 +389,8 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
             os = new FileOutputStream(target);
             final Collection<Node> nodes = new HashSet<Node>();
             for (final Arc a : this.arcs) {
-                nodes.add(a.getStartingNode(this));
-                nodes.add(a.getEndingNode(this));
+                nodes.add(a.getTerminalNode(this));
+                nodes.add(a.getInitialNode(this));
             }
             Route.logger.info("Starting visualizing route: " + this.getId());
             new RouteVisualizer(this).visualize(os);

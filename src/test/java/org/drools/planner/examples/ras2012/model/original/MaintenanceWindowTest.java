@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class MaintenanceWindowTest {
+public class MaintenanceWindowTest extends AbstractSectionTest {
 
     @Test()
     public void testConstructor() {
@@ -43,6 +43,22 @@ public class MaintenanceWindowTest {
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorSame() {
         new MaintenanceWindow(Node.getNode(1), Node.getNode(1), 0, 1);
+    }
+
+    @Override
+    public void testInitialAndTerminalNodesOnRoute() {
+        // prepare arc to be tested
+        final MaintenanceWindow mow = new MaintenanceWindow(Node.getNode(0), Node.getNode(1), 0, 10);
+        super.actuallyTestInitialAndTerminalNodesOnRoute(mow);
+    }
+
+    @Override
+    public void testInitialAndTerminalNodesOnTrain() {
+        // prepare arc to be tested
+        final Node n1 = Node.getNode(0);
+        final Node n2 = Node.getNode(1);
+        final MaintenanceWindow mow = new MaintenanceWindow(n1, n2, 0, 10);
+        super.actuallyTestInitialAndTerminalNodesOnRoute(mow);
     }
 
     @Test

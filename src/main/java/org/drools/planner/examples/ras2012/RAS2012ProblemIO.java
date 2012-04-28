@@ -100,8 +100,8 @@ public class RAS2012ProblemIO implements ProblemIO {
                         .getPlanningHorizon(TimeUnit.MILLISECONDS)) {
                     continue;
                 }
-                w.write("\t\t\t\t<movement arc='(" + arc.getStartingNode(t).getId() + ","
-                        + arc.getEndingNode(t).getId() + ")' entry='" + timeInSeconds + "' exit='"
+                w.write("\t\t\t\t<movement arc='(" + arc.getTerminalNode(t).getId() + ","
+                        + arc.getInitialNode(t).getId() + ")' entry='" + timeInSeconds + "' exit='"
                         + leaveTime + "' />");
                 w.newLine();
             } else {
