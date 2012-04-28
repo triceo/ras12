@@ -60,7 +60,7 @@ public class Train implements Comparable<Train> {
     private final int                                tob;
     private final Node                               origin;
     private final Node                               destination;
-    private final long                               entryTime;
+    private final int                                entryTime;
     private final int                                wantTime;
     private final int                                originalDelay;
     private final List<ScheduleAdherenceRequirement> scheduleAdherenceRequirements;
@@ -69,7 +69,7 @@ public class Train implements Comparable<Train> {
     private final boolean                            isWestbound;
 
     public Train(final String name, final BigDecimal length, final BigDecimal speedMultiplier,
-            final int tob, final Node origin, final Node destination, final long entryTime,
+            final int tob, final Node origin, final Node destination, final int entryTime,
             final int wantTime, final int originalScheduleAdherence,
             final List<ScheduleAdherenceRequirement> sars, final boolean hazmat,
             final boolean isWestbound) {
@@ -156,6 +156,9 @@ public class Train implements Comparable<Train> {
     }
 
     public long getArcTravellingTimeInMilliseconds(final Arc a) {
+        if (a == null) {
+            throw new IllegalArgumentException("Arc cannot be null!");
+        }
         final BigDecimal milesPerHour = BigDecimal.valueOf(this.getMaximumSpeed(a.getTrackType()));
         final BigDecimal hours = a.getLengthInMiles().divide(milesPerHour, 10,
                 BigDecimal.ROUND_HALF_DOWN);
@@ -167,7 +170,7 @@ public class Train implements Comparable<Train> {
         return this.destination;
     }
 
-    public long getEntryTime() {
+    public int getEntryTime() {
         return this.entryTime;
     }
 

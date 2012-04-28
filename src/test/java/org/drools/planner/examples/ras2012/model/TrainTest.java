@@ -228,6 +228,12 @@ public class TrainTest {
         }
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetArcTravellingTimeInMillisecondsWithNullArc() {
+        Train t = this.getTrains(Node.getNode(0), Node.getNode(1))[0];
+        t.getArcTravellingTimeInMilliseconds(null);
+    }
+
     @Test
     public void testGetMaximumSpeed() {
         final Node n1 = Node.getNode(0);
@@ -249,6 +255,9 @@ public class TrainTest {
                             "Outside main tracks, the train max speed should equal arc speed.",
                             arcSpeed, t.getMaximumSpeed(a.getTrackType()));
                 }
+                Assert.assertEquals(
+                        "Maximum speed with unspecified track should return the highest possible train speed.",
+                        t.getMaximumSpeed(), t.getMaximumSpeed(TrackType.MAIN_0));
             }
         }
     }
@@ -269,6 +278,10 @@ public class TrainTest {
                     Node.getNode(1), 0, 1, 0,
                     Collections.<ScheduleAdherenceRequirement> emptyList(), true, false);
             Assert.assertEquals("Train doesn't have the proper type.", e.getValue(), t.getType());
+            // schedule adherence by train type is specified by the problem definition
+            final boolean adheresToSchedule = !(e.getKey().equals("E") || e.getKey().equals("F"));
+            Assert.assertEquals("Train doesn't adhere to schedule as expected.", adheresToSchedule,
+                    t.getType().adhereToSchedule());
         }
     }
 
