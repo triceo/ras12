@@ -1,10 +1,11 @@
-package org.drools.planner.examples.ras2012.model;
+package org.drools.planner.examples.ras2012.model.original;
 
 import java.math.BigDecimal;
 import java.util.Collections;
 
-import org.drools.planner.examples.ras2012.model.Arc.TrackType;
+import org.drools.planner.examples.ras2012.model.Route;
 import org.drools.planner.examples.ras2012.model.Route.Direction;
+import org.drools.planner.examples.ras2012.model.original.Arc.TrackType;
 import org.junit.Assert;
 import org.junit.Test;
 

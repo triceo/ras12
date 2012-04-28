@@ -8,9 +8,9 @@ import java.awt.Stroke;
 import edu.uci.ics.jung.visualization.RenderContext;
 import edu.uci.ics.jung.visualization.VisualizationImageServer;
 import org.apache.commons.collections15.Transformer;
-import org.drools.planner.examples.ras2012.model.Arc;
-import org.drools.planner.examples.ras2012.model.Node;
 import org.drools.planner.examples.ras2012.model.Route;
+import org.drools.planner.examples.ras2012.model.original.Arc;
+import org.drools.planner.examples.ras2012.model.original.Node;
 
 public class RouteVisualizer extends GraphVisualizer {
 

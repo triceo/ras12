@@ -1,10 +1,11 @@
-package org.drools.planner.examples.ras2012.model;
+package org.drools.planner.examples.ras2012.model.original;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.drools.planner.examples.ras2012.model.Route;
 import org.drools.planner.examples.ras2012.model.Route.Direction;
 
 public class Arc {

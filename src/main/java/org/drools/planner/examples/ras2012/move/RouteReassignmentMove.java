@@ -8,10 +8,10 @@ import org.drools.planner.core.move.Move;
 import org.drools.planner.core.score.director.ScoreDirector;
 import org.drools.planner.examples.ras2012.RAS2012Solution;
 import org.drools.planner.examples.ras2012.model.ItineraryAssignment;
-import org.drools.planner.examples.ras2012.model.Node;
 import org.drools.planner.examples.ras2012.model.Route;
-import org.drools.planner.examples.ras2012.model.Train;
-import org.drools.planner.examples.ras2012.model.WaitTime;
+import org.drools.planner.examples.ras2012.model.original.Node;
+import org.drools.planner.examples.ras2012.model.original.Train;
+import org.drools.planner.examples.ras2012.model.original.WaitTime;
 
 public class RouteReassignmentMove implements Move {
 

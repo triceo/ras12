@@ -1,6 +1,6 @@
-package org.drools.planner.examples.ras2012.model;
+package org.drools.planner.examples.ras2012.model.original;
 
-import org.drools.planner.examples.ras2012.model.Arc.TrackType;
+import org.drools.planner.examples.ras2012.model.original.Arc.TrackType;
 import org.junit.Assert;
 import org.junit.Test;
 

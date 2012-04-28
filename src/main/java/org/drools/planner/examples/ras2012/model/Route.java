@@ -17,7 +17,11 @@ import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.drools.planner.examples.ras2012.interfaces.Visualizable;
-import org.drools.planner.examples.ras2012.model.Arc.TrackType;
+import org.drools.planner.examples.ras2012.model.original.Arc;
+import org.drools.planner.examples.ras2012.model.original.Arc.TrackType;
+import org.drools.planner.examples.ras2012.model.original.Node;
+import org.drools.planner.examples.ras2012.model.original.ScheduleAdherenceRequirement;
+import org.drools.planner.examples.ras2012.model.original.Train;
 import org.drools.planner.examples.ras2012.util.RouteVisualizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

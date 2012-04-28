@@ -9,8 +9,8 @@ import org.drools.planner.core.move.factory.AbstractMoveFactory;
 import org.drools.planner.core.solution.Solution;
 import org.drools.planner.examples.ras2012.RAS2012Solution;
 import org.drools.planner.examples.ras2012.model.ItineraryAssignment;
-import org.drools.planner.examples.ras2012.model.Node;
-import org.drools.planner.examples.ras2012.model.WaitTime;
+import org.drools.planner.examples.ras2012.model.original.Node;
+import org.drools.planner.examples.ras2012.model.original.WaitTime;
 
 public class WaitTimeAssignmentMoveFactory extends AbstractMoveFactory {
 

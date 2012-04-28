@@ -12,9 +12,9 @@ import org.drools.planner.api.domain.solution.PlanningEntityCollectionProperty;
 import org.drools.planner.core.score.buildin.hardandsoft.HardAndSoftScore;
 import org.drools.planner.core.solution.Solution;
 import org.drools.planner.examples.ras2012.model.ItineraryAssignment;
-import org.drools.planner.examples.ras2012.model.MaintenanceWindow;
 import org.drools.planner.examples.ras2012.model.Network;
-import org.drools.planner.examples.ras2012.model.Train;
+import org.drools.planner.examples.ras2012.model.original.MaintenanceWindow;
+import org.drools.planner.examples.ras2012.model.original.Train;
 
 public class RAS2012Solution implements Solution<HardAndSoftScore> {
 

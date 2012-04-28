@@ -8,7 +8,7 @@ import org.drools.planner.core.move.factory.CachedMoveFactory;
 import org.drools.planner.core.solution.Solution;
 import org.drools.planner.examples.ras2012.RAS2012Solution;
 import org.drools.planner.examples.ras2012.model.Route;
-import org.drools.planner.examples.ras2012.model.Train;
+import org.drools.planner.examples.ras2012.model.original.Train;
 
 public class RouteReassignmentMoveFactory extends CachedMoveFactory {
 

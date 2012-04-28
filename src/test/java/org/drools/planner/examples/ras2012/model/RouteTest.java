@@ -6,8 +6,12 @@ import java.util.Collection;
 import java.util.Collections;
 
 import junit.framework.Assert;
-import org.drools.planner.examples.ras2012.model.Arc.TrackType;
 import org.drools.planner.examples.ras2012.model.Route.Direction;
+import org.drools.planner.examples.ras2012.model.original.Arc;
+import org.drools.planner.examples.ras2012.model.original.Arc.TrackType;
+import org.drools.planner.examples.ras2012.model.original.Node;
+import org.drools.planner.examples.ras2012.model.original.ScheduleAdherenceRequirement;
+import org.drools.planner.examples.ras2012.model.original.Train;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;

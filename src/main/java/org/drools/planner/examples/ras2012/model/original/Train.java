@@ -1,11 +1,11 @@
-package org.drools.planner.examples.ras2012.model;
+package org.drools.planner.examples.ras2012.model.original;
 
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.drools.planner.examples.ras2012.model.Arc.TrackType;
+import org.drools.planner.examples.ras2012.model.original.Arc.TrackType;
 
 public class Train implements Comparable<Train> {
 

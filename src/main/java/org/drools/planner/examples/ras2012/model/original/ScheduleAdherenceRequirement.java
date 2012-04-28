@@ -1,4 +1,4 @@
-package org.drools.planner.examples.ras2012.model;
+package org.drools.planner.examples.ras2012.model.original;
 
 import java.util.concurrent.TimeUnit;
 

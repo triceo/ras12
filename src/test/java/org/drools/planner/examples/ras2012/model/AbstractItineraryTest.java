@@ -14,7 +14,10 @@ import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 
 import org.drools.planner.examples.ras2012.RAS2012Solution;
-import org.drools.planner.examples.ras2012.model.Train.TrainType;
+import org.drools.planner.examples.ras2012.model.original.Arc;
+import org.drools.planner.examples.ras2012.model.original.Node;
+import org.drools.planner.examples.ras2012.model.original.Train;
+import org.drools.planner.examples.ras2012.model.original.Train.TrainType;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;

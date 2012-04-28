@@ -6,6 +6,8 @@ import org.drools.planner.api.domain.entity.PlanningEntity;
 import org.drools.planner.api.domain.variable.PlanningVariable;
 import org.drools.planner.api.domain.variable.ValueRange;
 import org.drools.planner.api.domain.variable.ValueRangeType;
+import org.drools.planner.examples.ras2012.model.original.MaintenanceWindow;
+import org.drools.planner.examples.ras2012.model.original.Train;
 
 @PlanningEntity
 public final class ItineraryAssignment implements Cloneable {

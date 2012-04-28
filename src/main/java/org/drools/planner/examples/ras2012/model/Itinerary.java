@@ -19,6 +19,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.drools.planner.examples.ras2012.RAS2012Solution;
+import org.drools.planner.examples.ras2012.model.original.Arc;
+import org.drools.planner.examples.ras2012.model.original.MaintenanceWindow;
+import org.drools.planner.examples.ras2012.model.original.Node;
+import org.drools.planner.examples.ras2012.model.original.ScheduleAdherenceRequirement;
+import org.drools.planner.examples.ras2012.model.original.Train;
+import org.drools.planner.examples.ras2012.model.original.WaitTime;
 import org.drools.planner.examples.ras2012.util.ItineraryVisualizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
