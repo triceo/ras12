@@ -56,18 +56,19 @@ public final class Itinerary {
 
     private final Train                        train;
 
-    private final AtomicBoolean                scheduleCacheValid = new AtomicBoolean(false);
-    private final Set<Node>                    nodesEnRoute       = new HashSet<Node>();
-    private final SortedMap<Long, Node>        scheduleCache      = new TreeMap<Long, Node>();
+    private final AtomicBoolean                scheduleCacheValid    = new AtomicBoolean(false);
+    private final Set<Node>                    nodesEnRoute          = new HashSet<Node>();
+    private final SortedMap<Long, Node>        scheduleCache         = new TreeMap<Long, Node>();
+    private final SortedMap<Long, Arc>         scheduleCacheWithArcs = new TreeMap<Long, Arc>();
     private final long                         trainEntryTime;
-    private final List<Arc>                    arcProgression     = new LinkedList<Arc>();
-    private final Map<Node, Arc>               arcPerStartNode    = new HashMap<Node, Arc>();
-    private final Map<Node, WaitTime>          nodeWaitTimes      = new HashMap<Node, WaitTime>();
+    private final List<Arc>                    arcProgression        = new LinkedList<Arc>();
+    private final Map<Node, Arc>               arcPerStartNode       = new HashMap<Node, Arc>();
+    private final Map<Node, WaitTime>          nodeWaitTimes         = new HashMap<Node, WaitTime>();
 
     // FIXME only one window per node; multiple different windows with same node will get lost
-    private final Map<Node, MaintenanceWindow> maintenances       = new HashMap<Node, MaintenanceWindow>();
+    private final Map<Node, MaintenanceWindow> maintenances          = new HashMap<Node, MaintenanceWindow>();
 
-    private final Map<Long, Collection<Arc>>   occupiedArcsCache  = new HashMap<Long, Collection<Arc>>();
+    private final Map<Long, Collection<Arc>>   occupiedArcsCache     = new HashMap<Long, Collection<Arc>>();
 
     public Itinerary(final Route r, final Train t,
             final Collection<MaintenanceWindow> maintenanceWindows) {
@@ -100,6 +101,62 @@ public final class Itinerary {
             final Node n = mow.getOrigin(t);
             this.maintenances.put(n, mow);
         }
+    }
+
+    private void cacheSchedule() {
+        int i = 0;
+        long previousTime = 0;
+        Arc previousArc = null;
+        boolean seekingStart = true;
+        for (final Arc currentArc : this.arcProgression) {
+            // arc progression begins with the start of the route; the train doesn't necessarily start there
+            if (seekingStart) {
+                if (currentArc.getOrigin(this.getTrain()) != this.getTrain().getOrigin()) {
+                    continue;
+                } else {
+                    seekingStart = false;
+                }
+            }
+            long time = 0;
+            if (i == 0) {
+                // first item needs to be augmented by the train entry time
+                time += this.trainEntryTime;
+            } else {
+                // otherwise we need to convert a relative time to an absolute time by adding the previous node's time
+                time = this.getTrain().getArcTravellingTime(previousArc,
+                        Itinerary.DEFAULT_TIME_UNIT);
+                time += previousTime;
+            }
+            // now adjust for node wait time, should there be any
+            final Node n = currentArc.getOrigin(this.getTrain());
+            final WaitTime wt = this.nodeWaitTimes.get(n);
+            if (wt != null) {
+                time += wt.getWaitFor(Itinerary.DEFAULT_TIME_UNIT);
+            }
+            // check for maintenance windows
+            if (this.maintenances.containsKey(n)) {
+                // there is a maintenance registered for the next node
+                final MaintenanceWindow w = this.maintenances.get(n);
+                if (w.isInside(time, Itinerary.DEFAULT_TIME_UNIT)) { // the maintenance is ongoing, we have to wait
+                    // and adjust total node entry time
+                    time = w.getEnd(Itinerary.DEFAULT_TIME_UNIT);
+                }
+            }
+            // and store
+            this.scheduleCache.put(time, n);
+            this.scheduleCacheWithArcs.put(time, currentArc);
+            previousTime = time;
+            previousArc = currentArc;
+            i++;
+        }
+        if (previousArc == null) {
+            throw new IllegalStateException("previousArc == null. That shouldn't have happened!");
+        }
+        final long time = previousTime
+                + this.getTrain().getArcTravellingTime(previousArc, Itinerary.DEFAULT_TIME_UNIT);
+        this.scheduleCache.put(time, previousArc.getDestination(this.getTrain()));
+        this.scheduleCacheWithArcs.put(time, previousArc);
+        this.scheduleCacheValid.set(true);
     }
 
     @Override
@@ -254,60 +311,7 @@ public final class Itinerary {
 
     public synchronized SortedMap<Long, Node> getSchedule() {
         if (!this.scheduleCacheValid.get() || this.scheduleCache.size() == 0) {
-            int i = 0;
-            long previousTime = 0;
-            Arc previousArc = null;
-            boolean seekingStart = true;
-            for (final Arc currentArc : this.arcProgression) {
-                // arc progression begins with the start of the route; the train doesn't necessarily start there
-                if (seekingStart) {
-                    if (currentArc.getOrigin(this.getTrain()) != this.getTrain().getOrigin()) {
-                        continue;
-                    } else {
-                        seekingStart = false;
-                    }
-                }
-                long time = 0;
-                if (i == 0) {
-                    // first item needs to be augmented by the train entry time
-                    time += this.trainEntryTime;
-                } else {
-                    // otherwise we need to convert a relative time to an absolute time by adding the previous node's time
-                    time = this.getTrain().getArcTravellingTime(previousArc,
-                            Itinerary.DEFAULT_TIME_UNIT);
-                    time += previousTime;
-                }
-                // now adjust for node wait time, should there be any
-                final Node n = currentArc.getOrigin(this.getTrain());
-                final WaitTime wt = this.nodeWaitTimes.get(n);
-                if (wt != null) {
-                    time += wt.getWaitFor(Itinerary.DEFAULT_TIME_UNIT);
-                }
-                // check for maintenance windows
-                if (this.maintenances.containsKey(n)) {
-                    // there is a maintenance registered for the next node
-                    final MaintenanceWindow w = this.maintenances.get(n);
-                    if (w.isInside(time, Itinerary.DEFAULT_TIME_UNIT)) { // the maintenance is ongoing, we have to wait
-                        // and adjust total node entry time
-                        time = w.getEnd(Itinerary.DEFAULT_TIME_UNIT);
-                    }
-                }
-                // and store
-                this.scheduleCache.put(time, n);
-                previousTime = time;
-                previousArc = currentArc;
-                i++;
-            }
-            if (previousArc == null) {
-                throw new IllegalStateException(
-                        "previousArc == null. That shouldn't have happened!");
-            }
-            this.scheduleCache.put(
-                    previousTime
-                            + this.getTrain().getArcTravellingTime(previousArc,
-                                    Itinerary.DEFAULT_TIME_UNIT),
-                    previousArc.getDestination(this.getTrain()));
-            this.scheduleCacheValid.set(true);
+            this.cacheSchedule();
         }
         return Collections.unmodifiableSortedMap(this.scheduleCache);
     }
@@ -347,12 +351,11 @@ public final class Itinerary {
         return Collections.unmodifiableMap(result);
     }
 
-    public SortedMap<Long, Arc> getScheduleWithArcs() {
-        final SortedMap<Long, Arc> entries = new TreeMap<Long, Arc>();
-        for (final SortedMap.Entry<Long, Node> entry : this.getSchedule().entrySet()) {
-            entries.put(entry.getKey(), this.getArcPerStartingNode(entry.getValue()));
+    public synchronized SortedMap<Long, Arc> getScheduleWithArcs() {
+        if (!this.scheduleCacheValid.get() || this.scheduleCache.size() == 0) {
+            this.cacheSchedule();
         }
-        return Collections.unmodifiableSortedMap(entries);
+        return Collections.unmodifiableSortedMap(this.scheduleCacheWithArcs);
     }
 
     public long getTimeSpentOnUnpreferredTracks(final long time) {
@@ -365,12 +368,8 @@ public final class Itinerary {
          */
         long previousTimeOfEntry = 0;
         Arc previousArc = null;
-        for (final SortedMap.Entry<Long, Arc> entry : arcEntryTimes.entrySet()) {
+        for (final SortedMap.Entry<Long, Arc> entry : arcEntryTimes.headMap(time).entrySet()) {
             final long currentTimeOfEntry = entry.getKey();
-            if (currentTimeOfEntry > time) {
-                // we're not interested in values that are beyond the specified time
-                continue;
-            }
             final Arc a = entry.getValue();
             if (previousArc != null && !this.getRoute().isArcPreferred(previousArc)) {
                 if (previousArc == leadingArc) {
@@ -433,6 +432,7 @@ public final class Itinerary {
     private synchronized void invalidateCaches() {
         this.occupiedArcsCache.clear();
         this.scheduleCache.clear();
+        this.scheduleCacheWithArcs.clear();
     }
 
     public boolean isNodeOnRoute(final Node n) {
