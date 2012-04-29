@@ -1,10 +1,7 @@
 package org.drools.planner.examples.ras2012;
 
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.SortedMap;
 import java.util.concurrent.TimeUnit;
 
@@ -13,9 +10,9 @@ import org.drools.planner.core.score.buildin.hardandsoft.HardAndSoftScore;
 import org.drools.planner.core.score.director.incremental.AbstractIncrementalScoreCalculator;
 import org.drools.planner.examples.ras2012.model.Itinerary;
 import org.drools.planner.examples.ras2012.model.ItineraryAssignment;
-import org.drools.planner.examples.ras2012.model.original.Arc;
 import org.drools.planner.examples.ras2012.model.original.Node;
 import org.drools.planner.examples.ras2012.model.original.Train;
+import org.drools.planner.examples.ras2012.util.ConflictRegistry;
 
 public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<RAS2012Solution> {
 
@@ -32,21 +29,21 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
         }
     }
 
-    private RAS2012Solution                              solution                   = null;
+    private RAS2012Solution           solution                   = null;
 
-    private final Map<Train, Boolean>                    didTrainArrive             = new HashMap<Train, Boolean>();
+    private final Map<Train, Boolean> didTrainArrive             = new HashMap<Train, Boolean>();
 
-    private final Map<Train, Integer>                    wantTimePenalties          = new HashMap<Train, Integer>();
+    private final Map<Train, Integer> wantTimePenalties          = new HashMap<Train, Integer>();
 
-    private final Map<Train, Integer>                    delayPenalties             = new HashMap<Train, Integer>();
+    private final Map<Train, Integer> delayPenalties             = new HashMap<Train, Integer>();
 
-    private final Map<Train, Integer>                    scheduleAdherencePenalties = new HashMap<Train, Integer>();
+    private final Map<Train, Integer> scheduleAdherencePenalties = new HashMap<Train, Integer>();
 
-    private final Map<Train, Integer>                    unpreferredTracksPenalties = new HashMap<Train, Integer>();
+    private final Map<Train, Integer> unpreferredTracksPenalties = new HashMap<Train, Integer>();
 
-    private HardAndSoftScore                             cache                      = null;
+    private HardAndSoftScore          cache                      = null;
 
-    private final Map<Long, Map<Train, Collection<Arc>>> occupiedArcs               = new HashMap<Long, Map<Train, Collection<Arc>>>();
+    private final ConflictRegistry    conflicts                  = new ConflictRegistry(720 * 2);
 
     @Override
     public void afterAllVariablesChanged(final Object entity) {
@@ -118,7 +115,7 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
             penalty += this.unpreferredTracksPenalties.containsKey(t) ? this.unpreferredTracksPenalties
                     .get(t) : 0;
         }
-        final int conflicts = this.getConflicts();
+        final int conflicts = this.conflicts.countConflicts();
         if (conflicts > 0) {
             return DefaultHardAndSoftScore.valueOf(-conflicts, -penalty);
         } else {
@@ -133,7 +130,7 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
         this.scheduleAdherencePenalties.clear();
         this.delayPenalties.clear();
         this.didTrainArrive.clear();
-        this.occupiedArcs.clear();
+        this.conflicts.reset();
     }
 
     private boolean didTrainArrive(final Itinerary producer) {
@@ -147,23 +144,6 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
             }
         }
         return false;
-    }
-
-    private int getConflicts() {
-        int conflicts = 0;
-        for (final Map<Train, Collection<Arc>> entry : this.occupiedArcs.values()) {
-            final Set<Arc> conflictingArcs = new HashSet<Arc>();
-            for (final Collection<Arc> arcsOccupiedByTrain : entry.values()) {
-                for (final Arc a : arcsOccupiedByTrain) {
-                    if (conflictingArcs.contains(a)) {
-                        conflicts++;
-                    } else {
-                        conflictingArcs.add(a);
-                    }
-                }
-            }
-        }
-        return conflicts;
     }
 
     private int getDelayPenalty(final Itinerary i, final RAS2012Solution solution) {
@@ -243,12 +223,9 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
 
     private void recalculateOccupiedArcs(final ItineraryAssignment ia) {
         // insert the number of conflicts for the given assignments
-        for (long milliseconds = 0; RAS2012ScoreCalculator.isInPlanningHorizon(milliseconds); milliseconds += 30000) {
-            if (!this.occupiedArcs.containsKey(milliseconds)) {
-                this.occupiedArcs.put(milliseconds, new HashMap<Train, Collection<Arc>>());
-            }
-            final Map<Train, Collection<Arc>> arcs = this.occupiedArcs.get(milliseconds);
-            arcs.put(ia.getTrain(), ia.getItinerary().getCurrentlyOccupiedArcs(milliseconds));
+        for (long time = 0; RAS2012ScoreCalculator.isInPlanningHorizon(time); time += 30000) {
+            this.conflicts.setOccupiedArcs(time, ia.getTrain(), ia.getItinerary()
+                    .getCurrentlyOccupiedArcs(time));
         }
     }
 
@@ -269,9 +246,6 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
         this.scheduleAdherencePenalties.remove(t);
         this.delayPenalties.remove(t);
         this.didTrainArrive.remove(t);
-        for (final Map.Entry<Long, Map<Train, Collection<Arc>>> entry : this.occupiedArcs
-                .entrySet()) {
-            entry.getValue().remove(ia.getTrain());
-        }
+        this.conflicts.resetTrainData(t);
     }
 }

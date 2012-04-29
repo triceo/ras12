@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -217,9 +218,9 @@ public final class Itinerary {
         if (leadingArc == null) {
             // train not in the network
             // FIXME train should leave the network gradually, not at once when it reaches destination
-            return new HashSet<Arc>();
+            return Collections.emptySet();
         }
-        final List<Arc> occupiedArcs = new LinkedList<Arc>();
+        final Collection<Arc> occupiedArcs = new LinkedHashSet<Arc>();
         occupiedArcs.add(leadingArc);
         // calculate how far are we into the leading arc
         final SortedMap<Long, Arc> nodeEntryTimes = this.getScheduleWithArcs();
