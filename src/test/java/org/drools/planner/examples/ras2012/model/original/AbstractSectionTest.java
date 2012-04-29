@@ -9,13 +9,7 @@ import org.junit.Test;
 
 public abstract class AbstractSectionTest {
 
-    @Test
-    public abstract void testInitialAndTerminalNodesOnTrain();
-
-    @Test
-    public abstract void testInitialAndTerminalNodesOnRoute();
-
-    protected void actuallyTestInitialAndTerminalNodesOnRoute(Section s) {
+    protected void actuallyTestInitialAndTerminalNodesOnRoute(final Section s) {
         // prepare routes, one eastbound and one westbound
         final Route eastbound = new Route(true);
         final Route westbound = new Route(false);
@@ -26,7 +20,7 @@ public abstract class AbstractSectionTest {
         Assert.assertSame(s.getWestNode(), s.getDestination(westbound));
     }
 
-    protected void actuallyTestInitialAndTerminalNodesOnTrain(Section s) {
+    protected void actuallyTestInitialAndTerminalNodesOnTrain(final Section s) {
         // prepare routes, one eastbound and one westbound
         final BigDecimal length = new BigDecimal("1.5");
         final Train westbound = new Train("A1", BigDecimal.ONE, length, 90, s.getEastNode(),
@@ -41,5 +35,11 @@ public abstract class AbstractSectionTest {
         Assert.assertSame(s.getEastNode(), s.getOrigin(westbound));
         Assert.assertSame(s.getWestNode(), s.getDestination(westbound));
     }
+
+    @Test
+    public abstract void testInitialAndTerminalNodesOnRoute();
+
+    @Test
+    public abstract void testInitialAndTerminalNodesOnTrain();
 
 }

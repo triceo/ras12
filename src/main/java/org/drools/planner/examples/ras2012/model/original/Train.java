@@ -234,6 +234,7 @@ public class Train implements Comparable<Train>, Directed {
         return result;
     }
 
+    @Override
     public boolean isEastbound() {
         return !this.isWestbound();
     }
@@ -242,6 +243,7 @@ public class Train implements Comparable<Train>, Directed {
         return this.tob > 100;
     }
 
+    @Override
     public boolean isWestbound() {
         return this.isWestbound;
     }

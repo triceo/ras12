@@ -43,6 +43,7 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
     private final List<Arc>           arcs                    = new LinkedList<Arc>();
 
     private final boolean             isEastbound;
+    private final Arc                 origin, destination;
 
     private final int                 id                      = Route.idGenerator.getAndIncrement();
 
@@ -53,13 +54,17 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
     private final Map<Train, Boolean> routePossibilitiesCache = new HashMap<Train, Boolean>();
 
     public Route(final boolean isEastbound) {
-        this.isEastbound = isEastbound;
+        this(isEastbound, null, null);
     }
 
     private Route(final boolean isEastbound, final Arc... e) {
-        this(isEastbound);
+        this.isEastbound = isEastbound;
+        this.origin = e[0];
+        this.destination = e[e.length - 1];
         for (final Arc a : e) {
-            this.arcs.add(a);
+            if (a != null) {
+                this.arcs.add(a);
+            }
         }
     }
 
@@ -116,37 +121,58 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
         if (this.arcs.contains(add)) {
             throw new IllegalArgumentException("Cannot extend route with the same arc twice!");
         }
-        final Collection<Arc> newParts = new ArrayList<Arc>(this.arcs);
+        final List<Arc> newParts = new ArrayList<Arc>(this.arcs);
         newParts.add(add);
         final Arc[] result = newParts.toArray(new Arc[newParts.size()]);
         return new Route(this.isEastbound(), result);
+    }
+
+    private Arc getAdjacentArc(final Arc arc, final boolean next) {
+        if (this.arcs.isEmpty()) {
+            throw new IllegalArgumentException("There are no arcs in an empty route.");
+        } else if (arc == null) {
+            if (next) {
+                return this.getOrigin();
+            } else {
+                return this.getDestination();
+            }
+        } else if (!this.contains(arc)) {
+            throw new IllegalArgumentException("The route doesn't contain the arc.");
+        }
+        final int index = this.arcs.indexOf(arc);
+        final int leftIndex = index - 1;
+        final Arc arcLeftOf = leftIndex < 0 ? null : this.arcs.get(leftIndex);
+        final int rightIndex = index + 1;
+        final Arc arcRightOf = rightIndex < this.arcs.size() ? this.arcs.get(rightIndex) : null;
+        if (next) {
+            if (this.isNextArc(arc, arcLeftOf)) {
+                return arcLeftOf;
+            } else if (this.isNextArc(arc, arcRightOf)) {
+                return arcRightOf;
+            }
+        } else {
+            if (this.isPreviousArc(arc, arcLeftOf)) {
+                return arcLeftOf;
+            } else if (this.isPreviousArc(arc, arcRightOf)) {
+                return arcRightOf;
+            }
+        }
+        return null;
     }
 
     public List<Arc> getArcs() {
         return this.arcs;
     }
 
-    public int getId() {
-        return this.id;
+    public Arc getDestination() {
+        if (this.destination == null) {
+            return this.origin;
+        }
+        return this.destination;
     }
 
-    public Arc getOrigin() {
-        if (this.arcs.size() == 0) {
-            throw new IllegalStateException("There are no arcs.");
-        } else if (this.arcs.size() == 1) {
-            return this.arcs.get(0);
-        }
-        /*
-         * get the first and last arc inserted; some arc should have the west node == 0, it is the west-most arc; the other is
-         * by definition the east-most arc
-         */
-        final Arc first = this.arcs.get(0);
-        final Arc last = this.arcs.get(this.arcs.size() - 1);
-        if (this.isEastbound()) {
-            return (first.getOrigin(this) == Node.getNode(0)) ? first : last;
-        } else {
-            return (first.getDestination(this) == Node.getNode(0)) ? last : first;
-        }
+    public int getId() {
+        return this.id;
     }
 
     private int getLengthInArcs() {
@@ -154,22 +180,7 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
     }
 
     public Arc getNextArc(final Arc a) {
-        if (this.arcs.isEmpty()) {
-            throw new IllegalArgumentException("There is no next arc in an empty route.");
-        }
-        if (a == null) {
-            return this.getOrigin();
-        }
-        if (!this.contains(a)) {
-            throw new IllegalArgumentException("The route doesn't contain the arc.");
-        }
-        final Node n = a.getDestination(this);
-        for (final Arc a2 : this.arcs) {
-            if (a2.getOrigin(this) == n) {
-                return a2;
-            }
-        }
-        return null;
+        return this.getAdjacentArc(a, true);
     }
 
     private int getNumberOfPreferredTracks() {
@@ -185,33 +196,12 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
         return this.numberOfPreferredTracks;
     }
 
-    public Arc getPreviousArc(final Arc a) {
-        if (this.arcs.isEmpty()) {
-            throw new IllegalArgumentException("There is no previous arc in an empty route.");
-        }
-        if (a == null) {
-            return this.getDestination();
-        }
-        if (!this.contains(a)) {
-            throw new IllegalArgumentException("The route doesn't contain the arc.");
-        }
-        final Node n = a.getOrigin(this);
-        for (final Arc a2 : this.arcs) {
-            if (a2.getDestination(this) == n) {
-                return a2;
-            }
-        }
-        return null;
+    public Arc getOrigin() {
+        return this.origin;
     }
 
-    public Arc getDestination() {
-        final Arc initial = this.getOrigin();
-        final Arc first = this.arcs.get(0);
-        if (first == initial) {
-            return this.arcs.get(this.arcs.size() - 1);
-        } else {
-            return first;
-        }
+    public Arc getPreviousArc(final Arc a) {
+        return this.getAdjacentArc(a, false);
     }
 
     private BigDecimal getTravellingTimeInMinutes() {
@@ -281,6 +271,13 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
         return this.isEastbound;
     }
 
+    private boolean isNextArc(final Arc current, final Arc supposedlyNext) {
+        if (supposedlyNext == null) {
+            return current == this.getDestination();
+        }
+        return current.getDestination(this) == supposedlyNext.getOrigin(this);
+    }
+
     public boolean isPossibleForTrain(final Train t) {
         if (!this.routePossibilitiesCache.containsKey(t)) {
             this.routePossibilitiesCache.put(t, this.isPossibleForTrainUncached(t));
@@ -341,6 +338,13 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
             }
         }
         return true;
+    }
+
+    private boolean isPreviousArc(final Arc current, final Arc supposedlyPrevious) {
+        if (supposedlyPrevious == null) {
+            return current == this.getOrigin();
+        }
+        return current.getOrigin(this) == supposedlyPrevious.getDestination(this);
     }
 
     @Override

@@ -298,6 +298,10 @@ public final class Itinerary {
                 previousArc = currentArc;
                 i++;
             }
+            if (previousArc == null) {
+                throw new IllegalStateException(
+                        "previousArc == null. That shouldn't have happened!");
+            }
             this.scheduleCache.put(
                     previousTime
                             + this.getTrain().getArcTravellingTime(previousArc,

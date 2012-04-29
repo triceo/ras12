@@ -89,8 +89,8 @@ public class GraphVisualizer {
             g = new UndirectedOrderedSparseMultigraph<Node, Arc>();
         }
         for (final Arc a : this.edges) {
-            Node routelessOrigin = a.getOrigin(new Route(false));
-            Node routelessDestination = a.getDestination(new Route(false));
+            final Node routelessOrigin = a.getOrigin(new Route(false));
+            final Node routelessDestination = a.getDestination(new Route(false));
             g.addVertex(routelessOrigin);
             g.addVertex(routelessDestination);
             if (this.route == null) {

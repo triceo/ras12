@@ -103,36 +103,16 @@ public class RouteTest {
                 r.getDestination(), r.getOrigin());
         Assert.assertSame("With just one arc, initial and terminal arcs should equal. ",
                 r.getDestination(), r.getOrigin());
-        if (r.isEastbound()) {
-            r = r.extend(a2);
-            Assert.assertSame("With two arcs eastbound, the first inserted one should be initial.",
-                    a1, r.getOrigin());
-            Assert.assertSame(
-                    "With two arcs eastbound, the second inserted one should be terminal.", a2,
-                    r.getDestination());
-            r = r.extend(a3);
-            Assert.assertSame(
-                    "With three arcs eastbound, the first inserted one should be initial.", a1,
-                    r.getOrigin());
-            Assert.assertSame(
-                    "With three arcs eastbound, the last inserted one should be terminal.", a3,
-                    r.getDestination());
-        } else {
-            r = r.extend(a2);
-            Assert.assertSame(
-                    "With two arcs westbound, the second inserted one should be initial.", a2,
-                    r.getOrigin());
-            Assert.assertSame(
-                    "With two arcs westbound, the first inserted one should be terminal.", a1,
-                    r.getDestination());
-            r = r.extend(a3);
-            Assert.assertSame(
-                    "With three arcs westbound, the last inserted one should be initial.", a3,
-                    r.getOrigin());
-            Assert.assertSame(
-                    "With three arcs westbound, the first inserted one should be terminal.", a1,
-                    r.getDestination());
-        }
+        r = r.extend(a2);
+        Assert.assertSame("With two arcs, the first inserted one should be initial.", a1,
+                r.getOrigin());
+        Assert.assertSame("With two arcs, the second inserted one should be terminal.", a2,
+                r.getDestination());
+        r = r.extend(a3);
+        Assert.assertSame("With three arcs, the first inserted one should be initial.", a1,
+                r.getOrigin());
+        Assert.assertSame("With three arcs, the last inserted one should be terminal.", a3,
+                r.getDestination());
     }
 
     @Test
@@ -144,40 +124,23 @@ public class RouteTest {
         final Arc a1 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n1, n2);
         final Arc a2 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n2, n3);
         // validate
+        final Arc firstExtend = this.isEastbound ? a1 : a2;
+        final Arc secondExtend = this.isEastbound ? a2 : a1;
         Route r = new Route(this.isEastbound);
-        r = r.extend(a1);
+        r = r.extend(firstExtend);
         Assert.assertNull("On a route with single arc, next arc to the first one is null.",
-                r.getNextArc(a1));
+                r.getNextArc(firstExtend));
         Assert.assertNull("On a route with single arc, previous arc to the first one is null.",
-                r.getPreviousArc(a1));
-        r = r.extend(a2);
-        if (r.isWestbound()) {
-            Assert.assertNull(
-                    "On westbound route with two arcs, next arc to the first one is null.",
-                    r.getNextArc(a1));
-            Assert.assertSame(
-                    "On westbound route with two arcs, next arc to the second one is the first.",
-                    a1, r.getNextArc(a2));
-            Assert.assertSame(
-                    "On westbound route with two arcs, previous arc to the first one is the second.",
-                    a2, r.getPreviousArc(a1));
-            Assert.assertNull(
-                    "On westbound route with two arcs, previous arc to the second one is null.",
-                    r.getPreviousArc(a2));
-        } else {
-            Assert.assertSame(
-                    "On eastbound route with two arcs, next arc to the first one is the second.",
-                    a2, r.getNextArc(a1));
-            Assert.assertNull(
-                    "On eastbound route with two arcs, next arc to the second one is null.",
-                    r.getNextArc(a2));
-            Assert.assertNull(
-                    "On eastbound route with two arcs, previous arc to the first one is null.",
-                    r.getPreviousArc(a1));
-            Assert.assertSame(
-                    "On eastbound route with two arcs, previous arc to the second one is the first.",
-                    a1, r.getPreviousArc(a2));
-        }
+                r.getPreviousArc(firstExtend));
+        r = r.extend(secondExtend);
+        Assert.assertNull("On route with two arcs, next arc to the second one is null.",
+                r.getNextArc(secondExtend));
+        Assert.assertSame("On route with two arcs, next arc to the first one is the second.",
+                secondExtend, r.getNextArc(firstExtend));
+        Assert.assertSame("On route with two arcs, previous arc to the second one is the first.",
+                firstExtend, r.getPreviousArc(secondExtend));
+        Assert.assertNull("On route with two arcs, previous arc to the first one is null.",
+                r.getPreviousArc(firstExtend));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -289,7 +252,12 @@ public class RouteTest {
         final Arc a1 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n1, n2);
         final Arc a2 = new Arc(TrackType.SIDING, BigDecimal.ONE, n2, n3);
         final Arc a3 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n3, n4);
-        final Route r = new Route(this.isEastbound).extend(a1).extend(a2).extend(a3);
+        Route r = new Route(this.isEastbound);
+        if (this.isEastbound) {
+            r = r.extend(a1).extend(a2).extend(a3);
+        } else {
+            r = r.extend(a3).extend(a2).extend(a1);
+        }
         final Collection<Node> wp = r.getWaitPoints();
         Assert.assertEquals("One siding means two wait points, start + siding.", 2, wp.size());
         Assert.assertTrue("One of the wait points should be the route start.",
