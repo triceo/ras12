@@ -61,9 +61,9 @@ public class MaintenanceWindow extends Section {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("MaintenanceWindow [start=").append(start).append(", end=").append(end)
-                .append("]");
+        final StringBuilder builder = new StringBuilder();
+        builder.append("MaintenanceWindow [start=").append(this.start).append(", end=")
+                .append(this.end).append(", section=").append(super.toString()).append("]");
         return builder.toString();
     }
 

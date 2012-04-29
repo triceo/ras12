@@ -87,7 +87,7 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
         }
     }
 
-    public boolean contains(final Arc e) {
+    protected boolean contains(final Arc e) {
         return this.arcs.contains(e);
     }
 
@@ -146,16 +146,8 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
         }
     }
 
-    public int getLengthInArcs() {
+    private int getLengthInArcs() {
         return this.arcs.size();
-    }
-
-    public BigDecimal getLengthInMiles() {
-        BigDecimal result = BigDecimal.ZERO;
-        for (final Arc a : this.arcs) {
-            result = result.add(a.getLengthInMiles());
-        }
-        return result;
     }
 
     public Arc getNextArc(final Arc a) {
@@ -168,9 +160,9 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
         if (!this.contains(a)) {
             throw new IllegalArgumentException("The route doesn't contain the arc.");
         }
-        final Node n = a.getInitialNode(this);
+        final Node n = a.getDestination(this);
         for (final Arc a2 : this.arcs) {
-            if (a2.getTerminalNode(this) == n) {
+            if (a2.getOrigin(this) == n) {
                 return a2;
             }
         }
@@ -200,9 +192,9 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
         if (!this.contains(a)) {
             throw new IllegalArgumentException("The route doesn't contain the arc.");
         }
-        final Node n = a.getTerminalNode(this);
+        final Node n = a.getOrigin(this);
         for (final Arc a2 : this.arcs) {
-            if (a2.getInitialNode(this) == n) {
+            if (a2.getDestination(this) == n) {
                 return a2;
             }
         }
@@ -210,13 +202,12 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
     }
 
     public Arc getTerminalArc() {
-        final Arc one = this.arcs.get(0);
-        final Arc two = this.arcs.get(this.arcs.size() - 1);
         final Arc initial = this.getInitialArc();
-        if (one == initial) {
-            return two;
+        final Arc first = this.arcs.get(0);
+        if (first == initial) {
+            return this.arcs.get(this.arcs.size() - 1);
         } else {
-            return one;
+            return first;
         }
     }
 
@@ -316,8 +307,8 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
         boolean containsOrigin = false;
         boolean containsDestination = false;
         for (final Arc a : this.arcs) {
-            containsOrigin = containsOrigin || a.getTerminalNode(t) == t.getOrigin();
-            containsDestination = containsDestination || a.getInitialNode(t) == t.getDestination();
+            containsOrigin = containsOrigin || a.getOrigin(t) == t.getOrigin();
+            containsDestination = containsDestination || a.getDestination(t) == t.getDestination();
             if (a.getTrackType() == TrackType.SIDING) {
                 if (t.isHeavy()) {
                     /*
@@ -349,7 +340,7 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
             final Node requestedNode = sar.getDestination();
             boolean found = false;
             for (final Arc a : this.arcs) {
-                if (a.getTerminalNode(t) == requestedNode || a.getInitialNode(t) == requestedNode) {
+                if (a.getOrigin(t) == requestedNode || a.getDestination(t) == requestedNode) {
                     found = true;
                     break;
                 }
@@ -369,16 +360,8 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        builder.append("Route [id=");
-        builder.append(this.id);
-        builder.append(", isEastbound=");
-        builder.append(this.isEastbound);
-        builder.append(", ");
-        if (this.arcs != null) {
-            builder.append("arcs=");
-            builder.append(this.arcs);
-        }
-        builder.append("]");
+        builder.append("Route [id=").append(this.id).append(", isEastbound=")
+                .append(this.isEastbound).append(", arcs=").append(this.arcs).append("]");
         return builder.toString();
     }
 
@@ -389,8 +372,8 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
             os = new FileOutputStream(target);
             final Collection<Node> nodes = new HashSet<Node>();
             for (final Arc a : this.arcs) {
-                nodes.add(a.getTerminalNode(this));
-                nodes.add(a.getInitialNode(this));
+                nodes.add(a.getOrigin(this));
+                nodes.add(a.getDestination(this));
             }
             Route.logger.info("Starting visualizing route: " + this.getId());
             new RouteVisualizer(this).visualize(os);

@@ -136,9 +136,9 @@ public class Arc extends Section {
 
     private String toStringInternal() {
         final StringBuilder builder = new StringBuilder();
-        builder.append("Arc [").append(this.getWestNode().getId()).append("->")
-                .append(this.getEastNode().getId()).append(", miles=").append(this.lengthInMiles)
-                .append(", type=").append(this.trackType).append("]");
+        builder.append("Arc [id=").append(this.id).append(", trackType=").append(this.trackType)
+                .append(", lengthInMiles=").append(this.lengthInMiles).append(", section=")
+                .append(super.toString()).append("]");
         return builder.toString();
     }
 

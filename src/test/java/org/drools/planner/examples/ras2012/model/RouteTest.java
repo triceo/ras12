@@ -136,27 +136,6 @@ public class RouteTest {
     }
 
     @Test
-    public void testGetLength() {
-        final BigDecimal[] lengths = new BigDecimal[] { new BigDecimal("0.1"), new BigDecimal("1"),
-                new BigDecimal("12.34"), new BigDecimal("123.456") };
-        Route r = new Route(this.isEastbound);
-        Assert.assertEquals("Empty route shoud have zero miles.", BigDecimal.ZERO,
-                r.getLengthInMiles());
-        Assert.assertEquals("Empty route shoud have zero nodes.", 0, r.getLengthInArcs());
-        BigDecimal sum = BigDecimal.ZERO;
-        int nodeId = 0;
-        for (final BigDecimal augend : lengths) {
-            sum = sum.add(augend);
-            r = r.extend(new Arc(TrackType.MAIN_0, augend, Node.getNode(nodeId), Node
-                    .getNode(++nodeId)));
-            Assert.assertEquals("Length in miles doesn't match the total.", sum,
-                    r.getLengthInMiles());
-            Assert.assertEquals("Length in arcs doesn't match the number of arcs.", nodeId,
-                    r.getLengthInArcs());
-        }
-    }
-
-    @Test
     public void testGetNextAndPreviousArc() {
         // prepare data
         final Node n1 = Node.getNode(0);

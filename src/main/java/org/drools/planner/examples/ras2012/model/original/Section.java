@@ -17,11 +17,7 @@ public abstract class Section {
         this.eastNode = eastNode;
     }
 
-    public Node getEastNode() {
-        return this.eastNode;
-    }
-
-    public Node getInitialNode(final Directed d) {
+    public Node getDestination(final Directed d) {
         if (d.isEastbound()) {
             return this.eastNode;
         } else {
@@ -29,7 +25,11 @@ public abstract class Section {
         }
     }
 
-    public Node getTerminalNode(final Directed d) {
+    public Node getEastNode() {
+        return this.eastNode;
+    }
+
+    public Node getOrigin(final Directed d) {
         if (d.isEastbound()) {
             return this.westNode;
         } else {
@@ -39,6 +39,14 @@ public abstract class Section {
 
     public Node getWestNode() {
         return this.westNode;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder builder = new StringBuilder();
+        builder.append("[").append(this.westNode.getId()).append("->")
+                .append(this.eastNode.getId()).append("]");
+        return builder.toString();
     }
 
 }

@@ -20,10 +20,10 @@ public abstract class AbstractSectionTest {
         final Route eastbound = new Route(true);
         final Route westbound = new Route(false);
         // and validate their starting and ending nodes
-        Assert.assertSame(s.getWestNode(), s.getTerminalNode(eastbound));
-        Assert.assertSame(s.getEastNode(), s.getInitialNode(eastbound));
-        Assert.assertSame(s.getEastNode(), s.getTerminalNode(westbound));
-        Assert.assertSame(s.getWestNode(), s.getInitialNode(westbound));
+        Assert.assertSame(s.getWestNode(), s.getOrigin(eastbound));
+        Assert.assertSame(s.getEastNode(), s.getDestination(eastbound));
+        Assert.assertSame(s.getEastNode(), s.getOrigin(westbound));
+        Assert.assertSame(s.getWestNode(), s.getDestination(westbound));
     }
 
     protected void actuallyTestInitialAndTerminalNodesOnTrain(Section s) {
@@ -36,10 +36,10 @@ public abstract class AbstractSectionTest {
                 s.getEastNode(), 0, 0, 0, Collections.<ScheduleAdherenceRequirement> emptyList(),
                 true, false);
         // and validate their starting and ending nodes
-        Assert.assertSame(s.getWestNode(), s.getTerminalNode(eastbound));
-        Assert.assertSame(s.getEastNode(), s.getInitialNode(eastbound));
-        Assert.assertSame(s.getEastNode(), s.getTerminalNode(westbound));
-        Assert.assertSame(s.getWestNode(), s.getInitialNode(westbound));
+        Assert.assertSame(s.getWestNode(), s.getOrigin(eastbound));
+        Assert.assertSame(s.getEastNode(), s.getDestination(eastbound));
+        Assert.assertSame(s.getEastNode(), s.getOrigin(westbound));
+        Assert.assertSame(s.getWestNode(), s.getDestination(westbound));
     }
 
 }
