@@ -130,19 +130,22 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
         return this.id;
     }
 
-    public Arc getInitialArc() {
+    public Arc getOrigin() {
+        if (this.arcs.size() == 0) {
+            throw new IllegalStateException("There are no arcs.");
+        } else if (this.arcs.size() == 1) {
+            return this.arcs.get(0);
+        }
         /*
          * get the first and last arc inserted; some arc should have the west node == 0, it is the west-most arc; the other is
          * by definition the east-most arc
          */
-        final Arc one = this.arcs.get(0);
-        final Arc two = this.arcs.get(this.arcs.size() - 1);
-        if (one.getWestNode().getId() == 0) {
-            // one is west-most
-            return this.isWestbound() ? two : one;
+        final Arc first = this.arcs.get(0);
+        final Arc last = this.arcs.get(this.arcs.size() - 1);
+        if (this.isEastbound()) {
+            return (first.getOrigin(this) == Node.getNode(0)) ? first : last;
         } else {
-            // one is east-most
-            return this.isWestbound() ? one : two;
+            return (first.getDestination(this) == Node.getNode(0)) ? last : first;
         }
     }
 
@@ -155,7 +158,7 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
             throw new IllegalArgumentException("There is no next arc in an empty route.");
         }
         if (a == null) {
-            return this.getInitialArc();
+            return this.getOrigin();
         }
         if (!this.contains(a)) {
             throw new IllegalArgumentException("The route doesn't contain the arc.");
@@ -187,7 +190,7 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
             throw new IllegalArgumentException("There is no previous arc in an empty route.");
         }
         if (a == null) {
-            return this.getTerminalArc();
+            return this.getDestination();
         }
         if (!this.contains(a)) {
             throw new IllegalArgumentException("The route doesn't contain the arc.");
@@ -201,8 +204,8 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
         return null;
     }
 
-    public Arc getTerminalArc() {
-        final Arc initial = this.getInitialArc();
+    public Arc getDestination() {
+        final Arc initial = this.getOrigin();
         final Arc first = this.arcs.get(0);
         if (first == initial) {
             return this.arcs.get(this.arcs.size() - 1);
@@ -230,28 +233,16 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
     public Collection<Node> getWaitPoints() {
         final Collection<Node> waitPoints = new TreeSet<Node>();
         // we want to be able to hold the train before it enters the network
-        final Arc firstArc = this.getInitialArc();
-        if (this.isEastbound()) {
-            waitPoints.add(firstArc.getWestNode());
-        } else {
-            waitPoints.add(firstArc.getEastNode());
-        }
+        final Arc firstArc = this.getOrigin();
+        waitPoints.add(firstArc.getOrigin(this));
         // other wait points depend on the type of the track
         for (final Arc a : this.arcs) {
             if (a.getTrackType() == TrackType.SIDING) {
                 // on sidings, wait before leaving them through a switch
-                if (this.isEastbound()) {
-                    waitPoints.add(a.getEastNode());
-                } else {
-                    waitPoints.add(a.getWestNode());
-                }
+                waitPoints.add(a.getDestination(this));
             } else if (!a.getTrackType().isMainTrack()) {
                 // on crossovers and switches, wait before joining them
-                if (this.isEastbound()) {
-                    waitPoints.add(a.getWestNode());
-                } else {
-                    waitPoints.add(a.getEastNode());
-                }
+                waitPoints.add(a.getOrigin(this));
             } else {
                 // on main tracks, never wait
             }

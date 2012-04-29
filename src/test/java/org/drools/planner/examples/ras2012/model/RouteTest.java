@@ -100,38 +100,38 @@ public class RouteTest {
         final Arc a3 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n3, n4);
         Route r = new Route(this.isEastbound).extend(a1);
         Assert.assertSame("With just one arc, initial and terminal arcs should be the same. ",
-                r.getTerminalArc(), r.getInitialArc());
+                r.getDestination(), r.getOrigin());
         Assert.assertSame("With just one arc, initial and terminal arcs should equal. ",
-                r.getTerminalArc(), r.getInitialArc());
+                r.getDestination(), r.getOrigin());
         if (r.isEastbound()) {
             r = r.extend(a2);
             Assert.assertSame("With two arcs eastbound, the first inserted one should be initial.",
-                    a1, r.getInitialArc());
+                    a1, r.getOrigin());
             Assert.assertSame(
                     "With two arcs eastbound, the second inserted one should be terminal.", a2,
-                    r.getTerminalArc());
+                    r.getDestination());
             r = r.extend(a3);
             Assert.assertSame(
                     "With three arcs eastbound, the first inserted one should be initial.", a1,
-                    r.getInitialArc());
+                    r.getOrigin());
             Assert.assertSame(
                     "With three arcs eastbound, the last inserted one should be terminal.", a3,
-                    r.getTerminalArc());
+                    r.getDestination());
         } else {
             r = r.extend(a2);
             Assert.assertSame(
                     "With two arcs westbound, the second inserted one should be initial.", a2,
-                    r.getInitialArc());
+                    r.getOrigin());
             Assert.assertSame(
                     "With two arcs westbound, the first inserted one should be terminal.", a1,
-                    r.getTerminalArc());
+                    r.getDestination());
             r = r.extend(a3);
             Assert.assertSame(
                     "With three arcs westbound, the last inserted one should be initial.", a3,
-                    r.getInitialArc());
+                    r.getOrigin());
             Assert.assertSame(
                     "With three arcs westbound, the first inserted one should be terminal.", a1,
-                    r.getTerminalArc());
+                    r.getDestination());
         }
     }
 
@@ -207,10 +207,10 @@ public class RouteTest {
         Route r = new Route(this.isEastbound);
         r = r.extend(a1);
         Assert.assertSame("On a route with single arc, null next arc is the first one.",
-                r.getInitialArc(), r.getNextArc(null));
+                r.getOrigin(), r.getNextArc(null));
         r = r.extend(a2);
         Assert.assertSame("On a route with two arcs, null next arc is still the first one.",
-                r.getInitialArc(), r.getNextArc(null));
+                r.getOrigin(), r.getNextArc(null));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -246,10 +246,10 @@ public class RouteTest {
         Route r = new Route(this.isEastbound);
         r = r.extend(a1);
         Assert.assertSame("On a route with single arc, null previous arc is the first one.",
-                r.getTerminalArc(), r.getPreviousArc(null));
+                r.getDestination(), r.getPreviousArc(null));
         r = r.extend(a2);
         Assert.assertSame("On a route with two arcs, null previous arc is the last one.",
-                r.getTerminalArc(), r.getPreviousArc(null));
+                r.getDestination(), r.getPreviousArc(null));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -276,13 +276,8 @@ public class RouteTest {
         final Collection<Node> wp = r.getWaitPoints();
         Assert.assertEquals("Only main tracks means just one wait point at the beginning.", 1,
                 wp.size());
-        if (r.isEastbound()) {
-            Assert.assertTrue("One of the wait points should be the route start.",
-                    wp.contains(r.getInitialArc().getWestNode()));
-        } else {
-            Assert.assertTrue("One of the wait points should be the route start.",
-                    wp.contains(r.getInitialArc().getEastNode()));
-        }
+        Assert.assertTrue("One of the wait points should be the route start.",
+                wp.contains(r.getOrigin().getOrigin(r)));
     }
 
     @Test
@@ -297,17 +292,10 @@ public class RouteTest {
         final Route r = new Route(this.isEastbound).extend(a1).extend(a2).extend(a3);
         final Collection<Node> wp = r.getWaitPoints();
         Assert.assertEquals("One siding means two wait points, start + siding.", 2, wp.size());
-        if (r.isEastbound()) {
-            Assert.assertTrue("One of the wait points should be the route start.",
-                    wp.contains(r.getInitialArc().getWestNode()));
-            Assert.assertTrue("Eastbound sidings waypoint is at the east side of the siding.",
-                    wp.contains(a2.getEastNode()));
-        } else {
-            Assert.assertTrue("One of the wait points should be the route start.",
-                    wp.contains(r.getInitialArc().getEastNode()));
-            Assert.assertTrue("Westbound sidings waypoint is at the west side of the siding.",
-                    wp.contains(a2.getWestNode()));
-        }
+        Assert.assertTrue("One of the wait points should be the route start.",
+                wp.contains(r.getOrigin().getOrigin(r)));
+        Assert.assertTrue("Sidings waypoint is at the end side of the siding.",
+                wp.contains(a2.getDestination(r)));
     }
 
     @Test
@@ -326,17 +314,9 @@ public class RouteTest {
         final Route r = new Route(this.isEastbound).extend(a1).extend(a2).extend(a3);
         final Collection<Node> wp = r.getWaitPoints();
         Assert.assertEquals("One SW/C means two wait points, start + SW/C.", 2, wp.size());
-        if (r.isEastbound()) {
-            Assert.assertTrue("One of the wait points should be the route start.",
-                    wp.contains(r.getInitialArc().getWestNode()));
-            Assert.assertTrue("Eastbound SW/C waypoint is at the west side of the siding.",
-                    wp.contains(a2.getWestNode()));
-        } else {
-            Assert.assertTrue("One of the wait points should be the route start.",
-                    wp.contains(r.getInitialArc().getEastNode()));
-            Assert.assertTrue("Westbound SW/C waypoint is at the east side of the siding.",
-                    wp.contains(a2.getEastNode()));
-        }
+        Assert.assertTrue("One of the wait points should be the route start.",
+                wp.contains(r.getOrigin().getOrigin(r)));
+        Assert.assertTrue("SW/C waypoint is at the beginning side.", wp.contains(a2.getOrigin(r)));
     }
 
     @Test

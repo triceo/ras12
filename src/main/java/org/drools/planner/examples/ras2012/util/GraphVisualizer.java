@@ -89,12 +89,14 @@ public class GraphVisualizer {
             g = new UndirectedOrderedSparseMultigraph<Node, Arc>();
         }
         for (final Arc a : this.edges) {
-            g.addVertex(a.getEastNode());
-            g.addVertex(a.getWestNode());
-            if (this.route == null || this.route.isEastbound()) {
-                g.addEdge(a, a.getWestNode(), a.getEastNode());
+            Node routelessOrigin = a.getOrigin(new Route(false));
+            Node routelessDestination = a.getDestination(new Route(false));
+            g.addVertex(routelessOrigin);
+            g.addVertex(routelessDestination);
+            if (this.route == null) {
+                g.addEdge(a, routelessOrigin, routelessDestination);
             } else {
-                g.addEdge(a, a.getEastNode(), a.getWestNode());
+                g.addEdge(a, a.getOrigin(this.route), a.getDestination(this.route));
             }
         }
         return g;

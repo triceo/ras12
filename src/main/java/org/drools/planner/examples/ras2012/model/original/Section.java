@@ -25,7 +25,7 @@ public abstract class Section {
         }
     }
 
-    public Node getEastNode() {
+    protected Node getEastNode() {
         return this.eastNode;
     }
 
@@ -37,7 +37,7 @@ public abstract class Section {
         }
     }
 
-    public Node getWestNode() {
+    protected Node getWestNode() {
         return this.westNode;
     }
 

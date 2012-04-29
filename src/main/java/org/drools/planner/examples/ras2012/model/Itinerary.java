@@ -88,8 +88,8 @@ public final class Itinerary {
             this.arcProgression.add(currentArc);
             this.arcPerStartNode.put(currentArc.getOrigin(this.getRoute()), currentArc);
             if (journeyOngoing) {
-                this.nodesEnRoute.add(currentArc.getEastNode());
-                this.nodesEnRoute.add(currentArc.getWestNode());
+                this.nodesEnRoute.add(currentArc.getOrigin(r));
+                this.nodesEnRoute.add(currentArc.getDestination(r));
             }
             if (currentArc.getDestination(this.train) == this.train.getDestination()) {
                 journeyOngoing = false;

@@ -89,15 +89,18 @@ public abstract class AbstractItineraryTest {
 
     protected Itinerary getItinerary(final String trainName, final int routeId) {
         for (final Map.Entry<Train, Set<Route>> entry : this.getTestedRoutes().entrySet()) {
-            if (entry.getKey().getName().equals(trainName)) {
-                for (final Route r : entry.getValue()) {
-                    if (r.getId() == routeId) {
-                        return this.getItinerary(entry.getKey(), r);
-                    }
+            if (!entry.getKey().getName().equals(trainName)) {
+                continue;
+            }
+            for (final Route r : entry.getValue()) {
+                if (r.getId() == routeId) {
+                    return this.getItinerary(entry.getKey(), r);
                 }
             }
+
         }
-        return null;
+        throw new IllegalArgumentException("Itinerary for train " + trainName + ", route "
+                + routeId + " not found.");
     }
 
     protected Itinerary getItinerary(final Train t, final Route r) {
@@ -186,6 +189,7 @@ public abstract class AbstractItineraryTest {
     @Test
     public void testGetLeadingArc() {
         for (final Itinerary i : this.getItineraries()) {
+
             // assemble a list of "checkpoint" where the train should be at which times
             final Map<Long, Arc> expecteds = new HashMap<Long, Arc>();
             final Route r = i.getRoute();

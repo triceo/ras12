@@ -37,15 +37,18 @@ public class Network implements Visualizable {
         // now map every connection node
         final SortedMap<Node, SortedMap<Node, Arc>> eastboundConnections = new TreeMap<Node, SortedMap<Node, Arc>>();
         final SortedMap<Node, SortedMap<Node, Arc>> westboundConnections = new TreeMap<Node, SortedMap<Node, Arc>>();
+        final Route eastbound = new Route(true);
         for (final Arc a : edges) {
-            if (eastboundConnections.get(a.getWestNode()) == null) {
-                eastboundConnections.put(a.getWestNode(), new TreeMap<Node, Arc>());
+            Node east = a.getDestination(eastbound);
+            Node west = a.getOrigin(eastbound);
+            if (eastboundConnections.get(west) == null) {
+                eastboundConnections.put(west, new TreeMap<Node, Arc>());
             }
-            eastboundConnections.get(a.getWestNode()).put(a.getEastNode(), a);
-            if (westboundConnections.get(a.getEastNode()) == null) {
-                westboundConnections.put(a.getEastNode(), new TreeMap<Node, Arc>());
+            eastboundConnections.get(west).put(east, a);
+            if (westboundConnections.get(east) == null) {
+                westboundConnections.put(east, new TreeMap<Node, Arc>());
             }
-            westboundConnections.get(a.getEastNode()).put(a.getWestNode(), a);
+            westboundConnections.get(east).put(west, a);
         }
         Node eastDepo = null;
         for (final Node n : nodes) {
