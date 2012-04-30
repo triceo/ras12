@@ -63,8 +63,6 @@ public final class Itinerary {
     // FIXME only one window per node; multiple different windows with same node will get lost
     private final Map<Node, MaintenanceWindow> maintenances          = new HashMap<Node, MaintenanceWindow>();
 
-    private final Map<Long, Collection<Arc>>   occupiedArcsCache     = new HashMap<Long, Collection<Arc>>();
-
     public Itinerary(final Route r, final Train t,
             final Collection<MaintenanceWindow> maintenanceWindows) {
         if (!r.isPossibleForTrain(t)) {
@@ -179,15 +177,6 @@ public final class Itinerary {
     }
 
     public Collection<Arc> getCurrentlyOccupiedArcs(final long time) {
-        if (!this.occupiedArcsCache.containsKey(time)) {
-            final Collection<Arc> a = this.getCurrentlyOccupiedArcsUncached(time);
-            this.occupiedArcsCache.put(time, a);
-            return a;
-        }
-        return this.occupiedArcsCache.get(time);
-    }
-
-    private Collection<Arc> getCurrentlyOccupiedArcsUncached(final long time) {
         final Arc leadingArc = this.getLeadingArc(time);
         if (leadingArc == null) {
             // train not in the network
@@ -406,7 +395,6 @@ public final class Itinerary {
     }
 
     private synchronized void invalidateCaches() {
-        this.occupiedArcsCache.clear();
         this.scheduleCache.clear();
         this.scheduleCacheWithArcs.clear();
     }
