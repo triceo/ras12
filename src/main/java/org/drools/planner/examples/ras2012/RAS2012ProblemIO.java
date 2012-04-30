@@ -16,8 +16,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
-import org.drools.planner.examples.ras2012.model.original.Track;
-
 import org.drools.planner.benchmark.api.ProblemIO;
 import org.drools.planner.core.solution.Solution;
 import org.drools.planner.examples.ras2012.model.Network;
@@ -25,6 +23,7 @@ import org.drools.planner.examples.ras2012.model.original.Arc;
 import org.drools.planner.examples.ras2012.model.original.MaintenanceWindow;
 import org.drools.planner.examples.ras2012.model.original.Node;
 import org.drools.planner.examples.ras2012.model.original.ScheduleAdherenceRequirement;
+import org.drools.planner.examples.ras2012.model.original.Track;
 import org.drools.planner.examples.ras2012.model.original.Train;
 import org.drools.planner.examples.ras2012.parser.DataSetParser;
 import org.drools.planner.examples.ras2012.parser.DataSetParser.ParsedTrain;
@@ -92,7 +91,7 @@ public class RAS2012ProblemIO implements ProblemIO {
             }
             final BigDecimal timeInSeconds = RAS2012ProblemIO
                     .convertMillisToSeconds(entry.getKey());
-            if (arc != null) {
+            if (arc.getDestination(t) != t.getDestination()) {
                 final BigDecimal travellingTime = RAS2012ProblemIO.convertMillisToSeconds(t
                         .getArcTravellingTime(arc, TimeUnit.MILLISECONDS));
                 final BigDecimal leaveTime = timeInSeconds.add(travellingTime).subtract(

@@ -135,7 +135,6 @@ public final class Itinerary {
         final long time = previousTime
                 + this.getTrain().getArcTravellingTime(previousArc, Itinerary.DEFAULT_TIME_UNIT);
         this.scheduleCache.put(time, previousArc.getDestination(this.getTrain()));
-        this.scheduleCacheWithArcs.put(time, previousArc);
         this.scheduleCacheValid.set(true);
     }
 
