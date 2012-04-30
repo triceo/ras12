@@ -15,13 +15,12 @@ import java.util.Map;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.drools.planner.examples.ras2012.model.original.Track;
-
 import org.drools.planner.examples.ras2012.interfaces.Directed;
 import org.drools.planner.examples.ras2012.interfaces.Visualizable;
 import org.drools.planner.examples.ras2012.model.original.Arc;
 import org.drools.planner.examples.ras2012.model.original.Node;
 import org.drools.planner.examples.ras2012.model.original.ScheduleAdherenceRequirement;
+import org.drools.planner.examples.ras2012.model.original.Track;
 import org.drools.planner.examples.ras2012.model.original.Train;
 import org.drools.planner.examples.ras2012.util.ArcProgression;
 import org.drools.planner.examples.ras2012.util.RouteVisualizer;
@@ -218,48 +217,39 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
         if (!(bothEastbound || bothWestbound)) {
             return false;
         }
-        boolean containsOrigin = false;
-        boolean containsDestination = false;
-        for (final Arc a : this.progression.getArcs()) {
-            containsOrigin = containsOrigin || a.getOrigin(t) == t.getOrigin();
-            containsDestination = containsDestination || a.getDestination(t) == t.getDestination();
-            if (a.getTrack() == Track.SIDING) {
-                if (t.isHeavy()) {
-                    /*
-                     * heavy trains must never use a siding when there is a meet-pass with another NSA train. this is the
-                     * easiest way to fulfill the requirement.
-                     */
-                    return false;
-                }
-                // hazmat trains disallowed to take sidings
-                if (t.carriesHazardousMaterials()) {
-                    return false;
-                }
-                // make sure the route doesn't contain a siding shorter than the train
-                final int result = a.getLengthInMiles().compareTo(t.getLength());
-                if (result < 0) {
-                    return false;
-                }
-            }
-        }
         /*
          * some trains don't enter the world at depots. we must make sure that their origin/destination is actually part of this
          * route
          */
-        if (!containsOrigin || !containsDestination) {
+        final Collection<Node> nodes = this.progression.getNodes();
+        if (!nodes.contains(t.getOrigin()) || !nodes.contains(t.getDestination())) {
             return false;
         }
-        // make sure that the train traverses through everywhere it's expected to
+        // make sure that the route leads through every node where the train is expected
         for (final ScheduleAdherenceRequirement sar : t.getScheduleAdherenceRequirements()) {
-            final Node requestedNode = sar.getDestination();
-            boolean found = false;
-            for (final Arc a : this.progression.getArcs()) {
-                if (a.getOrigin(t) == requestedNode || a.getDestination(t) == requestedNode) {
-                    found = true;
-                    break;
-                }
+            if (!nodes.contains(sar.getDestination())) {
+                return false;
             }
-            if (!found) {
+        }
+        // now traverse arcs to make sure every other condition is met
+        for (final Arc a : this.progression.getArcs()) {
+            if (a.getTrack() != Track.SIDING) {
+                continue;
+            }
+            if (t.isHeavy()) {
+                /*
+                 * heavy trains must never use a siding when there is a meet-pass with another NSA train. this is the easiest
+                 * way to fulfill the requirement.
+                 */
+                return false;
+            }
+            // hazmat trains disallowed to take sidings
+            if (t.carriesHazardousMaterials()) {
+                return false;
+            }
+            // make sure the route doesn't contain a siding shorter than the train
+            final int result = a.getLengthInMiles().compareTo(t.getLength());
+            if (result < 0) {
                 return false;
             }
         }
