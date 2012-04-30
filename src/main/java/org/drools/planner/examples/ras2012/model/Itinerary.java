@@ -438,7 +438,7 @@ public final class Itinerary {
         if (!this.isNodeOnRoute(n)) {
             throw new IllegalArgumentException(n + " not in the itinerary: " + this);
         }
-        if (this.getRoute().getWaitPoints().contains(n)) {
+        if (this.getRoute().getProgression().getWaitPoints().contains(n)) {
             this.invalidateCaches();
             final WaitTime previous = this.nodeWaitTimes.get(n);
             this.nodeWaitTimes.put(n, w);

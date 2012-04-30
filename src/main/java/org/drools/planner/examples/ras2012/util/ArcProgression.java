@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.drools.planner.examples.ras2012.interfaces.Directed;
 import org.drools.planner.examples.ras2012.model.original.Arc;
@@ -23,6 +24,7 @@ public class ArcProgression implements Directed {
     private final Map<Node, Arc>    arcsPerDestination = new HashMap<Node, Arc>();
     private final Map<Arc, Boolean> isArcPreferred     = new HashMap<Arc, Boolean>();
     private final Collection<Node>  nodes              = new LinkedHashSet<Node>();
+    private final Collection<Node>  waitPoints;
     private final Directed          directed;
 
     public ArcProgression(final Directed directed, final Arc... arcs) {
@@ -53,6 +55,31 @@ public class ArcProgression implements Directed {
         for (final Arc a : this.orderedArcs) {
             this.isArcPreferred.put(a, this.determineArcPreferrence(a));
         }
+        // and finally cache the wait points
+        this.waitPoints = this.assembleWaitPoints();
+    }
+
+    private Collection<Node> assembleWaitPoints() {
+        final Collection<Node> points = new TreeSet<Node>();
+        if (this.orderedArcs.size() == 0) {
+            return Collections.unmodifiableCollection(points);
+        }
+        // we want to be able to hold the train before it enters the network
+        final Arc firstArc = this.getOrigin();
+        points.add(firstArc.getOrigin(this));
+        // other wait points depend on the type of the track
+        for (final Arc a : this.orderedArcs) {
+            if (a.getTrack() == Track.SIDING) {
+                // on sidings, wait before leaving them through a switch
+                points.add(a.getDestination(this));
+            } else if (!a.getTrack().isMainTrack()) {
+                // on crossovers and switches, wait before joining them
+                points.add(a.getOrigin(this));
+            } else {
+                // on main tracks, never wait
+            }
+        }
+        return Collections.unmodifiableCollection(points);
     }
 
     public boolean contains(final Arc a) {
@@ -144,6 +171,10 @@ public class ArcProgression implements Directed {
         } else {
             return null;
         }
+    }
+
+    public Collection<Node> getWaitPoints() {
+        return this.waitPoints;
     }
 
     public Arc getWithDestinationNode(final Node n) {

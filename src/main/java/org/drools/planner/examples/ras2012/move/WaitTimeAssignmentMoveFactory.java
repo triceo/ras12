@@ -24,7 +24,7 @@ public class WaitTimeAssignmentMoveFactory extends AbstractMoveFactory {
             final long planningHorizon = RAS2012Solution.getPlanningHorizon(TimeUnit.MINUTES)
                     - ia.getTrain().getEntryTime(TimeUnit.MINUTES);
             final int allFirstX = 10;
-            for (final Node waitPoint : ia.getRoute().getWaitPoints()) {
+            for (final Node waitPoint : ia.getRoute().getProgression().getWaitPoints()) {
                 moves.add(new WaitTimeAssignmentMove(ia, waitPoint, null));
                 int i = 1;
                 for (; i < allFirstX; i++) { // plan to the minute

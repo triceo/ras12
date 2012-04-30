@@ -7,12 +7,10 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.drools.planner.examples.ras2012.interfaces.Directed;
@@ -150,26 +148,6 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
             this.travellingTimeInMinutes = result;
         }
         return this.travellingTimeInMinutes;
-    }
-
-    public Collection<Node> getWaitPoints() {
-        final Collection<Node> waitPoints = new TreeSet<Node>();
-        // we want to be able to hold the train before it enters the network
-        final Arc firstArc = this.progression.getOrigin();
-        waitPoints.add(firstArc.getOrigin(this));
-        // other wait points depend on the type of the track
-        for (final Arc a : this.progression.getArcs()) {
-            if (a.getTrack() == Track.SIDING) {
-                // on sidings, wait before leaving them through a switch
-                waitPoints.add(a.getDestination(this));
-            } else if (!a.getTrack().isMainTrack()) {
-                // on crossovers and switches, wait before joining them
-                waitPoints.add(a.getOrigin(this));
-            } else {
-                // on main tracks, never wait
-            }
-        }
-        return Collections.unmodifiableCollection(waitPoints);
     }
 
     @Override

@@ -47,7 +47,7 @@ public class RouteVisualizer extends GraphVisualizer {
             } else if (input == this.route.getProgression().getDestination()
                     .getDestination(this.route)) {
                 return Color.RED;
-            } else if (this.route.getWaitPoints().contains(input)) {
+            } else if (this.route.getProgression().getWaitPoints().contains(input)) {
                 return Color.BLUE;
             } else {
                 return Color.GRAY;
