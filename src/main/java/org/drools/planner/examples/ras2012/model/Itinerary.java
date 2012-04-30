@@ -347,7 +347,7 @@ public final class Itinerary {
         for (final SortedMap.Entry<Long, Arc> entry : arcEntryTimes.headMap(time).entrySet()) {
             final long currentTimeOfEntry = entry.getKey();
             final Arc a = entry.getValue();
-            if (previousArc != null && !this.getRoute().isArcPreferred(previousArc)) {
+            if (previousArc != null && !this.getRoute().getProgression().isPreferred(previousArc)) {
                 if (previousArc == leadingArc) {
                     // include the time spent on this track so far
                     spentTime += time - currentTimeOfEntry;

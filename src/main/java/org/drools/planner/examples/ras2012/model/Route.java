@@ -123,7 +123,7 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
         if (this.numberOfPreferredTracks == -1) {
             int i = 0;
             for (final Arc a : this.progression.getArcs()) {
-                if (this.isArcPreferred(a)) {
+                if (this.getProgression().isPreferred(a)) {
                     i++;
                 }
             }
@@ -180,24 +180,6 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
         return result;
     }
 
-    public boolean isArcPreferred(final Arc a) {
-        if (a.getTrack() == Track.MAIN_0) {
-            return true;
-        } else if (a.getTrack() == Track.MAIN_2) {
-            return this.isEastbound();
-        } else if (a.getTrack() == Track.MAIN_1) {
-            return this.isWestbound();
-        } else {
-            // preference of SIDING/SWITCH/CROSSOVER is based on which track are those coming off of
-            final Arc previousArc = this.progression.getPrevious(a);
-            if (previousArc == null) {
-                return true;
-            } else {
-                return this.isArcPreferred(previousArc);
-            }
-        }
-    }
-
     @Override
     public boolean isEastbound() {
         return this.isEastbound;
@@ -233,7 +215,7 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
         }
         // now traverse arcs to make sure every other condition is met
         for (final Arc a : this.progression.getArcs()) {
-            if (a.getTrack() != Track.SIDING) {
+            if (a.getTrack() != Track.SIDING) { // we only have rules for sidings
                 continue;
             }
             if (t.isHeavy()) {

@@ -14,14 +14,16 @@ import java.util.Set;
 import org.drools.planner.examples.ras2012.interfaces.Directed;
 import org.drools.planner.examples.ras2012.model.original.Arc;
 import org.drools.planner.examples.ras2012.model.original.Node;
+import org.drools.planner.examples.ras2012.model.original.Track;
 
 public class ArcProgression implements Directed {
 
-    private final LinkedList<Arc>  orderedArcs        = new LinkedList<Arc>();
-    private final Map<Node, Arc>   arcsPerOrigin      = new HashMap<Node, Arc>();
-    private final Map<Node, Arc>   arcsPerDestination = new HashMap<Node, Arc>();
-    private final Collection<Node> nodes              = new LinkedHashSet<Node>();
-    private final Directed         directed;
+    private final LinkedList<Arc>   orderedArcs        = new LinkedList<Arc>();
+    private final Map<Node, Arc>    arcsPerOrigin      = new HashMap<Node, Arc>();
+    private final Map<Node, Arc>    arcsPerDestination = new HashMap<Node, Arc>();
+    private final Map<Arc, Boolean> isArcPreferred     = new HashMap<Arc, Boolean>();
+    private final Collection<Node>  nodes              = new LinkedHashSet<Node>();
+    private final Directed          directed;
 
     public ArcProgression(final Directed directed, final Arc... arcs) {
         this(directed, Arrays.asList(arcs));
@@ -29,6 +31,7 @@ public class ArcProgression implements Directed {
 
     public ArcProgression(final Directed directed, final Collection<Arc> arcs) {
         this.directed = directed;
+        // put arcs in proper order
         Node startingNode = this.getStartingNode(directed, arcs);
         while (arcs.size() != this.orderedArcs.size()) {
             for (final Arc a : arcs) {
@@ -39,11 +42,16 @@ public class ArcProgression implements Directed {
                 }
             }
         }
+        // cache information about nodes related to arcs
         for (final Arc a : this.orderedArcs) {
             this.arcsPerOrigin.put(a.getOrigin(this), a);
             this.arcsPerDestination.put(a.getDestination(this), a);
             this.nodes.add(a.getOrigin(this));
             this.nodes.add(a.getDestination(this));
+        }
+        // determine whether a particular arc is preferred
+        for (final Arc a : this.orderedArcs) {
+            this.isArcPreferred.put(a, this.determineArcPreferrence(a));
         }
     }
 
@@ -53,6 +61,24 @@ public class ArcProgression implements Directed {
 
     public int countArcs() {
         return this.orderedArcs.size();
+    }
+
+    private boolean determineArcPreferrence(final Arc a) {
+        if (a.getTrack() == Track.MAIN_0) {
+            return true;
+        } else if (a.getTrack() == Track.MAIN_2) {
+            return this.isEastbound();
+        } else if (a.getTrack() == Track.MAIN_1) {
+            return this.isWestbound();
+        } else {
+            // preference of SIDING/SWITCH/CROSSOVER is based on which track are those coming off of
+            final Arc previousArc = this.getPrevious(a);
+            if (previousArc == null) {
+                return true;
+            } else {
+                return this.determineArcPreferrence(previousArc);
+            }
+        }
     }
 
     public List<Arc> getArcs() {
@@ -137,14 +163,14 @@ public class ArcProgression implements Directed {
      *         empty progression.
      */
     public ArcProgression head(final Node n) {
-        if (!nodes.contains(n)) {
+        if (!this.nodes.contains(n)) {
             throw new IllegalArgumentException("Node not in progression!");
         } else if (n == this.getDestination().getDestination(this)) {
             return this;
         } else if (n == this.getOrigin().getOrigin(this)) {
             return new ArcProgression(this, new Arc[0]);
         }
-        Arc a = this.getWithDestinationNode(n);
+        final Arc a = this.getWithDestinationNode(n);
         assert a != null;
         final int indexOf = this.orderedArcs.indexOf(a);
         return new ArcProgression(this, this.orderedArcs.subList(0, indexOf + 1));
@@ -153,6 +179,10 @@ public class ArcProgression implements Directed {
     @Override
     public boolean isEastbound() {
         return this.directed.isEastbound();
+    }
+
+    public boolean isPreferred(final Arc a) {
+        return this.isArcPreferred.get(a);
     }
 
     @Override
@@ -169,14 +199,14 @@ public class ArcProgression implements Directed {
      *         starting node, returns this.
      */
     public ArcProgression tail(final Node n) {
-        if (!nodes.contains(n)) {
+        if (!this.nodes.contains(n)) {
             throw new IllegalArgumentException("Node not in progression!");
         } else if (n == this.getDestination().getDestination(this)) {
             return new ArcProgression(this, new Arc[0]);
         } else if (n == this.getOrigin().getOrigin(this)) {
             return this;
         }
-        Arc a = this.getWithOriginNode(n);
+        final Arc a = this.getWithOriginNode(n);
         assert a != null;
         final int indexOf = this.orderedArcs.indexOf(a);
         return new ArcProgression(this, this.orderedArcs.subList(indexOf, this.orderedArcs.size()));

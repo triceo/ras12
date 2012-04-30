@@ -24,7 +24,7 @@ public class RouteVisualizer extends GraphVisualizer {
 
         @Override
         public Stroke transform(final Arc input) {
-            if (this.route.isArcPreferred(input)) {
+            if (this.route.getProgression().isPreferred(input)) {
                 return new BasicStroke();
             } else {
                 return RenderContext.DOTTED;
