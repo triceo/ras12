@@ -8,12 +8,8 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
@@ -58,12 +54,10 @@ public final class Itinerary {
     private final Train                        train;
 
     private final AtomicBoolean                scheduleCacheValid    = new AtomicBoolean(false);
-    private final Set<Node>                    nodesEnRoute          = new HashSet<Node>();
+    private final Collection<Node>             nodesEnRoute;
     private final SortedMap<Long, Node>        scheduleCache         = new TreeMap<Long, Node>();
     private final SortedMap<Long, Arc>         scheduleCacheWithArcs = new TreeMap<Long, Arc>();
     private final long                         trainEntryTime;
-    private final List<Arc>                    arcProgression        = new LinkedList<Arc>();
-    private final Map<Node, Arc>               arcPerStartNode       = new HashMap<Node, Arc>();
     private final Map<Node, WaitTime>          nodeWaitTimes         = new HashMap<Node, WaitTime>();
 
     // FIXME only one window per node; multiple different windows with same node will get lost
@@ -80,23 +74,8 @@ public final class Itinerary {
         this.route = r;
         this.train = t;
         this.trainEntryTime = t.getEntryTime(Itinerary.DEFAULT_TIME_UNIT);
-        // assemble the node-traversal information
-        boolean journeyOngoing = false;
-        Arc currentArc = null;
-        while ((currentArc = this.route.getNextArc(currentArc)) != null) {
-            if (currentArc.getOrigin(this.train) == this.train.getOrigin()) {
-                journeyOngoing = true;
-            }
-            this.arcProgression.add(currentArc);
-            this.arcPerStartNode.put(currentArc.getOrigin(this.getRoute()), currentArc);
-            if (journeyOngoing) {
-                this.nodesEnRoute.add(currentArc.getOrigin(r));
-                this.nodesEnRoute.add(currentArc.getDestination(r));
-            }
-            if (currentArc.getDestination(this.train) == this.train.getDestination()) {
-                journeyOngoing = false;
-            }
-        }
+        this.nodesEnRoute = this.getRoute().getProgression().tail(this.getTrain().getOrigin())
+                .getNodes();
         // initialize the maintenance windows
         for (final MaintenanceWindow mow : maintenanceWindows) {
             final Node n = mow.getOrigin(t);
@@ -109,7 +88,7 @@ public final class Itinerary {
         long previousTime = 0;
         Arc previousArc = null;
         boolean seekingStart = true;
-        for (final Arc currentArc : this.arcProgression) {
+        for (final Arc currentArc : this.getRoute().getProgression().getArcs()) {
             // arc progression begins with the start of the route; the train doesn't necessarily start there
             if (seekingStart) {
                 if (currentArc.getOrigin(this.getTrain()) != this.getTrain().getOrigin()) {
@@ -200,10 +179,6 @@ public final class Itinerary {
         return Collections.unmodifiableMap(this.nodeWaitTimes);
     }
 
-    private Arc getArcPerStartingNode(final Node n) {
-        return this.arcPerStartNode.get(n);
-    }
-
     public Collection<Arc> getCurrentlyOccupiedArcs(final long time) {
         if (!this.occupiedArcsCache.containsKey(time)) {
             final Collection<Arc> a = this.getCurrentlyOccupiedArcsUncached(time);
@@ -242,7 +217,8 @@ public final class Itinerary {
                 .subtract(travelledInLeadingArc);
         // and now add any preceding arcs for as long as the remaining train length > 0
         Arc currentlyProcessedArc = leadingArc;
-        while ((currentlyProcessedArc = this.getRoute().getPreviousArc(currentlyProcessedArc)) != null) {
+        while ((currentlyProcessedArc = this.getRoute().getProgression()
+                .getPrevious(currentlyProcessedArc)) != null) {
             occupiedArcs.add(currentlyProcessedArc);
             remainingLengthOfTrain = remainingLengthOfTrain.subtract(currentlyProcessedArc
                     .getLengthInMiles());
@@ -294,9 +270,9 @@ public final class Itinerary {
                 previousNode = currentNode;
                 continue;
             } else if (time == timeOfArrival) {
-                return this.getArcPerStartingNode(currentNode);
+                return this.getRoute().getProgression().getWithOriginNode(currentNode);
             } else {
-                return this.getArcPerStartingNode(previousNode);
+                return this.getRoute().getProgression().getWithOriginNode(previousNode);
             }
         }
         return null;
@@ -392,7 +368,7 @@ public final class Itinerary {
 
     private BigDecimal getTravellingDistance(final Node target) {
         BigDecimal distance = BigDecimal.ZERO;
-        for (final Arc a : this.arcProgression) {
+        for (final Arc a : this.getRoute().getProgression().getArcs()) {
             distance = distance.add(a.getLengthInMiles());
             if (a.getDestination(this.getTrain()) == target) {
                 break;

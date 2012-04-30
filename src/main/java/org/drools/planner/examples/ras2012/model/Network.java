@@ -96,7 +96,7 @@ public class Network implements Visualizable {
         for (final Node n : keys) {
             final Node nextNode = n;
             final Arc edge = connections.get(startingNode).get(n);
-            if (r.contains(edge)) {
+            if (r.getProgression().contains(edge)) {
                 continue; // we'we been there already; skip this branch
             }
             final Route newRoute = r.extend(edge);

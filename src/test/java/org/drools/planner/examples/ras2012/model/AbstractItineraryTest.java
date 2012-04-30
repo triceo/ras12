@@ -201,7 +201,7 @@ public abstract class AbstractItineraryTest {
                 expecteds.put((long) 0, null);
                 expecteds.put(totalTime / 2, null);
             }
-            while ((currentArc = r.getNextArc(currentArc)) != null) {
+            while ((currentArc = r.getProgression().getNext(currentArc)) != null) {
                 // account for possible maintenance windows
                 final Node n = currentArc.getOrigin(r);
                 if (!i.isNodeOnRoute(n)) { // sometimes a train doesn't start at the beginning of a route

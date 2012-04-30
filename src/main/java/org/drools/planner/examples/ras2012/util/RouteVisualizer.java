@@ -42,9 +42,10 @@ public class RouteVisualizer extends GraphVisualizer {
 
         @Override
         public Paint transform(final Node input) {
-            if (input == this.route.getOrigin().getOrigin(this.route)) {
+            if (input == this.route.getProgression().getOrigin().getOrigin(this.route)) {
                 return Color.GREEN;
-            } else if (input == this.route.getDestination().getDestination(this.route)) {
+            } else if (input == this.route.getProgression().getDestination()
+                    .getDestination(this.route)) {
                 return Color.RED;
             } else if (this.route.getWaitPoints().contains(input)) {
                 return Color.BLUE;
@@ -57,7 +58,7 @@ public class RouteVisualizer extends GraphVisualizer {
     private final Route route;
 
     public RouteVisualizer(final Route r) {
-        super(r.getArcs(), r);
+        super(r.getProgression().getArcs(), r);
         this.route = r;
     }
 

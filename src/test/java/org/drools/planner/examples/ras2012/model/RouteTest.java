@@ -45,18 +45,6 @@ public class RouteTest {
     }
 
     @Test
-    public void testContains() {
-        final Arc arc = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
-        final Arc arc2 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(1), Node.getNode(2));
-        Route r = new Route(this.isEastbound);
-        Assert.assertFalse("Empty collection shouldn't contain the arc.", r.contains(arc));
-        r = r.extend(arc);
-        Assert.assertTrue("Collection should now contain the arc.", r.contains(arc));
-        Assert.assertFalse("Collection should not contain the never-inserted arc.",
-                r.contains(arc2));
-    }
-
-    @Test
     public void testEquals() {
         final Route r = new Route(this.isEastbound);
         final Route r2 = new Route(this.isEastbound);
@@ -90,138 +78,6 @@ public class RouteTest {
     }
 
     @Test
-    public void testGetInitialAndTerminalArc() {
-        final Node n1 = Node.getNode(0);
-        final Node n2 = Node.getNode(1);
-        final Node n3 = Node.getNode(2);
-        final Node n4 = Node.getNode(3);
-        final Arc a1 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n1, n2);
-        final Arc a2 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n2, n3);
-        final Arc a3 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n3, n4);
-        Route r = new Route(this.isEastbound).extend(a1);
-        Assert.assertSame("With just one arc, initial and terminal arcs should be the same. ",
-                r.getDestination(), r.getOrigin());
-        Assert.assertSame("With just one arc, initial and terminal arcs should equal. ",
-                r.getDestination(), r.getOrigin());
-        r = r.extend(a2);
-        Assert.assertSame("With two arcs, the first inserted one should be initial.", a1,
-                r.getOrigin());
-        Assert.assertSame("With two arcs, the second inserted one should be terminal.", a2,
-                r.getDestination());
-        r = r.extend(a3);
-        Assert.assertSame("With three arcs, the first inserted one should be initial.", a1,
-                r.getOrigin());
-        Assert.assertSame("With three arcs, the last inserted one should be terminal.", a3,
-                r.getDestination());
-    }
-
-    @Test
-    public void testGetNextAndPreviousArc() {
-        // prepare data
-        final Node n1 = Node.getNode(0);
-        final Node n2 = Node.getNode(1);
-        final Node n3 = Node.getNode(2);
-        final Arc a1 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n1, n2);
-        final Arc a2 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n2, n3);
-        // validate
-        final Arc firstExtend = this.isEastbound ? a1 : a2;
-        final Arc secondExtend = this.isEastbound ? a2 : a1;
-        Route r = new Route(this.isEastbound);
-        r = r.extend(firstExtend);
-        Assert.assertNull("On a route with single arc, next arc to the first one is null.",
-                r.getNextArc(firstExtend));
-        Assert.assertNull("On a route with single arc, previous arc to the first one is null.",
-                r.getPreviousArc(firstExtend));
-        r = r.extend(secondExtend);
-        Assert.assertNull("On route with two arcs, next arc to the second one is null.",
-                r.getNextArc(secondExtend));
-        Assert.assertSame("On route with two arcs, next arc to the first one is the second.",
-                secondExtend, r.getNextArc(firstExtend));
-        Assert.assertSame("On route with two arcs, previous arc to the second one is the first.",
-                firstExtend, r.getPreviousArc(secondExtend));
-        Assert.assertNull("On route with two arcs, previous arc to the first one is null.",
-                r.getPreviousArc(firstExtend));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testGetNextArcEmptyRoute() {
-        final Arc a1 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
-        final Route r = new Route(this.isEastbound);
-        r.getNextArc(a1);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testGetNextArcInvalid() {
-        final Arc a1 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
-        final Arc a2 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(1), Node.getNode(2));
-        final Route r = new Route(this.isEastbound).extend(a1);
-        r.getNextArc(a2);
-    }
-
-    @Test
-    public void testGetNextArcNull() {
-        // prepare data
-        final Node n1 = Node.getNode(0);
-        final Node n2 = Node.getNode(1);
-        final Node n3 = Node.getNode(2);
-        final Arc a1 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n1, n2);
-        final Arc a2 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n2, n3);
-        // validate
-        Route r = new Route(this.isEastbound);
-        r = r.extend(a1);
-        Assert.assertSame("On a route with single arc, null next arc is the first one.",
-                r.getOrigin(), r.getNextArc(null));
-        r = r.extend(a2);
-        Assert.assertSame("On a route with two arcs, null next arc is still the first one.",
-                r.getOrigin(), r.getNextArc(null));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testGetNextArcNullEmptyRoute() {
-        final Route r = new Route(this.isEastbound);
-        r.getNextArc(null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testGetPreviousArcEmptyRoute() {
-        final Arc a1 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
-        final Route r = new Route(this.isEastbound);
-        r.getPreviousArc(a1);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testGetPreviousArcInvalid() {
-        final Arc a1 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
-        final Arc a2 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(1), Node.getNode(2));
-        final Route r = new Route(this.isEastbound).extend(a1);
-        r.getPreviousArc(a2);
-    }
-
-    @Test
-    public void testGetPreviousArcNull() {
-        // prepare data
-        final Node n1 = Node.getNode(0);
-        final Node n2 = Node.getNode(1);
-        final Node n3 = Node.getNode(2);
-        final Arc a1 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n1, n2);
-        final Arc a2 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n2, n3);
-        // validate
-        Route r = new Route(this.isEastbound);
-        r = r.extend(a1);
-        Assert.assertSame("On a route with single arc, null previous arc is the first one.",
-                r.getDestination(), r.getPreviousArc(null));
-        r = r.extend(a2);
-        Assert.assertSame("On a route with two arcs, null previous arc is the last one.",
-                r.getDestination(), r.getPreviousArc(null));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testGetPreviousArcNullEmptyRoute() {
-        final Route r = new Route(this.isEastbound);
-        r.getPreviousArc(null);
-    }
-
-    @Test
     public void testGetWaitPointsOnCrossovers() {
         this.testGetWaitPointsOnSwitchesAndCrossovers(TrackType.CROSSOVER);
     }
@@ -240,7 +96,7 @@ public class RouteTest {
         Assert.assertEquals("Only main tracks means just one wait point at the beginning.", 1,
                 wp.size());
         Assert.assertTrue("One of the wait points should be the route start.",
-                wp.contains(r.getOrigin().getOrigin(r)));
+                wp.contains(r.getProgression().getOrigin().getOrigin(r)));
     }
 
     @Test
@@ -261,7 +117,7 @@ public class RouteTest {
         final Collection<Node> wp = r.getWaitPoints();
         Assert.assertEquals("One siding means two wait points, start + siding.", 2, wp.size());
         Assert.assertTrue("One of the wait points should be the route start.",
-                wp.contains(r.getOrigin().getOrigin(r)));
+                wp.contains(r.getProgression().getOrigin().getOrigin(r)));
         Assert.assertTrue("Sidings waypoint is at the end side of the siding.",
                 wp.contains(a2.getDestination(r)));
     }
@@ -283,7 +139,7 @@ public class RouteTest {
         final Collection<Node> wp = r.getWaitPoints();
         Assert.assertEquals("One SW/C means two wait points, start + SW/C.", 2, wp.size());
         Assert.assertTrue("One of the wait points should be the route start.",
-                wp.contains(r.getOrigin().getOrigin(r)));
+                wp.contains(r.getProgression().getOrigin().getOrigin(r)));
         Assert.assertTrue("SW/C waypoint is at the beginning side.", wp.contains(a2.getOrigin(r)));
     }
 
