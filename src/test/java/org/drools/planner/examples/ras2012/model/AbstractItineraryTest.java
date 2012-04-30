@@ -17,7 +17,7 @@ import org.drools.planner.examples.ras2012.RAS2012Solution;
 import org.drools.planner.examples.ras2012.model.original.Arc;
 import org.drools.planner.examples.ras2012.model.original.Node;
 import org.drools.planner.examples.ras2012.model.original.Train;
-import org.drools.planner.examples.ras2012.model.original.Train.TrainType;
+import org.drools.planner.examples.ras2012.model.original.Train.Type;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -43,15 +43,15 @@ public abstract class AbstractItineraryTest {
     private Map<Train, Set<Route>> fetchTestedRoutes() {
         final Map<Train, Set<Route>> results = new TreeMap<Train, Set<Route>>();
         final RAS2012Solution sol = this.getSolution();
-        TrainType lastUsedWestboundTrainType = null;
-        TrainType lastUsedEastboundTrainType = null;
+        Type lastUsedWestboundTrainType = null;
+        Type lastUsedEastboundTrainType = null;
         final Collection<Route> routes = new LinkedHashSet<Route>(sol.getNetwork().getAllRoutes());
         for (final Train t : sol.getTrains()) {
             /*
              * pick only one train for every train type and direction; depends on the assumption that the trains are sorted by
              * their names, thus AX trains will always come after BX trains
              */
-            final TrainType lastUsedTrainType = t.isEastbound() ? lastUsedEastboundTrainType
+            final Type lastUsedTrainType = t.isEastbound() ? lastUsedEastboundTrainType
                     : lastUsedWestboundTrainType;
             if (t.getType() == lastUsedTrainType) {
                 continue;

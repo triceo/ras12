@@ -8,8 +8,7 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import junit.framework.Assert;
-import org.drools.planner.examples.ras2012.model.original.Arc.TrackType;
-import org.drools.planner.examples.ras2012.model.original.Train.TrainType;
+import org.drools.planner.examples.ras2012.model.original.Train.Type;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -17,22 +16,22 @@ public class TrainTest {
 
     @BeforeClass
     public static void setSpeeds() {
-        TrackType.setSpeed(TrackType.MAIN_0, 100, 50);
-        TrackType.setSpeed(TrackType.MAIN_1, 85, 75);
-        TrackType.setSpeed(TrackType.MAIN_2, 110, 95);
-        TrackType.setSpeed(TrackType.SIDING, 25);
-        TrackType.setSpeed(TrackType.SWITCH, 35);
-        TrackType.setSpeed(TrackType.CROSSOVER, 45);
+        Track.setSpeed(Track.MAIN_0, 100, 50);
+        Track.setSpeed(Track.MAIN_1, 85, 75);
+        Track.setSpeed(Track.MAIN_2, 110, 95);
+        Track.setSpeed(Track.SIDING, 25);
+        Track.setSpeed(Track.SWITCH, 35);
+        Track.setSpeed(Track.CROSSOVER, 45);
     }
 
     private Arc[] getArcs(final Node n1, final Node n2, final BigDecimal length) {
         // prepare arcs, all of the same length
-        final Arc mainArc0 = new Arc(TrackType.MAIN_0, length, n1, n2);
-        final Arc mainArc1 = new Arc(TrackType.MAIN_0, length, n1, n2);
-        final Arc mainArc2 = new Arc(TrackType.MAIN_0, length, n1, n2);
-        final Arc sidingArc = new Arc(TrackType.SIDING, length, n1, n2);
-        final Arc switchArc = new Arc(TrackType.SWITCH, length, n1, n2);
-        final Arc crossoverArc = new Arc(TrackType.CROSSOVER, length, n1, n2);
+        final Arc mainArc0 = new Arc(Track.MAIN_0, length, n1, n2);
+        final Arc mainArc1 = new Arc(Track.MAIN_0, length, n1, n2);
+        final Arc mainArc2 = new Arc(Track.MAIN_0, length, n1, n2);
+        final Arc sidingArc = new Arc(Track.SIDING, length, n1, n2);
+        final Arc switchArc = new Arc(Track.SWITCH, length, n1, n2);
+        final Arc crossoverArc = new Arc(Track.CROSSOVER, length, n1, n2);
         return new Arc[] { mainArc0, mainArc1, mainArc2, sidingArc, switchArc, crossoverArc };
     }
 
@@ -217,7 +216,7 @@ public class TrainTest {
         for (final Arc a : this.getArcs(n1, n2, length)) {
             for (final Train t : this.getTrains(n1, n2)) {
                 final BigDecimal distanceInMiles = a.getLengthInMiles();
-                final int trainSpeedInMph = t.getMaximumSpeed(a.getTrackType());
+                final int trainSpeedInMph = t.getMaximumSpeed(a.getTrack());
                 final BigDecimal timeInHours = distanceInMiles.divide(
                         BigDecimal.valueOf(trainSpeedInMph), 10, BigDecimal.ROUND_HALF_EVEN);
                 final BigDecimal timeInMilliseconds = timeInHours.multiply(BigDecimal.valueOf(60))
@@ -242,38 +241,38 @@ public class TrainTest {
         final BigDecimal length = new BigDecimal("1.5");
         for (final Arc a : this.getArcs(n1, n2, length)) {
             for (final Train t : this.getTrains(n1, n2)) {
-                final Integer arcSpeed = t.isEastbound() ? a.getTrackType().getSpeedEastbound() : a
-                        .getTrackType().getSpeedWestbound();
-                if (a.getTrackType().isMainTrack()) {
+                final Integer arcSpeed = t.isEastbound() ? a.getTrack().getSpeedEastbound() : a
+                        .getTrack().getSpeedWestbound();
+                if (a.getTrack().isMainTrack()) {
                     final BigDecimal multiplier = t.getSpeedMultiplier();
                     final Integer expectedSpeed = multiplier.multiply(BigDecimal.valueOf(arcSpeed))
                             .intValue();
                     Assert.assertEquals(
                             "Outside main tracks, the train max speed should equal (arc speed)x(train speed multiplier).",
-                            expectedSpeed, t.getMaximumSpeed(a.getTrackType()));
+                            expectedSpeed, t.getMaximumSpeed(a.getTrack()));
                 } else {
                     Assert.assertEquals(
                             "Outside main tracks, the train max speed should equal arc speed.",
-                            arcSpeed, t.getMaximumSpeed(a.getTrackType()));
+                            arcSpeed, t.getMaximumSpeed(a.getTrack()));
                 }
                 Assert.assertEquals(
                         "Maximum speed with unspecified track should return the highest possible train speed.",
-                        t.getMaximumSpeed(), t.getMaximumSpeed(TrackType.MAIN_0));
+                        t.getMaximumSpeed(), t.getMaximumSpeed(Track.MAIN_0));
             }
         }
     }
 
     @Test
     public void testGetType() {
-        final Map<String, TrainType> types = new HashMap<String, TrainType>();
-        types.put("A", TrainType.A);
-        types.put("B", TrainType.B);
-        types.put("C", TrainType.C);
-        types.put("D", TrainType.D);
-        types.put("E", TrainType.E);
-        types.put("F", TrainType.F);
+        final Map<String, Type> types = new HashMap<String, Type>();
+        types.put("A", Type.A);
+        types.put("B", Type.B);
+        types.put("C", Type.C);
+        types.put("D", Type.D);
+        types.put("E", Type.E);
+        types.put("F", Type.F);
         final Random rand = new Random();
-        for (final Map.Entry<String, TrainType> e : types.entrySet()) {
+        for (final Map.Entry<String, Type> e : types.entrySet()) {
             final String name = e.getKey() + Math.max(1, rand.nextInt());
             final Train t = new Train(name, BigDecimal.ONE, BigDecimal.ONE, 90, Node.getNode(0),
                     Node.getNode(1), 0, 1, 0,

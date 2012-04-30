@@ -5,9 +5,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.drools.planner.examples.ras2012.model.original.Track;
+
 import junit.framework.Assert;
 import org.drools.planner.examples.ras2012.model.original.Arc;
-import org.drools.planner.examples.ras2012.model.original.Arc.TrackType;
 import org.drools.planner.examples.ras2012.model.original.Node;
 import org.drools.planner.examples.ras2012.model.original.ScheduleAdherenceRequirement;
 import org.drools.planner.examples.ras2012.model.original.Train;
@@ -56,7 +57,7 @@ public class RouteTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testExtendNotWithSameArc() {
-        final Arc a = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
+        final Arc a = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
         final Route r = new Route(this.isEastbound);
         final Route r2 = r.extend(a);
         r2.extend(a);
@@ -71,7 +72,7 @@ public class RouteTest {
     @Test
     public void testExtendResultsInNewRoute() {
         final Route r = new Route(this.isEastbound);
-        final Route r2 = r.extend(new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node
+        final Route r2 = r.extend(new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node
                 .getNode(1)));
         Assert.assertNotSame("Extended route should be a clone of the original one.", r2, r);
         Assert.assertFalse("Old and extended routes shouldn't be equal.", r2.equals(r));
@@ -79,7 +80,7 @@ public class RouteTest {
 
     @Test
     public void testGetWaitPointsOnCrossovers() {
-        this.testGetWaitPointsOnSwitchesAndCrossovers(TrackType.CROSSOVER);
+        this.testGetWaitPointsOnSwitchesAndCrossovers(Track.CROSSOVER);
     }
 
     @Test
@@ -88,9 +89,9 @@ public class RouteTest {
         final Node n2 = Node.getNode(1);
         final Node n3 = Node.getNode(2);
         final Node n4 = Node.getNode(3);
-        final Arc a1 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n1, n2);
-        final Arc a2 = new Arc(TrackType.MAIN_1, BigDecimal.ONE, n2, n3);
-        final Arc a3 = new Arc(TrackType.MAIN_2, BigDecimal.ONE, n3, n4);
+        final Arc a1 = new Arc(Track.MAIN_0, BigDecimal.ONE, n1, n2);
+        final Arc a2 = new Arc(Track.MAIN_1, BigDecimal.ONE, n2, n3);
+        final Arc a3 = new Arc(Track.MAIN_2, BigDecimal.ONE, n3, n4);
         final Route r = new Route(this.isEastbound).extend(a1).extend(a2).extend(a3);
         final Collection<Node> wp = r.getWaitPoints();
         Assert.assertEquals("Only main tracks means just one wait point at the beginning.", 1,
@@ -105,9 +106,9 @@ public class RouteTest {
         final Node n2 = Node.getNode(1);
         final Node n3 = Node.getNode(2);
         final Node n4 = Node.getNode(3);
-        final Arc a1 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n1, n2);
-        final Arc a2 = new Arc(TrackType.SIDING, BigDecimal.ONE, n2, n3);
-        final Arc a3 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n3, n4);
+        final Arc a1 = new Arc(Track.MAIN_0, BigDecimal.ONE, n1, n2);
+        final Arc a2 = new Arc(Track.SIDING, BigDecimal.ONE, n2, n3);
+        final Arc a3 = new Arc(Track.MAIN_0, BigDecimal.ONE, n3, n4);
         Route r = new Route(this.isEastbound);
         if (this.isEastbound) {
             r = r.extend(a1).extend(a2).extend(a3);
@@ -124,17 +125,17 @@ public class RouteTest {
 
     @Test
     public void testGetWaitPointsOnSwitches() {
-        this.testGetWaitPointsOnSwitchesAndCrossovers(TrackType.SWITCH);
+        this.testGetWaitPointsOnSwitchesAndCrossovers(Track.SWITCH);
     }
 
-    private void testGetWaitPointsOnSwitchesAndCrossovers(final TrackType t) {
+    private void testGetWaitPointsOnSwitchesAndCrossovers(final Track t) {
         final Node n1 = Node.getNode(0);
         final Node n2 = Node.getNode(1);
         final Node n3 = Node.getNode(2);
         final Node n4 = Node.getNode(3);
-        final Arc a1 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n1, n2);
+        final Arc a1 = new Arc(Track.MAIN_0, BigDecimal.ONE, n1, n2);
         final Arc a2 = new Arc(t, BigDecimal.ONE, n2, n3);
-        final Arc a3 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n3, n4);
+        final Arc a3 = new Arc(Track.MAIN_0, BigDecimal.ONE, n3, n4);
         final Route r = new Route(this.isEastbound).extend(a1).extend(a2).extend(a3);
         final Collection<Node> wp = r.getWaitPoints();
         Assert.assertEquals("One SW/C means two wait points, start + SW/C.", 2, wp.size());
@@ -148,7 +149,7 @@ public class RouteTest {
         // prepare route
         final Node n1 = Node.getNode(0);
         final Node n2 = Node.getNode(1);
-        final Arc a = new Arc(TrackType.SIDING, BigDecimal.ONE, n1, n2);
+        final Arc a = new Arc(Track.SIDING, BigDecimal.ONE, n1, n2);
         Route r = new Route(this.isEastbound);
         r = r.extend(a);
         final boolean isWestbound = !this.isEastbound;
@@ -170,7 +171,7 @@ public class RouteTest {
         // prepare route
         final Node n1 = Node.getNode(0);
         final Node n2 = Node.getNode(1);
-        final Arc a = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n1, n2);
+        final Arc a = new Arc(Track.MAIN_0, BigDecimal.ONE, n1, n2);
         Route r = new Route(this.isEastbound);
         r = r.extend(a);
         // prepare trains
@@ -196,7 +197,7 @@ public class RouteTest {
         // prepare route
         final Node n1 = Node.getNode(0);
         final Node n2 = Node.getNode(1);
-        final Arc a = new Arc(TrackType.SIDING, BigDecimal.ONE, n1, n2);
+        final Arc a = new Arc(Track.SIDING, BigDecimal.ONE, n1, n2);
         Route r = new Route(this.isEastbound);
         r = r.extend(a);
         final boolean isWestbound = !this.isEastbound;
@@ -218,7 +219,7 @@ public class RouteTest {
         // prepare route
         final Node n1 = Node.getNode(0);
         final Node n2 = Node.getNode(1);
-        final Arc a = new Arc(TrackType.SIDING, BigDecimal.ONE, n1, n2);
+        final Arc a = new Arc(Track.SIDING, BigDecimal.ONE, n1, n2);
         Route r = new Route(this.isEastbound);
         r = r.extend(a);
         final boolean isWestbound = !this.isEastbound;
@@ -243,7 +244,7 @@ public class RouteTest {
         final Node n2 = Node.getNode(1);
         final Node n3 = Node.getNode(2);
         final Node n4 = Node.getNode(3);
-        final Arc a = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n1, n2);
+        final Arc a = new Arc(Track.MAIN_0, BigDecimal.ONE, n1, n2);
         Route r = new Route(this.isEastbound);
         r = r.extend(a);
         final boolean isWestbound = !this.isEastbound;

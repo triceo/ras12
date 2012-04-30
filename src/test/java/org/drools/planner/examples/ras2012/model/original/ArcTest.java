@@ -2,7 +2,6 @@ package org.drools.planner.examples.ras2012.model.original;
 
 import java.math.BigDecimal;
 
-import org.drools.planner.examples.ras2012.model.original.Arc.TrackType;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -10,7 +9,7 @@ public class ArcTest extends AbstractSectionTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorNegativeLength() {
-        new Arc(TrackType.MAIN_0, new BigDecimal("-0.05"), Node.getNode(0), Node.getNode(1));
+        new Arc(Track.MAIN_0, new BigDecimal("-0.05"), Node.getNode(0), Node.getNode(1));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -20,27 +19,27 @@ public class ArcTest extends AbstractSectionTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorNull2() {
-        new Arc(TrackType.MAIN_0, null, Node.getNode(0), Node.getNode(1));
+        new Arc(Track.MAIN_0, null, Node.getNode(0), Node.getNode(1));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorNull3() {
-        new Arc(TrackType.MAIN_0, new BigDecimal("10"), null, Node.getNode(1));
+        new Arc(Track.MAIN_0, new BigDecimal("10"), null, Node.getNode(1));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorNull4() {
-        new Arc(TrackType.MAIN_0, new BigDecimal("10"), Node.getNode(0), null);
+        new Arc(Track.MAIN_0, new BigDecimal("10"), Node.getNode(0), null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorSameNodes() {
-        new Arc(TrackType.MAIN_0, new BigDecimal("10"), Node.getNode(0), Node.getNode(0));
+        new Arc(Track.MAIN_0, new BigDecimal("10"), Node.getNode(0), Node.getNode(0));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorZeroLength() {
-        new Arc(TrackType.MAIN_0, new BigDecimal("0"), Node.getNode(0), Node.getNode(1));
+        new Arc(Track.MAIN_0, new BigDecimal("0"), Node.getNode(0), Node.getNode(1));
     }
 
     @Test
@@ -48,10 +47,10 @@ public class ArcTest extends AbstractSectionTest {
         final Node n1 = Node.getNode(0);
         final Node n2 = Node.getNode(1);
         final BigDecimal length = new BigDecimal("1.5");
-        final Arc a1 = new Arc(TrackType.MAIN_0, length, n1, n2);
+        final Arc a1 = new Arc(Track.MAIN_0, length, n1, n2);
         Assert.assertSame(n1, a1.getWestNode());
         Assert.assertSame(n2, a1.getEastNode());
-        final Arc a2 = new Arc(TrackType.MAIN_0, length, n2, n1);
+        final Arc a2 = new Arc(Track.MAIN_0, length, n2, n1);
         Assert.assertSame(n1, a2.getEastNode());
         Assert.assertSame(n2, a2.getWestNode());
     }
@@ -61,9 +60,9 @@ public class ArcTest extends AbstractSectionTest {
         final Node n1 = Node.getNode(0);
         final Node n2 = Node.getNode(1);
         final BigDecimal length = new BigDecimal("1.5");
-        final Arc a1 = new Arc(TrackType.MAIN_0, length, n1, n2);
+        final Arc a1 = new Arc(Track.MAIN_0, length, n1, n2);
         Assert.assertTrue("The object should equal itself.", a1.equals(a1));
-        final Arc a2 = new Arc(TrackType.MAIN_0, length, n1, n2);
+        final Arc a2 = new Arc(Track.MAIN_0, length, n1, n2);
         Assert.assertFalse("Objects with the exact same parameters shouldn't equal itself.",
                 a1.equals(a2));
     }
@@ -74,7 +73,7 @@ public class ArcTest extends AbstractSectionTest {
         final Node n1 = Node.getNode(0);
         final Node n2 = Node.getNode(1);
         final BigDecimal length = new BigDecimal("1.5");
-        final Arc a = new Arc(TrackType.MAIN_0, length, n1, n2);
+        final Arc a = new Arc(Track.MAIN_0, length, n1, n2);
         super.actuallyTestInitialAndTerminalNodesOnRoute(a);
     }
 
@@ -84,7 +83,7 @@ public class ArcTest extends AbstractSectionTest {
         final Node n1 = Node.getNode(0);
         final Node n2 = Node.getNode(1);
         final BigDecimal length = new BigDecimal("1.5");
-        final Arc a = new Arc(TrackType.MAIN_0, length, n1, n2);
+        final Arc a = new Arc(Track.MAIN_0, length, n1, n2);
         super.actuallyTestInitialAndTerminalNodesOnTrain(a);
     }
 }

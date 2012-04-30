@@ -28,7 +28,7 @@ public class GraphVisualizer {
     private static class ArcLabeller implements Transformer<Arc, String> {
 
         private String getTrackId(final Arc input) {
-            switch (input.getTrackType()) {
+            switch (input.getTrack()) {
                 case MAIN_0:
                     return "M0";
                 case MAIN_1:
@@ -43,7 +43,7 @@ public class GraphVisualizer {
                     return "C";
                 default:
                     throw new IllegalArgumentException("Unknown track type: "
-                            + input.getTrackType());
+                            + input.getTrack());
             }
         }
 

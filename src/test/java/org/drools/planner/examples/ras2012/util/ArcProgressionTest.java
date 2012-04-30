@@ -8,10 +8,11 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.drools.planner.examples.ras2012.model.original.Track;
+
 import junit.framework.Assert;
 import org.drools.planner.examples.ras2012.model.Route;
 import org.drools.planner.examples.ras2012.model.original.Arc;
-import org.drools.planner.examples.ras2012.model.original.Arc.TrackType;
 import org.drools.planner.examples.ras2012.model.original.Node;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,9 +51,9 @@ public class ArcProgressionTest {
 
     @Test
     public void testCompleteHeadAndTail() {
-        final Arc a = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
-        final Arc b = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(1), Node.getNode(2));
-        final Arc c = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(2), Node.getNode(3));
+        final Arc a = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
+        final Arc b = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(1), Node.getNode(2));
+        final Arc c = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(2), Node.getNode(3));
         final List<Arc> arcs = Arrays.asList(new Arc[] { a, b, c });
         final ArcProgression p = new ArcProgression(this.route, arcs);
 
@@ -65,10 +66,10 @@ public class ArcProgressionTest {
 
     @Test
     public void testConstructor() {
-        final Arc a = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
-        final Arc b = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(1), Node.getNode(2));
-        final Arc c = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(2), Node.getNode(3));
-        final Arc d = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(3), Node.getNode(4));
+        final Arc a = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
+        final Arc b = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(1), Node.getNode(2));
+        final Arc c = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(2), Node.getNode(3));
+        final Arc d = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(3), Node.getNode(4));
         final List<Arc> arcs = Arrays.asList(new Arc[] { a, b, c, d });
         final List<Arc> eastboundOrdering = Arrays.asList(new Arc[] { a, b, c, d });
         final List<Arc> westboundOrdering = Arrays.asList(new Arc[] { d, c, b, a });
@@ -95,8 +96,8 @@ public class ArcProgressionTest {
 
     @Test
     public void testContains() {
-        final Arc arc = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
-        final Arc arc2 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(1), Node.getNode(2));
+        final Arc arc = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
+        final Arc arc2 = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(1), Node.getNode(2));
         Route r = this.route;
         Assert.assertFalse("Empty collection shouldn't contain the arc.", r.getProgression()
                 .contains(arc));
@@ -109,9 +110,9 @@ public class ArcProgressionTest {
 
     @Test
     public void testEmptyHeadAndTail() {
-        final Arc a = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
-        final Arc b = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(1), Node.getNode(2));
-        final Arc c = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(2), Node.getNode(3));
+        final Arc a = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
+        final Arc b = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(1), Node.getNode(2));
+        final Arc c = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(2), Node.getNode(3));
         final List<Arc> arcs = Arrays.asList(new Arc[] { a, b, c });
         final ArcProgression p = new ArcProgression(this.route, arcs);
 
@@ -128,8 +129,8 @@ public class ArcProgressionTest {
         final Node n1 = Node.getNode(0);
         final Node n2 = Node.getNode(1);
         final Node n3 = Node.getNode(2);
-        final Arc a1 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n1, n2);
-        final Arc a2 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n2, n3);
+        final Arc a1 = new Arc(Track.MAIN_0, BigDecimal.ONE, n1, n2);
+        final Arc a2 = new Arc(Track.MAIN_0, BigDecimal.ONE, n2, n3);
         // validate
         final Arc firstExtend = this.route.isEastbound() ? a1 : a2;
         final Arc secondExtend = this.route.isEastbound() ? a2 : a1;
@@ -152,15 +153,15 @@ public class ArcProgressionTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetNextEmptyRoute() {
-        final Arc a1 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
+        final Arc a1 = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
         final Route r = this.route;
         r.getProgression().getNext(a1);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetNextInvalid() {
-        final Arc a1 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
-        final Arc a2 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(1), Node.getNode(2));
+        final Arc a1 = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
+        final Arc a2 = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(1), Node.getNode(2));
         final Route r = this.route.extend(a1);
         r.getProgression().getNext(a2);
     }
@@ -171,8 +172,8 @@ public class ArcProgressionTest {
         final Node n1 = Node.getNode(0);
         final Node n2 = Node.getNode(1);
         final Node n3 = Node.getNode(2);
-        final Arc a1 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n1, n2);
-        final Arc a2 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n2, n3);
+        final Arc a1 = new Arc(Track.MAIN_0, BigDecimal.ONE, n1, n2);
+        final Arc a2 = new Arc(Track.MAIN_0, BigDecimal.ONE, n2, n3);
         // validate
         Route r = this.route;
         r = r.extend(a1);
@@ -195,9 +196,9 @@ public class ArcProgressionTest {
         final Node n2 = Node.getNode(1);
         final Node n3 = Node.getNode(2);
         final Node n4 = Node.getNode(3);
-        final Arc a1 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n1, n2);
-        final Arc a2 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n2, n3);
-        final Arc a3 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n3, n4);
+        final Arc a1 = new Arc(Track.MAIN_0, BigDecimal.ONE, n1, n2);
+        final Arc a2 = new Arc(Track.MAIN_0, BigDecimal.ONE, n2, n3);
+        final Arc a3 = new Arc(Track.MAIN_0, BigDecimal.ONE, n3, n4);
 
         Route r = this.route.extend(a1);
         Assert.assertSame("With just one arc, initial and terminal arcs should be the same. ", r
@@ -223,15 +224,15 @@ public class ArcProgressionTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetPreviousEmptyRoute() {
-        final Arc a1 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
+        final Arc a1 = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
         final Route r = this.route;
         r.getProgression().getPrevious(a1);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetPreviousInvalid() {
-        final Arc a1 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
-        final Arc a2 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(1), Node.getNode(2));
+        final Arc a1 = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
+        final Arc a2 = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(1), Node.getNode(2));
         final Route r = this.route.extend(a1);
         r.getProgression().getPrevious(a2);
     }
@@ -242,8 +243,8 @@ public class ArcProgressionTest {
         final Node n1 = Node.getNode(0);
         final Node n2 = Node.getNode(1);
         final Node n3 = Node.getNode(2);
-        final Arc a1 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n1, n2);
-        final Arc a2 = new Arc(TrackType.MAIN_0, BigDecimal.ONE, n2, n3);
+        final Arc a1 = new Arc(Track.MAIN_0, BigDecimal.ONE, n1, n2);
+        final Arc a2 = new Arc(Track.MAIN_0, BigDecimal.ONE, n2, n3);
         // validate
         Route r = this.route;
         r = r.extend(a1);
@@ -262,7 +263,7 @@ public class ArcProgressionTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testHeadNullNode() {
-        final Arc a = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
+        final Arc a = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
         final ArcProgression p = new ArcProgression(this.route, a);
         Assert.assertEquals("Tail starts with last node; result should be empty.", 0,
                 p.head(Node.getNode(2)));
@@ -270,10 +271,10 @@ public class ArcProgressionTest {
 
     @Test
     public void testPartialHeadAndTail() {
-        final Arc a = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
-        final Arc b = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(1), Node.getNode(2));
-        final Arc c = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(2), Node.getNode(3));
-        final Arc d = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(3), Node.getNode(4));
+        final Arc a = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
+        final Arc b = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(1), Node.getNode(2));
+        final Arc c = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(2), Node.getNode(3));
+        final Arc d = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(3), Node.getNode(4));
         final List<Arc> arcs = Arrays.asList(new Arc[] { a, b, c, d });
         final ArcProgression p = new ArcProgression(this.route, arcs);
 
@@ -308,7 +309,7 @@ public class ArcProgressionTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testTailNullNode() {
-        final Arc a = new Arc(TrackType.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
+        final Arc a = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
         final ArcProgression p = new ArcProgression(this.route, a);
         Assert.assertEquals("Tail starts with last node; result should be empty.", 0,
                 p.tail(Node.getNode(2)));

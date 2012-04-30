@@ -16,11 +16,12 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
+import org.drools.planner.examples.ras2012.model.original.Track;
+
 import org.drools.planner.benchmark.api.ProblemIO;
 import org.drools.planner.core.solution.Solution;
 import org.drools.planner.examples.ras2012.model.Network;
 import org.drools.planner.examples.ras2012.model.original.Arc;
-import org.drools.planner.examples.ras2012.model.original.Arc.TrackType;
 import org.drools.planner.examples.ras2012.model.original.MaintenanceWindow;
 import org.drools.planner.examples.ras2012.model.original.Node;
 import org.drools.planner.examples.ras2012.model.original.ScheduleAdherenceRequirement;
@@ -42,20 +43,20 @@ public class RAS2012ProblemIO implements ProblemIO {
                 .setScale(3, BigDecimal.ROUND_HALF_EVEN);
     }
 
-    private static TrackType getArcType(final Token t) {
+    private static Track getArcType(final Token t) {
         final String value = RAS2012ProblemIO.tokenToString(t);
         if (value.equals("0")) {
-            return TrackType.MAIN_0;
+            return Track.MAIN_0;
         } else if (value.equals("1")) {
-            return TrackType.MAIN_1;
+            return Track.MAIN_1;
         } else if (value.equals("2")) {
-            return TrackType.MAIN_2;
+            return Track.MAIN_2;
         } else if (value.equals("SW")) {
-            return TrackType.SWITCH;
+            return Track.SWITCH;
         } else if (value.equals("S")) {
-            return TrackType.SIDING;
+            return Track.SIDING;
         } else if (value.equals("C")) {
-            return TrackType.CROSSOVER;
+            return Track.CROSSOVER;
         } else {
             throw new IllegalArgumentException("Invalid value for track type: " + value);
         }
@@ -124,13 +125,13 @@ public class RAS2012ProblemIO implements ProblemIO {
         final int sidingsSpeed = RAS2012ProblemIO.tokenToInteger(p.getSpeedSidings());
         final int crossoverSpeed = RAS2012ProblemIO.tokenToInteger(p.getSpeedCrossovers());
         // set speeds for different track types
-        for (final TrackType t : TrackType.values()) {
+        for (final Track t : Track.values()) {
             if (t.isMainTrack()) {
-                TrackType.setSpeed(t, eastboundSpeed, westboundSpeed);
-            } else if (t == TrackType.SIDING) {
-                TrackType.setSpeed(t, sidingsSpeed);
+                Track.setSpeed(t, eastboundSpeed, westboundSpeed);
+            } else if (t == Track.SIDING) {
+                Track.setSpeed(t, sidingsSpeed);
             } else {
-                TrackType.setSpeed(t, crossoverSpeed);
+                Track.setSpeed(t, crossoverSpeed);
             }
         }
         final String name = RAS2012ProblemIO.tokenToString(p.getName());
@@ -161,7 +162,7 @@ public class RAS2012ProblemIO implements ProblemIO {
         final List<Arc> newArcs = new ArrayList<Arc>();
         final Map<Integer, Node> newNodes = new TreeMap<Integer, Node>();
         for (int i = 0; i < numberOfItems; i++) {
-            final TrackType t = RAS2012ProblemIO.getArcType(trackTypes.get(i));
+            final Track t = RAS2012ProblemIO.getArcType(trackTypes.get(i));
             final BigDecimal length = RAS2012ProblemIO.tokenToBigDecimal(trackLengths.get(i));
             // now convert node numbers to Node instances
             final int startNodeId = RAS2012ProblemIO.tokenToInteger(arcs.get(i).get(0));

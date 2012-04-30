@@ -6,21 +6,20 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.drools.planner.examples.ras2012.interfaces.Directed;
-import org.drools.planner.examples.ras2012.model.original.Arc.TrackType;
 
 public class Train implements Comparable<Train>, Directed {
 
-    public static enum TrainType {
+    public static enum Type {
         A(600), B(500), C(400), D(300), E(150, false), F(100, false);
 
         private final boolean adhereToSchedule;
         private final int     delayPenalty;
 
-        TrainType(final int delayPenalty) {
+        Type(final int delayPenalty) {
             this(delayPenalty, true);
         }
 
-        TrainType(final int delayPenalty, final boolean adhereToSchedule) {
+        Type(final int delayPenalty, final boolean adhereToSchedule) {
             this.adhereToSchedule = adhereToSchedule;
             this.delayPenalty = delayPenalty;
         }
@@ -36,21 +35,21 @@ public class Train implements Comparable<Train>, Directed {
 
     private static final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.MILLISECONDS;
 
-    private static TrainType determineType(final String name) {
+    private static Type determineType(final String name) {
         final char[] chars = name.toCharArray();
         switch (chars[0]) {
             case 'A':
-                return TrainType.A;
+                return Type.A;
             case 'B':
-                return TrainType.B;
+                return Type.B;
             case 'C':
-                return TrainType.C;
+                return Type.C;
             case 'D':
-                return TrainType.D;
+                return Type.D;
             case 'E':
-                return TrainType.E;
+                return Type.E;
             case 'F':
-                return TrainType.F;
+                return Type.F;
             default:
                 throw new IllegalArgumentException("Invalid train type: " + chars[0]);
         }
@@ -60,7 +59,7 @@ public class Train implements Comparable<Train>, Directed {
 
     private final BigDecimal                         length;
     private final BigDecimal                         speedMultiplier;
-    private final TrainType                          type;
+    private final Type                          type;
     private final int                                tob;
     private final Node                               origin;
     private final Node                               destination;
@@ -164,7 +163,7 @@ public class Train implements Comparable<Train>, Directed {
         if (a == null) {
             throw new IllegalArgumentException("Arc cannot be null!");
         }
-        final BigDecimal milesPerHour = BigDecimal.valueOf(this.getMaximumSpeed(a.getTrackType()));
+        final BigDecimal milesPerHour = BigDecimal.valueOf(this.getMaximumSpeed(a.getTrack()));
         final BigDecimal hours = a.getLengthInMiles().divide(milesPerHour, 10,
                 BigDecimal.ROUND_HALF_DOWN);
         final BigDecimal sixty = BigDecimal.valueOf(60);
@@ -186,10 +185,10 @@ public class Train implements Comparable<Train>, Directed {
     }
 
     public Integer getMaximumSpeed() {
-        return this.getMaximumSpeed(TrackType.MAIN_0);
+        return this.getMaximumSpeed(Track.MAIN_0);
     }
 
-    public Integer getMaximumSpeed(final TrackType t) {
+    public Integer getMaximumSpeed(final Track t) {
         final int coreSpeed = this.isWestbound() ? t.getSpeedWestbound() : t.getSpeedEastbound();
         if (t.isMainTrack()) {
             return this.speedMultiplier.multiply(new BigDecimal(coreSpeed)).intValue();
@@ -218,7 +217,7 @@ public class Train implements Comparable<Train>, Directed {
         return this.speedMultiplier;
     }
 
-    public TrainType getType() {
+    public Type getType() {
         return this.type;
     }
 

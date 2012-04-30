@@ -212,7 +212,7 @@ public final class Itinerary {
         }
         final long timeTravelledInLeadingArc = time - timeArcEntered;
         final BigDecimal travelledInLeadingArc = Itinerary.getDistanceInMilesFromSpeedAndTime(this
-                .getTrain().getMaximumSpeed(leadingArc.getTrackType()), timeTravelledInLeadingArc);
+                .getTrain().getMaximumSpeed(leadingArc.getTrack()), timeTravelledInLeadingArc);
         BigDecimal remainingLengthOfTrain = this.getTrain().getLength()
                 .subtract(travelledInLeadingArc);
         // and now add any preceding arcs for as long as the remaining train length > 0

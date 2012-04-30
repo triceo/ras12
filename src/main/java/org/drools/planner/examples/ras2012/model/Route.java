@@ -15,10 +15,11 @@ import java.util.Map;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.drools.planner.examples.ras2012.model.original.Track;
+
 import org.drools.planner.examples.ras2012.interfaces.Directed;
 import org.drools.planner.examples.ras2012.interfaces.Visualizable;
 import org.drools.planner.examples.ras2012.model.original.Arc;
-import org.drools.planner.examples.ras2012.model.original.Arc.TrackType;
 import org.drools.planner.examples.ras2012.model.original.Node;
 import org.drools.planner.examples.ras2012.model.original.ScheduleAdherenceRequirement;
 import org.drools.planner.examples.ras2012.model.original.Train;
@@ -141,8 +142,8 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
             BigDecimal result = BigDecimal.ZERO;
             for (final Arc a : this.progression.getArcs()) {
                 final BigDecimal length = a.getLengthInMiles();
-                final int speed = this.isEastbound() ? a.getTrackType().getSpeedEastbound() : a
-                        .getTrackType().getSpeedWestbound();
+                final int speed = this.isEastbound() ? a.getTrack().getSpeedEastbound() : a
+                        .getTrack().getSpeedWestbound();
                 final BigDecimal timeInHours = length.divide(BigDecimal.valueOf(speed), 2,
                         BigDecimal.ROUND_HALF_DOWN);
                 result = result.add(timeInHours.multiply(BigDecimal.valueOf(60)));
@@ -159,10 +160,10 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
         waitPoints.add(firstArc.getOrigin(this));
         // other wait points depend on the type of the track
         for (final Arc a : this.progression.getArcs()) {
-            if (a.getTrackType() == TrackType.SIDING) {
+            if (a.getTrack() == Track.SIDING) {
                 // on sidings, wait before leaving them through a switch
                 waitPoints.add(a.getDestination(this));
-            } else if (!a.getTrackType().isMainTrack()) {
+            } else if (!a.getTrack().isMainTrack()) {
                 // on crossovers and switches, wait before joining them
                 waitPoints.add(a.getOrigin(this));
             } else {
@@ -181,11 +182,11 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
     }
 
     public boolean isArcPreferred(final Arc a) {
-        if (a.getTrackType() == TrackType.MAIN_0) {
+        if (a.getTrack() == Track.MAIN_0) {
             return true;
-        } else if (a.getTrackType() == TrackType.MAIN_2) {
+        } else if (a.getTrack() == Track.MAIN_2) {
             return this.isEastbound();
-        } else if (a.getTrackType() == TrackType.MAIN_1) {
+        } else if (a.getTrack() == Track.MAIN_1) {
             return this.isWestbound();
         } else {
             // preference of SIDING/SWITCH/CROSSOVER is based on which track are those coming off of
@@ -222,7 +223,7 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
         for (final Arc a : this.progression.getArcs()) {
             containsOrigin = containsOrigin || a.getOrigin(t) == t.getOrigin();
             containsDestination = containsDestination || a.getDestination(t) == t.getDestination();
-            if (a.getTrackType() == TrackType.SIDING) {
+            if (a.getTrack() == Track.SIDING) {
                 if (t.isHeavy()) {
                     /*
                      * heavy trains must never use a siding when there is a meet-pass with another NSA train. this is the
