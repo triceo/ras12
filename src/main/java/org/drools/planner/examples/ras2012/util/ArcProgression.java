@@ -69,14 +69,20 @@ public class ArcProgression implements Directed {
         points.add(firstArc.getOrigin(this));
         // other wait points depend on the type of the track
         for (final Arc a : this.orderedArcs) {
-            if (a.getTrack() == Track.SIDING) {
-                // on sidings, wait before leaving them through a switch
-                points.add(a.getDestination(this));
-            } else if (!a.getTrack().isMainTrack()) {
-                // on crossovers and switches, wait before joining them
-                points.add(a.getOrigin(this));
-            } else {
-                // on main tracks, never wait
+            switch (a.getTrack()) {
+                case SIDING:
+                    // on sidings, wait before leaving them through a switch
+                    points.add(a.getDestination(this));
+                    break;
+                case CROSSOVER:
+                    // on crossovers, wait before joining them
+                    points.add(a.getOrigin(this));
+                    break;
+                default:
+                    /*
+                     * we don't wait on main tracks not to block them; also, we don't wait on switches, since then the train is
+                     * reaching over to a main track and blocking it. sidings are close enough to not need to wait at switches.
+                     */
             }
         }
         return Collections.unmodifiableCollection(points);
