@@ -25,6 +25,10 @@
       <artifactId>drools-planner-core</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.drools.planner</groupId>
+      <artifactId>drools-planner-benchmark</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.jfree</groupId>
       <artifactId>jfreechart</artifactId>
     </dependency>
