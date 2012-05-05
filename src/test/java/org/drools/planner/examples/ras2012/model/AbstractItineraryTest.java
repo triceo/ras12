@@ -1,7 +1,9 @@
 package org.drools.planner.examples.ras2012.model;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -18,6 +20,7 @@ import org.drools.planner.examples.ras2012.model.original.Arc;
 import org.drools.planner.examples.ras2012.model.original.Node;
 import org.drools.planner.examples.ras2012.model.original.Train;
 import org.drools.planner.examples.ras2012.model.original.Train.Type;
+import org.drools.planner.examples.ras2012.util.Converter;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -27,6 +30,55 @@ public abstract class AbstractItineraryTest {
     private RAS2012Solution        solution;
 
     private Map<Train, Set<Route>> testedRoutes;
+
+    private Collection<Arc> calculateOccupiedArcsWithKnownPosition(final Itinerary i, final Node n) {
+        return this.calculateOccupiedArcsWithKnownPosition(i, n, i.getTrain().getLength());
+    }
+
+    private Collection<Arc> calculateOccupiedArcsWithKnownPosition(final Itinerary i, final Node n,
+            final BigDecimal remainingLength) {
+        final Collection<Arc> results = new LinkedHashSet<Arc>();
+        BigDecimal remainingTrainLength = remainingLength;
+        Arc arc = i.getRoute().getProgression().getWithDestinationNode(n);
+        while (remainingTrainLength.compareTo(BigDecimal.ZERO) > 0) {
+            if (arc == null) { // train not yet fully en route
+                break;
+            }
+            results.add(arc);
+            remainingTrainLength = remainingTrainLength.subtract(arc.getLengthInMiles());
+            arc = i.getRoute().getProgression().getPrevious(arc);
+        }
+        return results;
+    }
+
+    private Collection<Arc> calculateOccupiedArcsWithUnknownPosition(final Itinerary i,
+            final long time) {
+        final Collection<Arc> results = new LinkedHashSet<Arc>();
+        // find where we are in the leading arc
+        final Arc leadingArc = i.getLeadingArc(time);
+        if (leadingArc == null) { // journey is over
+            return results;
+        }
+        final long timeTravelledInLeadingArc = time - this.getNearestPastCheckpoint(i, time);
+        BigDecimal distanceTravelledInLeadingArc = BigDecimal.ZERO;
+        if (timeTravelledInLeadingArc > 0) {
+            // if we're inside the leading arc (and not exactly in the origin node), count it
+            distanceTravelledInLeadingArc = Converter.getDistanceInMilesFromSpeedAndTime(i
+                    .getTrain().getMaximumSpeed(leadingArc.getTrack()), timeTravelledInLeadingArc);
+            results.add(leadingArc);
+        }
+        // and add the rest of the train, if necessary
+        final boolean travelledMoreThanTrainLength = distanceTravelledInLeadingArc.compareTo(i
+                .getTrain().getLength()) > 0;
+        if (!travelledMoreThanTrainLength) {
+            final Node lastKnownPoint = leadingArc.getOrigin(i.getRoute());
+            final BigDecimal remainingTrainLength = i.getTrain().getLength()
+                    .subtract(distanceTravelledInLeadingArc);
+            results.addAll(this.calculateOccupiedArcsWithKnownPosition(i, lastKnownPoint,
+                    remainingTrainLength));
+        }
+        return results;
+    }
 
     /**
      * Return the solution to get the itineraries from.
@@ -113,6 +165,10 @@ public abstract class AbstractItineraryTest {
         return i;
     }
 
+    private long getNearestPastCheckpoint(final Itinerary i, final long time) {
+        return i.getSchedule().headMap(time + 1).lastKey();
+    }
+
     protected synchronized RAS2012Solution getSolution() {
         if (this.solution == null) {
             this.solution = this.fetchSolution();
@@ -171,7 +227,7 @@ public abstract class AbstractItineraryTest {
             this.getSolution().getNetwork().visualize(new File(folder, "network.png"));
             for (final Set<Route> routes : this.testedRoutes.values()) {
                 for (final Route route : routes) {
-                    File f = new File(folder, "route" + route.getId() + ".png");
+                    final File f = new File(folder, "route" + route.getId() + ".png");
                     if (!f.exists()) {
                         route.visualize(f);
                     }
@@ -183,14 +239,27 @@ public abstract class AbstractItineraryTest {
 
     @Test
     public void testGetCurrentlyOccupiedArcs() {
-        long[] times = new long[] { 0, 100, 200, 300, 400, 500, 600, 700, 800 };
-        for (long time : times) {
-            for (Itinerary i : this.getItineraries()) {
-                final File f = new File(this.getTargetDataFolder(), "route" + i.getRoute().getId()
-                        + "_train" + i.getTrain().getName() + "_" + time + ".png");
-                if (!f.exists()) {
-                    i.visualize(f, time);
+        for (long time = 0; time <= RAS2012Solution.getPlanningHorizon(TimeUnit.MILLISECONDS); time += 1000) {
+            for (final Itinerary i : this.getItineraries()) {
+                if (time <= i.getTrain().getEntryTime(TimeUnit.MILLISECONDS)) {
+                    if (i.getTrain().getOrigin() == i.getRoute().getProgression().getOrigin()
+                            .getOrigin(i.getRoute())) {
+                        // the train shouldn't be en route yet
+                        Assert.assertEquals("No occupied arcs for " + i + " at " + time
+                                + " (before entry time)", Collections.EMPTY_SET,
+                                i.getCurrentlyOccupiedArcs(time));
+                    } else {
+                        // train starts somewhere in the middle of the route
+                        Assert.assertEquals("Occupied arcs for " + i + " at " + time
+                                + " (before entry time, different origin)",
+                                this.calculateOccupiedArcsWithKnownPosition(i, i.getTrain()
+                                        .getOrigin()), i.getCurrentlyOccupiedArcs(time));
+                    }
+                    continue;
                 }
+                Assert.assertEquals("Occupied arcs for " + i + " at " + time,
+                        this.calculateOccupiedArcsWithUnknownPosition(i, time),
+                        i.getCurrentlyOccupiedArcs(time));
             }
         }
     }

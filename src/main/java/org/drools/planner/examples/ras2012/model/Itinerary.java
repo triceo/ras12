@@ -23,32 +23,17 @@ import org.drools.planner.examples.ras2012.model.original.Node;
 import org.drools.planner.examples.ras2012.model.original.ScheduleAdherenceRequirement;
 import org.drools.planner.examples.ras2012.model.original.Train;
 import org.drools.planner.examples.ras2012.model.original.WaitTime;
+import org.drools.planner.examples.ras2012.util.Converter;
 import org.drools.planner.examples.ras2012.util.ItineraryVisualizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class Itinerary implements Visualizable {
 
-    private static final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.MILLISECONDS;
+    private static final TimeUnit              DEFAULT_TIME_UNIT     = TimeUnit.MILLISECONDS;
 
-    private static final Logger   logger            = LoggerFactory.getLogger(Itinerary.class);
-
-    private static BigDecimal getDistanceInMilesFromSpeedAndTime(final int speedInMPH,
-            final long timeInMilliseconds) {
-        final BigDecimal timeInSeconds = BigDecimal.valueOf(timeInMilliseconds).divide(
-                BigDecimal.valueOf(1000), 10, BigDecimal.ROUND_HALF_EVEN);
-        final BigDecimal timeInMinutes = timeInSeconds.divide(BigDecimal.valueOf(60), 10,
-                BigDecimal.ROUND_HALF_EVEN);
-        final BigDecimal milesPerHour = BigDecimal.valueOf(speedInMPH);
-        final BigDecimal milesPerMinute = milesPerHour.divide(BigDecimal.valueOf(60), 10,
-                BigDecimal.ROUND_HALF_EVEN);
-        return milesPerMinute.multiply(timeInMinutes);
-    }
-
-    private static long getTimeFromSpeedAndDistance(final int speedInMPH, final BigDecimal distance) {
-        return distance.divide(BigDecimal.valueOf(speedInMPH), 10, BigDecimal.ROUND_HALF_EVEN)
-                .multiply(BigDecimal.valueOf(3600000)).longValue();
-    }
+    private static final Logger                logger                = LoggerFactory
+                                                                             .getLogger(Itinerary.class);
 
     private final Route                        route;
 
@@ -184,8 +169,6 @@ public final class Itinerary implements Visualizable {
             // FIXME train should leave the network gradually, not at once when it reaches destination
             return Collections.emptySet();
         }
-        final Collection<Arc> occupiedArcs = new LinkedHashSet<Arc>();
-        occupiedArcs.add(leadingArc);
         // calculate how far are we into the leading arc
         final SortedMap<Long, Arc> nodeEntryTimes = this.getScheduleWithArcs();
         long timeArcEntered = -1;
@@ -200,20 +183,26 @@ public final class Itinerary implements Visualizable {
                     "Proper arc cannot be found! Possibly a bug in the algoritm.");
         }
         final long timeTravelledInLeadingArc = time - timeArcEntered;
-        final BigDecimal travelledInLeadingArc = Itinerary.getDistanceInMilesFromSpeedAndTime(this
-                .getTrain().getMaximumSpeed(leadingArc.getTrack()), timeTravelledInLeadingArc);
-        BigDecimal remainingLengthOfTrain = this.getTrain().getLength()
-                .subtract(travelledInLeadingArc);
+        BigDecimal remainingLengthOfTrain = this.getTrain().getLength();
+        final Collection<Arc> occupiedArcs = new LinkedHashSet<Arc>();
+        if (timeTravelledInLeadingArc > 0) {
+            // only mark the arc as occupied if we've actually ventured inside it
+            occupiedArcs.add(leadingArc);
+            final BigDecimal travelledInLeadingArc = Converter.getDistanceInMilesFromSpeedAndTime(
+                    this.getTrain().getMaximumSpeed(leadingArc.getTrack()),
+                    timeTravelledInLeadingArc);
+            remainingLengthOfTrain = remainingLengthOfTrain.subtract(travelledInLeadingArc);
+        }
         // and now add any preceding arcs for as long as the remaining train length > 0
         Arc currentlyProcessedArc = leadingArc;
-        while ((currentlyProcessedArc = this.getRoute().getProgression()
-                .getPrevious(currentlyProcessedArc)) != null) {
+        while (remainingLengthOfTrain.compareTo(BigDecimal.ZERO) > 0) {
+            currentlyProcessedArc = this.route.getProgression().getPrevious(currentlyProcessedArc);
+            if (currentlyProcessedArc == null) {
+                break;
+            }
             occupiedArcs.add(currentlyProcessedArc);
             remainingLengthOfTrain = remainingLengthOfTrain.subtract(currentlyProcessedArc
                     .getLengthInMiles());
-            if (remainingLengthOfTrain.compareTo(BigDecimal.ZERO) < 0) {
-                break;
-            }
         }
         return occupiedArcs;
     }
@@ -242,7 +231,7 @@ public final class Itinerary implements Visualizable {
         }
         final long actualArrivalTime = scheduleInHorizon.lastKey();
         final long optimalArrivalTime = this.trainEntryTime
-                + Itinerary.getTimeFromSpeedAndDistance(this.getTrain().getMaximumSpeed(),
+                + Converter.getTimeFromSpeedAndDistance(this.getTrain().getMaximumSpeed(),
                         this.getTravellingDistance(this.getTrain().getDestination()));
         return actualArrivalTime - optimalArrivalTime;
     }
@@ -439,16 +428,13 @@ public final class Itinerary implements Visualizable {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append("Itinerary: Train ").append(this.getTrain().getName()).append(", Route ")
-                .append(this.getRoute().getId()).append(" [");
-        for (final SortedMap.Entry<Long, Node> a : this.getSchedule().entrySet()) {
-            sb.append(a.getValue().getId()).append("@").append(a.getKey()).append(" ");
-        }
-        sb.append("]");
-        return sb.toString();
+        final StringBuilder builder = new StringBuilder();
+        builder.append("Itinerary [route=").append(this.route.getId()).append(", train=")
+                .append(this.train.getName()).append("]");
+        return builder.toString();
     }
 
+    @Override
     public boolean visualize(final File target) {
         return this.visualize(target, -1);
     }
