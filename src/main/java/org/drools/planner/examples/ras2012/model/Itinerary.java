@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.drools.planner.examples.ras2012.RAS2012Solution;
+import org.drools.planner.examples.ras2012.interfaces.Visualizable;
 import org.drools.planner.examples.ras2012.model.original.Arc;
 import org.drools.planner.examples.ras2012.model.original.MaintenanceWindow;
 import org.drools.planner.examples.ras2012.model.original.Node;
@@ -26,7 +27,7 @@ import org.drools.planner.examples.ras2012.util.ItineraryVisualizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class Itinerary {
+public final class Itinerary implements Visualizable {
 
     private static final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.MILLISECONDS;
 
@@ -449,11 +450,15 @@ public final class Itinerary {
     }
 
     public boolean visualize(final File target) {
+        return this.visualize(target, -1);
+    }
+
+    public boolean visualize(final File target, final long time) {
         OutputStream os = null;
         try {
             os = new FileOutputStream(target);
             Itinerary.logger.info("Starting visualizing itinerary: " + this);
-            new ItineraryVisualizer(this).visualize(os);
+            new ItineraryVisualizer(this, time).visualize(os);
             Itinerary.logger.info("Itinerary visualization finished: " + this);
             return true;
         } catch (final Exception ex) {

@@ -104,10 +104,12 @@ public abstract class AbstractItineraryTest {
     }
 
     protected Itinerary getItinerary(final Train t, final Route r) {
+        final Itinerary i = new Itinerary(r, t, this.getSolution().getMaintenances());
         final File f = new File(this.getTargetDataFolder(), "route" + r.getId() + "_train"
                 + t.getName() + ".png");
-        final Itinerary i = new Itinerary(r, t, this.getSolution().getMaintenances());
-        i.visualize(f);
+        if (!f.exists()) {
+            i.visualize(f);
+        }
         return i;
     }
 
@@ -169,17 +171,28 @@ public abstract class AbstractItineraryTest {
             this.getSolution().getNetwork().visualize(new File(folder, "network.png"));
             for (final Set<Route> routes : this.testedRoutes.values()) {
                 for (final Route route : routes) {
-                    route.visualize(new File(folder, "route" + route.getId() + ".png"));
+                    File f = new File(folder, "route" + route.getId() + ".png");
+                    if (!f.exists()) {
+                        route.visualize(f);
+                    }
                 }
             }
         }
         return this.testedRoutes;
     }
 
-    @Ignore
     @Test
     public void testGetCurrentlyOccupiedArcs() {
-        Assert.fail("Not yet implemented"); // TODO
+        long[] times = new long[] { 0, 100, 200, 300, 400, 500, 600, 700, 800 };
+        for (long time : times) {
+            for (Itinerary i : this.getItineraries()) {
+                final File f = new File(this.getTargetDataFolder(), "route" + i.getRoute().getId()
+                        + "_train" + i.getTrain().getName() + "_" + time + ".png");
+                if (!f.exists()) {
+                    i.visualize(f, time);
+                }
+            }
+        }
     }
 
     /**
