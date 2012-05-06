@@ -99,7 +99,7 @@ public class ItineraryTest {
     }
 
     @Test
-    public void testGetDelayAtHorizon() {
+    public void testGetDelay() {
         final long timeInterestedIn = RAS2012Solution.getPlanningHorizon(TimeUnit.MILLISECONDS);
         final SortedMap<Long, Node> schedulePast = this.itinerary.getSchedule().headMap(
                 timeInterestedIn + 1);

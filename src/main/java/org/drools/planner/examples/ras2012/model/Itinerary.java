@@ -181,7 +181,7 @@ public final class Itinerary implements Visualizable {
      *         specified horizon, this returns the exact value of delay. Otherwise, it returns estimated delay at the end of the
      *         specified horizon.
      */
-    protected long getDelay(final long horizon) {
+    private long getDelay(final long horizon) {
         if (this.trainEntryTime > horizon) {
             // train not en route yet, delay must be zero
             return 0;
@@ -199,11 +199,8 @@ public final class Itinerary implements Visualizable {
                 return originalDelay;
             }
         } else if (scheduleInHorizon.values().contains(this.getTrain().getDestination())) {
-            // we know the exact delay
-            final long actualTimeOfArrival = scheduleInHorizon.lastKey();
-            final long optimalTimeOfArrival = this.getTrain().getWantTime(
-                    Itinerary.DEFAULT_TIME_UNIT);
-            return actualTimeOfArrival - optimalTimeOfArrival;
+            return this.getDelay(this.getTrain().getDestination(),
+                    this.getTrain().getWantTime(Itinerary.DEFAULT_TIME_UNIT));
         }
         // otherwise, we need to estimate the delay
         final long actualArrivalTime = horizon;
@@ -211,6 +208,24 @@ public final class Itinerary implements Visualizable {
                 + Converter.getTimeFromSpeedAndDistance(this.getTrain().getMaximumSpeed(),
                         Converter.calculateActualDistanceTravelled(this, horizon));
         return actualArrivalTime - optimalArrivalTime;
+    }
+
+    /**
+     * Get delay at a given node, provided we know when we were supposed to be there.
+     * 
+     * @param n The node on the route.
+     * @param expectedArrival Time in milliseconds of the expected arrival.
+     * @return Milliseconds. Positive when delayed, negative when ahead. Returns the actual delay regardless of whether the node
+     *         is or isn't within the planning horizon.
+     */
+    private long getDelay(final Node n, final long expectedArrival) {
+        for (final SortedMap.Entry<Long, Node> entry : this.getSchedule().entrySet()) {
+            if (entry.getValue() != n) {
+                continue;
+            }
+            return entry.getKey() - expectedArrival;
+        }
+        throw new IllegalArgumentException(n + " not on the route!");
     }
 
     protected Arc getLeadingArc(final long time) {
@@ -295,34 +310,19 @@ public final class Itinerary implements Visualizable {
 
     public Map<Node, Long> getScheduleAdherenceStatus() {
         final long horizon = RAS2012Solution.getPlanningHorizon(Itinerary.DEFAULT_TIME_UNIT);
-        final SortedMap<Long, Node> schedule = this.getSchedule();
-        final SortedMap<Long, Node> scheduleInteresting = schedule.headMap(horizon);
+        final SortedMap<Long, Node> scheduleInteresting = this.getSchedule().headMap(horizon);
         final Map<Node, Long> result = new HashMap<Node, Long>();
         for (final ScheduleAdherenceRequirement sa : this.getTrain()
                 .getScheduleAdherenceRequirements()) {
-            final long expectedArrival = sa.getTimeSinceStartOfWorld(Itinerary.DEFAULT_TIME_UNIT);
             final Node expectedDestination = sa.getDestination();
-            if (expectedArrival <= horizon) {
-                // arrival expected inside the planning horizon
-                if (scheduleInteresting.values().contains(expectedDestination)) {
-                    final int numResults = result.size();
-                    // arrival actually inside the planning horizon; we know the exact delay
-                    for (final SortedMap.Entry<Long, Node> entry : scheduleInteresting.entrySet()) {
-                        if (entry.getValue() == expectedDestination) {
-                            result.put(expectedDestination, expectedArrival - entry.getKey());
-                        }
-                    }
-                    if (result.size() != numResults + 1) {
-                        throw new IllegalStateException(
-                                "Cannot find scheduled node. This must be a bug in the algorithm.");
-                    }
-                } else {
-                    // arrival unfortunately outside the planning horizon
-                    result.put(expectedDestination, this.getDelay());
-                }
+            if (scheduleInteresting.values().contains(expectedDestination)) {
+                // arrival actually inside the planning horizon; we know the exact delay
+                final long expectedArrival = sa
+                        .getTimeSinceStartOfWorld(Itinerary.DEFAULT_TIME_UNIT);
+                result.put(expectedDestination, this.getDelay(expectedDestination, expectedArrival));
             } else {
-                // arrival expected outside the horizon, only count the delay before the horizon
-                result.put(expectedDestination, this.getDelay());
+                // arrival outside the horizon, only count the delay before the horizon
+                result.put(expectedDestination, this.getDelay(horizon));
             }
         }
         return Collections.unmodifiableMap(result);
