@@ -146,8 +146,7 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
         return false;
     }
 
-    private int getDelayPenalty(final Itinerary i, final RAS2012Solution solution) {
-        final long delay = i.getDelay();
+    private int getDelayPenalty(final long delay, final Itinerary i, final RAS2012Solution solution) {
         final int hoursDelay = RAS2012ScoreCalculator.roundMillisecondsToWholeHours(delay);
         return Math.max(0, hoursDelay) * i.getTrain().getType().getDelayPenalty();
     }
@@ -180,52 +179,42 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
         return num;
     }
 
-    private int getWantTimePenalty(final Itinerary i, final RAS2012Solution solution) {
-        int penalty = 0;
-        final Map<Long, Long> wantTimeDifferences = i.getWantTimeDifference();
-        for (final Map.Entry<Long, Long> entry : wantTimeDifferences.entrySet()) {
-            int hourlyDifference = 0;
-            if (!RAS2012ScoreCalculator.isInPlanningHorizon(entry.getKey())) {
-                // difference occured past the planning horizon; we don't care about it
-                continue;
+    private int getWantTimePenalty(final long delay, final Itinerary i,
+            final RAS2012Solution solution) {
+        int hourlyDifference = 0;
+        if (delay > 0) {
+            final int hours = RAS2012ScoreCalculator.roundMillisecondsToWholeHours(delay);
+            if (hours > 3) {
+                hourlyDifference = hours - 3;
             }
-            final long wantTimeDifference = entry.getValue();
-            if (wantTimeDifference > 0) {
-                final int hours = RAS2012ScoreCalculator
-                        .roundMillisecondsToWholeHours(wantTimeDifference);
-                if (hours > 3) {
-                    hourlyDifference = hours - 3;
-                }
-            } else if (wantTimeDifference < 0) {
-                final int hours = RAS2012ScoreCalculator
-                        .roundMillisecondsToWholeHours(wantTimeDifference);
-                if (hours < -1) {
-                    hourlyDifference = Math.abs(hours + 1);
-                }
+        } else if (delay < 0) {
+            final int hours = RAS2012ScoreCalculator.roundMillisecondsToWholeHours(delay);
+            if (hours < -1) {
+                hourlyDifference = Math.abs(hours + 1);
             }
-            penalty += hourlyDifference * 75;
         }
-        return penalty;
+        return hourlyDifference * 75;
     }
 
     private void insert(final ItineraryAssignment ia) {
         final Train t = ia.getTrain();
         final Itinerary i = ia.getItinerary();
-        this.wantTimePenalties.put(t, this.getWantTimePenalty(i, this.solution));
         this.unpreferredTracksPenalties.put(t, RAS2012ScoreCalculator
                 .roundMillisecondsToWholeHours(i.getTimeSpentOnUnpreferredTracks(RAS2012Solution
                         .getPlanningHorizon(TimeUnit.MILLISECONDS)) * 50));
         this.scheduleAdherencePenalties.put(t, this.getScheduleAdherencePenalty(i, this.solution));
-        this.delayPenalties.put(t, this.getDelayPenalty(i, this.solution));
         this.didTrainArrive.put(t, this.didTrainArrive(i));
+        final long delay = i.getDelay();
+        this.wantTimePenalties.put(t, this.getWantTimePenalty(delay, i, this.solution));
+        this.delayPenalties.put(t, this.getDelayPenalty(delay, i, this.solution));
         this.recalculateOccupiedArcs(ia);
     }
 
     private void recalculateOccupiedArcs(final ItineraryAssignment ia) {
         // insert the number of conflicts for the given assignments
         for (long time = 0; RAS2012ScoreCalculator.isInPlanningHorizon(time); time += 30000) {
-            this.conflicts.setOccupiedArcs(time, ia.getTrain(), ia.getItinerary()
-                    .getOccupiedArcs(time));
+            this.conflicts.setOccupiedArcs(time, ia.getTrain(),
+                    ia.getItinerary().getOccupiedArcs(time));
         }
     }
 

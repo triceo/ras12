@@ -162,6 +162,81 @@ public final class Itinerary implements Visualizable {
         return Collections.unmodifiableMap(this.nodeWaitTimes);
     }
 
+    /**
+     * Return the delay at the ending terminal.
+     * 
+     * @return Milliseconds. Positive if the train is late, negative if the train is early. If the train arrived before the end
+     *         of the planning horizon, this returns the exact value of delay. Otherwise, it returns estimated delay at the end
+     *         of the planning horizon.
+     */
+    public long getDelay() {
+        return this.getDelay(RAS2012Solution.getPlanningHorizon(Itinerary.DEFAULT_TIME_UNIT));
+    }
+
+    /**
+     * Return the delay at the end of the horizon.
+     * 
+     * @param horizon Number of milliseconds since the start of the planning horizon.
+     * @return Milliseconds. Positive if the train is late, negative if the train is early. If the train arrived before the
+     *         specified horizon, this returns the exact value of delay. Otherwise, it returns estimated delay at the end of the
+     *         specified horizon.
+     */
+    protected long getDelay(final long horizon) {
+        if (this.trainEntryTime > horizon) {
+            // train not en route yet, delay must be zero
+            return 0;
+        }
+        final long originalDelay = this.getTrain().getOriginalDelay(Itinerary.DEFAULT_TIME_UNIT);
+        final SortedMap<Long, Node> schedule = this.getSchedule();
+        final SortedMap<Long, Node> scheduleInHorizon = schedule.headMap(horizon + 1);
+        if (scheduleInHorizon.size() == 0) {
+            // train is not in the network at the time
+            if (this.trainEntryTime < horizon) {
+                // however, it should be; origin node possibly has some wait time
+                return horizon - this.trainEntryTime + originalDelay;
+            } else {
+                // otherwise it's alright, there is only the original delay
+                return originalDelay;
+            }
+        } else if (scheduleInHorizon.values().contains(this.getTrain().getDestination())) {
+            // we know the exact delay
+            final long actualTimeOfArrival = scheduleInHorizon.lastKey();
+            final long optimalTimeOfArrival = this.getTrain().getWantTime(
+                    Itinerary.DEFAULT_TIME_UNIT);
+            return actualTimeOfArrival - optimalTimeOfArrival;
+        }
+        // otherwise, we need to estimate the delay
+        final long actualArrivalTime = horizon;
+        final long optimalArrivalTime = this.trainEntryTime
+                + Converter.getTimeFromSpeedAndDistance(this.getTrain().getMaximumSpeed(),
+                        Converter.calculateActualDistanceTravelled(this, horizon));
+        return actualArrivalTime - optimalArrivalTime;
+    }
+
+    protected Arc getLeadingArc(final long time) {
+        if (time < this.trainEntryTime) {
+            return null;
+        }
+        Node previousNode = null;
+        for (final SortedMap.Entry<Long, Node> entry : this.getSchedule().entrySet()) {
+            final long timeOfArrival = entry.getKey();
+            final Node currentNode = entry.getValue();
+            if (time > timeOfArrival) {
+                previousNode = currentNode;
+                continue;
+            } else if (time == timeOfArrival) {
+                return this.getRoute().getProgression().getWithOriginNode(currentNode);
+            } else {
+                return this.getRoute().getProgression().getWithOriginNode(previousNode);
+            }
+        }
+        return null;
+    }
+
+    public Map<Node, MaintenanceWindow> getMaintenances() {
+        return this.maintenances;
+    }
+
     public Collection<Arc> getOccupiedArcs(final long time) {
         final Arc leadingArc = this.getLeadingArc(time);
         if (leadingArc == null) {
@@ -205,71 +280,6 @@ public final class Itinerary implements Visualizable {
                     .getLengthInMiles());
         }
         return occupiedArcs;
-    }
-
-    public long getDelay() {
-        final long horizon = RAS2012Solution.getPlanningHorizon(Itinerary.DEFAULT_TIME_UNIT);
-        final SortedMap<Long, Node> schedule = this.getSchedule();
-        final SortedMap<Long, Node> head = schedule.headMap(horizon + 1);
-        if (head.values().contains(this.getTrain().getDestination())) {
-            // we know the exact delay
-            final long actualTimeOfArrival = head.lastKey();
-            final long optimalTimeOfArrival = this.getTrain().getWantTime(
-                    Itinerary.DEFAULT_TIME_UNIT);
-            return actualTimeOfArrival - optimalTimeOfArrival;
-        } else {
-            // estimate delay
-            return this.getDelay(horizon);
-        }
-    }
-
-    protected long getDelay(final long horizon) {
-        if (this.trainEntryTime > horizon) {
-            // train not en route yet, delay must be zero
-            return 0;
-        }
-        final long originalDelay = this.getTrain().getOriginalDelay(Itinerary.DEFAULT_TIME_UNIT);
-        final SortedMap<Long, Node> schedule = this.getSchedule();
-        final SortedMap<Long, Node> scheduleInHorizon = schedule.headMap(horizon);
-        if (scheduleInHorizon.size() == 0) {
-            // train is not in the network at the time
-            if (this.trainEntryTime < horizon) {
-                // however, it should be; origin node possibly has some wait time
-                return horizon - this.trainEntryTime + originalDelay;
-            } else {
-                // otherwise it's alright, there is only the original delay
-                return originalDelay;
-            }
-        }
-        final long actualArrivalTime = horizon;
-        final long optimalArrivalTime = this.trainEntryTime
-                + Converter.getTimeFromSpeedAndDistance(this.getTrain().getMaximumSpeed(),
-                        Converter.calculateActualDistanceTravelled(this, horizon));
-        return actualArrivalTime - optimalArrivalTime;
-    }
-
-    protected Arc getLeadingArc(final long time) {
-        if (time < this.trainEntryTime) {
-            return null;
-        }
-        Node previousNode = null;
-        for (final SortedMap.Entry<Long, Node> entry : this.getSchedule().entrySet()) {
-            final long timeOfArrival = entry.getKey();
-            final Node currentNode = entry.getValue();
-            if (time > timeOfArrival) {
-                previousNode = currentNode;
-                continue;
-            } else if (time == timeOfArrival) {
-                return this.getRoute().getProgression().getWithOriginNode(currentNode);
-            } else {
-                return this.getRoute().getProgression().getWithOriginNode(previousNode);
-            }
-        }
-        return null;
-    }
-
-    public Map<Node, MaintenanceWindow> getMaintenances() {
-        return this.maintenances;
     }
 
     public Route getRoute() {
@@ -358,21 +368,6 @@ public final class Itinerary implements Visualizable {
 
     public synchronized WaitTime getWaitTime(final Node n) {
         return this.nodeWaitTimes.get(n);
-    }
-
-    public Map<Long, Long> getWantTimeDifference() {
-        final Map<Long, Long> result = new HashMap<Long, Long>();
-        for (final SortedMap.Entry<Long, Node> entry : this.getSchedule().entrySet()) {
-            if (entry.getValue() == this.getTrain().getDestination()) {
-                // make sure we only include the time within the planning horizon
-                final long actualTime = Math.min(entry.getKey(),
-                        RAS2012Solution.getPlanningHorizon(Itinerary.DEFAULT_TIME_UNIT));
-                final long difference = actualTime
-                        - this.getTrain().getWantTime(Itinerary.DEFAULT_TIME_UNIT);
-                result.put(entry.getKey(), difference);
-            }
-        }
-        return result;
     }
 
     @Override

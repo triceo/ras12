@@ -12,7 +12,9 @@ public class Converter {
     public static BigDecimal calculateActualDistanceTravelled(final Itinerary i, final long time) {
         final SortedMap<Long, Node> schedule = i.getSchedule();
         final SortedMap<Long, Node> head = schedule.headMap(time);
-        if (head.values().contains(i.getTrain().getDestination())) {
+        if (head.size() == 0) {
+            return BigDecimal.ZERO;
+        } else if (head.values().contains(i.getTrain().getDestination())) {
             // train is already finished at the time
             return Converter.calculateActualDistanceTravelled(i, i.getTrain().getDestination());
         } else {
