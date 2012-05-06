@@ -225,7 +225,7 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
         // insert the number of conflicts for the given assignments
         for (long time = 0; RAS2012ScoreCalculator.isInPlanningHorizon(time); time += 30000) {
             this.conflicts.setOccupiedArcs(time, ia.getTrain(), ia.getItinerary()
-                    .getCurrentlyOccupiedArcs(time));
+                    .getOccupiedArcs(time));
         }
     }
 

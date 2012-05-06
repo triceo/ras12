@@ -82,7 +82,7 @@ public class ItineraryVisualizer extends RouteVisualizer {
         server.getRenderContext().setVertexLabelTransformer(new NodeLabeller(this.itinerary));
         if (this.time >= 0) {
             server.getRenderContext().setEdgeDrawPaintTransformer(
-                    new EdgePainter(this.itinerary.getCurrentlyOccupiedArcs(this.time)));
+                    new EdgePainter(this.itinerary.getOccupiedArcs(this.time)));
         }
         return server;
     }

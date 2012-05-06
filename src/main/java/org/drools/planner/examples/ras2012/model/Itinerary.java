@@ -162,7 +162,7 @@ public final class Itinerary implements Visualizable {
         return Collections.unmodifiableMap(this.nodeWaitTimes);
     }
 
-    public Collection<Arc> getCurrentlyOccupiedArcs(final long time) {
+    public Collection<Arc> getOccupiedArcs(final long time) {
         final Arc leadingArc = this.getLeadingArc(time);
         if (leadingArc == null) {
             // train not in the network

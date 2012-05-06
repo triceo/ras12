@@ -91,58 +91,34 @@ public class ItineraryTest {
         return itineraries;
     }
 
-    private final Itinerary i;
+    private final Itinerary itinerary;
 
     public ItineraryTest(final Itinerary i) {
-        this.i = i;
-    }
-
-    @Test
-    public void testGetCurrentlyOccupiedArcs() {
-        for (long time = 0; time <= RAS2012Solution.getPlanningHorizon(TimeUnit.MILLISECONDS); time += 1000) {
-            if (time <= this.i.getTrain().getEntryTime(TimeUnit.MILLISECONDS)) {
-                if (this.i.getTrain().getOrigin() == this.i.getRoute().getProgression().getOrigin()
-                        .getOrigin(this.i.getRoute())) {
-                    // the train shouldn't be en route yet
-                    Assert.assertEquals("No occupied arcs for " + this.i + " at " + time
-                            + " (before entry time)", Collections.EMPTY_SET,
-                            this.i.getCurrentlyOccupiedArcs(time));
-                } else {
-                    // train starts somewhere in the middle of the route
-                    Assert.assertEquals("Occupied arcs for " + this.i + " at " + time
-                            + " (before entry time, different origin)", ItineraryTest
-                            .calculateOccupiedArcsWithKnownPosition(this.i, this.i.getTrain()
-                                    .getOrigin()), this.i.getCurrentlyOccupiedArcs(time));
-                }
-                continue;
-            }
-            Assert.assertEquals("Occupied arcs for " + this.i + " at " + time,
-                    ItineraryTest.calculateOccupiedArcsWithUnknownPosition(this.i, time),
-                    this.i.getCurrentlyOccupiedArcs(time));
-        }
+        this.itinerary = i;
     }
 
     @Test
     public void testGetDelayAtHorizon() {
         final long timeInterestedIn = RAS2012Solution.getPlanningHorizon(TimeUnit.MILLISECONDS);
-        final SortedMap<Long, Node> schedulePast = this.i.getSchedule().headMap(
+        final SortedMap<Long, Node> schedulePast = this.itinerary.getSchedule().headMap(
                 timeInterestedIn + 1);
-        if (schedulePast.values().contains(this.i.getTrain().getDestination())) {
+        if (schedulePast.values().contains(this.itinerary.getTrain().getDestination())) {
             // train did finish in time, we don't need to estimate
-            final long actualTimeOfArrival = this.i.getSchedule().lastKey();
-            final long wantTime = this.i.getTrain().getWantTime(TimeUnit.MILLISECONDS);
+            final long actualTimeOfArrival = this.itinerary.getSchedule().lastKey();
+            final long wantTime = this.itinerary.getTrain().getWantTime(TimeUnit.MILLISECONDS);
             final long delay = actualTimeOfArrival - wantTime;
-            Assert.assertEquals("Exact delay for " + this.i, delay, this.i.getDelay());
+            Assert.assertEquals("Exact delay for " + this.itinerary, delay,
+                    this.itinerary.getDelay());
         } else {
             // train didn't finish in time, we need to estimate
             final BigDecimal actualDistanceTravelled = Converter.calculateActualDistanceTravelled(
-                    this.i, timeInterestedIn);
-            final long travellingTime = Converter.getTimeFromSpeedAndDistance(this.i.getTrain()
-                    .getMaximumSpeed(), actualDistanceTravelled);
+                    this.itinerary, timeInterestedIn);
+            final long travellingTime = Converter.getTimeFromSpeedAndDistance(this.itinerary
+                    .getTrain().getMaximumSpeed(), actualDistanceTravelled);
             final long totalTravellingTime = travellingTime
-                    + this.i.getTrain().getEntryTime(TimeUnit.MILLISECONDS);
-            Assert.assertEquals("Estimated delay for " + this.i, timeInterestedIn
-                    - totalTravellingTime, this.i.getDelay());
+                    + this.itinerary.getTrain().getEntryTime(TimeUnit.MILLISECONDS);
+            Assert.assertEquals("Estimated delay for " + this.itinerary, timeInterestedIn
+                    - totalTravellingTime, this.itinerary.getDelay());
         }
     }
 
@@ -154,8 +130,8 @@ public class ItineraryTest {
     public void testGetLeadingArc() {
         // assemble a list of "checkpoint" where the train should be at which times
         final Map<Long, Arc> expecteds = new HashMap<Long, Arc>();
-        final Route r = this.i.getRoute();
-        final Train t = this.i.getTrain();
+        final Route r = this.itinerary.getRoute();
+        final Train t = this.itinerary.getTrain();
         long totalTime = t.getEntryTime(TimeUnit.MILLISECONDS);
         Arc currentArc = null;
         if (totalTime > 0) {
@@ -166,12 +142,13 @@ public class ItineraryTest {
         while ((currentArc = r.getProgression().getNext(currentArc)) != null) {
             // account for possible maintenance windows
             final Node n = currentArc.getOrigin(r);
-            if (!this.i.isNodeOnRoute(n)) { // sometimes a train doesn't start at the beginning of a route
+            if (!this.itinerary.isNodeOnRoute(n)) { // sometimes a train doesn't start at the beginning of a route
                 continue;
             }
-            if (this.i.getMaintenances().containsKey(n)
-                    && this.i.getMaintenances().get(n).isInside(totalTime, TimeUnit.MILLISECONDS)) {
-                totalTime = this.i.getMaintenances().get(n).getEnd(TimeUnit.MILLISECONDS);
+            if (this.itinerary.getMaintenances().containsKey(n)
+                    && this.itinerary.getMaintenances().get(n)
+                            .isInside(totalTime, TimeUnit.MILLISECONDS)) {
+                totalTime = this.itinerary.getMaintenances().get(n).getEnd(TimeUnit.MILLISECONDS);
             }
             expecteds.put(totalTime, currentArc); // immediately after entering the node
             final long arcTravellingTime = t
@@ -189,7 +166,32 @@ public class ItineraryTest {
             }
             Assert.assertEquals("Train " + t.getName() + " on route " + r.getId() + " at time "
                     + entry.getKey() + " isn't where it's supposed to be.", entry.getValue(),
-                    this.i.getLeadingArc(entry.getKey()));
+                    this.itinerary.getLeadingArc(entry.getKey()));
+        }
+    }
+
+    @Test
+    public void testGetOccupiedArcs() {
+        for (long time = 0; time <= RAS2012Solution.getPlanningHorizon(TimeUnit.MILLISECONDS); time += 1000) {
+            if (time <= this.itinerary.getTrain().getEntryTime(TimeUnit.MILLISECONDS)) {
+                if (this.itinerary.getTrain().getOrigin() == this.itinerary.getRoute()
+                        .getProgression().getOrigin().getOrigin(this.itinerary.getRoute())) {
+                    // the train shouldn't be en route yet
+                    Assert.assertEquals("No occupied arcs for " + this.itinerary + " at " + time
+                            + " (before entry time)", Collections.EMPTY_SET,
+                            this.itinerary.getOccupiedArcs(time));
+                } else {
+                    // train starts somewhere in the middle of the route
+                    Assert.assertEquals("Occupied arcs for " + this.itinerary + " at " + time
+                            + " (before entry time, different origin)", ItineraryTest
+                            .calculateOccupiedArcsWithKnownPosition(this.itinerary, this.itinerary
+                                    .getTrain().getOrigin()), this.itinerary.getOccupiedArcs(time));
+                }
+                continue;
+            }
+            Assert.assertEquals("Occupied arcs for " + this.itinerary + " at " + time,
+                    ItineraryTest.calculateOccupiedArcsWithUnknownPosition(this.itinerary, time),
+                    this.itinerary.getOccupiedArcs(time));
         }
     }
 
