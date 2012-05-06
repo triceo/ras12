@@ -59,7 +59,7 @@ public class Train implements Comparable<Train>, Directed {
 
     private final BigDecimal                         length;
     private final BigDecimal                         speedMultiplier;
-    private final Type                          type;
+    private final Type                               type;
     private final int                                tob;
     private final Node                               origin;
     private final Node                               destination;

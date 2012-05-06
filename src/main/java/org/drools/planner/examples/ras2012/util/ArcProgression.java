@@ -124,6 +124,22 @@ public class ArcProgression implements Directed {
     }
 
     public BigDecimal getDistance(final Node start, final Node end) {
+        // first solve some corner cases
+        if (!this.nodes.contains(start)) {
+            throw new IllegalArgumentException(start + " not in progression!");
+        } else if (!this.nodes.contains(end)) {
+            throw new IllegalArgumentException(end + " not in progression!");
+        } else if (start == end) {
+            return BigDecimal.ZERO;
+        }
+        // then make sure nodes are in a proper order
+        final List<Node> nodes = new LinkedList<Node>(this.getNodes());
+        final int startIndex = nodes.indexOf(start);
+        final int endIndex = nodes.indexOf(end);
+        if (startIndex > endIndex) {
+            return this.getDistance(end, start);
+        }
+        // and then retrieve the actual distance
         BigDecimal result = BigDecimal.ZERO;
         for (final Arc a : this.head(end).tail(start).getArcs()) {
             result = result.add(a.getLengthInMiles());
@@ -210,7 +226,7 @@ public class ArcProgression implements Directed {
      */
     public ArcProgression head(final Node n) {
         if (!this.nodes.contains(n)) {
-            throw new IllegalArgumentException("Node not in progression!");
+            throw new IllegalArgumentException(n + " not in progression!");
         } else if (n == this.getDestination().getDestination(this)) {
             return this;
         } else if (n == this.getOrigin().getOrigin(this)) {
@@ -246,7 +262,7 @@ public class ArcProgression implements Directed {
      */
     public ArcProgression tail(final Node n) {
         if (!this.nodes.contains(n)) {
-            throw new IllegalArgumentException("Node not in progression!");
+            throw new IllegalArgumentException(n + " not in progression!");
         } else if (n == this.getDestination().getDestination(this)) {
             return new ArcProgression(this, new Arc[0]);
         } else if (n == this.getOrigin().getOrigin(this)) {

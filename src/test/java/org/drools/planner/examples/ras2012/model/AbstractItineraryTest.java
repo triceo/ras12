@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -27,16 +28,14 @@ import org.junit.Test;
 
 public abstract class AbstractItineraryTest {
 
-    private RAS2012Solution        solution;
-
-    private Map<Train, Set<Route>> testedRoutes;
-
-    private Collection<Arc> calculateOccupiedArcsWithKnownPosition(final Itinerary i, final Node n) {
-        return this.calculateOccupiedArcsWithKnownPosition(i, n, i.getTrain().getLength());
+    public static Collection<Arc> calculateOccupiedArcsWithKnownPosition(final Itinerary i,
+            final Node n) {
+        return AbstractItineraryTest.calculateOccupiedArcsWithKnownPosition(i, n, i.getTrain()
+                .getLength());
     }
 
-    private Collection<Arc> calculateOccupiedArcsWithKnownPosition(final Itinerary i, final Node n,
-            final BigDecimal remainingLength) {
+    private static Collection<Arc> calculateOccupiedArcsWithKnownPosition(final Itinerary i,
+            final Node n, final BigDecimal remainingLength) {
         final Collection<Arc> results = new LinkedHashSet<Arc>();
         BigDecimal remainingTrainLength = remainingLength;
         Arc arc = i.getRoute().getProgression().getWithDestinationNode(n);
@@ -51,7 +50,7 @@ public abstract class AbstractItineraryTest {
         return results;
     }
 
-    private Collection<Arc> calculateOccupiedArcsWithUnknownPosition(final Itinerary i,
+    public static Collection<Arc> calculateOccupiedArcsWithUnknownPosition(final Itinerary i,
             final long time) {
         final Collection<Arc> results = new LinkedHashSet<Arc>();
         // find where we are in the leading arc
@@ -59,12 +58,9 @@ public abstract class AbstractItineraryTest {
         if (leadingArc == null) { // journey is over
             return results;
         }
-        final long timeTravelledInLeadingArc = time - this.getNearestPastCheckpoint(i, time);
-        BigDecimal distanceTravelledInLeadingArc = BigDecimal.ZERO;
-        if (timeTravelledInLeadingArc > 0) {
-            // if we're inside the leading arc (and not exactly in the origin node), count it
-            distanceTravelledInLeadingArc = Converter.getDistanceInMilesFromSpeedAndTime(i
-                    .getTrain().getMaximumSpeed(leadingArc.getTrack()), timeTravelledInLeadingArc);
+        final BigDecimal distanceTravelledInLeadingArc = Converter.getDistanceTravelledInTheArc(i,
+                leadingArc, time);
+        if (distanceTravelledInLeadingArc.compareTo(BigDecimal.ZERO) > 0) {
             results.add(leadingArc);
         }
         // and add the rest of the train, if necessary
@@ -74,11 +70,15 @@ public abstract class AbstractItineraryTest {
             final Node lastKnownPoint = leadingArc.getOrigin(i.getRoute());
             final BigDecimal remainingTrainLength = i.getTrain().getLength()
                     .subtract(distanceTravelledInLeadingArc);
-            results.addAll(this.calculateOccupiedArcsWithKnownPosition(i, lastKnownPoint,
-                    remainingTrainLength));
+            results.addAll(AbstractItineraryTest.calculateOccupiedArcsWithKnownPosition(i,
+                    lastKnownPoint, remainingTrainLength));
         }
         return results;
     }
+
+    private RAS2012Solution        solution;
+
+    private Map<Train, Set<Route>> testedRoutes;
 
     /**
      * Return the solution to get the itineraries from.
@@ -165,10 +165,6 @@ public abstract class AbstractItineraryTest {
         return i;
     }
 
-    private long getNearestPastCheckpoint(final Itinerary i, final long time) {
-        return i.getSchedule().headMap(time + 1).lastKey();
-    }
-
     protected synchronized RAS2012Solution getSolution() {
         if (this.solution == null) {
             this.solution = this.fetchSolution();
@@ -252,14 +248,40 @@ public abstract class AbstractItineraryTest {
                         // train starts somewhere in the middle of the route
                         Assert.assertEquals("Occupied arcs for " + i + " at " + time
                                 + " (before entry time, different origin)",
-                                this.calculateOccupiedArcsWithKnownPosition(i, i.getTrain()
-                                        .getOrigin()), i.getCurrentlyOccupiedArcs(time));
+                                AbstractItineraryTest.calculateOccupiedArcsWithKnownPosition(i, i
+                                        .getTrain().getOrigin()), i.getCurrentlyOccupiedArcs(time));
                     }
                     continue;
                 }
                 Assert.assertEquals("Occupied arcs for " + i + " at " + time,
-                        this.calculateOccupiedArcsWithUnknownPosition(i, time),
+                        AbstractItineraryTest.calculateOccupiedArcsWithUnknownPosition(i, time),
                         i.getCurrentlyOccupiedArcs(time));
+            }
+        }
+    }
+
+    @Test
+    public void testGetDelayAtHorizon() {
+        final long timeInterestedIn = RAS2012Solution.getPlanningHorizon(TimeUnit.MILLISECONDS);
+        for (final Itinerary i : this.getItineraries()) {
+            final SortedMap<Long, Node> schedulePast = i.getSchedule()
+                    .headMap(timeInterestedIn + 1);
+            if (schedulePast.values().contains(i.getTrain().getDestination())) {
+                // train did finish in time, we don't need to estimate
+                final long actualTimeOfArrival = i.getSchedule().lastKey();
+                final long wantTime = i.getTrain().getWantTime(TimeUnit.MILLISECONDS);
+                final long delay = actualTimeOfArrival - wantTime;
+                Assert.assertEquals("Exact delay for " + i, delay, i.getDelay());
+            } else {
+                // train didn't finish in time, we need to estimate
+                final BigDecimal actualDistanceTravelled = Converter
+                        .calculateActualDistanceTravelled(i, timeInterestedIn);
+                final long travellingTime = Converter.getTimeFromSpeedAndDistance(i.getTrain()
+                        .getMaximumSpeed(), actualDistanceTravelled);
+                final long totalTravellingTime = travellingTime
+                        + i.getTrain().getEntryTime(TimeUnit.MILLISECONDS);
+                Assert.assertEquals("Estimated delay for " + i, timeInterestedIn
+                        - totalTravellingTime, i.getDelay());
             }
         }
     }

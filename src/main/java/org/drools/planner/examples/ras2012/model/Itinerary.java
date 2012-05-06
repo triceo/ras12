@@ -208,10 +208,22 @@ public final class Itinerary implements Visualizable {
     }
 
     public long getDelay() {
-        return this.getDelay(RAS2012Solution.getPlanningHorizon(Itinerary.DEFAULT_TIME_UNIT));
+        final long horizon = RAS2012Solution.getPlanningHorizon(Itinerary.DEFAULT_TIME_UNIT);
+        final SortedMap<Long, Node> schedule = this.getSchedule();
+        final SortedMap<Long, Node> head = schedule.headMap(horizon + 1);
+        if (head.values().contains(this.getTrain().getDestination())) {
+            // we know the exact delay
+            final long actualTimeOfArrival = head.lastKey();
+            final long optimalTimeOfArrival = this.getTrain().getWantTime(
+                    Itinerary.DEFAULT_TIME_UNIT);
+            return actualTimeOfArrival - optimalTimeOfArrival;
+        } else {
+            // estimate delay
+            return this.getDelay(horizon);
+        }
     }
 
-    private long getDelay(final long horizon) {
+    protected long getDelay(final long horizon) {
         if (this.trainEntryTime > horizon) {
             // train not en route yet, delay must be zero
             return 0;
@@ -229,12 +241,10 @@ public final class Itinerary implements Visualizable {
                 return originalDelay;
             }
         }
-        final long actualArrivalTime = scheduleInHorizon.lastKey();
+        final long actualArrivalTime = horizon;
         final long optimalArrivalTime = this.trainEntryTime
-                + Converter.getTimeFromSpeedAndDistance(
-                        this.getTrain().getMaximumSpeed(),
-                        this.route.getProgression().getDistance(this.getTrain().getOrigin(),
-                                this.getTrain().getDestination()));
+                + Converter.getTimeFromSpeedAndDistance(this.getTrain().getMaximumSpeed(),
+                        Converter.calculateActualDistanceTravelled(this, horizon));
         return actualArrivalTime - optimalArrivalTime;
     }
 
