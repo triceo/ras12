@@ -12,7 +12,7 @@
 <div class="separator">&nbsp;</div>
 <table class="report">
 <thead><tr>  <td class="heading">Classes in this File</td>  <td class="heading"><a class="dfn" href="help.html" onclick="popupwindow('help.html'); return false;">Line Coverage</a></td>  <td class="heading"><a class="dfn" href="help.html" onclick="popupwindow('help.html'); return false;">Branch Coverage</a></td>  <td class="heading"><a class="dfn" href="help.html" onclick="popupwindow('help.html'); return false;">Complexity</a></td></tr></thead>
-  <tr><td><a href="org.drools.planner.examples.ras2012.model.Itinerary.html">Itinerary</a></td><td><table cellpadding="0px" cellspacing="0px" class="percentgraph"><tr class="percentgraph"><td align="right" class="percentgraph" width="40">49%</td><td class="percentgraph"><div class="percentgraph"><div class="greenbar" style="width:49px"><span class="text">117/237</span></div></div></td></tr></table></td><td><table cellpadding="0px" cellspacing="0px" class="percentgraph"><tr class="percentgraph"><td align="right" class="percentgraph" width="40">37%</td><td class="percentgraph"><div class="percentgraph"><div class="greenbar" style="width:37px"><span class="text">46/124</span></div></div></td></tr></table></td><td class="value"><span class="hidden">4.5;</span>4.5</td></tr>
+  <tr><td><a href="org.drools.planner.examples.ras2012.model.Itinerary.html">Itinerary</a></td><td><table cellpadding="0px" cellspacing="0px" class="percentgraph"><tr class="percentgraph"><td align="right" class="percentgraph" width="40">52%</td><td class="percentgraph"><div class="percentgraph"><div class="greenbar" style="width:52px"><span class="text">116/220</span></div></div></td></tr></table></td><td><table cellpadding="0px" cellspacing="0px" class="percentgraph"><tr class="percentgraph"><td align="right" class="percentgraph" width="40">42%</td><td class="percentgraph"><div class="percentgraph"><div class="greenbar" style="width:42px"><span class="text">49/116</span></div></div></td></tr></table></td><td class="value"><span class="hidden">4.384615384615385;</span>4.385</td></tr>
 
 </table>
 <div class="separator">&nbsp;</div>
@@ -269,447 +269,454 @@
 <tr>  <td class="numLine">&nbsp;164</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;165</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> Collection&lt;Arc&gt; getOccupiedArcs(<span class="keyword">final</span> <span class="keyword">long</span> time) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;166</td>  <td class="nbHitsCovered">&nbsp;2721663</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> Arc leadingArc = <span class="keyword">this</span>.getLeadingArc(time);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;167</td>  <td class="nbHitsCovered"><a title="Line 167: Conditional coverage 100% (2/2).">&nbsp;2721663</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 167: Conditional coverage 100% (2/2).">        <span class="keyword">if</span> (leadingArc == <span class="keyword">null</span>) {</a></pre></td></tr>
+  <td class="src"><pre class="src">&nbsp;    <span class="comment">/**</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;166</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;<span class="comment">     * Return the delay at the ending terminal.</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;167</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;<span class="comment">     * </span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;168</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;            <span class="comment">// train not in the network</span></pre></td></tr>
+  <td class="src"><pre class="src">&nbsp;<span class="comment">     * @return Milliseconds. Positive if the train is late, negative if the train is early. If the train arrived before the end</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;169</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;            <span class="comment">// FIXME train should leave the network gradually, not at once when it reaches destination</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;170</td>  <td class="nbHitsCovered">&nbsp;2137316</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">return</span> Collections.emptySet();</pre></td></tr>
+  <td class="src"><pre class="src">&nbsp;<span class="comment">     *         of the planning horizon, this returns the exact value of delay. Otherwise, it returns estimated delay at the end</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;170</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;<span class="comment">     *         of the planning horizon.</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;171</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
+  <td class="src"><pre class="src">&nbsp;<span class="comment">     */</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;172</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;        <span class="comment">// calculate how far are we into the leading arc</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;173</td>  <td class="nbHitsCovered">&nbsp;584347</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> SortedMap&lt;Long, Arc&gt; nodeEntryTimes = <span class="keyword">this</span>.getScheduleWithArcs();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;174</td>  <td class="nbHitsCovered">&nbsp;584347</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">long</span> timeArcEntered = -1;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;175</td>  <td class="nbHitsUncovered"><a title="Line 175: Conditional coverage 50% (1/2).">&nbsp;584347</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 175: Conditional coverage 50% (1/2).">        <span class="keyword">for</span> (<span class="keyword">final</span> SortedMap.Entry&lt;Long, Arc&gt; entry : nodeEntryTimes.entrySet()) {</a></span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;176</td>  <td class="nbHitsCovered"><a title="Line 176: Conditional coverage 100% (2/2).">&nbsp;13668693</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 176: Conditional coverage 100% (2/2).">            <span class="keyword">if</span> (entry.getValue() == leadingArc) {</a></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;177</td>  <td class="nbHitsCovered">&nbsp;584347</td>  <td class="src"><pre class="src">&nbsp;                timeArcEntered = entry.getKey();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;178</td>  <td class="nbHitsCovered">&nbsp;584347</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">break</span>;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;179</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;180</td>  <td class="nbHitsCovered">&nbsp;13084346</td>  <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;181</td>  <td class="nbHitsUncovered"><a title="Line 181: Conditional coverage 50% (1/2).">&nbsp;584347</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 181: Conditional coverage 50% (1/2).">        <span class="keyword">if</span> (timeArcEntered &lt; <span class="keyword">this</span>.trainEntryTime) {</a></span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;182</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;183</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;                    <span class="string">"Proper arc cannot be found! Possibly a bug in the algoritm."</span>);</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;184</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;185</td>  <td class="nbHitsCovered">&nbsp;584347</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">long</span> timeTravelledInLeadingArc = time - timeArcEntered;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;186</td>  <td class="nbHitsCovered">&nbsp;584347</td>  <td class="src"><pre class="src">&nbsp;        BigDecimal remainingLengthOfTrain = <span class="keyword">this</span>.getTrain().getLength();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;187</td>  <td class="nbHitsCovered">&nbsp;584347</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> Collection&lt;Arc&gt; occupiedArcs = <span class="keyword">new</span> LinkedHashSet&lt;Arc&gt;();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;188</td>  <td class="nbHitsCovered"><a title="Line 188: Conditional coverage 100% (2/2).">&nbsp;584347</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 188: Conditional coverage 100% (2/2).">        <span class="keyword">if</span> (timeTravelledInLeadingArc &gt; 0) {</a></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;189</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;            <span class="comment">// only mark the arc as occupied if we've actually ventured inside it</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;190</td>  <td class="nbHitsCovered">&nbsp;583894</td>  <td class="src"><pre class="src">&nbsp;            occupiedArcs.add(leadingArc);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;191</td>  <td class="nbHitsCovered">&nbsp;583894</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">final</span> BigDecimal travelledInLeadingArc = Converter.getDistanceInMilesFromSpeedAndTime(</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;192</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;                    <span class="keyword">this</span>.getTrain().getMaximumSpeed(leadingArc.getTrack()),</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;193</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;                    timeTravelledInLeadingArc);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;194</td>  <td class="nbHitsCovered">&nbsp;583894</td>  <td class="src"><pre class="src">&nbsp;            remainingLengthOfTrain = remainingLengthOfTrain.subtract(travelledInLeadingArc);</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;195</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;196</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;        <span class="comment">// and now add any preceding arcs for as long as the remaining train length &gt; 0</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;197</td>  <td class="nbHitsCovered">&nbsp;584347</td>  <td class="src"><pre class="src">&nbsp;        Arc currentlyProcessedArc = leadingArc;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;198</td>  <td class="nbHitsCovered"><a title="Line 198: Conditional coverage 100% (2/2).">&nbsp;854770</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 198: Conditional coverage 100% (2/2).">        <span class="keyword">while</span> (remainingLengthOfTrain.compareTo(BigDecimal.ZERO) &gt; 0) {</a></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;199</td>  <td class="nbHitsCovered">&nbsp;277261</td>  <td class="src"><pre class="src">&nbsp;            currentlyProcessedArc = <span class="keyword">this</span>.route.getProgression().getPrevious(currentlyProcessedArc);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;200</td>  <td class="nbHitsCovered"><a title="Line 200: Conditional coverage 100% (2/2).">&nbsp;277261</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 200: Conditional coverage 100% (2/2).">            <span class="keyword">if</span> (currentlyProcessedArc == <span class="keyword">null</span>) {</a></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;201</td>  <td class="nbHitsCovered">&nbsp;6838</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">break</span>;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;202</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;203</td>  <td class="nbHitsCovered">&nbsp;270423</td>  <td class="src"><pre class="src">&nbsp;            occupiedArcs.add(currentlyProcessedArc);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;204</td>  <td class="nbHitsCovered">&nbsp;270423</td>  <td class="src"><pre class="src">&nbsp;            remainingLengthOfTrain = remainingLengthOfTrain.subtract(currentlyProcessedArc</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;205</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;                    .getLengthInMiles());</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;206</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;207</td>  <td class="nbHitsCovered">&nbsp;584347</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> occupiedArcs;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;208</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;209</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;210</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">long</span> getDelay() {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;211</td>  <td class="nbHitsCovered">&nbsp;63</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">long</span> horizon = RAS2012Solution.getPlanningHorizon(Itinerary.DEFAULT_TIME_UNIT);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;212</td>  <td class="nbHitsCovered">&nbsp;63</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> SortedMap&lt;Long, Node&gt; schedule = <span class="keyword">this</span>.getSchedule();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;213</td>  <td class="nbHitsCovered">&nbsp;63</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> SortedMap&lt;Long, Node&gt; head = schedule.headMap(horizon + 1);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;214</td>  <td class="nbHitsCovered"><a title="Line 214: Conditional coverage 100% (2/2).">&nbsp;63</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 214: Conditional coverage 100% (2/2).">        <span class="keyword">if</span> (head.values().contains(<span class="keyword">this</span>.getTrain().getDestination())) {</a></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;215</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;            <span class="comment">// we know the exact delay</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;216</td>  <td class="nbHitsCovered">&nbsp;57</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">final</span> <span class="keyword">long</span> actualTimeOfArrival = head.lastKey();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;217</td>  <td class="nbHitsCovered">&nbsp;57</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">final</span> <span class="keyword">long</span> optimalTimeOfArrival = <span class="keyword">this</span>.getTrain().getWantTime(</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;218</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;                    Itinerary.DEFAULT_TIME_UNIT);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;219</td>  <td class="nbHitsCovered">&nbsp;57</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">return</span> actualTimeOfArrival - optimalTimeOfArrival;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;220</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;        } <span class="keyword">else</span> {</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;221</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;            <span class="comment">// estimate delay</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;222</td>  <td class="nbHitsCovered">&nbsp;6</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">return</span> <span class="keyword">this</span>.getDelay(horizon);</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;223</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;224</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;173</td>  <td class="nbHitsCovered">&nbsp;63</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> <span class="keyword">this</span>.getDelay(RAS2012Solution.getPlanningHorizon(Itinerary.DEFAULT_TIME_UNIT));</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;174</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;225</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;175</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;226</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">long</span> getDelay(<span class="keyword">final</span> <span class="keyword">long</span> horizon) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;227</td>  <td class="nbHitsUncovered"><a title="Line 227: Conditional coverage 50% (1/2).">&nbsp;6</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 227: Conditional coverage 50% (1/2).">        <span class="keyword">if</span> (<span class="keyword">this</span>.trainEntryTime &gt; horizon) {</a></span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;228</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;176</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    <span class="comment">/**</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;177</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;<span class="comment">     * Return the delay at the end of the horizon.</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;178</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;<span class="comment">     * </span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;179</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;<span class="comment">     * @param horizon Number of milliseconds since the start of the planning horizon.</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;180</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;<span class="comment">     * @return Milliseconds. Positive if the train is late, negative if the train is early. If the train arrived before the</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;181</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;<span class="comment">     *         specified horizon, this returns the exact value of delay. Otherwise, it returns estimated delay at the end of the</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;182</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;<span class="comment">     *         specified horizon.</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;183</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;<span class="comment">     */</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;184</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    <span class="keyword">private</span> <span class="keyword">long</span> getDelay(<span class="keyword">final</span> <span class="keyword">long</span> horizon) {</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;185</td>  <td class="nbHitsUncovered"><a title="Line 185: Conditional coverage 50% (1/2).">&nbsp;63</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 185: Conditional coverage 50% (1/2).">        <span class="keyword">if</span> (<span class="keyword">this</span>.trainEntryTime &gt; horizon) {</a></span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;186</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            <span class="comment">// train not en route yet, delay must be zero</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;229</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">return</span> 0;</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;230</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;187</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">return</span> 0;</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;188</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;231</td>  <td class="nbHitsCovered">&nbsp;6</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">long</span> originalDelay = <span class="keyword">this</span>.getTrain().getOriginalDelay(Itinerary.DEFAULT_TIME_UNIT);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;232</td>  <td class="nbHitsCovered">&nbsp;6</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> SortedMap&lt;Long, Node&gt; schedule = <span class="keyword">this</span>.getSchedule();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;233</td>  <td class="nbHitsCovered">&nbsp;6</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> SortedMap&lt;Long, Node&gt; scheduleInHorizon = schedule.headMap(horizon);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;234</td>  <td class="nbHitsUncovered"><a title="Line 234: Conditional coverage 50% (1/2).">&nbsp;6</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 234: Conditional coverage 50% (1/2).">        <span class="keyword">if</span> (scheduleInHorizon.size() == 0) {</a></span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;235</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;189</td>  <td class="nbHitsCovered">&nbsp;63</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">long</span> originalDelay = <span class="keyword">this</span>.getTrain().getOriginalDelay(Itinerary.DEFAULT_TIME_UNIT);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;190</td>  <td class="nbHitsCovered">&nbsp;63</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> SortedMap&lt;Long, Node&gt; schedule = <span class="keyword">this</span>.getSchedule();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;191</td>  <td class="nbHitsCovered">&nbsp;63</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> SortedMap&lt;Long, Node&gt; scheduleInHorizon = schedule.headMap(horizon + 1);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;192</td>  <td class="nbHitsUncovered"><a title="Line 192: Conditional coverage 50% (1/2).">&nbsp;63</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 192: Conditional coverage 50% (1/2).">        <span class="keyword">if</span> (scheduleInHorizon.size() == 0) {</a></span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;193</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            <span class="comment">// train is not in the network at the time</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;236</td>  <td class="nbHitsUncovered"><a title="Line 236: Conditional coverage 0% (0/2).">&nbsp;0</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 236: Conditional coverage 0% (0/2).">            <span class="keyword">if</span> (<span class="keyword">this</span>.trainEntryTime &lt; horizon) {</a></span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;237</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;194</td>  <td class="nbHitsUncovered"><a title="Line 194: Conditional coverage 0% (0/2).">&nbsp;0</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 194: Conditional coverage 0% (0/2).">            <span class="keyword">if</span> (<span class="keyword">this</span>.trainEntryTime &lt; horizon) {</a></span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;195</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                <span class="comment">// however, it should be; origin node possibly has some wait time</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;238</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                <span class="keyword">return</span> horizon - <span class="keyword">this</span>.trainEntryTime + originalDelay;</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;239</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;196</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                <span class="keyword">return</span> horizon - <span class="keyword">this</span>.trainEntryTime + originalDelay;</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;197</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            } <span class="keyword">else</span> {</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;240</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;198</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                <span class="comment">// otherwise it's alright, there is only the original delay</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;241</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                <span class="keyword">return</span> originalDelay;</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;242</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;199</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                <span class="keyword">return</span> originalDelay;</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;200</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;243</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;201</td>  <td class="nbHitsCovered"><a title="Line 201: Conditional coverage 100% (2/2).">&nbsp;63</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 201: Conditional coverage 100% (2/2).">        } <span class="keyword">else</span> <span class="keyword">if</span> (scheduleInHorizon.values().contains(<span class="keyword">this</span>.getTrain().getDestination())) {</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;202</td>  <td class="nbHitsCovered">&nbsp;57</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">return</span> <span class="keyword">this</span>.getDelay(<span class="keyword">this</span>.getTrain().getDestination(),</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;203</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;                    <span class="keyword">this</span>.getTrain().getWantTime(Itinerary.DEFAULT_TIME_UNIT));</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;204</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;244</td>  <td class="nbHitsCovered">&nbsp;6</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">long</span> actualArrivalTime = horizon;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;245</td>  <td class="nbHitsCovered">&nbsp;6</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">long</span> optimalArrivalTime = <span class="keyword">this</span>.trainEntryTime</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;246</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;205</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;        <span class="comment">// otherwise, we need to estimate the delay</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;206</td>  <td class="nbHitsCovered">&nbsp;6</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">long</span> actualArrivalTime = horizon;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;207</td>  <td class="nbHitsCovered">&nbsp;6</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">long</span> optimalArrivalTime = <span class="keyword">this</span>.trainEntryTime</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;208</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                + Converter.getTimeFromSpeedAndDistance(<span class="keyword">this</span>.getTrain().getMaximumSpeed(),</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;247</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;209</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                        Converter.calculateActualDistanceTravelled(<span class="keyword">this</span>, horizon));</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;248</td>  <td class="nbHitsCovered">&nbsp;6</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> actualArrivalTime - optimalArrivalTime;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;210</td>  <td class="nbHitsCovered">&nbsp;6</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> actualArrivalTime - optimalArrivalTime;</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;211</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;212</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;213</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    <span class="comment">/**</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;214</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;<span class="comment">     * Get delay at a given node, provided we know when we were supposed to be there.</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;215</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;<span class="comment">     * </span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;216</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;<span class="comment">     * @param n The node on the route.</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;217</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;<span class="comment">     * @param expectedArrival Time in milliseconds of the expected arrival.</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;218</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;<span class="comment">     * @return Milliseconds. Positive when delayed, negative when ahead. Returns the actual delay regardless of whether the node</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;219</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;<span class="comment">     *         is or isn't within the planning horizon.</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;220</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;<span class="comment">     */</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;221</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    <span class="keyword">private</span> <span class="keyword">long</span> getDelay(<span class="keyword">final</span> Node n, <span class="keyword">final</span> <span class="keyword">long</span> expectedArrival) {</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;222</td>  <td class="nbHitsUncovered"><a title="Line 222: Conditional coverage 50% (1/2).">&nbsp;57</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 222: Conditional coverage 50% (1/2).">        <span class="keyword">for</span> (<span class="keyword">final</span> SortedMap.Entry&lt;Long, Node&gt; entry : <span class="keyword">this</span>.getSchedule().entrySet()) {</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;223</td>  <td class="nbHitsCovered"><a title="Line 223: Conditional coverage 100% (2/2).">&nbsp;2490</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 223: Conditional coverage 100% (2/2).">            <span class="keyword">if</span> (entry.getValue() != n) {</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;224</td>  <td class="nbHitsCovered">&nbsp;2433</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">continue</span>;</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;225</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;226</td>  <td class="nbHitsCovered">&nbsp;57</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">return</span> entry.getKey() - expectedArrival;</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;227</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;228</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(n + <span class="string">" not on the route!"</span>);</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;229</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;230</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;231</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> Arc getLeadingArc(<span class="keyword">final</span> <span class="keyword">long</span> time) {</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;232</td>  <td class="nbHitsCovered"><a title="Line 232: Conditional coverage 100% (2/2).">&nbsp;4830250</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 232: Conditional coverage 100% (2/2).">        <span class="keyword">if</span> (time &lt; <span class="keyword">this</span>.trainEntryTime) {</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;233</td>  <td class="nbHitsCovered">&nbsp;620458</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">return</span> <span class="keyword">null</span>;</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;234</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;235</td>  <td class="nbHitsCovered">&nbsp;4209792</td>  <td class="src"><pre class="src">&nbsp;        Node previousNode = <span class="keyword">null</span>;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;236</td>  <td class="nbHitsCovered"><a title="Line 236: Conditional coverage 100% (2/2).">&nbsp;4209792</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 236: Conditional coverage 100% (2/2).">        <span class="keyword">for</span> (<span class="keyword">final</span> SortedMap.Entry&lt;Long, Node&gt; entry : <span class="keyword">this</span>.getSchedule().entrySet()) {</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;237</td>  <td class="nbHitsCovered">&nbsp;148758628</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">final</span> <span class="keyword">long</span> timeOfArrival = entry.getKey();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;238</td>  <td class="nbHitsCovered">&nbsp;148758628</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">final</span> Node currentNode = entry.getValue();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;239</td>  <td class="nbHitsCovered"><a title="Line 239: Conditional coverage 100% (2/2).">&nbsp;148758628</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 239: Conditional coverage 100% (2/2).">            <span class="keyword">if</span> (time &gt; timeOfArrival) {</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;240</td>  <td class="nbHitsCovered">&nbsp;147577858</td>  <td class="src"><pre class="src">&nbsp;                previousNode = currentNode;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;241</td>  <td class="nbHitsCovered">&nbsp;147577858</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">continue</span>;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;242</td>  <td class="nbHitsCovered"><a title="Line 242: Conditional coverage 100% (2/2).">&nbsp;1180770</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 242: Conditional coverage 100% (2/2).">            } <span class="keyword">else</span> <span class="keyword">if</span> (time == timeOfArrival) {</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;243</td>  <td class="nbHitsCovered">&nbsp;3298</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">return</span> <span class="keyword">this</span>.getRoute().getProgression().getWithOriginNode(currentNode);</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;244</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;            } <span class="keyword">else</span> {</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;245</td>  <td class="nbHitsCovered">&nbsp;1177472</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">return</span> <span class="keyword">this</span>.getRoute().getProgression().getWithOriginNode(previousNode);</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;246</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;247</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;248</td>  <td class="nbHitsCovered">&nbsp;3029022</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> <span class="keyword">null</span>;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;249</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;250</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;251</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> Arc getLeadingArc(<span class="keyword">final</span> <span class="keyword">long</span> time) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;252</td>  <td class="nbHitsCovered"><a title="Line 252: Conditional coverage 100% (2/2).">&nbsp;4830250</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 252: Conditional coverage 100% (2/2).">        <span class="keyword">if</span> (time &lt; <span class="keyword">this</span>.trainEntryTime) {</a></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;253</td>  <td class="nbHitsCovered">&nbsp;620458</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">return</span> <span class="keyword">null</span>;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;254</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;255</td>  <td class="nbHitsCovered">&nbsp;4209792</td>  <td class="src"><pre class="src">&nbsp;        Node previousNode = <span class="keyword">null</span>;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;256</td>  <td class="nbHitsCovered"><a title="Line 256: Conditional coverage 100% (2/2).">&nbsp;4209792</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 256: Conditional coverage 100% (2/2).">        <span class="keyword">for</span> (<span class="keyword">final</span> SortedMap.Entry&lt;Long, Node&gt; entry : <span class="keyword">this</span>.getSchedule().entrySet()) {</a></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;257</td>  <td class="nbHitsCovered">&nbsp;148758628</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">final</span> <span class="keyword">long</span> timeOfArrival = entry.getKey();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;258</td>  <td class="nbHitsCovered">&nbsp;148758628</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">final</span> Node currentNode = entry.getValue();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;259</td>  <td class="nbHitsCovered"><a title="Line 259: Conditional coverage 100% (2/2).">&nbsp;148758628</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 259: Conditional coverage 100% (2/2).">            <span class="keyword">if</span> (time &gt; timeOfArrival) {</a></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;260</td>  <td class="nbHitsCovered">&nbsp;147577858</td>  <td class="src"><pre class="src">&nbsp;                previousNode = currentNode;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;261</td>  <td class="nbHitsCovered">&nbsp;147577858</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">continue</span>;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;262</td>  <td class="nbHitsCovered"><a title="Line 262: Conditional coverage 100% (2/2).">&nbsp;1180770</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 262: Conditional coverage 100% (2/2).">            } <span class="keyword">else</span> <span class="keyword">if</span> (time == timeOfArrival) {</a></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;263</td>  <td class="nbHitsCovered">&nbsp;3298</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">return</span> <span class="keyword">this</span>.getRoute().getProgression().getWithOriginNode(currentNode);</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;264</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;            } <span class="keyword">else</span> {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;265</td>  <td class="nbHitsCovered">&nbsp;1177472</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">return</span> <span class="keyword">this</span>.getRoute().getProgression().getWithOriginNode(previousNode);</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;266</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;267</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;268</td>  <td class="nbHitsCovered">&nbsp;3029022</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> <span class="keyword">null</span>;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;269</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;270</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;271</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> Map&lt;Node, MaintenanceWindow&gt; getMaintenances() {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;272</td>  <td class="nbHitsCovered">&nbsp;2801</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> <span class="keyword">this</span>.maintenances;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;252</td>  <td class="nbHitsCovered">&nbsp;2801</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> <span class="keyword">this</span>.maintenances;</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;253</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;254</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;255</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> Collection&lt;Arc&gt; getOccupiedArcs(<span class="keyword">final</span> <span class="keyword">long</span> time) {</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;256</td>  <td class="nbHitsCovered">&nbsp;2721663</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> Arc leadingArc = <span class="keyword">this</span>.getLeadingArc(time);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;257</td>  <td class="nbHitsCovered"><a title="Line 257: Conditional coverage 100% (2/2).">&nbsp;2721663</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 257: Conditional coverage 100% (2/2).">        <span class="keyword">if</span> (leadingArc == <span class="keyword">null</span>) {</a></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;258</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;            <span class="comment">// train not in the network</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;259</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;            <span class="comment">// FIXME train should leave the network gradually, not at once when it reaches destination</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;260</td>  <td class="nbHitsCovered">&nbsp;2137316</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">return</span> Collections.emptySet();</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;261</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;262</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;        <span class="comment">// calculate how far are we into the leading arc</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;263</td>  <td class="nbHitsCovered">&nbsp;584347</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> SortedMap&lt;Long, Arc&gt; nodeEntryTimes = <span class="keyword">this</span>.getScheduleWithArcs();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;264</td>  <td class="nbHitsCovered">&nbsp;584347</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">long</span> timeArcEntered = -1;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;265</td>  <td class="nbHitsUncovered"><a title="Line 265: Conditional coverage 50% (1/2).">&nbsp;584347</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 265: Conditional coverage 50% (1/2).">        <span class="keyword">for</span> (<span class="keyword">final</span> SortedMap.Entry&lt;Long, Arc&gt; entry : nodeEntryTimes.entrySet()) {</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;266</td>  <td class="nbHitsCovered"><a title="Line 266: Conditional coverage 100% (2/2).">&nbsp;13668693</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 266: Conditional coverage 100% (2/2).">            <span class="keyword">if</span> (entry.getValue() == leadingArc) {</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;267</td>  <td class="nbHitsCovered">&nbsp;584347</td>  <td class="src"><pre class="src">&nbsp;                timeArcEntered = entry.getKey();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;268</td>  <td class="nbHitsCovered">&nbsp;584347</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">break</span>;</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;269</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;270</td>  <td class="nbHitsCovered">&nbsp;13084346</td>  <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;271</td>  <td class="nbHitsUncovered"><a title="Line 271: Conditional coverage 50% (1/2).">&nbsp;584347</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 271: Conditional coverage 50% (1/2).">        <span class="keyword">if</span> (timeArcEntered &lt; <span class="keyword">this</span>.trainEntryTime) {</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;272</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;273</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+  <td class="src"><pre class="src">&nbsp;                    <span class="string">"Proper arc cannot be found! Possibly a bug in the algoritm."</span>);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;274</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;275</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> Route getRoute() {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;276</td>  <td class="nbHitsCovered">&nbsp;3090899</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> <span class="keyword">this</span>.route;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;277</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;278</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
+  <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;275</td>  <td class="nbHitsCovered">&nbsp;584347</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">long</span> timeTravelledInLeadingArc = time - timeArcEntered;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;276</td>  <td class="nbHitsCovered">&nbsp;584347</td>  <td class="src"><pre class="src">&nbsp;        BigDecimal remainingLengthOfTrain = <span class="keyword">this</span>.getTrain().getLength();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;277</td>  <td class="nbHitsCovered">&nbsp;584347</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> Collection&lt;Arc&gt; occupiedArcs = <span class="keyword">new</span> LinkedHashSet&lt;Arc&gt;();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;278</td>  <td class="nbHitsCovered"><a title="Line 278: Conditional coverage 100% (2/2).">&nbsp;584347</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 278: Conditional coverage 100% (2/2).">        <span class="keyword">if</span> (timeTravelledInLeadingArc &gt; 0) {</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;279</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">synchronized</span> SortedMap&lt;Long, Node&gt; getSchedule() {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;280</td>  <td class="nbHitsUncovered"><a title="Line 280: Conditional coverage 75% (3/4) [each condition: 100%, 50%].">&nbsp;4794291</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 280: Conditional coverage 75% (3/4) [each condition: 100%, 50%].">        <span class="keyword">if</span> (!<span class="keyword">this</span>.scheduleCacheValid.get() || <span class="keyword">this</span>.scheduleCache.size() == 0) {</a></span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;281</td>  <td class="nbHitsCovered">&nbsp;63</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">this</span>.cacheSchedule();</pre></td></tr>
+  <td class="src"><pre class="src">&nbsp;            <span class="comment">// only mark the arc as occupied if we've actually ventured inside it</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;280</td>  <td class="nbHitsCovered">&nbsp;583894</td>  <td class="src"><pre class="src">&nbsp;            occupiedArcs.add(leadingArc);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;281</td>  <td class="nbHitsCovered">&nbsp;583894</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">final</span> BigDecimal travelledInLeadingArc = Converter.getDistanceInMilesFromSpeedAndTime(</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;282</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;283</td>  <td class="nbHitsCovered">&nbsp;4794291</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> Collections.unmodifiableSortedMap(<span class="keyword">this</span>.scheduleCache);</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;284</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+  <td class="src"><pre class="src">&nbsp;                    <span class="keyword">this</span>.getTrain().getMaximumSpeed(leadingArc.getTrack()),</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;283</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;                    timeTravelledInLeadingArc);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;284</td>  <td class="nbHitsCovered">&nbsp;583894</td>  <td class="src"><pre class="src">&nbsp;            remainingLengthOfTrain = remainingLengthOfTrain.subtract(travelledInLeadingArc);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;285</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;286</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> Map&lt;Node, Long&gt; getScheduleAdherenceStatus() {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;287</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">final</span> <span class="keyword">long</span> horizon = RAS2012Solution.getPlanningHorizon(Itinerary.DEFAULT_TIME_UNIT);</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;288</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">final</span> SortedMap&lt;Long, Node&gt; schedule = <span class="keyword">this</span>.getSchedule();</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;289</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">final</span> SortedMap&lt;Long, Node&gt; scheduleInteresting = schedule.headMap(horizon);</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;290</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">final</span> Map&lt;Node, Long&gt; result = <span class="keyword">new</span> HashMap&lt;Node, Long&gt;();</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;291</td>  <td class="nbHitsUncovered"><a title="Line 291: Conditional coverage 0% (0/2).">&nbsp;0</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 291: Conditional coverage 0% (0/2).">        <span class="keyword">for</span> (<span class="keyword">final</span> ScheduleAdherenceRequirement sa : <span class="keyword">this</span>.getTrain()</a></span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;292</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;                .getScheduleAdherenceRequirements()) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;293</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">final</span> <span class="keyword">long</span> expectedArrival = sa.getTimeSinceStartOfWorld(Itinerary.DEFAULT_TIME_UNIT);</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;294</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">final</span> Node expectedDestination = sa.getDestination();</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;295</td>  <td class="nbHitsUncovered"><a title="Line 295: Conditional coverage 0% (0/2).">&nbsp;0</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 295: Conditional coverage 0% (0/2).">            <span class="keyword">if</span> (expectedArrival &lt;= horizon) {</a></span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;296</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;                <span class="comment">// arrival expected inside the planning horizon</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;297</td>  <td class="nbHitsUncovered"><a title="Line 297: Conditional coverage 0% (0/2).">&nbsp;0</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 297: Conditional coverage 0% (0/2).">                <span class="keyword">if</span> (scheduleInteresting.values().contains(expectedDestination)) {</a></span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;298</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                    <span class="keyword">final</span> <span class="keyword">int</span> numResults = result.size();</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;299</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;                    <span class="comment">// arrival actually inside the planning horizon; we know the exact delay</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;300</td>  <td class="nbHitsUncovered"><a title="Line 300: Conditional coverage 0% (0/2).">&nbsp;0</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 300: Conditional coverage 0% (0/2).">                    <span class="keyword">for</span> (<span class="keyword">final</span> SortedMap.Entry&lt;Long, Node&gt; entry : scheduleInteresting.entrySet()) {</a></span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;301</td>  <td class="nbHitsUncovered"><a title="Line 301: Conditional coverage 0% (0/2).">&nbsp;0</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 301: Conditional coverage 0% (0/2).">                        <span class="keyword">if</span> (entry.getValue() == expectedDestination) {</a></span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;302</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                            result.put(expectedDestination, expectedArrival - entry.getKey());</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;303</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;                        }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;304</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                    }</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;305</td>  <td class="nbHitsUncovered"><a title="Line 305: Conditional coverage 0% (0/2).">&nbsp;0</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 305: Conditional coverage 0% (0/2).">                    <span class="keyword">if</span> (result.size() != numResults + 1) {</a></span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;306</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;307</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;                                <span class="string">"Cannot find scheduled node. This must be a bug in the algorithm."</span>);</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;308</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;                    }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;309</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                } <span class="keyword">else</span> {</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;310</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;                    <span class="comment">// arrival unfortunately outside the planning horizon</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;311</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                    result.put(expectedDestination, <span class="keyword">this</span>.getDelay());</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;312</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;                }</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;313</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;            } <span class="keyword">else</span> {</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;314</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;                <span class="comment">// arrival expected outside the horizon, only count the delay before the horizon</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;315</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                result.put(expectedDestination, <span class="keyword">this</span>.getDelay());</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;316</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;317</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        }</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;318</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">return</span> Collections.unmodifiableMap(result);</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;319</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;320</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;321</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">synchronized</span> SortedMap&lt;Long, Arc&gt; getScheduleWithArcs() {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;322</td>  <td class="nbHitsUncovered"><a title="Line 322: Conditional coverage 50% (2/4) [each condition: 50%, 50%].">&nbsp;584347</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 322: Conditional coverage 50% (2/4) [each condition: 50%, 50%].">        <span class="keyword">if</span> (!<span class="keyword">this</span>.scheduleCacheValid.get() || <span class="keyword">this</span>.scheduleCache.size() == 0) {</a></span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;323</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">this</span>.cacheSchedule();</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;324</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;325</td>  <td class="nbHitsCovered">&nbsp;584347</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> Collections.unmodifiableSortedMap(<span class="keyword">this</span>.scheduleCacheWithArcs);</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;286</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;        <span class="comment">// and now add any preceding arcs for as long as the remaining train length &gt; 0</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;287</td>  <td class="nbHitsCovered">&nbsp;584347</td>  <td class="src"><pre class="src">&nbsp;        Arc currentlyProcessedArc = leadingArc;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;288</td>  <td class="nbHitsCovered"><a title="Line 288: Conditional coverage 100% (2/2).">&nbsp;854770</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 288: Conditional coverage 100% (2/2).">        <span class="keyword">while</span> (remainingLengthOfTrain.compareTo(BigDecimal.ZERO) &gt; 0) {</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;289</td>  <td class="nbHitsCovered">&nbsp;277261</td>  <td class="src"><pre class="src">&nbsp;            currentlyProcessedArc = <span class="keyword">this</span>.route.getProgression().getPrevious(currentlyProcessedArc);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;290</td>  <td class="nbHitsCovered"><a title="Line 290: Conditional coverage 100% (2/2).">&nbsp;277261</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 290: Conditional coverage 100% (2/2).">            <span class="keyword">if</span> (currentlyProcessedArc == <span class="keyword">null</span>) {</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;291</td>  <td class="nbHitsCovered">&nbsp;6838</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">break</span>;</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;292</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;293</td>  <td class="nbHitsCovered">&nbsp;270423</td>  <td class="src"><pre class="src">&nbsp;            occupiedArcs.add(currentlyProcessedArc);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;294</td>  <td class="nbHitsCovered">&nbsp;270423</td>  <td class="src"><pre class="src">&nbsp;            remainingLengthOfTrain = remainingLengthOfTrain.subtract(currentlyProcessedArc</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;295</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;                    .getLengthInMiles());</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;296</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;297</td>  <td class="nbHitsCovered">&nbsp;584347</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> occupiedArcs;</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;298</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;299</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;300</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> Route getRoute() {</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;301</td>  <td class="nbHitsCovered">&nbsp;3090899</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> <span class="keyword">this</span>.route;</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;302</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;303</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;304</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">synchronized</span> SortedMap&lt;Long, Node&gt; getSchedule() {</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;305</td>  <td class="nbHitsUncovered"><a title="Line 305: Conditional coverage 75% (3/4) [each condition: 100%, 50%].">&nbsp;4794342</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 305: Conditional coverage 75% (3/4) [each condition: 100%, 50%].">        <span class="keyword">if</span> (!<span class="keyword">this</span>.scheduleCacheValid.get() || <span class="keyword">this</span>.scheduleCache.size() == 0) {</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;306</td>  <td class="nbHitsCovered">&nbsp;63</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">this</span>.cacheSchedule();</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;307</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;308</td>  <td class="nbHitsCovered">&nbsp;4794342</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> Collections.unmodifiableSortedMap(<span class="keyword">this</span>.scheduleCache);</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;309</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;310</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;311</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> Map&lt;Node, Long&gt; getScheduleAdherenceStatus() {</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;312</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">final</span> <span class="keyword">long</span> horizon = RAS2012Solution.getPlanningHorizon(Itinerary.DEFAULT_TIME_UNIT);</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;313</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">final</span> SortedMap&lt;Long, Node&gt; scheduleInteresting = <span class="keyword">this</span>.getSchedule().headMap(horizon);</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;314</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">final</span> Map&lt;Node, Long&gt; result = <span class="keyword">new</span> HashMap&lt;Node, Long&gt;();</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;315</td>  <td class="nbHitsUncovered"><a title="Line 315: Conditional coverage 0% (0/2).">&nbsp;0</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 315: Conditional coverage 0% (0/2).">        <span class="keyword">for</span> (<span class="keyword">final</span> ScheduleAdherenceRequirement sa : <span class="keyword">this</span>.getTrain()</a></span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;316</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;                .getScheduleAdherenceRequirements()) {</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;317</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">final</span> Node expectedDestination = sa.getDestination();</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;318</td>  <td class="nbHitsUncovered"><a title="Line 318: Conditional coverage 0% (0/2).">&nbsp;0</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 318: Conditional coverage 0% (0/2).">            <span class="keyword">if</span> (scheduleInteresting.values().contains(expectedDestination)) {</a></span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;319</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;                <span class="comment">// arrival actually inside the planning horizon; we know the exact delay</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;320</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                <span class="keyword">final</span> <span class="keyword">long</span> expectedArrival = sa</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;321</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;                        .getTimeSinceStartOfWorld(Itinerary.DEFAULT_TIME_UNIT);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;322</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                result.put(expectedDestination, <span class="keyword">this</span>.getDelay(expectedDestination, expectedArrival));</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;323</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            } <span class="keyword">else</span> {</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;324</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;                <span class="comment">// arrival outside the horizon, only count the delay before the horizon</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;325</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                result.put(expectedDestination, <span class="keyword">this</span>.getDelay(horizon));</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;326</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;327</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        }</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;328</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">return</span> Collections.unmodifiableMap(result);</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;329</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;327</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;330</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;328</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">long</span> getTimeSpentOnUnpreferredTracks(<span class="keyword">final</span> <span class="keyword">long</span> time) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;329</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">final</span> SortedMap&lt;Long, Arc&gt; arcEntryTimes = <span class="keyword">this</span>.getScheduleWithArcs();</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;330</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">long</span> spentTime = 0;</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;331</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">final</span> Arc leadingArc = <span class="keyword">this</span>.getLeadingArc(time);</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;332</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;        <span class="comment">/*</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;333</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;<span class="comment">         * the time spent in between the nodes is calculated as a difference of their entry times; if we calculated just the</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;331</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">synchronized</span> SortedMap&lt;Long, Arc&gt; getScheduleWithArcs() {</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;332</td>  <td class="nbHitsUncovered"><a title="Line 332: Conditional coverage 50% (2/4) [each condition: 50%, 50%].">&nbsp;584347</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 332: Conditional coverage 50% (2/4) [each condition: 50%, 50%].">        <span class="keyword">if</span> (!<span class="keyword">this</span>.scheduleCacheValid.get() || <span class="keyword">this</span>.scheduleCache.size() == 0) {</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;333</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">this</span>.cacheSchedule();</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;334</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;<span class="comment">         * time spent traversing the arc, we would have missed wait times and MOWs.</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;335</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;<span class="comment">         */</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;336</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">long</span> previousTimeOfEntry = 0;</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;337</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        Arc previousArc = <span class="keyword">null</span>;</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;338</td>  <td class="nbHitsUncovered"><a title="Line 338: Conditional coverage 0% (0/2).">&nbsp;0</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 338: Conditional coverage 0% (0/2).">        <span class="keyword">for</span> (<span class="keyword">final</span> SortedMap.Entry&lt;Long, Arc&gt; entry : arcEntryTimes.headMap(time).entrySet()) {</a></span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;339</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">final</span> <span class="keyword">long</span> currentTimeOfEntry = entry.getKey();</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;340</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">final</span> Arc a = entry.getValue();</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;341</td>  <td class="nbHitsUncovered"><a title="Line 341: Conditional coverage 0% (0/4) [each condition: 0%, 0%].">&nbsp;0</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 341: Conditional coverage 0% (0/4) [each condition: 0%, 0%].">            <span class="keyword">if</span> (previousArc != <span class="keyword">null</span> &amp;&amp; !<span class="keyword">this</span>.getRoute().getProgression().isPreferred(previousArc)) {</a></span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;342</td>  <td class="nbHitsUncovered"><a title="Line 342: Conditional coverage 0% (0/2).">&nbsp;0</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 342: Conditional coverage 0% (0/2).">                <span class="keyword">if</span> (previousArc == leadingArc) {</a></span></pre></td></tr>
+  <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;335</td>  <td class="nbHitsCovered">&nbsp;584347</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> Collections.unmodifiableSortedMap(<span class="keyword">this</span>.scheduleCacheWithArcs);</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;336</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;337</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;338</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">long</span> getTimeSpentOnUnpreferredTracks(<span class="keyword">final</span> <span class="keyword">long</span> time) {</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;339</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">final</span> SortedMap&lt;Long, Arc&gt; arcEntryTimes = <span class="keyword">this</span>.getScheduleWithArcs();</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;340</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">long</span> spentTime = 0;</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;341</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">final</span> Arc leadingArc = <span class="keyword">this</span>.getLeadingArc(time);</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;342</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;        <span class="comment">/*</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;343</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;                    <span class="comment">// include the time spent on this track so far</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;344</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                    spentTime += time - currentTimeOfEntry;</span></pre></td></tr>
+  <td class="src"><pre class="src">&nbsp;<span class="comment">         * the time spent in between the nodes is calculated as a difference of their entry times; if we calculated just the</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;344</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;<span class="comment">         * time spent traversing the arc, we would have missed wait times and MOWs.</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;345</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;                }</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;346</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;                <span class="comment">// include the whole time spent on previous</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;347</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                spentTime += currentTimeOfEntry - previousTimeOfEntry;</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;348</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;349</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            previousTimeOfEntry = currentTimeOfEntry;</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;350</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            previousArc = a;</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;351</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        }</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;352</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">return</span> spentTime;</span></pre></td></tr>
+  <td class="src"><pre class="src">&nbsp;<span class="comment">         */</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;346</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">long</span> previousTimeOfEntry = 0;</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;347</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        Arc previousArc = <span class="keyword">null</span>;</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;348</td>  <td class="nbHitsUncovered"><a title="Line 348: Conditional coverage 0% (0/2).">&nbsp;0</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 348: Conditional coverage 0% (0/2).">        <span class="keyword">for</span> (<span class="keyword">final</span> SortedMap.Entry&lt;Long, Arc&gt; entry : arcEntryTimes.headMap(time).entrySet()) {</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;349</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">final</span> <span class="keyword">long</span> currentTimeOfEntry = entry.getKey();</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;350</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">final</span> Arc a = entry.getValue();</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;351</td>  <td class="nbHitsUncovered"><a title="Line 351: Conditional coverage 0% (0/4) [each condition: 0%, 0%].">&nbsp;0</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 351: Conditional coverage 0% (0/4) [each condition: 0%, 0%].">            <span class="keyword">if</span> (previousArc != <span class="keyword">null</span> &amp;&amp; !<span class="keyword">this</span>.getRoute().getProgression().isPreferred(previousArc)) {</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;352</td>  <td class="nbHitsUncovered"><a title="Line 352: Conditional coverage 0% (0/2).">&nbsp;0</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 352: Conditional coverage 0% (0/2).">                <span class="keyword">if</span> (previousArc == leadingArc) {</a></span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;353</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;354</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
+  <td class="src"><pre class="src">&nbsp;                    <span class="comment">// include the time spent on this track so far</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;354</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                    spentTime += time - currentTimeOfEntry;</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;355</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> Train getTrain() {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;356</td>  <td class="nbHitsCovered">&nbsp;5884548</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> <span class="keyword">this</span>.train;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;357</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+  <td class="src"><pre class="src">&nbsp;                }</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;356</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;                <span class="comment">// include the whole time spent on previous</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;357</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                spentTime += currentTimeOfEntry - previousTimeOfEntry;</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;358</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;359</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">synchronized</span> WaitTime getWaitTime(<span class="keyword">final</span> Node n) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;360</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">return</span> <span class="keyword">this</span>.nodeWaitTimes.get(n);</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;361</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;362</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;363</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> Map&lt;Long, Long&gt; getWantTimeDifference() {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;364</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">final</span> Map&lt;Long, Long&gt; result = <span class="keyword">new</span> HashMap&lt;Long, Long&gt;();</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;365</td>  <td class="nbHitsUncovered"><a title="Line 365: Conditional coverage 0% (0/2).">&nbsp;0</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 365: Conditional coverage 0% (0/2).">        <span class="keyword">for</span> (<span class="keyword">final</span> SortedMap.Entry&lt;Long, Node&gt; entry : <span class="keyword">this</span>.getSchedule().entrySet()) {</a></span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;366</td>  <td class="nbHitsUncovered"><a title="Line 366: Conditional coverage 0% (0/2).">&nbsp;0</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 366: Conditional coverage 0% (0/2).">            <span class="keyword">if</span> (entry.getValue() == <span class="keyword">this</span>.getTrain().getDestination()) {</a></span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;367</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;                <span class="comment">// make sure we only include the time within the planning horizon</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;368</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                <span class="keyword">final</span> <span class="keyword">long</span> actualTime = Math.min(entry.getKey(),</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;369</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;                        RAS2012Solution.getPlanningHorizon(Itinerary.DEFAULT_TIME_UNIT));</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;370</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                <span class="keyword">final</span> <span class="keyword">long</span> difference = actualTime</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;371</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;                        - <span class="keyword">this</span>.getTrain().getWantTime(Itinerary.DEFAULT_TIME_UNIT);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;372</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                result.put(entry.getKey(), difference);</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;373</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;374</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        }</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;375</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">return</span> result;</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;376</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;359</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            previousTimeOfEntry = currentTimeOfEntry;</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;360</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            previousArc = a;</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;361</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        }</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;362</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">return</span> spentTime;</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;363</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;377</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;364</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;378</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    @Override</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;379</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">int</span> hashCode() {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;380</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">final</span> <span class="keyword">int</span> prime = 31;</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;381</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">int</span> result = 1;</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;382</td>  <td class="nbHitsUncovered"><a title="Line 382: Conditional coverage 0% (0/2).">&nbsp;0</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 382: Conditional coverage 0% (0/2).">        result = prime * result + (<span class="keyword">this</span>.nodeWaitTimes == <span class="keyword">null</span> ? 0 : <span class="keyword">this</span>.nodeWaitTimes.hashCode());</a></span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;383</td>  <td class="nbHitsUncovered"><a title="Line 383: Conditional coverage 0% (0/2).">&nbsp;0</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 383: Conditional coverage 0% (0/2).">        result = prime * result + (<span class="keyword">this</span>.route == <span class="keyword">null</span> ? 0 : <span class="keyword">this</span>.route.hashCode());</a></span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;384</td>  <td class="nbHitsUncovered"><a title="Line 384: Conditional coverage 0% (0/2).">&nbsp;0</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 384: Conditional coverage 0% (0/2).">        result = prime * result + (<span class="keyword">this</span>.train == <span class="keyword">null</span> ? 0 : <span class="keyword">this</span>.train.hashCode());</a></span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;385</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">return</span> result;</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;386</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;365</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> Train getTrain() {</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;366</td>  <td class="nbHitsCovered">&nbsp;5884662</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> <span class="keyword">this</span>.train;</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;367</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;368</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;369</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">synchronized</span> WaitTime getWaitTime(<span class="keyword">final</span> Node n) {</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;370</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">return</span> <span class="keyword">this</span>.nodeWaitTimes.get(n);</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;371</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;372</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;373</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    @Override</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;374</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">int</span> hashCode() {</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;375</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">final</span> <span class="keyword">int</span> prime = 31;</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;376</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">int</span> result = 1;</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;377</td>  <td class="nbHitsUncovered"><a title="Line 377: Conditional coverage 0% (0/2).">&nbsp;0</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 377: Conditional coverage 0% (0/2).">        result = prime * result + (<span class="keyword">this</span>.nodeWaitTimes == <span class="keyword">null</span> ? 0 : <span class="keyword">this</span>.nodeWaitTimes.hashCode());</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;378</td>  <td class="nbHitsUncovered"><a title="Line 378: Conditional coverage 0% (0/2).">&nbsp;0</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 378: Conditional coverage 0% (0/2).">        result = prime * result + (<span class="keyword">this</span>.route == <span class="keyword">null</span> ? 0 : <span class="keyword">this</span>.route.hashCode());</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;379</td>  <td class="nbHitsUncovered"><a title="Line 379: Conditional coverage 0% (0/2).">&nbsp;0</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 379: Conditional coverage 0% (0/2).">        result = prime * result + (<span class="keyword">this</span>.train == <span class="keyword">null</span> ? 0 : <span class="keyword">this</span>.train.hashCode());</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;380</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">return</span> result;</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;381</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;382</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;383</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    <span class="keyword">private</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> invalidateCaches() {</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;384</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">this</span>.scheduleCache.clear();</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;385</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">this</span>.scheduleCacheWithArcs.clear();</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;386</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;    }</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;387</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;388</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    <span class="keyword">private</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> invalidateCaches() {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;389</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">this</span>.scheduleCache.clear();</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;390</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">this</span>.scheduleCacheWithArcs.clear();</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;391</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;    }</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;392</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;393</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">boolean</span> isNodeOnRoute(<span class="keyword">final</span> Node n) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;394</td>  <td class="nbHitsCovered">&nbsp;3032</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> <span class="keyword">this</span>.nodesEnRoute.contains(n);</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;395</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;389</td>  <td class="nbHitsCovered">&nbsp;3032</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> <span class="keyword">this</span>.nodesEnRoute.contains(n);</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;390</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;396</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;391</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;397</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;392</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">void</span> removeAllWaitTimes() {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;398</td>  <td class="nbHitsUncovered"><a title="Line 398: Conditional coverage 0% (0/2).">&nbsp;0</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 398: Conditional coverage 0% (0/2).">        <span class="keyword">if</span> (<span class="keyword">this</span>.nodeWaitTimes.size() &gt; 0) {</a></span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;399</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">this</span>.invalidateCaches();</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;400</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;393</td>  <td class="nbHitsUncovered"><a title="Line 393: Conditional coverage 0% (0/2).">&nbsp;0</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 393: Conditional coverage 0% (0/2).">        <span class="keyword">if</span> (<span class="keyword">this</span>.nodeWaitTimes.size() &gt; 0) {</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;394</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">this</span>.invalidateCaches();</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;395</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;401</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">this</span>.nodeWaitTimes.clear();</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;402</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;    }</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;403</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;396</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">this</span>.nodeWaitTimes.clear();</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;397</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;    }</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;398</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;404</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;399</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> WaitTime removeWaitTime(<span class="keyword">final</span> Node n) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;405</td>  <td class="nbHitsUncovered"><a title="Line 405: Conditional coverage 0% (0/2).">&nbsp;0</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 405: Conditional coverage 0% (0/2).">        <span class="keyword">if</span> (<span class="keyword">this</span>.nodeWaitTimes.containsKey(n)) {</a></span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;406</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">this</span>.invalidateCaches();</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;407</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">return</span> <span class="keyword">this</span>.nodeWaitTimes.remove(n);</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;400</td>  <td class="nbHitsUncovered"><a title="Line 400: Conditional coverage 0% (0/2).">&nbsp;0</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 400: Conditional coverage 0% (0/2).">        <span class="keyword">if</span> (<span class="keyword">this</span>.nodeWaitTimes.containsKey(n)) {</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;401</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">this</span>.invalidateCaches();</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;402</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">return</span> <span class="keyword">this</span>.nodeWaitTimes.remove(n);</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;403</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;        } <span class="keyword">else</span> {</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;404</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">return</span> <span class="keyword">null</span>;</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;405</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;406</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;407</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;408</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;        } <span class="keyword">else</span> {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;409</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">return</span> <span class="keyword">null</span>;</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;410</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;411</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;412</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;413</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">synchronized</span> WaitTime setWaitTime(<span class="keyword">final</span> WaitTime w, <span class="keyword">final</span> Node n) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;414</td>  <td class="nbHitsUncovered"><a title="Line 414: Conditional coverage 0% (0/2).">&nbsp;0</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 414: Conditional coverage 0% (0/2).">        <span class="keyword">if</span> (w == <span class="keyword">null</span>) {</a></span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;415</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">return</span> <span class="keyword">this</span>.removeWaitTime(n);</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;416</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;409</td>  <td class="nbHitsUncovered"><a title="Line 409: Conditional coverage 0% (0/2).">&nbsp;0</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 409: Conditional coverage 0% (0/2).">        <span class="keyword">if</span> (w == <span class="keyword">null</span>) {</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;410</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">return</span> <span class="keyword">this</span>.removeWaitTime(n);</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;411</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;417</td>  <td class="nbHitsUncovered"><a title="Line 417: Conditional coverage 0% (0/2).">&nbsp;0</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 417: Conditional coverage 0% (0/2).">        <span class="keyword">if</span> (!<span class="keyword">this</span>.isNodeOnRoute(n)) {</a></span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;418</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(n + <span class="string">" not in the itinerary: "</span> + <span class="keyword">this</span>);</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;419</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;412</td>  <td class="nbHitsUncovered"><a title="Line 412: Conditional coverage 0% (0/2).">&nbsp;0</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 412: Conditional coverage 0% (0/2).">        <span class="keyword">if</span> (!<span class="keyword">this</span>.isNodeOnRoute(n)) {</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;413</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(n + <span class="string">" not in the itinerary: "</span> + <span class="keyword">this</span>);</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;414</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;420</td>  <td class="nbHitsUncovered"><a title="Line 420: Conditional coverage 0% (0/2).">&nbsp;0</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 420: Conditional coverage 0% (0/2).">        <span class="keyword">if</span> (<span class="keyword">this</span>.getRoute().getProgression().getWaitPoints().contains(n)) {</a></span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;421</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">this</span>.invalidateCaches();</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;422</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">final</span> WaitTime previous = <span class="keyword">this</span>.nodeWaitTimes.get(n);</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;423</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">this</span>.nodeWaitTimes.put(n, w);</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;424</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">return</span> previous;</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;425</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;415</td>  <td class="nbHitsUncovered"><a title="Line 415: Conditional coverage 0% (0/2).">&nbsp;0</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 415: Conditional coverage 0% (0/2).">        <span class="keyword">if</span> (<span class="keyword">this</span>.getRoute().getProgression().getWaitPoints().contains(n)) {</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;416</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">this</span>.invalidateCaches();</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;417</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">final</span> WaitTime previous = <span class="keyword">this</span>.nodeWaitTimes.get(n);</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;418</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">this</span>.nodeWaitTimes.put(n, w);</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;419</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">return</span> previous;</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;420</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        } <span class="keyword">else</span> {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;426</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">return</span> <span class="keyword">null</span>;</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;427</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;421</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">return</span> <span class="keyword">null</span>;</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;422</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;428</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;423</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;429</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;424</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;430</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;425</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    @Override</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;431</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;426</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> String toString() {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;432</td>  <td class="nbHitsCovered">&nbsp;2721726</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> StringBuilder builder = <span class="keyword">new</span> StringBuilder();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;433</td>  <td class="nbHitsCovered">&nbsp;2721726</td>  <td class="src"><pre class="src">&nbsp;        builder.append(<span class="string">"Itinerary [route="</span>).append(<span class="keyword">this</span>.route.getId()).append(<span class="string">", train="</span>)</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;434</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;427</td>  <td class="nbHitsCovered">&nbsp;2721726</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> StringBuilder builder = <span class="keyword">new</span> StringBuilder();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;428</td>  <td class="nbHitsCovered">&nbsp;2721726</td>  <td class="src"><pre class="src">&nbsp;        builder.append(<span class="string">"Itinerary [route="</span>).append(<span class="keyword">this</span>.route.getId()).append(<span class="string">", train="</span>)</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;429</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                .append(<span class="keyword">this</span>.train.getName()).append(<span class="string">"]"</span>);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;435</td>  <td class="nbHitsCovered">&nbsp;2721726</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> builder.toString();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;430</td>  <td class="nbHitsCovered">&nbsp;2721726</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> builder.toString();</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;431</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;432</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;433</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    @Override</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;434</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">boolean</span> visualize(<span class="keyword">final</span> File target) {</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;435</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">return</span> <span class="keyword">this</span>.visualize(target, -1);</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;436</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;437</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;438</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    @Override</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;439</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">boolean</span> visualize(<span class="keyword">final</span> File target) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;440</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">return</span> <span class="keyword">this</span>.visualize(target, -1);</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;441</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;442</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;443</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">boolean</span> visualize(<span class="keyword">final</span> File target, <span class="keyword">final</span> <span class="keyword">long</span> time) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;444</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        OutputStream os = <span class="keyword">null</span>;</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;445</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;439</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        OutputStream os = <span class="keyword">null</span>;</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;440</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="keyword">try</span> {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;446</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            os = <span class="keyword">new</span> FileOutputStream(target);</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;447</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            Itinerary.logger.info(<span class="string">"Starting visualizing itinerary: "</span> + <span class="keyword">this</span>);</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;448</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">new</span> ItineraryVisualizer(<span class="keyword">this</span>, time).visualize(os);</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;449</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            Itinerary.logger.info(<span class="string">"Itinerary visualization finished: "</span> + <span class="keyword">this</span>);</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;450</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">return</span> <span class="keyword">true</span>;</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;451</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        } <span class="keyword">catch</span> (<span class="keyword">final</span> Exception ex) {</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;452</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            Itinerary.logger.error(<span class="string">"Visualizing itinerary "</span> + <span class="keyword">this</span> + <span class="string">" failed."</span>, ex);</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;453</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">return</span> <span class="keyword">false</span>;</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;454</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;441</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            os = <span class="keyword">new</span> FileOutputStream(target);</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;442</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            Itinerary.logger.info(<span class="string">"Starting visualizing itinerary: "</span> + <span class="keyword">this</span>);</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;443</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">new</span> ItineraryVisualizer(<span class="keyword">this</span>, time).visualize(os);</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;444</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            Itinerary.logger.info(<span class="string">"Itinerary visualization finished: "</span> + <span class="keyword">this</span>);</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;445</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">return</span> <span class="keyword">true</span>;</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;446</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        } <span class="keyword">catch</span> (<span class="keyword">final</span> Exception ex) {</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;447</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            Itinerary.logger.error(<span class="string">"Visualizing itinerary "</span> + <span class="keyword">this</span> + <span class="string">" failed."</span>, ex);</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;448</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">return</span> <span class="keyword">false</span>;</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;449</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        } <span class="keyword">finally</span> {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;455</td>  <td class="nbHitsUncovered"><a title="Line 455: Conditional coverage 0% (0/2).">&nbsp;0</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 455: Conditional coverage 0% (0/2).">            <span class="keyword">if</span> (os != <span class="keyword">null</span>) {</a></span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;456</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;450</td>  <td class="nbHitsUncovered"><a title="Line 450: Conditional coverage 0% (0/2).">&nbsp;0</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 450: Conditional coverage 0% (0/2).">            <span class="keyword">if</span> (os != <span class="keyword">null</span>) {</a></span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;451</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                <span class="keyword">try</span> {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;457</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                    os.close();</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;458</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                } <span class="keyword">catch</span> (<span class="keyword">final</span> IOException e) {</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;459</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;452</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                    os.close();</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;453</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                } <span class="keyword">catch</span> (<span class="keyword">final</span> IOException e) {</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;454</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                    <span class="comment">// nothing to do here</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;460</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                }</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;461</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;455</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                }</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;456</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;462</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;457</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;463</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;458</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;464</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;459</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;}</pre></td></tr>
 </table>
 
-<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 1.9.4.1 on 5/6/12 4:18 PM.</div>
+<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 1.9.4.1 on 5/6/12 8:32 PM.</div>
 </body>
 </html>
