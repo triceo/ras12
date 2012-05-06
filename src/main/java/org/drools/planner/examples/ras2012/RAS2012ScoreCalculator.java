@@ -134,16 +134,9 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
     }
 
     private boolean didTrainArrive(final Itinerary producer) {
-        final SortedMap<Long, Node> nodes = producer.getSchedule();
-        for (final SortedMap.Entry<Long, Node> entry : nodes.entrySet()) {
-            if (!RAS2012ScoreCalculator.isInPlanningHorizon(entry.getKey())) {
-                continue;
-            }
-            if (entry.getValue() == producer.getTrain().getDestination()) {
-                return true;
-            }
-        }
-        return false;
+        final SortedMap<Long, Node> nodes = producer.getSchedule().headMap(
+                RAS2012Solution.getPlanningHorizon(TimeUnit.MILLISECONDS) + 1);
+        return nodes.values().contains(producer.getTrain().getDestination());
     }
 
     private int getDelayPenalty(final long delay, final Itinerary i, final RAS2012Solution solution) {
