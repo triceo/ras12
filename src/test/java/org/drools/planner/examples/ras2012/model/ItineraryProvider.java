@@ -147,7 +147,8 @@ public abstract class ItineraryProvider {
                 for (final int id : expected.get(name)) {
                     expectedRouteIds.add(id);
                 }
-                Assert.assertEquals("There must only be the expected routes.",
+                Assert.assertEquals(
+                        "There must only be the expected routes for train " + t.getName() + ".",
                         expectedRouteIds.size(), toTest.get(t).size());
                 for (final Route r : toTest.get(t)) {
                     if (!expectedRouteIds.contains(r.getId())) {

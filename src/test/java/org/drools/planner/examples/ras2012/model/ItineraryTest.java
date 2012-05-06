@@ -77,6 +77,7 @@ public class ItineraryTest {
     @Parameters
     public static Collection<Object[]> getInput() {
         final Collection<Object[]> providers = new ArrayList<Object[]>();
+        providers.addAll(ItineraryTest.unwrapProvider(new ToyItineraryProvider()));
         providers.addAll(ItineraryTest.unwrapProvider(new RDS1ItineraryProvider()));
         providers.addAll(ItineraryTest.unwrapProvider(new RDS2ItineraryProvider()));
         providers.addAll(ItineraryTest.unwrapProvider(new RDS3ItineraryProvider()));

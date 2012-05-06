@@ -7,6 +7,7 @@
   <inheritedSolverBenchmark>
     <problemBenchmarks>
       <problemIOClass>org.drools.planner.examples.ras2012.RAS2012ProblemIO</problemIOClass>
+      <inputSolutionFile>src/main/resources/org/drools/planner/examples/ras2012/TOY.txt</inputSolutionFile>
       <inputSolutionFile>src/main/resources/org/drools/planner/examples/ras2012/RDS1.txt</inputSolutionFile>
       <inputSolutionFile>src/main/resources/org/drools/planner/examples/ras2012/RDS2.txt</inputSolutionFile>
       <inputSolutionFile>src/main/resources/org/drools/planner/examples/ras2012/RDS3.txt</inputSolutionFile>
