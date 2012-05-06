@@ -28,10 +28,6 @@
       <groupId>org.drools.planner</groupId>
       <artifactId>drools-planner-benchmark</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.jfree</groupId>
-      <artifactId>jfreechart</artifactId>
-    </dependency>
     <!-- Logging -->
     <dependency>
       <groupId>ch.qos.logback</groupId>
