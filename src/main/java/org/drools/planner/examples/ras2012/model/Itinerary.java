@@ -231,8 +231,10 @@ public final class Itinerary implements Visualizable {
         }
         final long actualArrivalTime = scheduleInHorizon.lastKey();
         final long optimalArrivalTime = this.trainEntryTime
-                + Converter.getTimeFromSpeedAndDistance(this.getTrain().getMaximumSpeed(),
-                        this.getTravellingDistance(this.getTrain().getDestination()));
+                + Converter.getTimeFromSpeedAndDistance(
+                        this.getTrain().getMaximumSpeed(),
+                        this.route.getProgression().getDistance(this.getTrain().getOrigin(),
+                                this.getTrain().getDestination()));
         return actualArrivalTime - optimalArrivalTime;
     }
 
@@ -342,17 +344,6 @@ public final class Itinerary implements Visualizable {
 
     public Train getTrain() {
         return this.train;
-    }
-
-    private BigDecimal getTravellingDistance(final Node target) {
-        BigDecimal distance = BigDecimal.ZERO;
-        for (final Arc a : this.getRoute().getProgression().getArcs()) {
-            distance = distance.add(a.getLengthInMiles());
-            if (a.getDestination(this.getTrain()) == target) {
-                break;
-            }
-        }
-        return distance;
     }
 
     public synchronized WaitTime getWaitTime(final Node n) {

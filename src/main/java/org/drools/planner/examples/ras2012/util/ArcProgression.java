@@ -1,5 +1,6 @@
 package org.drools.planner.examples.ras2012.util;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -120,6 +121,14 @@ public class ArcProgression implements Directed {
 
     public Arc getDestination() {
         return this.orderedArcs.peekLast();
+    }
+
+    public BigDecimal getDistance(final Node start, final Node end) {
+        BigDecimal result = BigDecimal.ZERO;
+        for (final Arc a : this.head(end).tail(start).getArcs()) {
+            result = result.add(a.getLengthInMiles());
+        }
+        return result;
     }
 
     public Arc getNext(final Arc a) {
