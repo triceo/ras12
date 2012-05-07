@@ -143,7 +143,11 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
         return nodes.values().contains(producer.getTrain().getDestination());
     }
 
-    private int getDelayPenalty(final long delay, final Itinerary i, final RAS2012Solution solution) {
+    private int getDelayPenalty(final Itinerary i, final RAS2012Solution solution) {
+        final long delay = i.getDelay();
+        if (!RAS2012ScoreCalculator.isInPlanningHorizon(delay)) {
+            return 0;
+        }
         final BigDecimal hoursDelay = RAS2012ScoreCalculator.roundMillisecondsToHours(delay);
         final BigDecimal maxHoursDelay = hoursDelay.max(BigDecimal.ZERO);
         return maxHoursDelay.multiply(BigDecimal.valueOf(i.getTrain().getType().getDelayPenalty()))
@@ -186,8 +190,11 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
         return hours.multiply(BigDecimal.valueOf(50)).intValue();
     }
 
-    private int getWantTimePenalty(final long delay, final Itinerary i,
-            final RAS2012Solution solution) {
+    private int getWantTimePenalty(final Itinerary i, final RAS2012Solution solution) {
+        final long delay = i.getWantTimeDifference();
+        if (!RAS2012ScoreCalculator.isInPlanningHorizon(delay)) {
+            return 0;
+        }
         BigDecimal hours = RAS2012ScoreCalculator.roundMillisecondsToHours(delay);
         final BigDecimal penalty = BigDecimal.valueOf(75);
         if (delay > 0) {
@@ -210,9 +217,8 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
         this.unpreferredTracksPenalties.put(t, this.getUnpreferredTracksPenalty(i));
         this.scheduleAdherencePenalties.put(t, this.getScheduleAdherencePenalty(i, this.solution));
         this.didTrainArrive.put(t, this.didTrainArrive(i));
-        final long delay = i.getDelay();
-        this.wantTimePenalties.put(t, this.getWantTimePenalty(delay, i, this.solution));
-        this.delayPenalties.put(t, this.getDelayPenalty(delay, i, this.solution));
+        this.wantTimePenalties.put(t, this.getWantTimePenalty(i, this.solution));
+        this.delayPenalties.put(t, this.getDelayPenalty(i, this.solution));
         this.recalculateOccupiedArcs(ia);
     }
 

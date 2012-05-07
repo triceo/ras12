@@ -309,21 +309,12 @@ public final class Itinerary implements Visualizable {
     }
 
     public Map<Node, Long> getScheduleAdherenceStatus() {
-        final long horizon = RAS2012Solution.getPlanningHorizon(Itinerary.DEFAULT_TIME_UNIT);
-        final SortedMap<Long, Node> scheduleInteresting = this.getSchedule().headMap(horizon);
         final Map<Node, Long> result = new HashMap<Node, Long>();
         for (final ScheduleAdherenceRequirement sa : this.getTrain()
                 .getScheduleAdherenceRequirements()) {
             final Node expectedDestination = sa.getDestination();
-            if (scheduleInteresting.values().contains(expectedDestination)) {
-                // arrival actually inside the planning horizon; we know the exact delay
-                final long expectedArrival = sa
-                        .getTimeSinceStartOfWorld(Itinerary.DEFAULT_TIME_UNIT);
-                result.put(expectedDestination, this.getDelay(expectedDestination, expectedArrival));
-            } else {
-                // arrival outside the horizon, only count the delay before the horizon
-                result.put(expectedDestination, this.getDelay(horizon));
-            }
+            final long expectedArrival = sa.getTimeSinceStartOfWorld(Itinerary.DEFAULT_TIME_UNIT);
+            result.put(expectedDestination, this.getDelay(expectedDestination, expectedArrival));
         }
         return Collections.unmodifiableMap(result);
     }
@@ -368,6 +359,11 @@ public final class Itinerary implements Visualizable {
 
     public synchronized WaitTime getWaitTime(final Node n) {
         return this.nodeWaitTimes.get(n);
+    }
+
+    public long getWantTimeDifference() {
+        return this.getDelay(this.getTrain().getDestination(),
+                this.getTrain().getWantTime(Itinerary.DEFAULT_TIME_UNIT));
     }
 
     @Override
