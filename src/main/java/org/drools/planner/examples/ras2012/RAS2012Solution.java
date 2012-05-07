@@ -1,7 +1,12 @@
 package org.drools.planner.examples.ras2012;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.SortedSet;
@@ -11,12 +16,17 @@ import java.util.concurrent.TimeUnit;
 import org.drools.planner.api.domain.solution.PlanningEntityCollectionProperty;
 import org.drools.planner.core.score.buildin.hardandsoft.HardAndSoftScore;
 import org.drools.planner.core.solution.Solution;
+import org.drools.planner.examples.ras2012.interfaces.Visualizable;
 import org.drools.planner.examples.ras2012.model.ItineraryAssignment;
 import org.drools.planner.examples.ras2012.model.Network;
+import org.drools.planner.examples.ras2012.model.original.Arc;
 import org.drools.planner.examples.ras2012.model.original.MaintenanceWindow;
 import org.drools.planner.examples.ras2012.model.original.Train;
+import org.drools.planner.examples.ras2012.util.GraphVisualizer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class RAS2012Solution implements Solution<HardAndSoftScore> {
+public class RAS2012Solution implements Solution<HardAndSoftScore>, Visualizable {
 
     public static long getPlanningHorizon(final TimeUnit unit) {
         return unit.convert(12, TimeUnit.HOURS);
@@ -29,6 +39,9 @@ public class RAS2012Solution implements Solution<HardAndSoftScore> {
 
     private final Collection<Train>               trains;
     private HardAndSoftScore                      score;
+
+    private static final Logger                   logger      = LoggerFactory
+                                                                      .getLogger(RAS2012Solution.class);
 
     public RAS2012Solution(final String name, final Network net,
             final Collection<MaintenanceWindow> maintenances, final Collection<Train> trains) {
@@ -155,6 +168,33 @@ public class RAS2012Solution implements Solution<HardAndSoftScore> {
         builder.append(this.score);
         builder.append("]");
         return builder.toString();
+    }
+
+    @Override
+    public boolean visualize(final File target) {
+        final Collection<Arc> arcs = new HashSet<Arc>();
+        for (final ItineraryAssignment ia : this.getAssignments()) {
+            arcs.addAll(ia.getRoute().getProgression().getArcs());
+        }
+        OutputStream os = null;
+        try {
+            os = new FileOutputStream(target);
+            RAS2012Solution.logger.info("Visualizing: " + this);
+            new GraphVisualizer(arcs).visualize(os);
+            RAS2012Solution.logger.info("Visualization finished: " + this);
+            return true;
+        } catch (final Exception ex) {
+            RAS2012Solution.logger.error("Visualizing " + this + " failed.", ex);
+            return false;
+        } finally {
+            if (os != null) {
+                try {
+                    os.close();
+                } catch (final IOException e) {
+                    // nothing to do here
+                }
+            }
+        }
     }
 
 }

@@ -28,6 +28,8 @@ public class App {
         if (!targetFolder.exists()) {
             targetFolder.mkdirs();
         }
-        new RAS2012ProblemIO().write(solver.getBestSolution(), new File(targetFolder, "RDS3.txt"));
+        RAS2012Solution solution = (RAS2012Solution) solver.getBestSolution();
+        new RAS2012ProblemIO().write(solution, new File(targetFolder, f.getName()));
+        solution.visualize(new File(targetFolder, f.getName() + ".png"));
     }
 }
