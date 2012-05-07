@@ -1,7 +1,11 @@
 package org.drools.planner.examples.ras2012.util;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.Paint;
+import java.awt.Stroke;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -14,9 +18,11 @@ import javax.imageio.ImageIO;
 
 import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
+import edu.uci.ics.jung.graph.DirectedGraph;
 import edu.uci.ics.jung.graph.DirectedOrderedSparseMultigraph;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.UndirectedOrderedSparseMultigraph;
+import edu.uci.ics.jung.visualization.RenderContext;
 import edu.uci.ics.jung.visualization.VisualizationImageServer;
 import org.apache.commons.collections15.Transformer;
 import org.drools.planner.examples.ras2012.model.Route;
@@ -42,8 +48,7 @@ public class GraphVisualizer {
                 case CROSSOVER:
                     return "C";
                 default:
-                    throw new IllegalArgumentException("Unknown track type: "
-                            + input.getTrack());
+                    throw new IllegalArgumentException("Unknown track type: " + input.getTrack());
             }
         }
 
@@ -54,6 +59,24 @@ public class GraphVisualizer {
 
     }
 
+    private static final class EdgePainter implements Transformer<Arc, Stroke> {
+
+        private final Route route;
+
+        public EdgePainter(final Route r) {
+            this.route = r;
+        }
+
+        @Override
+        public Stroke transform(final Arc input) {
+            if (this.route.getProgression().isPreferred(input)) {
+                return new BasicStroke();
+            } else {
+                return RenderContext.DOTTED;
+            }
+        }
+    }
+
     private static class NodeLabeller implements Transformer<Node, String> {
 
         @Override
@@ -61,6 +84,29 @@ public class GraphVisualizer {
             return String.valueOf(input.getId());
         }
 
+    }
+
+    private static final class NodePainter implements Transformer<Node, Paint> {
+
+        private final Route route;
+
+        public NodePainter(final Route r) {
+            this.route = r;
+        }
+
+        @Override
+        public Paint transform(final Node input) {
+            if (input == this.route.getProgression().getOrigin().getOrigin(this.route)) {
+                return Color.GREEN;
+            } else if (input == this.route.getProgression().getDestination()
+                    .getDestination(this.route)) {
+                return Color.RED;
+            } else if (this.route.getProgression().getWaitPoints().contains(input)) {
+                return Color.BLUE;
+            } else {
+                return Color.GRAY;
+            }
+        }
     }
 
     private static final int      GRAPH_WIDTH  = 1920;
@@ -88,16 +134,15 @@ public class GraphVisualizer {
         } else {
             g = new UndirectedOrderedSparseMultigraph<Node, Arc>();
         }
+        final boolean isGraphDirected = g instanceof DirectedGraph;
         for (final Arc a : this.edges) {
-            final Node routelessOrigin = a.getOrigin(new Route(false));
-            final Node routelessDestination = a.getDestination(new Route(false));
-            g.addVertex(routelessOrigin);
-            g.addVertex(routelessDestination);
-            if (this.route == null) {
-                g.addEdge(a, routelessOrigin, routelessDestination);
-            } else {
-                g.addEdge(a, a.getOrigin(this.route), a.getDestination(this.route));
-            }
+            final Node origin = isGraphDirected ? a.getOrigin(this.route) : a.getOrigin(new Route(
+                    false));
+            final Node destination = isGraphDirected ? a.getDestination(this.route) : a
+                    .getDestination(new Route(false));
+            g.addVertex(origin);
+            g.addVertex(destination);
+            g.addEdge(a, origin, destination);
         }
         return g;
     }
@@ -109,8 +154,13 @@ public class GraphVisualizer {
     }
 
     protected VisualizationImageServer<Node, Arc> getServer() {
+        final Layout<Node, Arc> layout = this.getLayout();
         final VisualizationImageServer<Node, Arc> server = new VisualizationImageServer<Node, Arc>(
-                this.getLayout(), this.getLayout().getSize());
+                layout, layout.getSize());
+        if (layout.getGraph() instanceof DirectedGraph) {
+            server.getRenderContext().setVertexFillPaintTransformer(new NodePainter(this.route));
+            server.getRenderContext().setEdgeStrokeTransformer(new EdgePainter(this.route));
+        }
         server.getRenderContext().setLabelOffset(30);
         server.getRenderContext().setEdgeLabelTransformer(new ArcLabeller());
         server.getRenderContext().setVertexLabelTransformer(new NodeLabeller());
