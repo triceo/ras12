@@ -6,35 +6,46 @@ import java.util.concurrent.TimeUnit;
 
 import org.drools.planner.core.move.Move;
 import org.drools.planner.core.score.director.ScoreDirector;
+import org.drools.planner.examples.ras2012.RAS2012Solution;
 import org.drools.planner.examples.ras2012.model.ItineraryAssignment;
+import org.drools.planner.examples.ras2012.model.Route;
 import org.drools.planner.examples.ras2012.model.original.Node;
+import org.drools.planner.examples.ras2012.model.original.Train;
 import org.drools.planner.examples.ras2012.model.original.WaitTime;
 
 public class WaitTimeAssignmentMove implements Move {
 
-    private final ItineraryAssignment assignment;
+    private ItineraryAssignment assignment;
+    private final Train         train;
+    private final Route         route;
+    private final Node          node;
+    private final WaitTime      waitTime;
+    private WaitTime            previousWaitTime;
 
-    private final Node                node;
-
-    private final WaitTime            waitTime, previousWaitTime;
-
-    public WaitTimeAssignmentMove(final ItineraryAssignment ia, final Node n, final WaitTime wt) {
-        this.assignment = ia;
+    public WaitTimeAssignmentMove(final Train t, final Route r, final Node n, final WaitTime wt) {
+        this.train = t;
+        this.route = r;
         this.node = n;
         this.waitTime = wt;
-        this.previousWaitTime = ia.getItinerary().getWaitTime(n);
+    }
+
+    private boolean assignmentExists(final ScoreDirector scoreDirector) {
+        return this.getAssignment(scoreDirector) != null;
     }
 
     @Override
     public Move createUndoMove(final ScoreDirector scoreDirector) {
-        return new WaitTimeAssignmentMove(this.assignment, this.node, this.previousWaitTime);
+        this.initializeMove(scoreDirector);
+        return new WaitTimeAssignmentMove(this.train, this.route, this.node, this.previousWaitTime);
     }
 
     @Override
     public void doMove(final ScoreDirector scoreDirector) {
-        scoreDirector.beforeVariableChanged(this.assignment, "waitTime");
-        this.assignment.getItinerary().setWaitTime(this.waitTime, this.node);
-        scoreDirector.afterVariableChanged(this.assignment, "waitTime");
+        this.initializeMove(scoreDirector);
+        final ItineraryAssignment ia = this.getAssignment(scoreDirector);
+        scoreDirector.beforeVariableChanged(ia, "waitTime");
+        ia.getItinerary().setWaitTime(this.waitTime, this.node);
+        scoreDirector.afterVariableChanged(ia, "waitTime");
     }
 
     @Override
@@ -49,24 +60,30 @@ public class WaitTimeAssignmentMove implements Move {
             return false;
         }
         final WaitTimeAssignmentMove other = (WaitTimeAssignmentMove) obj;
-        if (this.assignment == null) {
-            if (other.assignment != null) {
-                return false;
-            }
-        } else if (!this.assignment.equals(other.assignment)) {
-            return false;
-        }
         if (this.node != other.node) {
             return false;
         }
         if (this.waitTime != other.waitTime) {
             return false;
         }
+        if (this.route != other.route) {
+            return false;
+        }
+        if (this.train != other.train) {
+            return false;
+        }
         return true;
+    }
+
+    private ItineraryAssignment getAssignment(final ScoreDirector scoreDirector) {
+        return this.getSolution(scoreDirector).getAssignment(this.train);
     }
 
     @Override
     public Collection<? extends Object> getPlanningEntities() {
+        if (this.assignment == null) {
+            throw new IllegalStateException("Move not yet initialized!");
+        }
         return Collections.singletonList(this.assignment);
     }
 
@@ -75,18 +92,36 @@ public class WaitTimeAssignmentMove implements Move {
         return Collections.singletonList(this.waitTime);
     }
 
+    private RAS2012Solution getSolution(final ScoreDirector scoreDirector) {
+        return (RAS2012Solution) scoreDirector.getWorkingSolution();
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (this.assignment == null ? 0 : this.assignment.hashCode());
         result = prime * result + (this.node == null ? 0 : this.node.hashCode());
+        result = prime * result + (this.route == null ? 0 : this.route.hashCode());
+        result = prime * result + (this.train == null ? 0 : this.train.hashCode());
         result = prime * result + (this.waitTime == null ? 0 : this.waitTime.hashCode());
         return result;
     }
 
+    private ItineraryAssignment initializeMove(final ScoreDirector scoreDirector) {
+        this.assignment = this.getAssignment(scoreDirector);
+        this.previousWaitTime = this.assignment.getItinerary().getWaitTime(this.node);
+        return this.assignment;
+    }
+
     @Override
     public boolean isMoveDoable(final ScoreDirector scoreDirector) {
+        if (!this.assignmentExists(scoreDirector)) {
+            return false;
+        }
+        this.initializeMove(scoreDirector);
+        if (this.assignment.getRoute() != this.route) {
+            return false;
+        }
         if (this.assignment.getItinerary().isNodeOnRoute(this.node)) {
             return this.waitTime != this.previousWaitTime;
         } else {
@@ -98,9 +133,9 @@ public class WaitTimeAssignmentMove implements Move {
     public String toString() {
         final StringBuilder builder = new StringBuilder();
         builder.append("WaitTimeAssignmentMove [");
-        builder.append(this.assignment.getTrain().getName());
+        builder.append(this.train.getName());
         builder.append("@");
-        builder.append(this.assignment.getRoute().getId());
+        builder.append(this.route.getId());
         builder.append("-");
         builder.append(this.node.getId());
         builder.append(", ");

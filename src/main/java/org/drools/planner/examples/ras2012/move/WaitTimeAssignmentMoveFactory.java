@@ -54,7 +54,8 @@ public class WaitTimeAssignmentMoveFactory extends AbstractMoveFactory {
             for (final Node waitPoint : ia.getRoute().getProgression().getWaitPoints()) {
                 for (final WaitTime wt : waitTimes) {
                     if (wt == null || wt.getWaitFor(TimeUnit.MINUTES) <= maxPlanningHorizon) {
-                        moves.add(new WaitTimeAssignmentMove(ia, waitPoint, wt));
+                        moves.add(new WaitTimeAssignmentMove(ia.getTrain(), ia.getRoute(),
+                                waitPoint, wt));
                     }
                 }
             }

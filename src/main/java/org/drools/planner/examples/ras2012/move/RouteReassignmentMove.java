@@ -53,18 +53,10 @@ public class RouteReassignmentMove implements Move {
             return false;
         }
         final RouteReassignmentMove other = (RouteReassignmentMove) obj;
-        if (this.route == null) {
-            if (other.route != null) {
-                return false;
-            }
-        } else if (!this.route.equals(other.route)) {
+        if (this.route != other.route) {
             return false;
         }
-        if (this.train == null) {
-            if (other.train != null) {
-                return false;
-            }
-        } else if (!this.train.equals(other.train)) {
+        if (this.train != other.train) {
             return false;
         }
         return true;
