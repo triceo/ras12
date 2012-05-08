@@ -173,14 +173,16 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
     }
 
     private int getTrainArrivalMetrics() {
-        int num = 0;
+        int actual = 0, full = 0;
         for (final Map.Entry<Train, Boolean> entry : this.didTrainArrive.entrySet()) {
+            final int trainValue = (int) Math
+                    .ceil(entry.getKey().getType().getDelayPenalty() / 100.0);
+            full += trainValue;
             if (entry.getValue()) {
-                final Train t = entry.getKey();
-                num += Math.ceil(t.getType().getDelayPenalty() / 100.0);
+                actual += trainValue;
             }
         }
-        return num;
+        return actual * 100 / full;
     }
 
     private int getUnpreferredTracksPenalty(final Itinerary i) {
