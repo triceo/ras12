@@ -65,8 +65,6 @@ public class ToyExampleSolutionTest {
         long delay = 5110576 - this.getArrivalAtNode(b1Assignment.getItinerary(), Node.getNode(6));
         b1Assignment.getItinerary().setWaitTime(WaitTime.getWaitTime(delay, TimeUnit.MILLISECONDS),
                 Node.getNode(9));
-        System.out.println(b1Assignment.getItinerary().getScheduleWithArcs());
-        System.out.println(b1Assignment.getItinerary().getSchedule());
         // prepare C1 according to the example
         final Train c1 = this.locateTrain("C1");
         final ItineraryAssignment c1Assignment = this.SOLUTION.getAssignment(c1);
@@ -75,16 +73,10 @@ public class ToyExampleSolutionTest {
         delay = 7713668 - this.getArrivalAtNode(c1Assignment.getItinerary(), Node.getNode(6));
         c1Assignment.getItinerary().setWaitTime(WaitTime.getWaitTime(delay, TimeUnit.MILLISECONDS),
                 Node.getNode(4));
-        System.out.println("---");
-        System.out.println(c1Assignment.getItinerary().getScheduleWithArcs());
-        System.out.println(c1Assignment.getItinerary().getSchedule());
         // prepare A1 according to the example
         final Train a1 = this.locateTrain("A1");
         final ItineraryAssignment a1Assignment = this.SOLUTION.getAssignment(a1);
         a1Assignment.setRoute(this.locateRoute(20));
-        System.out.println("---");
-        System.out.println(a1Assignment.getItinerary().getScheduleWithArcs());
-        System.out.println(a1Assignment.getItinerary().getSchedule());
     }
 
     @Test
@@ -93,5 +85,4 @@ public class ToyExampleSolutionTest {
         final HardAndSoftScore expectedScore = DefaultHardAndSoftScore.valueOf(100, -925);
         Assert.assertEquals(expectedScore, score);
     }
-
 }

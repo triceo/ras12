@@ -207,7 +207,7 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
                 return false;
             }
             // make sure the route doesn't contain a siding shorter than the train
-            final int result = a.getLengthInMiles().compareTo(t.getLength());
+            final int result = a.getLengthInMiles().compareTo(t.getLengthInMiles());
             if (result < 0) {
                 return false;
             }

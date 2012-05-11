@@ -177,7 +177,7 @@ public class Train implements Comparable<Train>, Directed {
         return unit.convert(this.entryTime, Train.DEFAULT_TIME_UNIT);
     }
 
-    public BigDecimal getLength() {
+    public BigDecimal getLengthInMiles() {
         return this.length;
     }
 

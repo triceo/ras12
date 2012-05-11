@@ -261,7 +261,7 @@ public final class Itinerary implements Visualizable {
                     "Proper arc cannot be found! Possibly a bug in the algoritm.");
         }
         final long timeTravelledInLeadingArc = time - timeArcEntered;
-        BigDecimal remainingLengthOfTrain = this.getTrain().getLength();
+        BigDecimal remainingLengthOfTrain = this.getTrain().getLengthInMiles();
         final Collection<Arc> occupiedArcs = new LinkedHashSet<Arc>();
         if (timeTravelledInLeadingArc > 0) {
             // only mark the arc as occupied if we've actually ventured inside it

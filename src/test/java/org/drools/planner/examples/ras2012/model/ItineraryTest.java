@@ -26,7 +26,7 @@ public class ItineraryTest extends AbstractItineraryProviderBasedTest {
 
     private static Collection<Arc> calculateOccupiedArcsWithKnownPosition(final Itinerary i,
             final Node n) {
-        return ItineraryTest.calculateOccupiedArcsWithKnownPosition(i, n, i.getTrain().getLength());
+        return ItineraryTest.calculateOccupiedArcsWithKnownPosition(i, n, i.getTrain().getLengthInMiles());
     }
 
     private static Collection<Arc> calculateOccupiedArcsWithKnownPosition(final Itinerary i,
@@ -60,10 +60,10 @@ public class ItineraryTest extends AbstractItineraryProviderBasedTest {
         }
         // and add the rest of the train, if necessary
         final boolean travelledMoreThanTrainLength = distanceTravelledInLeadingArc.compareTo(i
-                .getTrain().getLength()) > 0;
+                .getTrain().getLengthInMiles()) > 0;
         if (!travelledMoreThanTrainLength) {
             final Node lastKnownPoint = leadingArc.getOrigin(i.getRoute());
-            final BigDecimal remainingTrainLength = i.getTrain().getLength()
+            final BigDecimal remainingTrainLength = i.getTrain().getLengthInMiles()
                     .subtract(distanceTravelledInLeadingArc);
             results.addAll(ItineraryTest.calculateOccupiedArcsWithKnownPosition(i, lastKnownPoint,
                     remainingTrainLength));
