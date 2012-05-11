@@ -83,20 +83,22 @@ public class ItineraryTest extends AbstractItineraryProviderBasedTest {
     private static Collection<Object[]> unwrapProvider(final ItineraryProvider provider) {
         final List<Object[]> itineraries = new LinkedList<Object[]>();
         for (final Itinerary i : provider.getItineraries()) {
-            itineraries.add(new Object[] { i });
+            itineraries.add(new Object[] { i, provider.getSolution() });
         }
         return itineraries;
     }
 
-    private final Itinerary itinerary;
+    private final RAS2012Solution solution;
+    private final Itinerary       itinerary;
 
-    public ItineraryTest(final Itinerary i) {
+    public ItineraryTest(final Itinerary i, final RAS2012Solution solution) {
         this.itinerary = i;
+        this.solution = solution;
     }
 
     @Test
     public void testGetDelay() {
-        final long timeInterestedIn = RAS2012Solution.getPlanningHorizon(TimeUnit.MILLISECONDS);
+        final long timeInterestedIn = this.solution.getPlanningHorizon(TimeUnit.MILLISECONDS);
         final SortedMap<Long, Node> schedulePast = this.itinerary.getSchedule().headMap(
                 timeInterestedIn + 1);
         if (schedulePast.values().contains(this.itinerary.getTrain().getDestination())) {
@@ -105,7 +107,7 @@ public class ItineraryTest extends AbstractItineraryProviderBasedTest {
             final long wantTime = this.itinerary.getTrain().getWantTime(TimeUnit.MILLISECONDS);
             final long delay = actualTimeOfArrival - wantTime;
             Assert.assertEquals("Exact delay for " + this.itinerary, delay,
-                    this.itinerary.getDelay());
+                    this.itinerary.getDelay(timeInterestedIn));
         } else {
             // train didn't finish in time, we need to estimate
             final BigDecimal actualDistanceTravelled = Converter.calculateActualDistanceTravelled(
@@ -115,7 +117,7 @@ public class ItineraryTest extends AbstractItineraryProviderBasedTest {
             final long totalTravellingTime = travellingTime
                     + this.itinerary.getTrain().getEntryTime(TimeUnit.MILLISECONDS);
             Assert.assertEquals("Estimated delay for " + this.itinerary, timeInterestedIn
-                    - totalTravellingTime, this.itinerary.getDelay());
+                    - totalTravellingTime, this.itinerary.getDelay(timeInterestedIn));
         }
     }
 
@@ -157,7 +159,7 @@ public class ItineraryTest extends AbstractItineraryProviderBasedTest {
         }
         // and now validate against reality
         for (final Map.Entry<Long, Arc> entry : expecteds.entrySet()) {
-            if (entry.getKey() > RAS2012Solution.getPlanningHorizon(TimeUnit.MILLISECONDS)) {
+            if (entry.getKey() > this.solution.getPlanningHorizon(TimeUnit.MILLISECONDS)) {
                 // don't measure beyond the planning horizon
                 break;
             }
@@ -169,7 +171,7 @@ public class ItineraryTest extends AbstractItineraryProviderBasedTest {
 
     @Test
     public void testGetOccupiedArcs() {
-        for (long time = 0; time <= RAS2012Solution.getPlanningHorizon(TimeUnit.MILLISECONDS); time += 1000) {
+        for (long time = 0; time <= this.solution.getPlanningHorizon(TimeUnit.MILLISECONDS); time += 1000) {
             if (time <= this.itinerary.getTrain().getEntryTime(TimeUnit.MILLISECONDS)) {
                 if (this.itinerary.getTrain().getOrigin() == this.itinerary.getRoute()
                         .getProgression().getOrigin().getOrigin(this.itinerary.getRoute())) {

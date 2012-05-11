@@ -28,18 +28,14 @@ import org.slf4j.LoggerFactory;
 
 public class RAS2012Solution implements Solution<HardAndSoftScore>, Visualizable {
 
-    public static long getPlanningHorizon(final TimeUnit unit) {
-        return unit.convert(12, TimeUnit.HOURS);
-    }
-
     private final String                          name;
+
     private final Network                         network;
     private final Collection<MaintenanceWindow>   maintenances;
     private final Map<Train, ItineraryAssignment> assignments = new HashMap<Train, ItineraryAssignment>();
-
     private final Collection<Train>               trains;
-    private HardAndSoftScore                      score;
 
+    private HardAndSoftScore                      score;
     private static final Logger                   logger      = LoggerFactory
                                                                       .getLogger(RAS2012Solution.class);
 
@@ -123,6 +119,15 @@ public class RAS2012Solution implements Solution<HardAndSoftScore>, Visualizable
 
     public Network getNetwork() {
         return this.network;
+    }
+
+    public long getPlanningHorizon(final TimeUnit unit) {
+        if (this.getName().endsWith("TOY")) {
+            // FIXME ugly hack
+            return unit.convert(150, TimeUnit.MINUTES);
+        } else {
+            return unit.convert(12, TimeUnit.HOURS);
+        }
     }
 
     @Override

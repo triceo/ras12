@@ -15,7 +15,6 @@ import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.drools.planner.examples.ras2012.RAS2012Solution;
 import org.drools.planner.examples.ras2012.interfaces.Visualizable;
 import org.drools.planner.examples.ras2012.model.original.Arc;
 import org.drools.planner.examples.ras2012.model.original.MaintenanceWindow;
@@ -163,17 +162,6 @@ public final class Itinerary implements Visualizable {
     }
 
     /**
-     * Return the delay at the ending terminal.
-     * 
-     * @return Milliseconds. Positive if the train is late, negative if the train is early. If the train arrived before the end
-     *         of the planning horizon, this returns the exact value of delay. Otherwise, it returns estimated delay at the end
-     *         of the planning horizon.
-     */
-    public long getDelay() {
-        return this.getDelay(RAS2012Solution.getPlanningHorizon(Itinerary.DEFAULT_TIME_UNIT));
-    }
-
-    /**
      * Return the delay at the end of the horizon.
      * 
      * @param horizon Number of milliseconds since the start of the planning horizon.
@@ -181,7 +169,7 @@ public final class Itinerary implements Visualizable {
      *         specified horizon, this returns the exact value of delay. Otherwise, it returns estimated delay at the end of the
      *         specified horizon.
      */
-    private long getDelay(final long horizon) {
+    public long getDelay(final long horizon) {
         if (this.trainEntryTime > horizon) {
             // train not en route yet, delay must be zero
             return 0;

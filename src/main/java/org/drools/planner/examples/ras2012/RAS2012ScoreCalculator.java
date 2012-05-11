@@ -20,10 +20,6 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
 
     private static final BigDecimal MILLIS_TO_HOURS = BigDecimal.valueOf(3600000);
 
-    private static boolean isInPlanningHorizon(final long time) {
-        return time <= RAS2012Solution.getPlanningHorizon(TimeUnit.MILLISECONDS);
-    }
-
     private static BigDecimal roundMillisecondsToHours(final long milliseconds) {
         final BigDecimal result = BigDecimal.valueOf(milliseconds).divide(
                 RAS2012ScoreCalculator.MILLIS_TO_HOURS, Converter.BIGDECIMAL_SCALE,
@@ -141,13 +137,13 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
 
     private boolean didTrainArrive(final Itinerary producer) {
         final SortedMap<Long, Node> nodes = producer.getSchedule().headMap(
-                RAS2012Solution.getPlanningHorizon(TimeUnit.MILLISECONDS) + 1);
+                this.solution.getPlanningHorizon(TimeUnit.MILLISECONDS) + 1);
         return nodes.values().contains(producer.getTrain().getDestination());
     }
 
     private int getDelayPenalty(final Itinerary i, final RAS2012Solution solution) {
-        final long delay = i.getDelay();
-        if (!RAS2012ScoreCalculator.isInPlanningHorizon(delay)) {
+        final long delay = i.getDelay(solution.getPlanningHorizon(TimeUnit.MILLISECONDS));
+        if (!this.isInPlanningHorizon(delay)) {
             return 0;
         }
         final BigDecimal hoursDelay = RAS2012ScoreCalculator.roundMillisecondsToHours(delay);
@@ -189,14 +185,14 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
 
     private int getUnpreferredTracksPenalty(final Itinerary i) {
         final BigDecimal hours = RAS2012ScoreCalculator.roundMillisecondsToHours(i
-                .getTimeSpentOnUnpreferredTracks(RAS2012Solution
+                .getTimeSpentOnUnpreferredTracks(this.solution
                         .getPlanningHorizon(TimeUnit.MILLISECONDS)));
         return hours.multiply(BigDecimal.valueOf(50)).intValue();
     }
 
     private int getWantTimePenalty(final Itinerary i, final RAS2012Solution solution) {
         final long delay = i.getWantTimeDifference();
-        if (!RAS2012ScoreCalculator.isInPlanningHorizon(delay)) {
+        if (!this.isInPlanningHorizon(delay)) {
             return 0;
         }
         BigDecimal hours = RAS2012ScoreCalculator.roundMillisecondsToHours(delay);
@@ -226,9 +222,13 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
         this.recalculateOccupiedArcs(ia);
     }
 
+    private boolean isInPlanningHorizon(final long time) {
+        return time <= this.solution.getPlanningHorizon(TimeUnit.MILLISECONDS);
+    }
+
     private void recalculateOccupiedArcs(final ItineraryAssignment ia) {
         // insert the number of conflicts for the given assignments
-        for (long time = 0; RAS2012ScoreCalculator.isInPlanningHorizon(time); time += 30000) {
+        for (long time = 0; this.isInPlanningHorizon(time); time += 30000) {
             this.conflicts.setOccupiedArcs(time, ia.getTrain(),
                     ia.getItinerary().getOccupiedArcs(time));
         }
