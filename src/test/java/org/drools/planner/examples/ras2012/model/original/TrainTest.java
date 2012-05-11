@@ -218,10 +218,11 @@ public class TrainTest {
                 final BigDecimal distanceInMiles = a.getLengthInMiles();
                 final int trainSpeedInMph = t.getMaximumSpeed(a.getTrack());
                 final BigDecimal timeInHours = distanceInMiles.divide(
-                        BigDecimal.valueOf(trainSpeedInMph), 10, BigDecimal.ROUND_HALF_EVEN);
+                        BigDecimal.valueOf(trainSpeedInMph), 7, BigDecimal.ROUND_HALF_EVEN);
                 final BigDecimal timeInMilliseconds = timeInHours.multiply(BigDecimal.valueOf(60))
                         .multiply(BigDecimal.valueOf(60)).multiply(BigDecimal.valueOf(1000));
-                final long result = timeInMilliseconds.longValue();
+                final long result = timeInMilliseconds.setScale(0, BigDecimal.ROUND_HALF_EVEN)
+                        .longValue();
                 Assert.assertEquals(t + " didn't travel " + a + " in expected time.", result,
                         t.getArcTravellingTime(a, TimeUnit.MILLISECONDS));
             }
@@ -246,7 +247,7 @@ public class TrainTest {
                 if (a.getTrack().isMainTrack()) {
                     final BigDecimal multiplier = t.getSpeedMultiplier();
                     final Integer expectedSpeed = multiplier.multiply(BigDecimal.valueOf(arcSpeed))
-                            .intValue();
+                            .setScale(0, BigDecimal.ROUND_HALF_EVEN).intValue();
                     Assert.assertEquals(
                             "Outside main tracks, the train max speed should equal (arc speed)x(train speed multiplier).",
                             expectedSpeed, t.getMaximumSpeed(a.getTrack()));
