@@ -1,6 +1,7 @@
 package org.drools.planner.examples.ras2012.model;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import org.drools.planner.api.domain.entity.PlanningEntity;
 import org.drools.planner.api.domain.variable.PlanningVariable;
@@ -18,7 +19,14 @@ public final class ItineraryAssignment implements Cloneable {
     private Itinerary                           itinerary;
     private final Collection<MaintenanceWindow> maintenances;
 
+    public ItineraryAssignment(final Train t) {
+        this(t, Collections.<MaintenanceWindow> emptySet());
+    }
+
     public ItineraryAssignment(final Train t, final Collection<MaintenanceWindow> maintenances) {
+        if (t == null) {
+            throw new IllegalArgumentException("Train may not be null!");
+        }
         this.train = t;
         this.maintenances = maintenances;
     }
@@ -54,6 +62,9 @@ public final class ItineraryAssignment implements Cloneable {
     }
 
     public Itinerary getItinerary() {
+        if (this.itinerary == null) {
+            throw new IllegalStateException("No itinerary available, provide a route first.");
+        }
         return this.itinerary;
     }
 
@@ -76,8 +87,13 @@ public final class ItineraryAssignment implements Cloneable {
     }
 
     public synchronized void setRoute(final Route route) {
-        this.route = route;
-        this.itinerary = new Itinerary(this.route, this.train, this.maintenances);
+        if (route == null) {
+            throw new IllegalArgumentException("Route may not be null.");
+        }
+        if (this.route != route) {
+            this.route = route;
+            this.itinerary = new Itinerary(this.route, this.train, this.maintenances);
+        }
     }
 
     @Override

@@ -20,12 +20,9 @@ import org.drools.planner.examples.ras2012.util.Converter;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-@RunWith(Parameterized.class)
-public class ItineraryTest {
+public class ItineraryTest extends AbstractItineraryProviderBasedTest {
 
     private static Collection<Arc> calculateOccupiedArcsWithKnownPosition(final Itinerary i,
             final Node n) {
@@ -77,10 +74,9 @@ public class ItineraryTest {
     @Parameters
     public static Collection<Object[]> getInput() {
         final Collection<Object[]> providers = new ArrayList<Object[]>();
-        providers.addAll(ItineraryTest.unwrapProvider(new ToyItineraryProvider()));
-        providers.addAll(ItineraryTest.unwrapProvider(new RDS1ItineraryProvider()));
-        providers.addAll(ItineraryTest.unwrapProvider(new RDS2ItineraryProvider()));
-        providers.addAll(ItineraryTest.unwrapProvider(new RDS3ItineraryProvider()));
+        for (final ItineraryProvider provider : AbstractItineraryProviderBasedTest.getProviders()) {
+            providers.addAll(ItineraryTest.unwrapProvider(provider));
+        }
         return providers;
     }
 
