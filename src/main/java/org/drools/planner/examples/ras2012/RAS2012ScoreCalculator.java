@@ -14,6 +14,7 @@ import org.drools.planner.examples.ras2012.model.ItineraryAssignment;
 import org.drools.planner.examples.ras2012.model.original.Node;
 import org.drools.planner.examples.ras2012.model.original.Train;
 import org.drools.planner.examples.ras2012.util.ConflictRegistry;
+import org.drools.planner.examples.ras2012.util.Converter;
 
 public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<RAS2012Solution> {
 
@@ -25,7 +26,8 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
 
     private static BigDecimal roundMillisecondsToHours(final long milliseconds) {
         final BigDecimal result = BigDecimal.valueOf(milliseconds).divide(
-                RAS2012ScoreCalculator.MILLIS_TO_HOURS, 3, BigDecimal.ROUND_HALF_EVEN);
+                RAS2012ScoreCalculator.MILLIS_TO_HOURS, Converter.BIGDECIMAL_SCALE,
+                Converter.BIGDECIMAL_ROUNDING);
         if (milliseconds < 0) {
             return result.negate();
         } else {

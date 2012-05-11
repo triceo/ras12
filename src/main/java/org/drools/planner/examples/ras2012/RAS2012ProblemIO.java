@@ -29,6 +29,7 @@ import org.drools.planner.examples.ras2012.parser.DataSetParser;
 import org.drools.planner.examples.ras2012.parser.DataSetParser.ParsedTrain;
 import org.drools.planner.examples.ras2012.parser.ParseException;
 import org.drools.planner.examples.ras2012.parser.Token;
+import org.drools.planner.examples.ras2012.util.Converter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,9 +38,10 @@ public class RAS2012ProblemIO implements ProblemIO {
     private static final Logger logger = LoggerFactory.getLogger(RAS2012ProblemIO.class);
 
     private static BigDecimal convertMillisToSeconds(final long time) {
-        return BigDecimal.valueOf(time)
-                .divide(BigDecimal.valueOf(1000), 10, BigDecimal.ROUND_HALF_EVEN)
-                .setScale(3, BigDecimal.ROUND_HALF_EVEN);
+        return BigDecimal
+                .valueOf(time)
+                .divide(BigDecimal.valueOf(1000), Converter.BIGDECIMAL_SCALE,
+                        Converter.BIGDECIMAL_ROUNDING).setScale(3);
     }
 
     private static Track getArcType(final Token t) {

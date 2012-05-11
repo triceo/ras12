@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.drools.planner.examples.ras2012.interfaces.Directed;
+import org.drools.planner.examples.ras2012.util.Converter;
 
 public class Train implements Comparable<Train>, Directed {
 
@@ -163,13 +164,9 @@ public class Train implements Comparable<Train>, Directed {
         if (a == null) {
             throw new IllegalArgumentException("Arc cannot be null!");
         }
-        final BigDecimal milesPerHour = BigDecimal.valueOf(this.getMaximumSpeed(a.getTrack()));
-        final BigDecimal hours = a.getLengthInMiles().divide(milesPerHour, 10,
-                BigDecimal.ROUND_HALF_DOWN);
-        final BigDecimal sixty = BigDecimal.valueOf(60);
-        final long millis = hours.multiply(sixty).multiply(sixty)
-                .multiply(BigDecimal.valueOf(1000)).longValue();
-        return unit.convert(millis, TimeUnit.MILLISECONDS);
+        return unit.convert(
+                Converter.getTimeFromSpeedAndDistance(this.getMaximumSpeed(a.getTrack()),
+                        a.getLengthInMiles()), TimeUnit.MILLISECONDS);
     }
 
     public Node getDestination() {
@@ -191,7 +188,8 @@ public class Train implements Comparable<Train>, Directed {
     public Integer getMaximumSpeed(final Track t) {
         final int coreSpeed = this.isWestbound() ? t.getSpeedWestbound() : t.getSpeedEastbound();
         if (t.isMainTrack()) {
-            return this.speedMultiplier.multiply(new BigDecimal(coreSpeed)).intValue();
+            return this.speedMultiplier.multiply(BigDecimal.valueOf(coreSpeed))
+                    .setScale(0, BigDecimal.ROUND_HALF_EVEN).intValue();
         } else {
             return coreSpeed;
         }

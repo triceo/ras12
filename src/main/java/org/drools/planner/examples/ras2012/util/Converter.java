@@ -9,6 +9,9 @@ import org.drools.planner.examples.ras2012.model.original.Node;
 
 public class Converter {
 
+    public static final int BIGDECIMAL_ROUNDING = BigDecimal.ROUND_HALF_EVEN;
+    public static final int BIGDECIMAL_SCALE    = 7;
+
     public static BigDecimal calculateActualDistanceTravelled(final Itinerary i, final long time) {
         final SortedMap<Long, Node> schedule = i.getSchedule();
         final SortedMap<Long, Node> head = schedule.headMap(time);
@@ -35,14 +38,15 @@ public class Converter {
 
     public static BigDecimal getDistanceInMilesFromSpeedAndTime(final int speedInMPH,
             final long timeInMilliseconds) {
-        final BigDecimal timeInSeconds = BigDecimal.valueOf(timeInMilliseconds).divide(
-                BigDecimal.valueOf(1000), 10, BigDecimal.ROUND_HALF_EVEN);
-        final BigDecimal timeInMinutes = timeInSeconds.divide(BigDecimal.valueOf(60), 10,
-                BigDecimal.ROUND_HALF_EVEN);
+        final BigDecimal timeInSeconds = BigDecimal.valueOf(timeInMilliseconds)
+                .divide(BigDecimal.valueOf(1000), Converter.BIGDECIMAL_SCALE,
+                        Converter.BIGDECIMAL_ROUNDING);
+        final BigDecimal timeInMinutes = timeInSeconds.divide(BigDecimal.valueOf(60),
+                Converter.BIGDECIMAL_SCALE, Converter.BIGDECIMAL_ROUNDING);
+        final BigDecimal timeInHours = timeInMinutes.divide(BigDecimal.valueOf(60),
+                Converter.BIGDECIMAL_SCALE, Converter.BIGDECIMAL_ROUNDING);
         final BigDecimal milesPerHour = BigDecimal.valueOf(speedInMPH);
-        final BigDecimal milesPerMinute = milesPerHour.divide(BigDecimal.valueOf(60), 10,
-                BigDecimal.ROUND_HALF_EVEN);
-        return milesPerMinute.multiply(timeInMinutes);
+        return milesPerHour.multiply(timeInHours);
     }
 
     public static BigDecimal getDistanceTravelledInTheArc(final Itinerary i, final Arc a,
@@ -62,8 +66,10 @@ public class Converter {
     }
 
     public static long getTimeFromSpeedAndDistance(final int speedInMPH, final BigDecimal distance) {
-        return distance.divide(BigDecimal.valueOf(speedInMPH), 10, BigDecimal.ROUND_HALF_EVEN)
-                .multiply(BigDecimal.valueOf(3600000)).longValue();
+        return distance
+                .divide(BigDecimal.valueOf(speedInMPH), Converter.BIGDECIMAL_SCALE,
+                        Converter.BIGDECIMAL_ROUNDING).multiply(BigDecimal.valueOf(3600000))
+                .setScale(0, Converter.BIGDECIMAL_ROUNDING).longValue();
     }
 
 }

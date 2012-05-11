@@ -21,6 +21,7 @@ import org.drools.planner.examples.ras2012.model.original.ScheduleAdherenceRequi
 import org.drools.planner.examples.ras2012.model.original.Track;
 import org.drools.planner.examples.ras2012.model.original.Train;
 import org.drools.planner.examples.ras2012.util.ArcProgression;
+import org.drools.planner.examples.ras2012.util.Converter;
 import org.drools.planner.examples.ras2012.util.RouteVisualizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,13 +42,14 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
     private final boolean             isEastbound;
     private final ArcProgression      progression;
 
-    private final int                 id                      = Route.idGenerator.getAndIncrement();
+    private final int                 id                           = Route.idGenerator
+                                                                           .getAndIncrement();
 
-    private int                       numberOfPreferredTracks = -1;
+    private int                       numberOfPreferredTracks      = -1;
 
-    private BigDecimal                travellingTimeInMinutes = null;
+    private long                      travellingTimeInMilliseconds = -1;
 
-    private final Map<Train, Boolean> routePossibilitiesCache = new HashMap<Train, Boolean>();
+    private final Map<Train, Boolean> routePossibilitiesCache      = new HashMap<Train, Boolean>();
 
     public Route(final boolean isEastbound) {
         this(isEastbound, new Arc[0]);
@@ -63,12 +65,11 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
         if (this.isEastbound == o.isEastbound) { // less tracks = better
             final int comparison = o.progression.countArcs() - this.progression.countArcs();
             if (comparison == 0) { // shorter = better
-                final int comparison2 = o.getTravellingTimeInMinutes().compareTo(
-                        this.getTravellingTimeInMinutes());
-                if (comparison2 == 0) { // more preferred tracks = better
+                if (this.getTravellingTimeInMillis() == o.getTravellingTimeInMillis()) { // more preferred tracks = better
                     return this.getNumberOfPreferredTracks() - o.getNumberOfPreferredTracks();
                 } else {
-                    return comparison2;
+                    return o.getTravellingTimeInMillis() > this.getTravellingTimeInMillis() ? 1
+                            : -1;
                 }
             } else {
                 return comparison;
@@ -134,20 +135,18 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
         return this.progression;
     }
 
-    private BigDecimal getTravellingTimeInMinutes() {
-        if (this.travellingTimeInMinutes == null) {
-            BigDecimal result = BigDecimal.ZERO;
+    private long getTravellingTimeInMillis() {
+        if (this.travellingTimeInMilliseconds == -1) {
+            long result = 0;
             for (final Arc a : this.progression.getArcs()) {
                 final BigDecimal length = a.getLengthInMiles();
                 final int speed = this.isEastbound() ? a.getTrack().getSpeedEastbound() : a
                         .getTrack().getSpeedWestbound();
-                final BigDecimal timeInHours = length.divide(BigDecimal.valueOf(speed), 2,
-                        BigDecimal.ROUND_HALF_DOWN);
-                result = result.add(timeInHours.multiply(BigDecimal.valueOf(60)));
+                result += Converter.getTimeFromSpeedAndDistance(speed, length);
             }
-            this.travellingTimeInMinutes = result;
+            this.travellingTimeInMilliseconds = result;
         }
-        return this.travellingTimeInMinutes;
+        return this.travellingTimeInMilliseconds;
     }
 
     @Override
