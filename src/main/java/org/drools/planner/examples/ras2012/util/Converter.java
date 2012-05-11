@@ -38,6 +38,12 @@ public class Converter {
 
     public static BigDecimal getDistanceInMilesFromSpeedAndTime(final int speedInMPH,
             final long timeInMilliseconds) {
+        return Converter.getDistanceInMilesFromSpeedAndTime(BigDecimal.valueOf(speedInMPH),
+                timeInMilliseconds);
+    }
+
+    public static BigDecimal getDistanceInMilesFromSpeedAndTime(final BigDecimal speedInMPH,
+            final long timeInMilliseconds) {
         final BigDecimal timeInSeconds = BigDecimal.valueOf(timeInMilliseconds)
                 .divide(BigDecimal.valueOf(1000), Converter.BIGDECIMAL_SCALE,
                         Converter.BIGDECIMAL_ROUNDING);
@@ -45,8 +51,7 @@ public class Converter {
                 Converter.BIGDECIMAL_SCALE, Converter.BIGDECIMAL_ROUNDING);
         final BigDecimal timeInHours = timeInMinutes.divide(BigDecimal.valueOf(60),
                 Converter.BIGDECIMAL_SCALE, Converter.BIGDECIMAL_ROUNDING);
-        final BigDecimal milesPerHour = BigDecimal.valueOf(speedInMPH);
-        return milesPerHour.multiply(timeInHours);
+        return speedInMPH.multiply(timeInHours);
     }
 
     public static BigDecimal getDistanceTravelledInTheArc(final Itinerary i, final Arc a,
@@ -66,10 +71,15 @@ public class Converter {
     }
 
     public static long getTimeFromSpeedAndDistance(final int speedInMPH, final BigDecimal distance) {
+        return Converter.getTimeFromSpeedAndDistance(BigDecimal.valueOf(speedInMPH), distance);
+    }
+
+    public static long getTimeFromSpeedAndDistance(final BigDecimal speedInMPH,
+            final BigDecimal distance) {
         return distance
-                .divide(BigDecimal.valueOf(speedInMPH), Converter.BIGDECIMAL_SCALE,
-                        Converter.BIGDECIMAL_ROUNDING).multiply(BigDecimal.valueOf(3600000))
-                .setScale(0, Converter.BIGDECIMAL_ROUNDING).longValue();
+                .divide(speedInMPH, Converter.BIGDECIMAL_SCALE, Converter.BIGDECIMAL_ROUNDING)
+                .multiply(BigDecimal.valueOf(3600000)).setScale(0, Converter.BIGDECIMAL_ROUNDING)
+                .longValue();
     }
 
 }

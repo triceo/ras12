@@ -216,9 +216,9 @@ public class TrainTest {
         for (final Arc a : this.getArcs(n1, n2, length)) {
             for (final Train t : this.getTrains(n1, n2)) {
                 final BigDecimal distanceInMiles = a.getLengthInMiles();
-                final int trainSpeedInMph = t.getMaximumSpeed(a.getTrack());
-                final BigDecimal timeInHours = distanceInMiles.divide(
-                        BigDecimal.valueOf(trainSpeedInMph), 7, BigDecimal.ROUND_HALF_EVEN);
+                final BigDecimal trainSpeedInMph = t.getMaximumSpeed(a.getTrack());
+                final BigDecimal timeInHours = distanceInMiles.divide(trainSpeedInMph, 7,
+                        BigDecimal.ROUND_HALF_EVEN);
                 final BigDecimal timeInMilliseconds = timeInHours.multiply(BigDecimal.valueOf(60))
                         .multiply(BigDecimal.valueOf(60)).multiply(BigDecimal.valueOf(1000));
                 final long result = timeInMilliseconds.setScale(0, BigDecimal.ROUND_HALF_EVEN)
@@ -246,15 +246,15 @@ public class TrainTest {
                         .getTrack().getSpeedWestbound();
                 if (a.getTrack().isMainTrack()) {
                     final BigDecimal multiplier = t.getSpeedMultiplier();
-                    final Integer expectedSpeed = multiplier.multiply(BigDecimal.valueOf(arcSpeed))
-                            .setScale(0, BigDecimal.ROUND_HALF_EVEN).intValue();
+                    final BigDecimal expectedSpeed = multiplier.multiply(
+                            BigDecimal.valueOf(arcSpeed)).setScale(1, BigDecimal.ROUND_HALF_EVEN);
                     Assert.assertEquals(
                             "Outside main tracks, the train max speed should equal (arc speed)x(train speed multiplier).",
                             expectedSpeed, t.getMaximumSpeed(a.getTrack()));
                 } else {
                     Assert.assertEquals(
                             "Outside main tracks, the train max speed should equal arc speed.",
-                            arcSpeed, t.getMaximumSpeed(a.getTrack()));
+                            BigDecimal.valueOf(arcSpeed), t.getMaximumSpeed(a.getTrack()));
                 }
                 Assert.assertEquals(
                         "Maximum speed with unspecified track should return the highest possible train speed.",

@@ -181,17 +181,17 @@ public class Train implements Comparable<Train>, Directed {
         return this.length;
     }
 
-    public Integer getMaximumSpeed() {
+    public BigDecimal getMaximumSpeed() {
         return this.getMaximumSpeed(Track.MAIN_0);
     }
 
-    public Integer getMaximumSpeed(final Track t) {
+    public BigDecimal getMaximumSpeed(final Track t) {
         final int coreSpeed = this.isWestbound() ? t.getSpeedWestbound() : t.getSpeedEastbound();
         if (t.isMainTrack()) {
-            return this.speedMultiplier.multiply(BigDecimal.valueOf(coreSpeed))
-                    .setScale(0, BigDecimal.ROUND_HALF_EVEN).intValue();
+            return this.speedMultiplier.multiply(BigDecimal.valueOf(coreSpeed)).setScale(1,
+                    BigDecimal.ROUND_HALF_EVEN);
         } else {
-            return coreSpeed;
+            return BigDecimal.valueOf(coreSpeed);
         }
     }
 
