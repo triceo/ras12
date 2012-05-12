@@ -11,6 +11,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.drools.planner.examples.ras2012.interfaces.Directed;
@@ -20,13 +22,16 @@ import org.drools.planner.examples.ras2012.model.original.Track;
 
 public class ArcProgression implements Directed {
 
-    private final LinkedList<Arc>   orderedArcs        = new LinkedList<Arc>();
-    private final Map<Node, Arc>    arcsPerOrigin      = new HashMap<Node, Arc>();
-    private final Map<Node, Arc>    arcsPerDestination = new HashMap<Node, Arc>();
-    private final Map<Arc, Boolean> isArcPreferred     = new HashMap<Arc, Boolean>();
-    private final Collection<Node>  nodes              = new LinkedHashSet<Node>();
-    private final Collection<Node>  waitPoints;
-    private final Directed          directed;
+    private final LinkedList<Arc>            orderedArcs        = new LinkedList<Arc>();
+    private final SortedMap<BigDecimal, Arc> milestones         = new TreeMap<BigDecimal, Arc>();
+    private final Map<Node, Arc>             arcsPerOrigin      = new HashMap<Node, Arc>();
+    private final Map<Node, Arc>             arcsPerDestination = new HashMap<Node, Arc>();
+    private final Map<Arc, Boolean>          isArcPreferred     = new HashMap<Arc, Boolean>();
+    private final Collection<Node>           nodes              = new LinkedHashSet<Node>();
+    private final Collection<Node>           waitPoints;
+    private final Directed                   directed;
+
+    private static final BigDecimal          MINIMAL_DISTANCE   = new BigDecimal("0.001");
 
     public ArcProgression(final Directed directed, final Arc... arcs) {
         this(directed, Arrays.asList(arcs));
@@ -46,11 +51,14 @@ public class ArcProgression implements Directed {
             }
         }
         // cache information about nodes related to arcs
+        BigDecimal milestone = BigDecimal.ZERO;
         for (final Arc a : this.orderedArcs) {
+            this.milestones.put(milestone.add(ArcProgression.MINIMAL_DISTANCE), a);
             this.arcsPerOrigin.put(a.getOrigin(this), a);
             this.arcsPerDestination.put(a.getDestination(this), a);
             this.nodes.add(a.getOrigin(this));
             this.nodes.add(a.getDestination(this));
+            milestone = milestone.add(a.getLengthInMiles());
         }
         // determine whether a particular arc is preferred
         for (final Arc a : this.orderedArcs) {
@@ -123,6 +131,16 @@ public class ArcProgression implements Directed {
         return this.orderedArcs.peekLast();
     }
 
+    public BigDecimal getDistance(final Node end) {
+        // first solve some corner cases
+        if (!this.nodes.contains(end)) {
+            throw new IllegalArgumentException(end + " not in progression!");
+        }
+        // then make sure nodes are in a proper order
+        final Node start = this.getOrigin().getOrigin(this);
+        return this.getDistance(start, end);
+    }
+
     public BigDecimal getDistance(final Node start, final Node end) {
         // first solve some corner cases
         if (!this.nodes.contains(start)) {
@@ -147,6 +165,14 @@ public class ArcProgression implements Directed {
         return result;
     }
 
+    public BigDecimal getLength() {
+        BigDecimal length = BigDecimal.ZERO;
+        for (final Arc a : this.orderedArcs) {
+            length = length.add(a.getLengthInMiles());
+        }
+        return length;
+    }
+
     public Arc getNext(final Arc a) {
         if (this.orderedArcs.size() == 0) {
             throw new IllegalArgumentException("No next arc on an empty route.");
@@ -166,6 +192,41 @@ public class ArcProgression implements Directed {
 
     public Collection<Node> getNodes() {
         return Collections.unmodifiableCollection(this.nodes);
+    }
+
+    public Collection<Arc> getOccupiedArcs(final BigDecimal endingMilestone,
+            final BigDecimal backtrack) {
+        if (endingMilestone.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Please provide a milestone >= 0.");
+        }
+        if (backtrack.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Please provide a backtrack > 0.");
+        }
+        final BigDecimal startingMilestone = endingMilestone.subtract(backtrack);
+        if (startingMilestone.compareTo(this.getLength()) > 0) {
+            return Collections.emptySet();
+        }
+        final Collection<Arc> occupiedArcs = new LinkedHashSet<Arc>();
+        final SortedMap<BigDecimal, Arc> pre = this.milestones.headMap(startingMilestone
+                .add(ArcProgression.MINIMAL_DISTANCE));
+        final BigDecimal startingWith = pre.size() == 0 ? this.milestones.firstKey() : pre
+                .lastKey();
+        final SortedMap<BigDecimal, Arc> post = this.milestones.headMap(endingMilestone
+                .add(ArcProgression.MINIMAL_DISTANCE));
+        final BigDecimal endingWith = post.size() == 0 ? this.milestones.lastKey() : post.lastKey();
+        boolean track = false;
+        for (final BigDecimal milestone : this.milestones.keySet()) {
+            if (milestone == startingWith) {
+                track = true;
+            }
+            if (track) {
+                occupiedArcs.add(this.milestones.get(milestone));
+            }
+            if (milestone == endingWith) {
+                break;
+            }
+        }
+        return occupiedArcs;
     }
 
     public Arc getOrigin() {

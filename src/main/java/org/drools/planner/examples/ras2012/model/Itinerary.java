@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -20,8 +19,10 @@ import org.drools.planner.examples.ras2012.model.original.Arc;
 import org.drools.planner.examples.ras2012.model.original.MaintenanceWindow;
 import org.drools.planner.examples.ras2012.model.original.Node;
 import org.drools.planner.examples.ras2012.model.original.ScheduleAdherenceRequirement;
+import org.drools.planner.examples.ras2012.model.original.Track;
 import org.drools.planner.examples.ras2012.model.original.Train;
 import org.drools.planner.examples.ras2012.model.original.WaitTime;
+import org.drools.planner.examples.ras2012.util.ArcProgression;
 import org.drools.planner.examples.ras2012.util.Converter;
 import org.drools.planner.examples.ras2012.util.ItineraryVisualizer;
 import org.slf4j.Logger;
@@ -217,6 +218,22 @@ public final class Itinerary implements Visualizable {
         throw new IllegalArgumentException(n + " not on the route!");
     }
 
+    private long getEntryTime(final Arc a) {
+        final SortedMap<Long, Arc> nodeEntryTimes = this.getScheduleWithArcs();
+        long timeArcEntered = -1;
+        for (final SortedMap.Entry<Long, Arc> entry : nodeEntryTimes.entrySet()) {
+            if (entry.getValue() == a) {
+                timeArcEntered = entry.getKey() - 1;
+                break;
+            }
+        }
+        if (timeArcEntered < this.trainEntryTime) {
+            throw new IllegalStateException(
+                    "Proper arc cannot be found! Possibly a bug in the algoritm.");
+        }
+        return timeArcEntered;
+    }
+
     protected Arc getLeadingArc(final long time) {
         if (time < this.trainEntryTime) {
             return null;
@@ -236,55 +253,43 @@ public final class Itinerary implements Visualizable {
     }
 
     public Collection<Arc> getOccupiedArcs(final long time) {
-        final Arc leadingArc = this.getLeadingArc(time);
-        if (leadingArc == null) {
-            // train not in the network
-            // FIXME train should leave the network gradually, not at once when it reaches destination
+        if (time < this.trainEntryTime) {
+            // train not yet started, cannot occupy anything
+            if (this.getTrain().getOrigin() != this.getRoute().getProgression().getOrigin()
+                    .getOrigin(this.getRoute())) { // some defensive programming
+                throw new IllegalStateException(
+                        "Train can either start late or start outside origin, not both.");
+            }
             return Collections.emptySet();
         }
-        final Collection<Arc> occupiedArcs = new LinkedHashSet<Arc>();
-        BigDecimal remainingLengthOfTrain = this.getTrain().getLengthInMiles();
-        if (!this.getScheduleWithArcs().containsValue(leadingArc)) {
-            // train enters the route at some other place than the route origin
-            occupiedArcs.add(leadingArc);
-            remainingLengthOfTrain = remainingLengthOfTrain.subtract(leadingArc.getLengthInMiles());
+        final ArcProgression progression = this.getRoute().getProgression();
+        final Arc leadingArc = this.getLeadingArc(time);
+        if (leadingArc == null) {
+            // the train should gradually leave the network through its destination
+            final long timeTravelledInArc = time - this.getEntryTime(progression.getPrevious(null));
+            final BigDecimal travelledInArc = Converter.getDistanceInMilesFromSpeedAndTime(this
+                    .getTrain().getMaximumSpeed(Track.MAIN_0), timeTravelledInArc);
+            if (travelledInArc.compareTo(this.getTrain().getLengthInMiles()) >= 0) {
+                // the train is gone completely
+                return Collections.emptySet();
+            } else {
+                // some part of the train is still in the network
+                return progression.getOccupiedArcs(progression.getLength(), this.getTrain()
+                        .getLengthInMiles().subtract(travelledInArc));
+            }
+        } else if (!this.getScheduleWithArcs().containsValue(leadingArc)) {
+            // the train didn't enter the network yet
+            return progression.getOccupiedArcs(progression.getDistance(leadingArc
+                    .getDestination(progression)), this.getTrain().getLengthInMiles());
         } else {
-            // calculate how far are we into the leading arc
-            final SortedMap<Long, Arc> nodeEntryTimes = this.getScheduleWithArcs();
-            long timeArcEntered = -1;
-            for (final SortedMap.Entry<Long, Arc> entry : nodeEntryTimes.entrySet()) {
-                if (entry.getValue() == leadingArc) {
-                    timeArcEntered = entry.getKey() - 1;
-                    break;
-                }
-            }
-            if (timeArcEntered < this.trainEntryTime) {
-                throw new IllegalStateException(
-                        "Proper arc cannot be found! Possibly a bug in the algoritm.");
-            }
-            final long timeTravelledInLeadingArc = time - timeArcEntered;
-            if (timeTravelledInLeadingArc > 0) {
-                // only mark the arc as occupied if we've actually ventured inside it
-                occupiedArcs.add(leadingArc);
-                final BigDecimal travelledInLeadingArc = Converter
-                        .getDistanceInMilesFromSpeedAndTime(
-                                this.getTrain().getMaximumSpeed(leadingArc.getTrack()),
-                                timeTravelledInLeadingArc).max(leadingArc.getLengthInMiles());
-                remainingLengthOfTrain = remainingLengthOfTrain.subtract(travelledInLeadingArc);
-            }
+            // the train is in the network
+            final long timeTravelledInArc = time - this.getEntryTime(leadingArc);
+            final BigDecimal travelledInArc = Converter.getDistanceInMilesFromSpeedAndTime(this
+                    .getTrain().getMaximumSpeed(leadingArc.getTrack()), timeTravelledInArc);
+            return progression.getOccupiedArcs(
+                    progression.getDistance(leadingArc.getOrigin(progression)).add(travelledInArc),
+                    this.getTrain().getLengthInMiles());
         }
-        // and now add any preceding arcs for as long as the remaining train length > 0
-        Arc currentlyProcessedArc = leadingArc;
-        while (remainingLengthOfTrain.compareTo(BigDecimal.ZERO) > 0) {
-            currentlyProcessedArc = this.route.getProgression().getPrevious(currentlyProcessedArc);
-            if (currentlyProcessedArc == null) {
-                break;
-            }
-            occupiedArcs.add(currentlyProcessedArc);
-            remainingLengthOfTrain = remainingLengthOfTrain.subtract(currentlyProcessedArc
-                    .getLengthInMiles());
-        }
-        return occupiedArcs;
     }
 
     public Route getRoute() {
