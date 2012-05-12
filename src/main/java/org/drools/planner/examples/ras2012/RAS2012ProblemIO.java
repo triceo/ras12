@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
@@ -85,19 +86,20 @@ public class RAS2012ProblemIO implements ProblemIO {
         w.newLine();
         w.write("\t\t\t<movements>");
         w.newLine();
-        for (final Map.Entry<Long, Arc> entry : solution.getAssignment(t).getItinerary()
+        for (final SortedMap.Entry<Long, Arc> entry : solution.getAssignment(t).getItinerary()
                 .getScheduleWithArcs().entrySet()) {
             final Arc arc = entry.getValue();
             if (entry.getKey() >= solution.getPlanningHorizon(TimeUnit.MILLISECONDS)) {
                 continue;
             }
             final BigDecimal timeInSeconds = RAS2012ProblemIO
-                    .convertMillisToSeconds(entry.getKey());
-            if (arc.getDestination(t) != t.getDestination()) {
-                final BigDecimal travellingTime = RAS2012ProblemIO.convertMillisToSeconds(t
-                        .getArcTravellingTime(arc, TimeUnit.MILLISECONDS));
-                final BigDecimal leaveTime = timeInSeconds.add(travellingTime).subtract(
-                        new BigDecimal("0.5"));
+                    .convertMillisToSeconds(entry.getKey() - 1);
+            if (arc != null) {
+                final BigDecimal distance = arc.getLengthInMiles().add(t.getLengthInMiles());
+                final long travellingTime = Converter.getTimeFromSpeedAndDistance(
+                        t.getMaximumSpeed(arc.getTrack()), distance);
+                final BigDecimal leaveTime = RAS2012ProblemIO
+                        .convertMillisToSeconds(travellingTime).add(timeInSeconds);
                 if (leaveTime.intValue() > solution.getPlanningHorizon(TimeUnit.MILLISECONDS)) {
                     continue;
                 }
