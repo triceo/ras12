@@ -21,22 +21,23 @@
       </scoreDirectorFactory>
       <termination>
         <terminationCompositionStyle>OR</terminationCompositionStyle>
+        <maximumMinutesSpend>5</maximumMinutesSpend>
       </termination>
     </solver>
   </inheritedSolverBenchmark>
 
   <solverBenchmark>
-    <name>5-50</name>
+    <name>10-10</name>
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
         </termination>
         <forager>
-          <minimalAcceptedSelection>16</minimalAcceptedSelection>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
         </forager>
         <acceptor>
-          <simulatedAnnealingStartingTemperature>5hard/50soft</simulatedAnnealingStartingTemperature>
+          <simulatedAnnealingStartingTemperature>10hard/10soft</simulatedAnnealingStartingTemperature>
         </acceptor>
     <selector>
       <selector>
@@ -49,112 +50,15 @@
       </localSearch>
     </solver>
   </solverBenchmark>
-  <solverBenchmark>
-    <name>5-100</name>
-    <solver>
-      <localSearch>
-        <termination>
-          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
-        </termination>
-        <forager>
-          <minimalAcceptedSelection>16</minimalAcceptedSelection>
-        </forager>
-        <acceptor>
-          <simulatedAnnealingStartingTemperature>5hard/100soft</simulatedAnnealingStartingTemperature>
-        </acceptor>
-    <selector>
-      <selector>
-        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
-      </selector>
-      <selector>
-        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
-      </selector>
-    </selector>
-      </localSearch>
-    </solver>
-  </solverBenchmark>
-  <solverBenchmark>
-    <name>5-500</name>
-    <solver>
-      <localSearch>
-        <termination>
-          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
-        </termination>
-        <forager>
-          <minimalAcceptedSelection>16</minimalAcceptedSelection>
-        </forager>
-        <acceptor>
-          <simulatedAnnealingStartingTemperature>5hard/500soft</simulatedAnnealingStartingTemperature>
-        </acceptor>
-    <selector>
-      <selector>
-        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
-      </selector>
-      <selector>
-        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
-      </selector>
-    </selector>
-      </localSearch>
-    </solver>
-  </solverBenchmark>
-  <solverBenchmark>
-    <name>5-1000</name>
-    <solver>
-      <localSearch>
-        <termination>
-          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
-        </termination>
-        <forager>
-          <minimalAcceptedSelection>16</minimalAcceptedSelection>
-        </forager>
-        <acceptor>
-          <simulatedAnnealingStartingTemperature>5hard/1000soft</simulatedAnnealingStartingTemperature>
-        </acceptor>
-    <selector>
-      <selector>
-        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
-      </selector>
-      <selector>
-        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
-      </selector>
-    </selector>
-      </localSearch>
-    </solver>
-  </solverBenchmark>
-  <solverBenchmark>
-    <name>5-2000</name>
-    <solver>
-      <localSearch>
-        <termination>
-          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
-        </termination>
-        <forager>
-          <minimalAcceptedSelection>16</minimalAcceptedSelection>
-        </forager>
-        <acceptor>
-          <simulatedAnnealingStartingTemperature>5hard/2000soft</simulatedAnnealingStartingTemperature>
-        </acceptor>
-    <selector>
-      <selector>
-        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
-      </selector>
-      <selector>
-        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
-      </selector>
-    </selector>
-      </localSearch>
-    </solver>
-  </solverBenchmark>
-
   <solverBenchmark>
     <name>10-50</name>
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
         </termination>
         <forager>
-          <minimalAcceptedSelection>16</minimalAcceptedSelection>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>10hard/50soft</simulatedAnnealingStartingTemperature>
@@ -175,10 +79,10 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
         </termination>
         <forager>
-          <minimalAcceptedSelection>16</minimalAcceptedSelection>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>10hard/100soft</simulatedAnnealingStartingTemperature>
@@ -199,10 +103,10 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
         </termination>
         <forager>
-          <minimalAcceptedSelection>16</minimalAcceptedSelection>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>10hard/500soft</simulatedAnnealingStartingTemperature>
@@ -223,10 +127,10 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
         </termination>
         <forager>
-          <minimalAcceptedSelection>16</minimalAcceptedSelection>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>10hard/1000soft</simulatedAnnealingStartingTemperature>
@@ -243,42 +147,17 @@
     </solver>
   </solverBenchmark>
   <solverBenchmark>
-    <name>10-2000</name>
+    <name>10-5000</name>
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
         </termination>
         <forager>
-          <minimalAcceptedSelection>16</minimalAcceptedSelection>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
         </forager>
         <acceptor>
-          <simulatedAnnealingStartingTemperature>10hard/2000soft</simulatedAnnealingStartingTemperature>
-        </acceptor>
-    <selector>
-      <selector>
-        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
-      </selector>
-      <selector>
-        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
-      </selector>
-    </selector>
-      </localSearch>
-    </solver>
-  </solverBenchmark>
-  
-  <solverBenchmark>
-    <name>15-50</name>
-    <solver>
-      <localSearch>
-        <termination>
-          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
-        </termination>
-        <forager>
-          <minimalAcceptedSelection>16</minimalAcceptedSelection>
-        </forager>
-        <acceptor>
-          <simulatedAnnealingStartingTemperature>15hard/50soft</simulatedAnnealingStartingTemperature>
+          <simulatedAnnealingStartingTemperature>10hard/5000soft</simulatedAnnealingStartingTemperature>
         </acceptor>
     <selector>
       <selector>
@@ -292,17 +171,17 @@
     </solver>
   </solverBenchmark>
   <solverBenchmark>
-    <name>15-100</name>
+    <name>10-10000</name>
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
         </termination>
         <forager>
-          <minimalAcceptedSelection>16</minimalAcceptedSelection>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
         </forager>
         <acceptor>
-          <simulatedAnnealingStartingTemperature>15hard/100soft</simulatedAnnealingStartingTemperature>
+          <simulatedAnnealingStartingTemperature>10hard/10000soft</simulatedAnnealingStartingTemperature>
         </acceptor>
     <selector>
       <selector>
@@ -315,18 +194,19 @@
       </localSearch>
     </solver>
   </solverBenchmark>
+
   <solverBenchmark>
-    <name>15-500</name>
+    <name>20-10</name>
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
         </termination>
         <forager>
-          <minimalAcceptedSelection>16</minimalAcceptedSelection>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
         </forager>
         <acceptor>
-          <simulatedAnnealingStartingTemperature>15hard/500soft</simulatedAnnealingStartingTemperature>
+          <simulatedAnnealingStartingTemperature>20hard/10soft</simulatedAnnealingStartingTemperature>
         </acceptor>
     <selector>
       <selector>
@@ -339,64 +219,15 @@
       </localSearch>
     </solver>
   </solverBenchmark>
-  <solverBenchmark>
-    <name>15-1000</name>
-    <solver>
-      <localSearch>
-        <termination>
-          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
-        </termination>
-        <forager>
-          <minimalAcceptedSelection>16</minimalAcceptedSelection>
-        </forager>
-        <acceptor>
-          <simulatedAnnealingStartingTemperature>15hard/1000soft</simulatedAnnealingStartingTemperature>
-        </acceptor>
-    <selector>
-      <selector>
-        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
-      </selector>
-      <selector>
-        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
-      </selector>
-    </selector>
-      </localSearch>
-    </solver>
-  </solverBenchmark>
-  <solverBenchmark>
-    <name>15-2000</name>
-    <solver>
-      <localSearch>
-        <termination>
-          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
-        </termination>
-        <forager>
-          <minimalAcceptedSelection>16</minimalAcceptedSelection>
-        </forager>
-        <acceptor>
-          <simulatedAnnealingStartingTemperature>15hard/2000soft</simulatedAnnealingStartingTemperature>
-        </acceptor>
-    <selector>
-      <selector>
-        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
-      </selector>
-      <selector>
-        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
-      </selector>
-    </selector>
-      </localSearch>
-    </solver>
-  </solverBenchmark>
-  
   <solverBenchmark>
     <name>20-50</name>
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
         </termination>
         <forager>
-          <minimalAcceptedSelection>16</minimalAcceptedSelection>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>20hard/50soft</simulatedAnnealingStartingTemperature>
@@ -417,10 +248,10 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
         </termination>
         <forager>
-          <minimalAcceptedSelection>16</minimalAcceptedSelection>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>20hard/100soft</simulatedAnnealingStartingTemperature>
@@ -441,10 +272,10 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
         </termination>
         <forager>
-          <minimalAcceptedSelection>16</minimalAcceptedSelection>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>20hard/500soft</simulatedAnnealingStartingTemperature>
@@ -465,10 +296,10 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
         </termination>
         <forager>
-          <minimalAcceptedSelection>16</minimalAcceptedSelection>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>20hard/1000soft</simulatedAnnealingStartingTemperature>
@@ -483,19 +314,19 @@
     </selector>
       </localSearch>
     </solver>
-  </solverBenchmark>  
+  </solverBenchmark>
   <solverBenchmark>
-    <name>20-2000</name>
+    <name>20-5000</name>
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
         </termination>
         <forager>
-          <minimalAcceptedSelection>16</minimalAcceptedSelection>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
         </forager>
         <acceptor>
-          <simulatedAnnealingStartingTemperature>20hard/2000soft</simulatedAnnealingStartingTemperature>
+          <simulatedAnnealingStartingTemperature>20hard/5000soft</simulatedAnnealingStartingTemperature>
         </acceptor>
     <selector>
       <selector>
@@ -508,16 +339,402 @@
       </localSearch>
     </solver>
   </solverBenchmark>
-  
+  <solverBenchmark>
+    <name>20-10000</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>20hard/10000soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+
+  <solverBenchmark>
+    <name>30-10</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>30hard/10soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>30-50</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>30hard/50soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>30-100</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>30hard/100soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>30-500</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>30hard/500soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>30-1000</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>30hard/1000soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>30-5000</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>30hard/5000soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>30-10000</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>30hard/10000soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+
+  <solverBenchmark>
+    <name>40-10</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>40hard/10soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>40-50</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>40hard/50soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>40-100</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>40hard/100soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>40-500</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>40hard/500soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>40-1000</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>40hard/1000soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>40-5000</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>40hard/5000soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>40-10000</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>40hard/10000soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+
+  <solverBenchmark>
+    <name>50-10</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>50hard/10soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
   <solverBenchmark>
     <name>50-50</name>
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
         </termination>
         <forager>
-          <minimalAcceptedSelection>16</minimalAcceptedSelection>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>50hard/50soft</simulatedAnnealingStartingTemperature>
@@ -538,10 +755,10 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
         </termination>
         <forager>
-          <minimalAcceptedSelection>16</minimalAcceptedSelection>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>50hard/100soft</simulatedAnnealingStartingTemperature>
@@ -562,10 +779,10 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
         </termination>
         <forager>
-          <minimalAcceptedSelection>16</minimalAcceptedSelection>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>50hard/500soft</simulatedAnnealingStartingTemperature>
@@ -586,10 +803,10 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
         </termination>
         <forager>
-          <minimalAcceptedSelection>16</minimalAcceptedSelection>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>50hard/1000soft</simulatedAnnealingStartingTemperature>
@@ -606,17 +823,886 @@
     </solver>
   </solverBenchmark>
   <solverBenchmark>
-    <name>50-2000</name>
+    <name>50-5000</name>
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>25</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
         </termination>
         <forager>
-          <minimalAcceptedSelection>16</minimalAcceptedSelection>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
         </forager>
         <acceptor>
-          <simulatedAnnealingStartingTemperature>50hard/2000soft</simulatedAnnealingStartingTemperature>
+          <simulatedAnnealingStartingTemperature>50hard/5000soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>50-10000</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>50hard/10000soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+
+  <solverBenchmark>
+    <name>60-10</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>60hard/10soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>60-50</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>60hard/50soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>60-100</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>60hard/100soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>60-500</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>60hard/500soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>60-1000</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>60hard/1000soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>60-5000</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>60hard/5000soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>60-10000</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>60hard/10000soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  
+  <solverBenchmark>
+    <name>70-10</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>70hard/10soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>70-50</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>70hard/50soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>70-100</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>70hard/100soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>70-500</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>70hard/500soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>70-1000</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>70hard/1000soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>70-5000</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>70hard/5000soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>70-10000</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>70hard/10000soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  
+  <solverBenchmark>
+    <name>80-10</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>80hard/10soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>80-50</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>80hard/50soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>80-100</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>80hard/100soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>80-500</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>80hard/500soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>80-1000</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>80hard/1000soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>80-5000</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>80hard/5000soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>80-10000</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>80hard/10000soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  
+  <solverBenchmark>
+    <name>90-10</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>90hard/10soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>90-50</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>90hard/50soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>90-100</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>90hard/100soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>90-500</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>90hard/500soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>90-1000</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>90hard/1000soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>90-5000</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>90hard/5000soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>90-10000</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>90hard/10000soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  
+  <solverBenchmark>
+    <name>100-10</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>100hard/10soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>100-50</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>100hard/50soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>100-100</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>100hard/100soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>100-500</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>100hard/500soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>100-1000</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>100hard/1000soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>100-5000</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>100hard/5000soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+    <selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
+      </selector>
+      <selector>
+        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
+      </selector>
+    </selector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>100-10000</name>
+    <solver>
+      <localSearch>
+        <termination>
+          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+        </termination>
+        <forager>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+        </forager>
+        <acceptor>
+          <simulatedAnnealingStartingTemperature>100hard/10000soft</simulatedAnnealingStartingTemperature>
         </acceptor>
     <selector>
       <selector>
