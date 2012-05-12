@@ -107,7 +107,7 @@ public final class Itinerary implements Visualizable {
             }
             // and store
             this.scheduleCache.put(time, n);
-            this.scheduleCacheWithArcs.put(time, currentArc);
+            this.scheduleCacheWithArcs.put(time + 1, currentArc);
             previousTime = time;
             previousArc = currentArc;
             i++;
@@ -118,6 +118,7 @@ public final class Itinerary implements Visualizable {
         final long time = previousTime
                 + this.getTrain().getArcTravellingTime(previousArc, Itinerary.DEFAULT_TIME_UNIT);
         this.scheduleCache.put(time, previousArc.getDestination(this.getTrain()));
+        this.scheduleCacheWithArcs.put(time + 1, null);
         this.scheduleCacheValid.set(true);
     }
 
@@ -220,20 +221,14 @@ public final class Itinerary implements Visualizable {
         if (time < this.trainEntryTime) {
             return null;
         }
-        Node previousNode = null;
-        for (final SortedMap.Entry<Long, Node> entry : this.getSchedule().entrySet()) {
-            final long timeOfArrival = entry.getKey();
-            final Node currentNode = entry.getValue();
-            if (time > timeOfArrival) {
-                previousNode = currentNode;
-                continue;
-            } else if (time == timeOfArrival) {
-                return this.getRoute().getProgression().getWithOriginNode(currentNode);
-            } else {
-                return this.getRoute().getProgression().getWithOriginNode(previousNode);
-            }
+        final SortedMap<Long, Arc> arcs = this.getScheduleWithArcs().tailMap(time);
+        if (arcs.size() == 0) {
+            return null;
+        } else if (time == arcs.firstKey()) {
+            return arcs.get(arcs.firstKey());
+        } else {
+            return this.getRoute().getProgression().getPrevious(arcs.get(arcs.firstKey()));
         }
-        return null;
     }
 
     public Map<Node, MaintenanceWindow> getMaintenances() {
