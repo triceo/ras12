@@ -242,29 +242,36 @@ public final class Itinerary implements Visualizable {
             // FIXME train should leave the network gradually, not at once when it reaches destination
             return Collections.emptySet();
         }
-        // calculate how far are we into the leading arc
-        final SortedMap<Long, Arc> nodeEntryTimes = this.getScheduleWithArcs();
-        long timeArcEntered = -1;
-        for (final SortedMap.Entry<Long, Arc> entry : nodeEntryTimes.entrySet()) {
-            if (entry.getValue() == leadingArc) {
-                timeArcEntered = entry.getKey();
-                break;
-            }
-        }
-        if (timeArcEntered < this.trainEntryTime) {
-            throw new IllegalStateException(
-                    "Proper arc cannot be found! Possibly a bug in the algoritm.");
-        }
-        final long timeTravelledInLeadingArc = time - timeArcEntered;
-        BigDecimal remainingLengthOfTrain = this.getTrain().getLengthInMiles();
         final Collection<Arc> occupiedArcs = new LinkedHashSet<Arc>();
-        if (timeTravelledInLeadingArc > 0) {
-            // only mark the arc as occupied if we've actually ventured inside it
+        BigDecimal remainingLengthOfTrain = this.getTrain().getLengthInMiles();
+        if (!this.getScheduleWithArcs().containsValue(leadingArc)) {
+            // train enters the route at some other place than the route origin
             occupiedArcs.add(leadingArc);
-            final BigDecimal travelledInLeadingArc = Converter.getDistanceInMilesFromSpeedAndTime(
-                    this.getTrain().getMaximumSpeed(leadingArc.getTrack()),
-                    timeTravelledInLeadingArc);
-            remainingLengthOfTrain = remainingLengthOfTrain.subtract(travelledInLeadingArc);
+            remainingLengthOfTrain = remainingLengthOfTrain.subtract(leadingArc.getLengthInMiles());
+        } else {
+            // calculate how far are we into the leading arc
+            final SortedMap<Long, Arc> nodeEntryTimes = this.getScheduleWithArcs();
+            long timeArcEntered = -1;
+            for (final SortedMap.Entry<Long, Arc> entry : nodeEntryTimes.entrySet()) {
+                if (entry.getValue() == leadingArc) {
+                    timeArcEntered = entry.getKey() - 1;
+                    break;
+                }
+            }
+            if (timeArcEntered < this.trainEntryTime) {
+                throw new IllegalStateException(
+                        "Proper arc cannot be found! Possibly a bug in the algoritm.");
+            }
+            final long timeTravelledInLeadingArc = time - timeArcEntered;
+            if (timeTravelledInLeadingArc > 0) {
+                // only mark the arc as occupied if we've actually ventured inside it
+                occupiedArcs.add(leadingArc);
+                final BigDecimal travelledInLeadingArc = Converter
+                        .getDistanceInMilesFromSpeedAndTime(
+                                this.getTrain().getMaximumSpeed(leadingArc.getTrack()),
+                                timeTravelledInLeadingArc).max(leadingArc.getLengthInMiles());
+                remainingLengthOfTrain = remainingLengthOfTrain.subtract(travelledInLeadingArc);
+            }
         }
         // and now add any preceding arcs for as long as the remaining train length > 0
         Arc currentlyProcessedArc = leadingArc;

@@ -63,7 +63,8 @@ public class Converter {
             distanceTravelledInLeadingArc = Converter.getDistanceInMilesFromSpeedAndTime(i
                     .getTrain().getMaximumSpeed(a.getTrack()), timeTravelledInLeadingArc);
         }
-        return distanceTravelledInLeadingArc;
+        // train cannot travel more than the arc's length; if it does, there must be some wait times in play
+        return distanceTravelledInLeadingArc.max(a.getLengthInMiles());
     }
 
     private static long getNearestPastCheckpoint(final Itinerary i, final long time) {

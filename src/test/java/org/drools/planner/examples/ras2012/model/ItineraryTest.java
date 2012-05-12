@@ -3,8 +3,6 @@ package org.drools.planner.examples.ras2012.model;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -23,54 +21,6 @@ import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
 
 public class ItineraryTest extends AbstractItineraryProviderBasedTest {
-
-    private static Collection<Arc> calculateOccupiedArcsWithKnownPosition(final Itinerary i,
-            final Node n) {
-        return ItineraryTest.calculateOccupiedArcsWithKnownPosition(i, n, i.getTrain()
-                .getLengthInMiles());
-    }
-
-    private static Collection<Arc> calculateOccupiedArcsWithKnownPosition(final Itinerary i,
-            final Node n, final BigDecimal remainingLength) {
-        final Collection<Arc> results = new LinkedHashSet<Arc>();
-        BigDecimal remainingTrainLength = remainingLength;
-        Arc arc = i.getRoute().getProgression().getWithDestinationNode(n);
-        while (remainingTrainLength.compareTo(BigDecimal.ZERO) > 0) {
-            if (arc == null) { // train not yet fully en route
-                break;
-            }
-            results.add(arc);
-            remainingTrainLength = remainingTrainLength.subtract(arc.getLengthInMiles());
-            arc = i.getRoute().getProgression().getPrevious(arc);
-        }
-        return results;
-    }
-
-    private static Collection<Arc> calculateOccupiedArcsWithUnknownPosition(final Itinerary i,
-            final long time) {
-        final Collection<Arc> results = new LinkedHashSet<Arc>();
-        // find where we are in the leading arc
-        final Arc leadingArc = i.getLeadingArc(time);
-        if (leadingArc == null) { // journey is over
-            return results;
-        }
-        final BigDecimal distanceTravelledInLeadingArc = Converter.getDistanceTravelledInTheArc(i,
-                leadingArc, time);
-        if (distanceTravelledInLeadingArc.compareTo(BigDecimal.ZERO) > 0) {
-            results.add(leadingArc);
-        }
-        // and add the rest of the train, if necessary
-        final boolean travelledMoreThanTrainLength = distanceTravelledInLeadingArc.compareTo(i
-                .getTrain().getLengthInMiles()) > 0;
-        if (!travelledMoreThanTrainLength) {
-            final Node lastKnownPoint = leadingArc.getOrigin(i.getRoute());
-            final BigDecimal remainingTrainLength = i.getTrain().getLengthInMiles()
-                    .subtract(distanceTravelledInLeadingArc);
-            results.addAll(ItineraryTest.calculateOccupiedArcsWithKnownPosition(i, lastKnownPoint,
-                    remainingTrainLength));
-        }
-        return results;
-    }
 
     @Parameters
     public static Collection<Object[]> getInput() {
@@ -169,32 +119,6 @@ public class ItineraryTest extends AbstractItineraryProviderBasedTest {
             Assert.assertEquals("Train " + t.getName() + " on route " + r.getId() + " at time "
                     + entry.getKey() + " isn't where it's supposed to be.", entry.getValue(),
                     this.itinerary.getLeadingArc(entry.getKey()));
-        }
-    }
-
-    @Test
-    @Ignore
-    public void testGetOccupiedArcs() {
-        for (long time = 0; time <= this.solution.getPlanningHorizon(TimeUnit.MILLISECONDS); time += 1000) {
-            if (time <= this.itinerary.getTrain().getEntryTime(TimeUnit.MILLISECONDS)) {
-                if (this.itinerary.getTrain().getOrigin() == this.itinerary.getRoute()
-                        .getProgression().getOrigin().getOrigin(this.itinerary.getRoute())) {
-                    // the train shouldn't be en route yet
-                    Assert.assertEquals("No occupied arcs for " + this.itinerary + " at " + time
-                            + " (before entry time)", Collections.EMPTY_SET,
-                            this.itinerary.getOccupiedArcs(time));
-                } else {
-                    // train starts somewhere in the middle of the route
-                    Assert.assertEquals("Occupied arcs for " + this.itinerary + " at " + time
-                            + " (before entry time, different origin)", ItineraryTest
-                            .calculateOccupiedArcsWithKnownPosition(this.itinerary, this.itinerary
-                                    .getTrain().getOrigin()), this.itinerary.getOccupiedArcs(time));
-                }
-                continue;
-            }
-            Assert.assertEquals("Occupied arcs for " + this.itinerary + " at " + time,
-                    ItineraryTest.calculateOccupiedArcsWithUnknownPosition(this.itinerary, time),
-                    this.itinerary.getOccupiedArcs(time));
         }
     }
 

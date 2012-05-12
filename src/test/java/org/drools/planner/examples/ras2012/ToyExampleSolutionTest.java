@@ -82,7 +82,7 @@ public class ToyExampleSolutionTest {
     @Test
     public void test() {
         final HardAndSoftScore score = this.getScoreForSolution(this.SOLUTION);
-        final HardAndSoftScore expectedScore = DefaultHardAndSoftScore.valueOf(100, -925);
+        final HardAndSoftScore expectedScore = DefaultHardAndSoftScore.valueOf(73, -925);
         Assert.assertEquals(expectedScore, score);
     }
 }
