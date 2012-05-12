@@ -253,13 +253,7 @@ public final class Itinerary implements Visualizable {
     }
 
     public Collection<Arc> getOccupiedArcs(final long time) {
-        if (time < this.trainEntryTime) {
-            // train not yet started, cannot occupy anything
-            if (this.getTrain().getOrigin() != this.getRoute().getProgression().getOrigin()
-                    .getOrigin(this.getRoute())) { // some defensive programming
-                throw new IllegalStateException(
-                        "Train can either start late or start outside origin, not both.");
-            }
+        if (time <= this.getSchedule().firstKey()) {
             return Collections.emptySet();
         }
         final ArcProgression progression = this.getRoute().getProgression();
@@ -284,8 +278,9 @@ public final class Itinerary implements Visualizable {
         } else {
             // the train is in the network
             final long timeTravelledInArc = time - this.getEntryTime(leadingArc);
-            final BigDecimal travelledInArc = Converter.getDistanceInMilesFromSpeedAndTime(this
-                    .getTrain().getMaximumSpeed(leadingArc.getTrack()), timeTravelledInArc);
+            final BigDecimal travelledInArc = Converter.getDistanceInMilesFromSpeedAndTime(
+                    this.getTrain().getMaximumSpeed(leadingArc.getTrack()), timeTravelledInArc)
+                    .max(leadingArc.getLengthInMiles());
             return progression.getOccupiedArcs(
                     progression.getDistance(leadingArc.getOrigin(progression)).add(travelledInArc),
                     this.getTrain().getLengthInMiles());
