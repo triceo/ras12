@@ -21,14 +21,8 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
     private static final BigDecimal MILLIS_TO_HOURS = BigDecimal.valueOf(3600000);
 
     private static BigDecimal roundMillisecondsToHours(final long milliseconds) {
-        final BigDecimal result = BigDecimal.valueOf(milliseconds).divide(
-                RAS2012ScoreCalculator.MILLIS_TO_HOURS, Converter.BIGDECIMAL_SCALE,
-                Converter.BIGDECIMAL_ROUNDING);
-        if (milliseconds < 0) {
-            return result.negate();
-        } else {
-            return result;
-        }
+        return BigDecimal.valueOf(milliseconds).divide(RAS2012ScoreCalculator.MILLIS_TO_HOURS,
+                Converter.BIGDECIMAL_SCALE, Converter.BIGDECIMAL_ROUNDING);
     }
 
     private RAS2012Solution           solution                   = null;
@@ -143,7 +137,7 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
 
     private int getDelayPenalty(final Itinerary i, final RAS2012Solution solution) {
         final long delay = i.getDelay(solution.getPlanningHorizon(TimeUnit.MILLISECONDS));
-        if (!this.isInPlanningHorizon(delay)) {
+        if (delay <= 0) {
             return 0;
         }
         final BigDecimal hoursDelay = RAS2012ScoreCalculator.roundMillisecondsToHours(delay);
@@ -192,7 +186,8 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
 
     private int getWantTimePenalty(final Itinerary i, final RAS2012Solution solution) {
         final long delay = i.getWantTimeDifference();
-        if (!this.isInPlanningHorizon(delay)) {
+        final long actualTime = delay + i.getTrain().getWantTime(TimeUnit.MILLISECONDS);
+        if (!this.isInPlanningHorizon(actualTime)) {
             return 0;
         }
         BigDecimal hours = RAS2012ScoreCalculator.roundMillisecondsToHours(delay);
@@ -205,7 +200,7 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
         } else if (delay < 0) {
             hours = hours.add(BigDecimal.valueOf(1));
             if (hours.compareTo(BigDecimal.ZERO) < 0) {
-                return hours.multiply(penalty).intValue();
+                return -hours.multiply(penalty).intValue();
             }
         }
         return 0;
