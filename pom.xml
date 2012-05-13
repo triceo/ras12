@@ -73,7 +73,7 @@
         <configuration>
           <forkMode>always</forkMode> <!-- fork for each class -->
           <runOrder>alphabetical</runOrder> <!-- always run tests in a defined order -->
-          <parallel>classes</parallel>
+          <parallel>both</parallel>
         </configuration>
       </plugin>
       <plugin>
