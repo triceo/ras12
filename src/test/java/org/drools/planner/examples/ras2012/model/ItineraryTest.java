@@ -192,18 +192,21 @@ public class ItineraryTest extends AbstractItineraryProviderBasedTest {
         }
     }
 
+    // FIXME this method should not only compare the arcs, but also the total mileage
     @Test
     public void testGetOccupiedArcs() {
         final Train t = this.itinerary.getTrain();
         final Route r = this.itinerary.getRoute();
         final long arrivalTime = this.itinerary.getSchedule().lastKey();
         for (long time = 0; time < this.solution.getPlanningHorizon(TimeUnit.MILLISECONDS); time += 1000) {
+            final Collection<Arc> occupiedArcs = this.itinerary.getOccupiedArcs(time)
+                    .getIncludedArcs();
             if (time <= t.getEntryTime(TimeUnit.MILLISECONDS)) {
                 if (t.getOrigin() == r.getProgression().getOrigin().getOrigin(r)) {
                     // the train shouldn't be en route yet
                     Assert.assertEquals("No occupied arcs for " + this.itinerary + " at " + time
                             + " (entry time " + t.getEntryTime(TimeUnit.MILLISECONDS) + ")",
-                            Collections.emptySet(), this.itinerary.getOccupiedArcs(time));
+                            Collections.emptySet(), occupiedArcs);
                 } else {
                     // train starts somewhere in the middle of the route
                     Assert.assertEquals(
@@ -211,20 +214,20 @@ public class ItineraryTest extends AbstractItineraryProviderBasedTest {
                                     + t.getEntryTime(TimeUnit.MILLISECONDS) + ", origin "
                                     + t.getOrigin() + ")",
                             ItineraryTest.calculateOccupiedArcsWithKnownPosition(this.itinerary,
-                                    t.getOrigin()), this.itinerary.getOccupiedArcs(time));
+                                    t.getOrigin()), occupiedArcs);
                 }
             } else if (time > arrivalTime) {
                 // train should be gradually leaving the network
                 Assert.assertEquals("Occupied arcs for " + this.itinerary + " at " + time
                         + " (arrival time " + arrivalTime + ")",
                         ItineraryTest.calculateOccupiedArcsAfterArrival(this.itinerary, time),
-                        this.itinerary.getOccupiedArcs(time));
+                        occupiedArcs);
             } else {
                 // business as usual
                 Assert.assertEquals("Occupied arcs for " + this.itinerary + " at " + time,
                         ItineraryTest
                                 .calculateOccupiedArcsWithUnknownPosition(this.itinerary, time),
-                        this.itinerary.getOccupiedArcs(time));
+                        occupiedArcs);
             }
         }
     }

@@ -196,7 +196,7 @@ public class RAS2012ProblemIO implements ProblemIO {
         return mows;
     }
 
-    private Train initTrain(String solutionName, final ParsedTrain t) {
+    private Train initTrain(final String solutionName, final ParsedTrain t) {
         final boolean hazmat = RAS2012ProblemIO.tokenToBoolean(t.getHazmat());
         final boolean isWestbound = RAS2012ProblemIO.tokenToString(t.getDirection()).equals(
                 "WESTBOUND");
@@ -214,7 +214,7 @@ public class RAS2012ProblemIO implements ProblemIO {
         // just checking; make sure that the direction and target depot match
         final String wantDepot = RAS2012ProblemIO.tokenToString(t.getWantTime().get(0));
         if (wantDepot.equals("WEST") && !isWestbound || wantDepot.equals("EAST") && isWestbound) {
-            logger.info("Train " + name
+            RAS2012ProblemIO.logger.info("Train " + name
                     + " is headed away from the target destination. This bug in " + solutionName
                     + " will be corrected by directing the train to the proper destination.");
         }
@@ -231,7 +231,7 @@ public class RAS2012ProblemIO implements ProblemIO {
                 wantTime, originalScheduleAdherence, sars, hazmat, isWestbound);
     }
 
-    private Collection<Train> initTrains(String solutionName, final DataSetParser p) {
+    private Collection<Train> initTrains(final String solutionName, final DataSetParser p) {
         // first make sure there's as much trains as stated
         final List<ParsedTrain> origTrains = p.getTrains();
         if (!RAS2012ProblemIO.tokenToInteger(p.getNumTrains()).equals(origTrains.size())) {

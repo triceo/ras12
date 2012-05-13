@@ -120,17 +120,17 @@ public class ItineraryAssignmentTest extends AbstractItineraryProviderBasedTest 
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testRouteSetterNull() {
-        final ItineraryAssignment ia = new ItineraryAssignment(this.expectedTrain,
-                this.solution.getMaintenances());
-        ia.setRoute(null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
     public void testRouteSetterImpossible() {
         final ItineraryAssignment ia = new ItineraryAssignment(this.expectedTrain,
                 this.solution.getMaintenances());
         ia.setRoute(new Route(this.expectedTrain.isWestbound()));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testRouteSetterNull() {
+        final ItineraryAssignment ia = new ItineraryAssignment(this.expectedTrain,
+                this.solution.getMaintenances());
+        ia.setRoute(null);
     }
 
     @Test

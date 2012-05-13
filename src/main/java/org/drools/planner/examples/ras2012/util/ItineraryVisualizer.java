@@ -2,7 +2,6 @@ package org.drools.planner.examples.ras2012.util;
 
 import java.awt.Color;
 import java.awt.Paint;
-import java.util.Collection;
 import java.util.SortedMap;
 import java.util.concurrent.TimeUnit;
 
@@ -16,15 +15,15 @@ public class ItineraryVisualizer extends RouteVisualizer {
 
     private static final class EdgePainter implements Transformer<Arc, Paint> {
 
-        private final Collection<Arc> arcs;
+        private final OccupationTracker arcs;
 
-        public EdgePainter(final Collection<Arc> occupiedArcs) {
+        public EdgePainter(final OccupationTracker occupiedArcs) {
             this.arcs = occupiedArcs;
         }
 
         @Override
         public Paint transform(final Arc input) {
-            if (this.arcs.contains(input)) {
+            if (this.arcs.getIncludedArcs().contains(input)) {
                 return Color.RED;
             } else {
                 return Color.BLACK;
@@ -43,9 +42,9 @@ public class ItineraryVisualizer extends RouteVisualizer {
 
         @Override
         public String transform(final Node input) {
-            SortedMap<Long, Node> schedule = this.itinerary.getSchedule();
+            final SortedMap<Long, Node> schedule = this.itinerary.getSchedule();
             if (schedule.containsValue(input)) {
-                for (SortedMap.Entry<Long, Node> entry : schedule.entrySet()) {
+                for (final SortedMap.Entry<Long, Node> entry : schedule.entrySet()) {
                     if (entry.getValue() == input) {
                         return input.getId() + "@"
                                 + TimeUnit.MILLISECONDS.toMinutes(entry.getKey());

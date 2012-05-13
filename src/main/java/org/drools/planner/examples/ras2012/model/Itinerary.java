@@ -25,6 +25,7 @@ import org.drools.planner.examples.ras2012.model.original.WaitTime;
 import org.drools.planner.examples.ras2012.util.ArcProgression;
 import org.drools.planner.examples.ras2012.util.Converter;
 import org.drools.planner.examples.ras2012.util.ItineraryVisualizer;
+import org.drools.planner.examples.ras2012.util.OccupationTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -252,13 +253,13 @@ public final class Itinerary implements Visualizable {
         return this.maintenances;
     }
 
-    public Collection<Arc> getOccupiedArcs(final long time) {
+    public OccupationTracker getOccupiedArcs(final long time) {
         final boolean trainStarted = time <= this.getSchedule().firstKey();
         final boolean trainInOrigin = this.getTrain().getOrigin() == this.getRoute()
                 .getProgression().getOrigin().getOrigin(this.getRoute());
         if (trainStarted && trainInOrigin) {
             // train not yet on the route
-            return Collections.emptySet();
+            return OccupationTracker.Builder.empty();
         }
         final ArcProgression progression = this.getRoute().getProgression();
         final Arc leadingArc = this.getLeadingArc(time);
@@ -269,7 +270,7 @@ public final class Itinerary implements Visualizable {
                     .getTrain().getMaximumSpeed(Track.MAIN_0), timeTravelledInArc);
             if (travelledInArc.compareTo(this.getTrain().getLengthInMiles()) >= 0) {
                 // the train is gone completely
-                return Collections.emptySet();
+                return OccupationTracker.Builder.empty();
             } else {
                 // some part of the train is still in the network
                 return progression.getOccupiedArcs(progression.getLength(), this.getTrain()

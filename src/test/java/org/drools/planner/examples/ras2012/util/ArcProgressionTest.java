@@ -48,10 +48,6 @@ public class ArcProgressionTest {
         this.route = r;
     }
 
-    private Object[] arcs(final Arc... arcs) {
-        return arcs;
-    }
-
     @Test
     public void testCompleteHeadAndTail() {
         final Arc a = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));

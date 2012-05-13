@@ -1,30 +1,29 @@
 package org.drools.planner.examples.ras2012.util;
 
-import java.util.Collection;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.drools.planner.examples.ras2012.model.original.Arc;
 import org.drools.planner.examples.ras2012.model.original.Train;
 
 public class ConflictRegistry {
 
     private static class ConflictRegistryItem {
 
-        private final Map<Train, Collection<Arc>> occupiedArcs = new HashMap<Train, Collection<Arc>>();
+        private final Map<Train, OccupationTracker> occupiedArcs = new HashMap<Train, OccupationTracker>();
 
-        public int getConflicts() {
-            int conflicts = 0;
-            final Set<Arc> conflictingArcs = new HashSet<Arc>();
-            for (final Collection<Arc> arcsOccupiedByTrain : this.occupiedArcs.values()) {
-                for (final Arc a : arcsOccupiedByTrain) {
-                    if (conflictingArcs.contains(a)) {
-                        conflicts++;
-                    } else {
-                        conflictingArcs.add(a);
+        public BigDecimal getConflicts() {
+            BigDecimal conflicts = BigDecimal.ZERO;
+            final Set<OccupationTracker> used = new HashSet<OccupationTracker>();
+            for (final OccupationTracker oa : this.occupiedArcs.values()) {
+                used.add(oa);
+                for (final OccupationTracker oa2 : this.occupiedArcs.values()) {
+                    if (used.contains(oa2)) {
+                        continue;
                     }
+                    conflicts = conflicts.add(oa.getConflictingMileage(oa2));
                 }
             }
             return conflicts;
@@ -38,7 +37,7 @@ public class ConflictRegistry {
             this.occupiedArcs.remove(t);
         }
 
-        public void setOccupiedArcs(final Train t, final Collection<Arc> arcs) {
+        public void setOccupiedArcs(final Train t, final OccupationTracker arcs) {
             this.occupiedArcs.put(t, arcs);
         }
 
@@ -51,11 +50,11 @@ public class ConflictRegistry {
     }
 
     public int countConflicts() {
-        int conflicts = 0;
+        BigDecimal conflicts = BigDecimal.ZERO;
         for (final ConflictRegistryItem item : this.items.values()) {
-            conflicts += item.getConflicts();
+            conflicts = conflicts.add(item.getConflicts());
         }
-        return conflicts;
+        return conflicts.setScale(0, BigDecimal.ROUND_HALF_EVEN).intValue();
     }
 
     public void reset() {
@@ -70,7 +69,7 @@ public class ConflictRegistry {
         }
     }
 
-    public void setOccupiedArcs(final long time, final Train t, final Collection<Arc> occupiedArcs) {
+    public void setOccupiedArcs(final long time, final Train t, final OccupationTracker occupiedArcs) {
         if (!this.items.containsKey(time)) {
             this.items.put(time, new ConflictRegistryItem());
         }

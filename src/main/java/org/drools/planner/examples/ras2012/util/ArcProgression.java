@@ -19,6 +19,7 @@ import org.drools.planner.examples.ras2012.interfaces.Directed;
 import org.drools.planner.examples.ras2012.model.original.Arc;
 import org.drools.planner.examples.ras2012.model.original.Node;
 import org.drools.planner.examples.ras2012.model.original.Track;
+import org.drools.planner.examples.ras2012.util.OccupationTracker.Builder;
 
 public class ArcProgression implements Directed {
 
@@ -192,7 +193,7 @@ public class ArcProgression implements Directed {
         return Collections.unmodifiableCollection(this.nodes);
     }
 
-    public Collection<Arc> getOccupiedArcs(final BigDecimal endingMilestone,
+    public OccupationTracker getOccupiedArcs(final BigDecimal endingMilestone,
             final BigDecimal backtrack) {
         if (endingMilestone.signum() < 0) {
             throw new IllegalArgumentException("Please provide a milestone >= 0.");
@@ -202,17 +203,18 @@ public class ArcProgression implements Directed {
         }
         final BigDecimal startingMilestone = endingMilestone.subtract(backtrack);
         if (startingMilestone.compareTo(this.getLength()) > 0) {
-            return Collections.emptySet();
+            return OccupationTracker.Builder.empty();
         }
-        final Collection<Arc> occupiedArcs = new LinkedHashSet<Arc>();
+        final Builder b = new OccupationTracker.Builder(this);
         // find the farthest away occupied arc
         final SortedMap<BigDecimal, Arc> post = this.milestones.headMap(endingMilestone);
         final BigDecimal endingWith = post.size() == 0 ? this.milestones.lastKey() : post.lastKey();
         // determine how much must be occupied in other arcs
-        BigDecimal leftToOccupy = backtrack.subtract(endingMilestone.subtract(endingWith));
+        final BigDecimal occupied = endingMilestone.subtract(endingWith);
+        BigDecimal leftToOccupy = backtrack.subtract(occupied);
         Arc currentArc = this.milestones.get(endingWith);
         if (!leftToOccupy.equals(backtrack)) { // something has been occupied
-            occupiedArcs.add(currentArc);
+            b.addTo(currentArc, occupied);
         }
         while (leftToOccupy.signum() > 0) {
             // now occupy every other arc for as long as necessary
@@ -220,10 +222,17 @@ public class ArcProgression implements Directed {
             if (currentArc == null) {
                 break;
             }
-            occupiedArcs.add(currentArc);
+            if (leftToOccupy.compareTo(currentArc.getLengthInMiles()) < 0) {
+                // can no longer occupy the whole arc
+                b.addFrom(currentArc, currentArc.getLengthInMiles().subtract(leftToOccupy));
+                break;
+            } else {
+                // occupy the whole arc and continue to another
+                b.addWhole(currentArc);
+            }
             leftToOccupy = leftToOccupy.subtract(currentArc.getLengthInMiles());
         }
-        return occupiedArcs;
+        return b.build();
     }
 
     public Arc getOrigin() {
