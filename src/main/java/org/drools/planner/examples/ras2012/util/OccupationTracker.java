@@ -12,7 +12,7 @@ import org.drools.planner.examples.ras2012.model.original.Arc;
 
 public class OccupationTracker {
 
-    private static final class ArcRange {
+    protected static final class ArcRange {
 
         private final Arc arc;
 
@@ -34,12 +34,44 @@ public class OccupationTracker {
             }
             this.start = start;
             if (end.signum() < 0 || end.compareTo(a.getLengthInMiles()) > 0) {
-                throw new IllegalArgumentException("Arc range end must be between <0,"
+                throw new IllegalArgumentException("Arc range end must be in the range of <0,"
                         + a.getLengthInMiles() + ">.");
             }
             this.end = end;
             this.full = start.equals(BigDecimal.ZERO) && end.equals(a.getLengthInMiles());
             this.empty = start.equals(end);
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (!(obj instanceof ArcRange)) {
+                return false;
+            }
+            final ArcRange other = (ArcRange) obj;
+            if (this.arc != other.arc) {
+                return false;
+            }
+            if (this.end == null) {
+                if (other.end != null) {
+                    return false;
+                }
+            } else if (!this.end.equals(other.end)) {
+                return false;
+            }
+            if (this.start == null) {
+                if (other.start != null) {
+                    return false;
+                }
+            } else if (!this.start.equals(other.start)) {
+                return false;
+            }
+            return true;
         }
 
         public Arc getArc() {
@@ -63,6 +95,11 @@ public class OccupationTracker {
                 // we need to calculate the actual conflicting range
                 final BigDecimal start = this.getStart().max(other.getStart());
                 final BigDecimal end = this.getEnd().min(other.getEnd());
+                final BigDecimal result = end.subtract(start);
+                if (result.signum() < 0) {
+                    // ranges don't overlap
+                    return BigDecimal.ZERO;
+                }
                 return end.subtract(start);
             }
         }
@@ -75,12 +112,30 @@ public class OccupationTracker {
             return this.start;
         }
 
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + (this.arc == null ? 0 : this.arc.hashCode());
+            result = prime * result + (this.end == null ? 0 : this.end.hashCode());
+            result = prime * result + (this.start == null ? 0 : this.start.hashCode());
+            return result;
+        }
+
         private boolean isEmpty() {
             return this.empty;
         }
 
         private boolean isFull() {
             return this.full;
+        }
+
+        @Override
+        public String toString() {
+            final StringBuilder builder = new StringBuilder();
+            builder.append("ArcRange [arc=").append(this.arc).append(", start=").append(this.start)
+                    .append(", end=").append(this.end).append("]");
+            return builder.toString();
         }
 
     }
@@ -128,12 +183,12 @@ public class OccupationTracker {
             return new OccupationTracker(this.ranges.toArray(new ArcRange[this.ranges.size()]));
         }
 
-        private ArcRange create(final Arc a, final BigDecimal start, final BigDecimal end) {
+        protected ArcRange create(final Arc a, final BigDecimal start, final BigDecimal end) {
             if (this.directed.isEastbound()) {
                 return new ArcRange(a, start, end);
             } else {
-                return new ArcRange(a, a.getLengthInMiles().subtract(start), a.getLengthInMiles()
-                        .subtract(end));
+                return new ArcRange(a, a.getLengthInMiles().subtract(end), a.getLengthInMiles()
+                        .subtract(start));
             }
         }
     }
