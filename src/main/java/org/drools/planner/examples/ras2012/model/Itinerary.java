@@ -253,14 +253,18 @@ public final class Itinerary implements Visualizable {
     }
 
     public Collection<Arc> getOccupiedArcs(final long time) {
-        if (time <= this.getSchedule().firstKey()) {
+        final boolean trainStarted = time <= this.getSchedule().firstKey();
+        final boolean trainInOrigin = this.getTrain().getOrigin() == this.getRoute()
+                .getProgression().getOrigin().getOrigin(this.getRoute());
+        if (trainStarted && trainInOrigin) {
+            // train not yet on the route
             return Collections.emptySet();
         }
         final ArcProgression progression = this.getRoute().getProgression();
         final Arc leadingArc = this.getLeadingArc(time);
         if (leadingArc == null) {
             // the train should gradually leave the network through its destination
-            final long timeTravelledInArc = time - this.getEntryTime(progression.getPrevious(null));
+            final long timeTravelledInArc = time - this.getSchedule().lastKey();
             final BigDecimal travelledInArc = Converter.getDistanceInMilesFromSpeedAndTime(this
                     .getTrain().getMaximumSpeed(Track.MAIN_0), timeTravelledInArc);
             if (travelledInArc.compareTo(this.getTrain().getLengthInMiles()) >= 0) {
@@ -280,7 +284,7 @@ public final class Itinerary implements Visualizable {
             final long timeTravelledInArc = time - this.getEntryTime(leadingArc);
             final BigDecimal travelledInArc = Converter.getDistanceInMilesFromSpeedAndTime(
                     this.getTrain().getMaximumSpeed(leadingArc.getTrack()), timeTravelledInArc)
-                    .max(leadingArc.getLengthInMiles());
+                    .min(leadingArc.getLengthInMiles());
             return progression.getOccupiedArcs(
                     progression.getDistance(leadingArc.getOrigin(progression)).add(travelledInArc),
                     this.getTrain().getLengthInMiles());

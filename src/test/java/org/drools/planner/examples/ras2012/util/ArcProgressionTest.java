@@ -194,47 +194,6 @@ public class ArcProgressionTest {
     }
 
     @Test
-    public void testGetOccupiedArcs() {
-        final Arc a = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
-        final Arc b = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(1), Node.getNode(2));
-        final Arc c = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(2), Node.getNode(3));
-        final List<Arc> arcs = Arrays.asList(new Arc[] { a, b, c });
-        final ArcProgression p = new ArcProgression(this.route, arcs);
-
-        // varying train lengths
-        Assert.assertArrayEquals(p.isEastbound() ? this.arcs(b, c) : this.arcs(b, a), p
-                .getOccupiedArcs(new BigDecimal("2.5"), new BigDecimal("1.1")).toArray());
-        Assert.assertArrayEquals(p.isEastbound() ? this.arcs(c) : this.arcs(a),
-                p.getOccupiedArcs(new BigDecimal("2.5"), new BigDecimal("0.49")).toArray());
-        Assert.assertArrayEquals(p.isEastbound() ? this.arcs(b, c) : this.arcs(b, a), p
-                .getOccupiedArcs(new BigDecimal("2.5"), new BigDecimal("0.5")).toArray());
-        Assert.assertArrayEquals(p.isEastbound() ? this.arcs(b, c) : this.arcs(b, a), p
-                .getOccupiedArcs(new BigDecimal("2.5"), new BigDecimal("0.51")).toArray());
-        Assert.assertArrayEquals(p.isEastbound() ? this.arcs(b, c) : this.arcs(b, a), p
-                .getOccupiedArcs(new BigDecimal("2.5"), new BigDecimal("1.49")).toArray());
-        Assert.assertArrayEquals(p.isEastbound() ? this.arcs(a, b, c) : this.arcs(c, b, a), p
-                .getOccupiedArcs(new BigDecimal("2.5"), new BigDecimal("1.5")).toArray());
-        Assert.assertArrayEquals(p.isEastbound() ? this.arcs(a, b, c) : this.arcs(c, b, a), p
-                .getOccupiedArcs(new BigDecimal("2.5"), new BigDecimal("1.51")).toArray());
-        Assert.assertArrayEquals(p.isEastbound() ? this.arcs(a, b, c) : this.arcs(c, b, a), p
-                .getOccupiedArcs(new BigDecimal("2.5"), new BigDecimal("10")).toArray());
-
-        // varying milestones
-        Assert.assertArrayEquals(this.arcs(),
-                p.getOccupiedArcs(new BigDecimal("10"), new BigDecimal("1")).toArray());
-        Assert.assertArrayEquals(this.arcs(),
-                p.getOccupiedArcs(new BigDecimal("4"), new BigDecimal("0.99")).toArray());
-        Assert.assertArrayEquals(p.isEastbound() ? this.arcs(c) : this.arcs(a),
-                p.getOccupiedArcs(new BigDecimal("4"), new BigDecimal("1")).toArray());
-        Assert.assertArrayEquals(p.isEastbound() ? this.arcs(c) : this.arcs(a),
-                p.getOccupiedArcs(new BigDecimal("4"), new BigDecimal("1.01")).toArray());
-        Assert.assertArrayEquals(p.isEastbound() ? this.arcs(a) : this.arcs(c),
-                p.getOccupiedArcs(new BigDecimal("0.5"), new BigDecimal("0.1")).toArray());
-        Assert.assertArrayEquals(p.isEastbound() ? this.arcs(a) : this.arcs(c),
-                p.getOccupiedArcs(new BigDecimal("0.1"), new BigDecimal("0.11")).toArray());
-    }
-
-    @Test
     public void testGetOriginAndDestination() {
         final Node n1 = Node.getNode(0);
         final Node n2 = Node.getNode(1);

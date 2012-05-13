@@ -31,8 +31,6 @@ public class ArcProgression implements Directed {
     private final Collection<Node>           waitPoints;
     private final Directed                   directed;
 
-    private static final BigDecimal          MINIMAL_DISTANCE   = new BigDecimal("0.001");
-
     public ArcProgression(final Directed directed, final Arc... arcs) {
         this(directed, Arrays.asList(arcs));
     }
@@ -53,7 +51,7 @@ public class ArcProgression implements Directed {
         // cache information about nodes related to arcs
         BigDecimal milestone = BigDecimal.ZERO;
         for (final Arc a : this.orderedArcs) {
-            this.milestones.put(milestone.add(ArcProgression.MINIMAL_DISTANCE), a);
+            this.milestones.put(milestone, a);
             this.arcsPerOrigin.put(a.getOrigin(this), a);
             this.arcsPerDestination.put(a.getDestination(this), a);
             this.nodes.add(a.getOrigin(this));
@@ -207,24 +205,23 @@ public class ArcProgression implements Directed {
             return Collections.emptySet();
         }
         final Collection<Arc> occupiedArcs = new LinkedHashSet<Arc>();
-        final SortedMap<BigDecimal, Arc> pre = this.milestones.headMap(startingMilestone
-                .add(ArcProgression.MINIMAL_DISTANCE));
-        final BigDecimal startingWith = pre.size() == 0 ? this.milestones.firstKey() : pre
-                .lastKey();
-        final SortedMap<BigDecimal, Arc> post = this.milestones.headMap(endingMilestone
-                .add(ArcProgression.MINIMAL_DISTANCE));
+        // find the farthest away occupied arc
+        final SortedMap<BigDecimal, Arc> post = this.milestones.headMap(endingMilestone);
         final BigDecimal endingWith = post.size() == 0 ? this.milestones.lastKey() : post.lastKey();
-        boolean track = false;
-        for (final BigDecimal milestone : this.milestones.keySet()) {
-            if (milestone == startingWith) {
-                track = true;
-            }
-            if (track) {
-                occupiedArcs.add(this.milestones.get(milestone));
-            }
-            if (milestone == endingWith) {
+        // determine how much must be occupied in other arcs
+        BigDecimal leftToOccupy = backtrack.subtract(endingMilestone.subtract(endingWith));
+        Arc currentArc = this.milestones.get(endingWith);
+        if (!leftToOccupy.equals(backtrack)) { // something has been occupied
+            occupiedArcs.add(currentArc);
+        }
+        while (leftToOccupy.signum() > 0) {
+            // now occupy every other arc for as long as necessary
+            currentArc = this.getPrevious(currentArc);
+            if (currentArc == null) {
                 break;
             }
+            occupiedArcs.add(currentArc);
+            leftToOccupy = leftToOccupy.subtract(currentArc.getLengthInMiles());
         }
         return occupiedArcs;
     }

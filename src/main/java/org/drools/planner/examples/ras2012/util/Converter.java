@@ -36,12 +36,6 @@ public class Converter {
         return i.getRoute().getProgression().getDistance(i.getTrain().getOrigin(), position);
     }
 
-    public static BigDecimal getDistanceInMilesFromSpeedAndTime(final int speedInMPH,
-            final long timeInMilliseconds) {
-        return Converter.getDistanceInMilesFromSpeedAndTime(BigDecimal.valueOf(speedInMPH),
-                timeInMilliseconds);
-    }
-
     public static BigDecimal getDistanceInMilesFromSpeedAndTime(final BigDecimal speedInMPH,
             final long timeInMilliseconds) {
         final BigDecimal timeInSeconds = BigDecimal.valueOf(timeInMilliseconds)
@@ -54,6 +48,12 @@ public class Converter {
         return speedInMPH.multiply(timeInHours);
     }
 
+    public static BigDecimal getDistanceInMilesFromSpeedAndTime(final int speedInMPH,
+            final long timeInMilliseconds) {
+        return Converter.getDistanceInMilesFromSpeedAndTime(BigDecimal.valueOf(speedInMPH),
+                timeInMilliseconds);
+    }
+
     public static BigDecimal getDistanceTravelledInTheArc(final Itinerary i, final Arc a,
             final long time) {
         final long timeTravelledInLeadingArc = time - Converter.getNearestPastCheckpoint(i, time);
@@ -64,15 +64,11 @@ public class Converter {
                     .getTrain().getMaximumSpeed(a.getTrack()), timeTravelledInLeadingArc);
         }
         // train cannot travel more than the arc's length; if it does, there must be some wait times in play
-        return distanceTravelledInLeadingArc.max(a.getLengthInMiles());
+        return distanceTravelledInLeadingArc.min(a.getLengthInMiles());
     }
 
     private static long getNearestPastCheckpoint(final Itinerary i, final long time) {
-        return i.getSchedule().headMap(time + 1).lastKey();
-    }
-
-    public static long getTimeFromSpeedAndDistance(final int speedInMPH, final BigDecimal distance) {
-        return Converter.getTimeFromSpeedAndDistance(BigDecimal.valueOf(speedInMPH), distance);
+        return i.getSchedule().headMap(time).lastKey();
     }
 
     public static long getTimeFromSpeedAndDistance(final BigDecimal speedInMPH,
@@ -81,6 +77,10 @@ public class Converter {
                 .divide(speedInMPH, Converter.BIGDECIMAL_SCALE, Converter.BIGDECIMAL_ROUNDING)
                 .multiply(BigDecimal.valueOf(3600000)).setScale(0, Converter.BIGDECIMAL_ROUNDING)
                 .longValue();
+    }
+
+    public static long getTimeFromSpeedAndDistance(final int speedInMPH, final BigDecimal distance) {
+        return Converter.getTimeFromSpeedAndDistance(BigDecimal.valueOf(speedInMPH), distance);
     }
 
 }
