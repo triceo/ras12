@@ -1,10 +1,11 @@
 CLEAR_CONSOLE=true
-JAVACC_OPTIONS=-JDK_VERSION\=1.6 -GRAMMAR_ENCODING\=UTF-8
+JAVACC_OPTIONS=-GRAMMAR_ENCODING\=UTF-8
 JJDOC_OPTIONS=
 JJTREE_OPTIONS=
 JJ_NATURE=true
 JTB_OPTIONS=-ia -jd -tk
-RUNTIME_JJJAR=/home/lpetrovi/Apps/eclipse/plugins/sf.eclipse.javacc_1.5.24/javacc.jar
-RUNTIME_JTBJAR=/home/lpetrovi/Apps/eclipse/plugins/sf.eclipse.javacc_1.5.24/jtb-1.4.4.jar
+MARK_GEN_FILES_AS_DERIVED=true
+RUNTIME_JJJAR=/home/lpetrovi/Apps/eclipse/plugins/sf.eclipse.javacc_1.5.25/javacc.jar
+RUNTIME_JTBJAR=/home/lpetrovi/Apps/eclipse/plugins/sf.eclipse.javacc_1.5.25/jtb-1.4.6.jar
 SUPPRESS_WARNINGS=false
 eclipse.preferences.version=1
