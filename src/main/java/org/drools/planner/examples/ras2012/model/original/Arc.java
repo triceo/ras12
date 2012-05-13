@@ -21,7 +21,7 @@ public class Arc extends Section {
         if (t == null || lengthInMiles == null) {
             throw new IllegalArgumentException("Neither of the arguments can be null.");
         }
-        if (BigDecimal.ZERO.compareTo(lengthInMiles) > -1) {
+        if (lengthInMiles.signum() <= 0) {
             throw new IllegalArgumentException("Arc length must be greater than zero.");
         }
         this.track = t;

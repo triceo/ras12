@@ -54,7 +54,7 @@ public class ItineraryTest extends AbstractItineraryProviderBasedTest {
         final Collection<Arc> results = new LinkedHashSet<Arc>();
         BigDecimal remainingTrainLength = remainingLength;
         Arc arc = i.getRoute().getProgression().getWithDestinationNode(n);
-        while (remainingTrainLength.compareTo(BigDecimal.ZERO) > 0) {
+        while (remainingTrainLength.signum() > 0) {
             if (arc == null) { // train not yet fully en route
                 break;
             }
@@ -75,7 +75,7 @@ public class ItineraryTest extends AbstractItineraryProviderBasedTest {
         }
         final BigDecimal distanceTravelledInLeadingArc = Converter.getDistanceTravelledInTheArc(i,
                 leadingArc, time);
-        if (distanceTravelledInLeadingArc.compareTo(BigDecimal.ZERO) > 0) {
+        if (distanceTravelledInLeadingArc.signum() > 0) {
             results.add(leadingArc);
         }
         // and add the rest of the train, if necessary

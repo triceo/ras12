@@ -90,11 +90,11 @@ public class Train implements Comparable<Train>, Directed {
                     + name);
         }
         this.name = name;
-        if (length == null || length.compareTo(BigDecimal.ZERO) != 1) {
+        if (length == null || length.signum() <= 0) {
             throw new IllegalArgumentException("Train must have a length greater than 0.");
         }
         this.length = length;
-        if (speedMultiplier == null || speedMultiplier.compareTo(BigDecimal.ZERO) != 1) {
+        if (speedMultiplier == null || speedMultiplier.signum() <= 0) {
             throw new IllegalArgumentException("Train must have a speed multiplier greater than 0.");
         }
         this.speedMultiplier = speedMultiplier;

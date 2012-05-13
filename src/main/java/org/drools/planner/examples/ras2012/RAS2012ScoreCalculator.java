@@ -156,7 +156,7 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
                 BigDecimal hourlyDifference = RAS2012ScoreCalculator
                         .roundMillisecondsToHours(difference);
                 hourlyDifference = hourlyDifference.subtract(BigDecimal.valueOf(2));
-                if (hourlyDifference.compareTo(BigDecimal.ZERO) > 0) {
+                if (hourlyDifference.signum() > 0) {
                     penalty += hourlyDifference.multiply(BigDecimal.valueOf(200)).intValue();
                 }
             }
@@ -194,12 +194,12 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
         final BigDecimal penalty = BigDecimal.valueOf(75);
         if (delay > 0) {
             hours = hours.subtract(BigDecimal.valueOf(3));
-            if (hours.compareTo(BigDecimal.ZERO) > 0) {
+            if (hours.signum() > 0) {
                 return hours.multiply(penalty).intValue();
             }
         } else if (delay < 0) {
             hours = hours.add(BigDecimal.valueOf(1));
-            if (hours.compareTo(BigDecimal.ZERO) < 0) {
+            if (hours.signum() < 0) {
                 return -hours.multiply(penalty).intValue();
             }
         }

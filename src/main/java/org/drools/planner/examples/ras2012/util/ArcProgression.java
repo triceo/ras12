@@ -194,10 +194,10 @@ public class ArcProgression implements Directed {
 
     public Collection<Arc> getOccupiedArcs(final BigDecimal endingMilestone,
             final BigDecimal backtrack) {
-        if (endingMilestone.compareTo(BigDecimal.ZERO) < 0) {
+        if (endingMilestone.signum() < 0) {
             throw new IllegalArgumentException("Please provide a milestone >= 0.");
         }
-        if (backtrack.compareTo(BigDecimal.ZERO) <= 0) {
+        if (backtrack.signum() <= 0) {
             throw new IllegalArgumentException("Please provide a backtrack > 0.");
         }
         final BigDecimal startingMilestone = endingMilestone.subtract(backtrack);
