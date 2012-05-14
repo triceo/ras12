@@ -63,16 +63,16 @@ public class ToyExampleSolutionTest {
         b1Assignment.setRoute(this.locateRoute(45));
         // we must be at node 6 precisely at 5110576
         long delay = 5110576 - this.getArrivalAtNode(b1Assignment.getItinerary(), Node.getNode(6));
-        b1Assignment.getItinerary().setWaitTime(WaitTime.getWaitTime(delay, TimeUnit.MILLISECONDS),
-                Node.getNode(9));
+        b1Assignment.getItinerary().setWaitTime(Node.getNode(9),
+                WaitTime.getWaitTime(delay, TimeUnit.MILLISECONDS));
         // prepare C1 according to the example
         final Train c1 = this.locateTrain("C1");
         final ItineraryAssignment c1Assignment = this.SOLUTION.getAssignment(c1);
         c1Assignment.setRoute(this.locateRoute(9));
         // we must be at node 6 precisely at 7713668
         delay = 7713668 - this.getArrivalAtNode(c1Assignment.getItinerary(), Node.getNode(6));
-        c1Assignment.getItinerary().setWaitTime(WaitTime.getWaitTime(delay, TimeUnit.MILLISECONDS),
-                Node.getNode(4));
+        c1Assignment.getItinerary().setWaitTime(Node.getNode(4),
+                WaitTime.getWaitTime(delay, TimeUnit.MILLISECONDS));
         // prepare A1 according to the example
         final Train a1 = this.locateTrain("A1");
         final ItineraryAssignment a1Assignment = this.SOLUTION.getAssignment(a1);

@@ -88,7 +88,7 @@ public class RouteReassignmentMove implements Move {
         this.assignment = ((RAS2012Solution) scoreDirector.getWorkingSolution())
                 .getAssignment(this.train);
         this.previousRoute = this.assignment.getRoute();
-        this.previousWaitTimes = this.assignment.getItinerary().getAllWaitTimes();
+        this.previousWaitTimes = this.assignment.getItinerary().getWaitTimes();
         return this.assignment;
     }
 

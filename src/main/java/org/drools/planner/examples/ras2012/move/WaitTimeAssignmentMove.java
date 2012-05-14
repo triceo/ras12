@@ -44,7 +44,7 @@ public class WaitTimeAssignmentMove implements Move {
         this.initializeMove(scoreDirector);
         final ItineraryAssignment ia = this.getAssignment(scoreDirector);
         scoreDirector.beforeVariableChanged(ia, "waitTime");
-        ia.getItinerary().setWaitTime(this.waitTime, this.node);
+        ia.getItinerary().setWaitTime(this.node, this.waitTime);
         scoreDirector.afterVariableChanged(ia, "waitTime");
     }
 

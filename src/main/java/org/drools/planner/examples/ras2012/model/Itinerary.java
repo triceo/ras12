@@ -50,8 +50,15 @@ public final class Itinerary implements Visualizable {
     // FIXME only one window per node; multiple different windows with same node will get lost
     private final Map<Node, MaintenanceWindow> maintenances          = new HashMap<Node, MaintenanceWindow>();
 
+    public Itinerary(final Route r, final Train t) {
+        this(r, t, null);
+    }
+
     public Itinerary(final Route r, final Train t,
             final Collection<MaintenanceWindow> maintenanceWindows) {
+        if (r == null || t == null) {
+            throw new IllegalArgumentException("Neither route nor train may be null.");
+        }
         if (!r.isPossibleForTrain(t)) {
             throw new IllegalArgumentException("Route " + r.getId() + " impossible for train "
                     + t.getName() + ".");
@@ -62,9 +69,14 @@ public final class Itinerary implements Visualizable {
         this.nodesEnRoute = this.getRoute().getProgression().tail(this.getTrain().getOrigin())
                 .getNodes();
         // initialize the maintenance windows
-        for (final MaintenanceWindow mow : maintenanceWindows) {
-            final Node n = mow.getOrigin(t);
-            this.maintenances.put(n, mow);
+        if (maintenanceWindows != null) {
+            for (final MaintenanceWindow mow : maintenanceWindows) {
+                final Node origin = mow.getOrigin(t);
+                final Node destination = mow.getDestination(t);
+                if (this.isNodeOnRoute(origin) && this.isNodeOnRoute(destination)) {
+                    this.maintenances.put(origin, mow);
+                }
+            }
         }
     }
 
@@ -114,9 +126,6 @@ public final class Itinerary implements Visualizable {
             previousArc = currentArc;
             i++;
         }
-        if (previousArc == null) {
-            throw new IllegalStateException("previousArc == null. That shouldn't have happened!");
-        }
         final long time = previousTime
                 + this.getTrain().getArcTravellingTime(previousArc, Itinerary.DEFAULT_TIME_UNIT);
         this.scheduleCache.put(time, previousArc.getDestination(this.getTrain()));
@@ -136,32 +145,16 @@ public final class Itinerary implements Visualizable {
             return false;
         }
         final Itinerary other = (Itinerary) obj;
-        if (this.nodeWaitTimes == null) {
-            if (other.nodeWaitTimes != null) {
-                return false;
-            }
-        } else if (!this.nodeWaitTimes.equals(other.nodeWaitTimes)) {
+        if (this.train != other.train) {
             return false;
         }
-        if (this.route == null) {
-            if (other.route != null) {
-                return false;
-            }
-        } else if (!this.route.equals(other.route)) {
+        if (this.route != other.route) {
             return false;
         }
-        if (this.train == null) {
-            if (other.train != null) {
-                return false;
-            }
-        } else if (!this.train.equals(other.train)) {
+        if (!this.nodeWaitTimes.equals(other.nodeWaitTimes)) {
             return false;
         }
         return true;
-    }
-
-    public Map<Node, WaitTime> getAllWaitTimes() {
-        return Collections.unmodifiableMap(this.nodeWaitTimes);
     }
 
     /**
@@ -356,6 +349,10 @@ public final class Itinerary implements Visualizable {
         return this.nodeWaitTimes.get(n);
     }
 
+    public Map<Node, WaitTime> getWaitTimes() {
+        return Collections.unmodifiableMap(this.nodeWaitTimes);
+    }
+
     public long getWantTimeDifference() {
         return this.getDelay(this.getTrain().getDestination(),
                 this.getTrain().getWantTime(Itinerary.DEFAULT_TIME_UNIT));
@@ -365,9 +362,9 @@ public final class Itinerary implements Visualizable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (this.nodeWaitTimes == null ? 0 : this.nodeWaitTimes.hashCode());
-        result = prime * result + (this.route == null ? 0 : this.route.hashCode());
-        result = prime * result + (this.train == null ? 0 : this.train.hashCode());
+        result = prime * result + this.nodeWaitTimes.hashCode();
+        result = prime * result + this.route.hashCode();
+        result = prime * result + this.train.hashCode();
         return result;
     }
 
@@ -380,13 +377,6 @@ public final class Itinerary implements Visualizable {
         return this.nodesEnRoute.contains(n);
     }
 
-    public void removeAllWaitTimes() {
-        if (this.nodeWaitTimes.size() > 0) {
-            this.invalidateCaches();
-        }
-        this.nodeWaitTimes.clear();
-    }
-
     public WaitTime removeWaitTime(final Node n) {
         if (this.nodeWaitTimes.containsKey(n)) {
             this.invalidateCaches();
@@ -396,21 +386,24 @@ public final class Itinerary implements Visualizable {
         }
     }
 
-    public synchronized WaitTime setWaitTime(final WaitTime w, final Node n) {
+    public void removeWaitTimes() {
+        if (this.nodeWaitTimes.size() > 0) {
+            this.invalidateCaches();
+        }
+        this.nodeWaitTimes.clear();
+    }
+
+    public synchronized WaitTime setWaitTime(final Node n, final WaitTime w) {
+        if (!this.getRoute().getProgression().getWaitPoints().contains(n)) {
+            throw new IllegalArgumentException(n + " not a wait point: " + this);
+        }
         if (w == null) {
             return this.removeWaitTime(n);
         }
-        if (!this.isNodeOnRoute(n)) {
-            throw new IllegalArgumentException(n + " not in the itinerary: " + this);
-        }
-        if (this.getRoute().getProgression().getWaitPoints().contains(n)) {
-            this.invalidateCaches();
-            final WaitTime previous = this.nodeWaitTimes.get(n);
-            this.nodeWaitTimes.put(n, w);
-            return previous;
-        } else {
-            return null;
-        }
+        this.invalidateCaches();
+        final WaitTime previous = this.nodeWaitTimes.get(n);
+        this.nodeWaitTimes.put(n, w);
+        return previous;
     }
 
     @Override

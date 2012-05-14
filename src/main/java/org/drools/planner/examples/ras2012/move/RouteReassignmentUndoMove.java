@@ -40,7 +40,7 @@ public class RouteReassignmentUndoMove implements Move {
         scoreDirector.beforeVariableChanged(this.assignment, "route");
         this.assignment.setRoute(this.originalRoute);
         for (final Map.Entry<Node, WaitTime> entry : this.originalWaitTimes.entrySet()) {
-            this.assignment.getItinerary().setWaitTime(entry.getValue(), entry.getKey());
+            this.assignment.getItinerary().setWaitTime(entry.getKey(), entry.getValue());
         }
         scoreDirector.afterVariableChanged(this.assignment, "route");
     }

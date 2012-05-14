@@ -16,10 +16,13 @@ import org.junit.runners.Parameterized.Parameters;
 public class ItineraryAssignmentTest extends AbstractItineraryProviderBasedTest {
 
     private static Map<Node, MaintenanceWindow> convertMOWs(
-            final Collection<MaintenanceWindow> mows, final Route r) {
+            final Collection<MaintenanceWindow> mows, final Itinerary i) {
+        Route r = i.getRoute();
         final Map<Node, MaintenanceWindow> result = new HashMap<Node, MaintenanceWindow>();
         for (final MaintenanceWindow mow : mows) {
-            result.put(mow.getOrigin(r), mow);
+            if (i.isNodeOnRoute(mow.getOrigin(r)) && i.isNodeOnRoute(mow.getDestination(r))) {
+                result.put(mow.getOrigin(r), mow);
+            }
         }
         return result;
     }
@@ -115,8 +118,9 @@ public class ItineraryAssignmentTest extends AbstractItineraryProviderBasedTest 
         Assert.assertEquals(this.expectedItinerary, itinerary);
         Assert.assertEquals(this.expectedTrain, itinerary.getTrain());
         Assert.assertEquals(this.expectedRoute, itinerary.getRoute());
-        Assert.assertEquals(ItineraryAssignmentTest.convertMOWs(this.solution.getMaintenances(),
-                this.expectedRoute), itinerary.getMaintenances());
+        Assert.assertEquals(
+                ItineraryAssignmentTest.convertMOWs(this.solution.getMaintenances(), itinerary),
+                itinerary.getMaintenances());
     }
 
     @Test(expected = IllegalArgumentException.class)
