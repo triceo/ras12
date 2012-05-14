@@ -13,7 +13,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.drools.planner.examples.ras2012.Visualizable;
-
 import org.drools.planner.examples.ras2012.model.original.Arc;
 import org.drools.planner.examples.ras2012.model.original.Node;
 import org.drools.planner.examples.ras2012.model.original.Train;
@@ -57,6 +56,9 @@ public class Network extends Visualizable {
                 westDepo = n;
                 break;
             }
+        }
+        if (eastDepo == null || westDepo == null) {
+            throw new IllegalStateException("Cannot find depot in one of the directions.");
         }
 
         Route.resetRouteCounter();
