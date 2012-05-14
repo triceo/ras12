@@ -22,7 +22,8 @@ public class OccupationTrackerArcRangeTest {
         private final BigDecimal start1, start2, end1, end2, result;
         private final String     description;
 
-        public TestInfo(int start1, int start2, int end1, int end2, int result, String description) {
+        public TestInfo(final int start1, final int start2, final int end1, final int end2,
+                final int result, final String description) {
             this.start1 = BigDecimal.valueOf(start1);
             this.start2 = BigDecimal.valueOf(start2);
             this.end1 = BigDecimal.valueOf(end1);
@@ -32,39 +33,39 @@ public class OccupationTrackerArcRangeTest {
                     + ")";
         }
 
-        public BigDecimal getResult() {
-            return result;
-        }
-
-        public BigDecimal getStart1() {
-            return start1;
-        }
-
-        public BigDecimal getStart2() {
-            return start2;
+        public String getDescription() {
+            return this.description;
         }
 
         public BigDecimal getEnd1() {
-            return end1;
+            return this.end1;
         }
 
         public BigDecimal getEnd2() {
-            return end2;
+            return this.end2;
         }
 
         public BigDecimal getMax() {
-            return start1.max(start2.max(end1.max(end2)));
+            return this.start1.max(this.start2.max(this.end1.max(this.end2)));
         }
 
-        public String getDescription() {
-            return description;
+        public BigDecimal getResult() {
+            return this.result;
+        }
+
+        public BigDecimal getStart1() {
+            return this.start1;
+        }
+
+        public BigDecimal getStart2() {
+            return this.start2;
         }
 
     }
 
     @Parameters
     public static Collection<Object[]> getInput() {
-        Collection<Object[]> infos = new LinkedList<Object[]>();
+        final Collection<Object[]> infos = new LinkedList<Object[]>();
         // ranges may overlap; all combinations possible
         infos.add(new Object[] { new TestInfo(1, 0, 2, 3, 1, "start1 > start2,end1 < end2") });
         infos.add(new Object[] { new TestInfo(0, 0, 2, 3, 2, "start1 = start2,end1 < end2") });
@@ -94,39 +95,39 @@ public class OccupationTrackerArcRangeTest {
 
     private final TestInfo testInfo;
 
-    public OccupationTrackerArcRangeTest(TestInfo testInfo) {
+    public OccupationTrackerArcRangeTest(final TestInfo testInfo) {
         this.testInfo = testInfo;
     }
 
     @Test
     public void testRanges() {
-        Arc a = new Arc(Track.MAIN_0, testInfo.getMax().max(BigDecimal.ONE), Node.getNode(0),
-                Node.getNode(1));
-        ArcRange a1 = new ArcRange(a, testInfo.getStart1(), testInfo.getEnd1());
-        ArcRange a2 = new ArcRange(a, testInfo.getStart2(), testInfo.getEnd2());
-        Assert.assertEquals(testInfo.getDescription(), testInfo.getResult(),
+        final Arc a = new Arc(Track.MAIN_0, this.testInfo.getMax().max(BigDecimal.ONE),
+                Node.getNode(0), Node.getNode(1));
+        final ArcRange a1 = new ArcRange(a, this.testInfo.getStart1(), this.testInfo.getEnd1());
+        final ArcRange a2 = new ArcRange(a, this.testInfo.getStart2(), this.testInfo.getEnd2());
+        Assert.assertEquals(this.testInfo.getDescription(), this.testInfo.getResult(),
                 a1.getConflictingMileage(a2));
-        Assert.assertEquals(testInfo.getDescription(), testInfo.getResult(),
+        Assert.assertEquals(this.testInfo.getDescription(), this.testInfo.getResult(),
                 a2.getConflictingMileage(a1));
     }
 
     @Test
     public void testRangesLonger() {
-        Arc a = new Arc(Track.MAIN_0, testInfo.getMax().add(BigDecimal.ONE), Node.getNode(0),
-                Node.getNode(1));
-        ArcRange a1 = new ArcRange(a, testInfo.getStart1(), testInfo.getEnd1());
-        ArcRange a2 = new ArcRange(a, testInfo.getStart2(), testInfo.getEnd2());
-        Assert.assertEquals(testInfo.getDescription(), testInfo.getResult(),
+        final Arc a = new Arc(Track.MAIN_0, this.testInfo.getMax().add(BigDecimal.ONE),
+                Node.getNode(0), Node.getNode(1));
+        final ArcRange a1 = new ArcRange(a, this.testInfo.getStart1(), this.testInfo.getEnd1());
+        final ArcRange a2 = new ArcRange(a, this.testInfo.getStart2(), this.testInfo.getEnd2());
+        Assert.assertEquals(this.testInfo.getDescription(), this.testInfo.getResult(),
                 a1.getConflictingMileage(a2));
-        Assert.assertEquals(testInfo.getDescription(), testInfo.getResult(),
+        Assert.assertEquals(this.testInfo.getDescription(), this.testInfo.getResult(),
                 a2.getConflictingMileage(a1));
     }
 
-    private void testRangesShorter(boolean switchRanges) {
-        Arc a = new Arc(Track.MAIN_0, testInfo.getMax().subtract(BigDecimal.ONE), Node.getNode(0),
-                Node.getNode(1));
-        ArcRange a1 = new ArcRange(a, testInfo.getStart1(), testInfo.getEnd1());
-        ArcRange a2 = new ArcRange(a, testInfo.getStart2(), testInfo.getEnd2());
+    private void testRangesShorter(final boolean switchRanges) {
+        final Arc a = new Arc(Track.MAIN_0, this.testInfo.getMax().subtract(BigDecimal.ONE),
+                Node.getNode(0), Node.getNode(1));
+        final ArcRange a1 = new ArcRange(a, this.testInfo.getStart1(), this.testInfo.getEnd1());
+        final ArcRange a2 = new ArcRange(a, this.testInfo.getStart2(), this.testInfo.getEnd2());
         if (switchRanges) {
             a1.getConflictingMileage(a2);
         } else {
@@ -136,11 +137,11 @@ public class OccupationTrackerArcRangeTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testRangesShorterOne() {
-        testRangesShorter(true);
+        this.testRangesShorter(true);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testRangesShorterTwo() {
-        testRangesShorter(false);
+        this.testRangesShorter(false);
     }
 }
