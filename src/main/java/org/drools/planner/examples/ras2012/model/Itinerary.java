@@ -1,9 +1,6 @@
 package org.drools.planner.examples.ras2012.model;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
@@ -14,7 +11,6 @@ import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.drools.planner.examples.ras2012.interfaces.Visualizable;
 import org.drools.planner.examples.ras2012.model.original.Arc;
 import org.drools.planner.examples.ras2012.model.original.MaintenanceWindow;
 import org.drools.planner.examples.ras2012.model.original.Node;
@@ -26,15 +22,10 @@ import org.drools.planner.examples.ras2012.util.ArcProgression;
 import org.drools.planner.examples.ras2012.util.Converter;
 import org.drools.planner.examples.ras2012.util.ItineraryVisualizer;
 import org.drools.planner.examples.ras2012.util.OccupationTracker;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public final class Itinerary implements Visualizable {
+public final class Itinerary extends Visualizable {
 
     private static final TimeUnit              DEFAULT_TIME_UNIT     = TimeUnit.MILLISECONDS;
-
-    private static final Logger                logger                = LoggerFactory
-                                                                             .getLogger(Itinerary.class);
 
     private final Route                        route;
 
@@ -420,24 +411,6 @@ public final class Itinerary implements Visualizable {
     }
 
     public boolean visualize(final File target, final long time) {
-        OutputStream os = null;
-        try {
-            os = new FileOutputStream(target);
-            Itinerary.logger.info("Starting visualizing itinerary: " + this);
-            new ItineraryVisualizer(this, time).visualize(os);
-            Itinerary.logger.info("Itinerary visualization finished: " + this);
-            return true;
-        } catch (final Exception ex) {
-            Itinerary.logger.error("Visualizing itinerary " + this + " failed.", ex);
-            return false;
-        } finally {
-            if (os != null) {
-                try {
-                    os.close();
-                } catch (final IOException e) {
-                    // nothing to do here
-                }
-            }
-        }
+        return this.visualize(new ItineraryVisualizer(this, time), target);
     }
 }

@@ -1,20 +1,15 @@
 package org.drools.planner.examples.ras2012.model;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.drools.planner.examples.ras2012.interfaces.Directed;
-import org.drools.planner.examples.ras2012.interfaces.Visualizable;
 import org.drools.planner.examples.ras2012.model.original.Arc;
 import org.drools.planner.examples.ras2012.model.original.Node;
 import org.drools.planner.examples.ras2012.model.original.ScheduleAdherenceRequirement;
@@ -23,15 +18,11 @@ import org.drools.planner.examples.ras2012.model.original.Train;
 import org.drools.planner.examples.ras2012.util.ArcProgression;
 import org.drools.planner.examples.ras2012.util.Converter;
 import org.drools.planner.examples.ras2012.util.RouteVisualizer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Note: this class has a natural ordering that is inconsistent with equals.
  */
-public class Route implements Comparable<Route>, Directed, Visualizable {
-
-    private static final Logger        logger      = LoggerFactory.getLogger(Route.class);
+public class Route extends Visualizable implements Comparable<Route>, Directed {
 
     private static final AtomicInteger idGenerator = new AtomicInteger(0);
 
@@ -230,29 +221,6 @@ public class Route implements Comparable<Route>, Directed, Visualizable {
 
     @Override
     public boolean visualize(final File target) {
-        OutputStream os = null;
-        try {
-            os = new FileOutputStream(target);
-            final Collection<Node> nodes = new HashSet<Node>();
-            for (final Arc a : this.progression.getArcs()) {
-                nodes.add(a.getOrigin(this));
-                nodes.add(a.getDestination(this));
-            }
-            Route.logger.info("Starting visualizing route: " + this.getId());
-            new RouteVisualizer(this).visualize(os);
-            Route.logger.info("Route visualization finished: " + this.getId());
-            return true;
-        } catch (final Exception ex) {
-            Route.logger.error("Visualizing route " + this.getId() + " failed.", ex);
-            return false;
-        } finally {
-            if (os != null) {
-                try {
-                    os.close();
-                } catch (final IOException e) {
-                    // nothing to do here
-                }
-            }
-        }
+        return this.visualize(new RouteVisualizer(this), target);
     }
 }

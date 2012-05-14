@@ -1,9 +1,6 @@
 package org.drools.planner.examples.ras2012.model;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,17 +12,12 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.drools.planner.examples.ras2012.interfaces.Visualizable;
 import org.drools.planner.examples.ras2012.model.original.Arc;
 import org.drools.planner.examples.ras2012.model.original.Node;
 import org.drools.planner.examples.ras2012.model.original.Train;
 import org.drools.planner.examples.ras2012.util.GraphVisualizer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class Network implements Visualizable {
-
-    private static final Logger     logger     = LoggerFactory.getLogger(Network.class);
+public class Network extends Visualizable {
 
     private final GraphVisualizer   visualizer;
     private final Collection<Route> westboundRoutes;
@@ -136,24 +128,6 @@ public class Network implements Visualizable {
 
     @Override
     public boolean visualize(final File target) {
-        OutputStream os = null;
-        try {
-            os = new FileOutputStream(target);
-            Network.logger.info("Starting visualizing network.");
-            this.visualizer.visualize(os);
-            Network.logger.info("Network vizualization finished.");
-            return true;
-        } catch (final Exception ex) {
-            Network.logger.error("Visualizing network failed.", ex);
-            return false;
-        } finally {
-            if (os != null) {
-                try {
-                    os.close();
-                } catch (final IOException e) {
-                    // nothing to do here
-                }
-            }
-        }
+        return this.visualize(this.visualizer, target);
     }
 }

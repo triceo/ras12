@@ -46,12 +46,18 @@ public class RouteTest {
 
     @Test
     public void testEquals() {
+        Route.resetRouteCounter();
         final Route r = new Route(this.isEastbound);
         final Route r2 = new Route(this.isEastbound);
-        Assert.assertTrue("Route should be equal to itself.", r.equals(r));
+        Assert.assertEquals("Route should be equal to itself.", r, r);
         Assert.assertFalse("Route should not equal null.", r.equals(null));
         Assert.assertFalse("No two routes should be equal.", r.equals(r2));
         Assert.assertFalse("No two routes should be equal.", r2.equals(r));
+        Assert.assertFalse("Route shouldn't equal non-Route.", r.equals("nonsense"));
+        // route that's been reset should have the same ID as the original first route
+        Route.resetRouteCounter();
+        final Route r3 = new Route(this.isEastbound);
+        Assert.assertEquals(r, r3);
     }
 
     @Test(expected = IllegalArgumentException.class)
