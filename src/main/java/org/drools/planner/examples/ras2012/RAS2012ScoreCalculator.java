@@ -146,7 +146,7 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
                 .intValue();
     }
 
-    private int getScheduleAdherencePenalty(final Itinerary i, final RAS2012Solution solution) {
+    private int getScheduleAdherencePenalty(final Itinerary i) {
         int penalty = 0;
         if (i.getTrain().getType().adhereToSchedule()) {
             for (final long difference : i.getScheduleAdherenceStatus().values()) {
@@ -184,7 +184,7 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
         return hours.multiply(BigDecimal.valueOf(50)).intValue();
     }
 
-    private int getWantTimePenalty(final Itinerary i, final RAS2012Solution solution) {
+    private int getWantTimePenalty(final Itinerary i) {
         final long delay = i.getWantTimeDifference();
         final long actualTime = delay + i.getTrain().getWantTime(TimeUnit.MILLISECONDS);
         if (!this.isInPlanningHorizon(actualTime)) {
@@ -210,9 +210,9 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
         final Train t = ia.getTrain();
         final Itinerary i = ia.getItinerary();
         this.unpreferredTracksPenalties.put(t, this.getUnpreferredTracksPenalty(i));
-        this.scheduleAdherencePenalties.put(t, this.getScheduleAdherencePenalty(i, this.solution));
+        this.scheduleAdherencePenalties.put(t, this.getScheduleAdherencePenalty(i));
         this.didTrainArrive.put(t, this.didTrainArrive(i));
-        this.wantTimePenalties.put(t, this.getWantTimePenalty(i, this.solution));
+        this.wantTimePenalties.put(t, this.getWantTimePenalty(i));
         this.delayPenalties.put(t, this.getDelayPenalty(i, this.solution));
         this.recalculateOccupiedArcs(ia);
     }
