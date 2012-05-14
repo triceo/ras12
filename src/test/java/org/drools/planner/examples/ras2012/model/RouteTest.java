@@ -46,7 +46,7 @@ public class RouteTest {
 
     @Test
     public void testEquals() {
-        Route.resetRouteCounter();
+        Route.resetCounter();
         final Route r = new Route(this.isEastbound);
         final Route r2 = new Route(this.isEastbound);
         Assert.assertEquals("Route should be equal to itself.", r, r);
@@ -55,7 +55,7 @@ public class RouteTest {
         Assert.assertFalse("No two routes should be equal.", r2.equals(r));
         Assert.assertFalse("Route shouldn't equal non-Route.", r.equals("nonsense"));
         // route that's been reset should have the same ID as the original first route
-        Route.resetRouteCounter();
+        Route.resetCounter();
         final Route r3 = new Route(this.isEastbound);
         Assert.assertEquals(r, r3);
     }

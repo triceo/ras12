@@ -9,9 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.drools.planner.examples.ras2012.Visualizable;
-
 import org.drools.planner.examples.ras2012.Directed;
+import org.drools.planner.examples.ras2012.Visualizable;
 import org.drools.planner.examples.ras2012.model.original.Arc;
 import org.drools.planner.examples.ras2012.model.original.Node;
 import org.drools.planner.examples.ras2012.model.original.ScheduleAdherenceRequirement;
@@ -28,7 +27,7 @@ public class Route extends Visualizable implements Comparable<Route>, Directed {
 
     private static final AtomicInteger idGenerator = new AtomicInteger(0);
 
-    protected static int resetRouteCounter() {
+    public static int resetCounter() {
         return Route.idGenerator.getAndSet(0);
     }
 

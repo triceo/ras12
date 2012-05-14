@@ -1,4 +1,4 @@
-package org.drools.planner.examples.ras2012.model;
+package org.drools.planner.examples.ras2012.util;
 
 import java.io.File;
 import java.util.Collection;
@@ -13,10 +13,10 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.drools.planner.examples.ras2012.Visualizable;
+import org.drools.planner.examples.ras2012.model.Route;
 import org.drools.planner.examples.ras2012.model.original.Arc;
 import org.drools.planner.examples.ras2012.model.original.Node;
 import org.drools.planner.examples.ras2012.model.original.Train;
-import org.drools.planner.examples.ras2012.util.GraphVisualizer;
 
 public class Network extends Visualizable {
 
@@ -60,8 +60,6 @@ public class Network extends Visualizable {
         if (eastDepo == null || westDepo == null) {
             throw new IllegalStateException("Cannot find depot in one of the directions.");
         }
-
-        Route.resetRouteCounter();
         this.eastboundRoutes = this.getAllRoutes(new Route(true), eastboundConnections, westDepo);
         this.westboundRoutes = this.getAllRoutes(new Route(false), westboundConnections, eastDepo);
     }

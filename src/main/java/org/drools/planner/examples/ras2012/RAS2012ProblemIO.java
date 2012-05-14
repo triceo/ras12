@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.drools.planner.benchmark.api.ProblemIO;
 import org.drools.planner.core.solution.Solution;
-import org.drools.planner.examples.ras2012.model.Network;
+import org.drools.planner.examples.ras2012.model.Route;
 import org.drools.planner.examples.ras2012.model.original.Arc;
 import org.drools.planner.examples.ras2012.model.original.MaintenanceWindow;
 import org.drools.planner.examples.ras2012.model.original.Node;
@@ -31,6 +31,7 @@ import org.drools.planner.examples.ras2012.parser.DataSetParser.ParsedTrain;
 import org.drools.planner.examples.ras2012.parser.ParseException;
 import org.drools.planner.examples.ras2012.parser.Token;
 import org.drools.planner.examples.ras2012.util.Converter;
+import org.drools.planner.examples.ras2012.util.Network;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -140,6 +141,7 @@ public class RAS2012ProblemIO implements ProblemIO {
         final Collection<Arc> arcs = this.initArcs(p);
         final Collection<MaintenanceWindow> mows = this.initMOW(p);
         final Collection<Train> trains = this.initTrains(name, p);
+        Route.resetCounter();
         return new RAS2012Solution(name, new Network(this.nodes.values(), arcs), mows, trains);
     }
 
