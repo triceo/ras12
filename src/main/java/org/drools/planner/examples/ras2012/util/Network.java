@@ -13,10 +13,10 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.drools.planner.examples.ras2012.Visualizable;
+import org.drools.planner.examples.ras2012.model.Arc;
+import org.drools.planner.examples.ras2012.model.Node;
 import org.drools.planner.examples.ras2012.model.Route;
-import org.drools.planner.examples.ras2012.model.original.Arc;
-import org.drools.planner.examples.ras2012.model.original.Node;
-import org.drools.planner.examples.ras2012.model.original.Train;
+import org.drools.planner.examples.ras2012.model.Train;
 
 public class Network extends Visualizable {
 

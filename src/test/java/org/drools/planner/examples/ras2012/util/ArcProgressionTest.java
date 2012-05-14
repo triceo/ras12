@@ -8,10 +8,10 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.drools.planner.examples.ras2012.model.Arc;
+import org.drools.planner.examples.ras2012.model.Node;
 import org.drools.planner.examples.ras2012.model.Route;
-import org.drools.planner.examples.ras2012.model.original.Arc;
-import org.drools.planner.examples.ras2012.model.original.Node;
-import org.drools.planner.examples.ras2012.model.original.Track;
+import org.drools.planner.examples.ras2012.model.Track;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

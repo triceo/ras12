@@ -4,12 +4,6 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.LinkedList;
 
-import org.drools.planner.examples.ras2012.model.original.Arc;
-import org.drools.planner.examples.ras2012.model.original.MaintenanceWindow;
-import org.drools.planner.examples.ras2012.model.original.Node;
-import org.drools.planner.examples.ras2012.model.original.Track;
-import org.drools.planner.examples.ras2012.model.original.Train;
-import org.drools.planner.examples.ras2012.model.original.WaitTime;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -1,9 +1,8 @@
-package org.drools.planner.examples.ras2012.model.original;
+package org.drools.planner.examples.ras2012.model;
 
 import java.math.BigDecimal;
 import java.util.Collections;
 
-import org.drools.planner.examples.ras2012.model.Route;
 import org.junit.Assert;
 import org.junit.Test;
 

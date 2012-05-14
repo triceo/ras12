@@ -12,8 +12,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.drools.planner.examples.ras2012.RAS2012Solution;
-import org.drools.planner.examples.ras2012.model.original.Train;
-import org.drools.planner.examples.ras2012.model.original.Train.Type;
+import org.drools.planner.examples.ras2012.model.Train.Type;
 import org.junit.Assert;
 
 public abstract class ItineraryProvider {

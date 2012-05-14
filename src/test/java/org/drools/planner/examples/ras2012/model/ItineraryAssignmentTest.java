@@ -6,9 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.drools.planner.examples.ras2012.RAS2012Solution;
-import org.drools.planner.examples.ras2012.model.original.MaintenanceWindow;
-import org.drools.planner.examples.ras2012.model.original.Node;
-import org.drools.planner.examples.ras2012.model.original.Train;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;

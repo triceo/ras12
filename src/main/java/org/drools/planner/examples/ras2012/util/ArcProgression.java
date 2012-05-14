@@ -16,9 +16,9 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.drools.planner.examples.ras2012.Directed;
-import org.drools.planner.examples.ras2012.model.original.Arc;
-import org.drools.planner.examples.ras2012.model.original.Node;
-import org.drools.planner.examples.ras2012.model.original.Track;
+import org.drools.planner.examples.ras2012.model.Arc;
+import org.drools.planner.examples.ras2012.model.Node;
+import org.drools.planner.examples.ras2012.model.Track;
 import org.drools.planner.examples.ras2012.util.OccupationTracker.Builder;
 
 public class ArcProgression implements Directed {

@@ -1,4 +1,4 @@
-package org.drools.planner.examples.ras2012.model.original;
+package org.drools.planner.examples.ras2012.model;
 
 import java.math.BigDecimal;
 import java.util.concurrent.atomic.AtomicInteger;

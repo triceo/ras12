@@ -1,4 +1,4 @@
-package org.drools.planner.examples.ras2012.model.original;
+package org.drools.planner.examples.ras2012.model;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -8,7 +8,7 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import junit.framework.Assert;
-import org.drools.planner.examples.ras2012.model.original.Train.Type;
+import org.drools.planner.examples.ras2012.model.Train.Type;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

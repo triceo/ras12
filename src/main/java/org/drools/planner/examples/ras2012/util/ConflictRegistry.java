@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.drools.planner.examples.ras2012.model.original.Train;
+import org.drools.planner.examples.ras2012.model.Train;
 
 public class ConflictRegistry {
 
