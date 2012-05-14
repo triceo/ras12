@@ -60,6 +60,7 @@ public class Network extends Visualizable {
         if (eastDepo == null || westDepo == null) {
             throw new IllegalStateException("Cannot find depot in one of the directions.");
         }
+        Route.resetCounter(); // FIXME get this outside somewhere
         this.eastboundRoutes = this.getAllRoutes(new Route(true), eastboundConnections, westDepo);
         this.westboundRoutes = this.getAllRoutes(new Route(false), westboundConnections, eastDepo);
     }
