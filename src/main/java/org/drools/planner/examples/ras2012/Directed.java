@@ -1,4 +1,4 @@
-package org.drools.planner.examples.ras2012.interfaces;
+package org.drools.planner.examples.ras2012;
 
 /**
  * Class implementing this interface signifies that the represented entity has a sense of direction, namely eastbound or

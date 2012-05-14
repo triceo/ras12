@@ -5,7 +5,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.drools.planner.examples.ras2012.interfaces.Directed;
+import org.drools.planner.examples.ras2012.Directed;
+
 import org.drools.planner.examples.ras2012.util.Converter;
 
 public class Train implements Comparable<Train>, Directed {

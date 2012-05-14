@@ -1,6 +1,6 @@
 package org.drools.planner.examples.ras2012.model.original;
 
-import org.drools.planner.examples.ras2012.interfaces.Directed;
+import org.drools.planner.examples.ras2012.Directed;
 
 public abstract class Section {
 

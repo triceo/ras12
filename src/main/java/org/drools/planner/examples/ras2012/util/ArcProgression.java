@@ -15,7 +15,8 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.drools.planner.examples.ras2012.interfaces.Directed;
+import org.drools.planner.examples.ras2012.Directed;
+
 import org.drools.planner.examples.ras2012.model.original.Arc;
 import org.drools.planner.examples.ras2012.model.original.Node;
 import org.drools.planner.examples.ras2012.model.original.Track;
