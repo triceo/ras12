@@ -181,7 +181,8 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
     private int getTrainArrivalMetrics() {
         int actual = 0, full = 0;
         for (final Map.Entry<Train, Boolean> entry : this.didTrainArrive.entrySet()) {
-            final int trainValue = 1;
+            final int trainValue = (int) Math
+                    .ceil(entry.getKey().getType().getDelayPenalty() / 100.0);
             full += trainValue;
             if (entry.getValue()) {
                 actual += trainValue;
