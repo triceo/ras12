@@ -24,6 +24,7 @@ public final class Itinerary extends Visualizable {
     private final Route                        route;
 
     private final Train                        train;
+    private long                               delay                 = 0;
 
     private final AtomicBoolean                scheduleCacheValid    = new AtomicBoolean(false);
     private final Collection<Node>             nodesEnRoute;
@@ -66,6 +67,7 @@ public final class Itinerary extends Visualizable {
     }
 
     private void cacheSchedule() {
+        this.delay = 0;
         int i = 0;
         long previousTime = 0;
         Arc previousArc = null;
@@ -89,6 +91,7 @@ public final class Itinerary extends Visualizable {
                         Itinerary.DEFAULT_TIME_UNIT);
                 time += previousTime;
             }
+            final long preDelaying = time;
             // now adjust for node wait time, should there be any
             final Node n = currentArc.getOrigin(this.getTrain());
             final WaitTime wt = this.nodeWaitTimes.get(n);
@@ -104,6 +107,7 @@ public final class Itinerary extends Visualizable {
                     time = w.getEnd(Itinerary.DEFAULT_TIME_UNIT);
                 }
             }
+            this.delay += time - preDelaying; // difference between 'preDelaying' is a sum of MOWs and WTs
             // and store
             this.scheduleCache.put(time, n);
             this.scheduleCacheWithArcs.put(time + 1, currentArc);
@@ -142,63 +146,25 @@ public final class Itinerary extends Visualizable {
         return true;
     }
 
+    public Map<Node, Long> getArrivalsAtSANodes() {
+        final Map<Node, Long> result = new HashMap<Node, Long>();
+        for (final ScheduleAdherenceRequirement sa : this.getTrain()
+                .getScheduleAdherenceRequirements().values()) {
+            final Node expectedDestination = sa.getDestination();
+            result.put(expectedDestination, this.getEntryTime(expectedDestination));
+        }
+        return Collections.unmodifiableMap(result);
+    }
+
     public long getArrivalTime() {
         return this.getSchedule().lastKey();
     }
 
-    /**
-     * Return the delay at the end of the horizon.
-     * 
-     * @param horizon Number of milliseconds since the start of the planning horizon.
-     * @return Milliseconds. Positive if the train is late, negative if the train is early. If the train arrived before the
-     *         specified horizon, this returns the exact value of delay. Otherwise, it returns estimated delay at the end of the
-     *         specified horizon.
-     */
-    public long getDelay(final long horizon) {
-        if (this.trainEntryTime > horizon) {
-            // train not en route yet, delay must be zero
-            return 0;
+    public long getDelay() {
+        if (!this.scheduleCacheValid.get() || this.scheduleCache.size() == 0) {
+            this.cacheSchedule();
         }
-        final long originalDelay = this.getTrain().getOriginalSA(Itinerary.DEFAULT_TIME_UNIT);
-        final SortedMap<Long, Node> schedule = this.getSchedule();
-        final SortedMap<Long, Node> scheduleInHorizon = schedule.headMap(horizon + 1);
-        if (scheduleInHorizon.size() == 0) {
-            // train is not in the network at the time
-            if (this.trainEntryTime < horizon) {
-                // however, it should be; origin node possibly has some wait time
-                return horizon - this.trainEntryTime + originalDelay;
-            } else {
-                // otherwise it's alright, there is only the original delay
-                return originalDelay;
-            }
-        } else if (scheduleInHorizon.values().contains(this.getTrain().getDestination())) {
-            return this.getDelay(this.getTrain().getDestination(),
-                    this.getTrain().getWantTime(Itinerary.DEFAULT_TIME_UNIT));
-        }
-        // otherwise, we need to estimate the delay
-        final long actualArrivalTime = horizon;
-        final long optimalArrivalTime = this.trainEntryTime
-                + Converter.getTimeFromSpeedAndDistance(this.getTrain().getMaximumSpeed(),
-                        Converter.getDistanceTravelled(this, horizon));
-        return actualArrivalTime - optimalArrivalTime;
-    }
-
-    /**
-     * Get delay at a given node, provided we know when we were supposed to be there.
-     * 
-     * @param n The node on the route.
-     * @param expectedArrival Time in milliseconds of the expected arrival.
-     * @return Milliseconds. Positive when delayed, negative when ahead. Returns the actual delay regardless of whether the node
-     *         is or isn't within the planning horizon.
-     */
-    private long getDelay(final Node n, final long expectedArrival) {
-        for (final SortedMap.Entry<Long, Node> entry : this.getSchedule().entrySet()) {
-            if (entry.getValue() != n) {
-                continue;
-            }
-            return entry.getKey() - expectedArrival;
-        }
-        throw new IllegalArgumentException(n + " not on the route!");
+        return this.delay;
     }
 
     private long getEntryTime(final Arc a) {
@@ -299,16 +265,6 @@ public final class Itinerary extends Visualizable {
             this.cacheSchedule();
         }
         return Collections.unmodifiableSortedMap(this.scheduleCache);
-    }
-
-    public Map<Node, Long> getArrivalsAtSANodes() {
-        final Map<Node, Long> result = new HashMap<Node, Long>();
-        for (final ScheduleAdherenceRequirement sa : this.getTrain()
-                .getScheduleAdherenceRequirements().values()) {
-            final Node expectedDestination = sa.getDestination();
-            result.put(expectedDestination, this.getEntryTime(expectedDestination));
-        }
-        return Collections.unmodifiableMap(result);
     }
 
     public synchronized SortedMap<Long, Arc> getScheduleWithArcs() {

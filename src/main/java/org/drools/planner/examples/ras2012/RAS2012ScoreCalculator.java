@@ -140,7 +140,7 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
     }
 
     private int getDelayPenalty(final Itinerary i, final RAS2012Solution solution) {
-        final long delay = i.getDelay(solution.getPlanningHorizon(TimeUnit.MILLISECONDS));
+        final long delay = i.getDelay();
         if (delay <= 0) {
             return 0;
         }
