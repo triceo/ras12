@@ -353,9 +353,8 @@ public final class Itinerary extends Visualizable {
         return Collections.unmodifiableMap(this.nodeWaitTimes);
     }
 
-    public long getWantTimeDifference() {
-        return this.getDelay(this.getTrain().getDestination(),
-                this.getTrain().getWantTime(Itinerary.DEFAULT_TIME_UNIT));
+    public long getArrivalTime() {
+        return this.getSchedule().lastKey();
     }
 
     @Override

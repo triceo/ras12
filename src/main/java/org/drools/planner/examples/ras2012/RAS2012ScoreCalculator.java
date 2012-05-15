@@ -199,11 +199,12 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
     }
 
     private int getWantTimePenalty(final Itinerary i) {
-        final long delay = i.getWantTimeDifference();
-        final long actualTime = delay + i.getTrain().getWantTime(TimeUnit.MILLISECONDS);
+        final long actualTime = i.getArrivalTime();
         if (!this.isInPlanningHorizon(actualTime)) {
+            // arrivals outside of the planning horizon aren't counted
             return 0;
         }
+        final long delay = actualTime - i.getTrain().getWantTime(TimeUnit.MILLISECONDS);
         BigDecimal hours = RAS2012ScoreCalculator.roundMillisecondsToHours(delay);
         final BigDecimal penalty = BigDecimal.valueOf(75);
         if (delay > 0) {

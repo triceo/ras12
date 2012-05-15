@@ -84,7 +84,7 @@ public class ToyExampleSolutionTest {
         for (ItineraryAssignment ia : this.SOLUTION.getAssignments()) {
             System.out.println(ia.getTrain().getName() + " " + ia.getRoute().getId() + " "
                     + ia.getItinerary().getScheduleAdherenceStatus() + " "
-                    + ia.getItinerary().getSchedule());
+                    + ia.getItinerary().getArrivalTime() + " " + ia.getItinerary().getSchedule());
         }
         final HardAndSoftScore score = this.getScoreForSolution(this.SOLUTION);
         final HardAndSoftScore expectedScore = DefaultHardAndSoftScore.valueOf(73, -925);
