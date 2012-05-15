@@ -54,7 +54,7 @@ public class GraphVisualizer {
 
         @Override
         public String transform(final Arc input) {
-            return input.getLengthInMiles() + this.getTrackId(input);
+            return input.getLength() + this.getTrackId(input);
         }
 
     }

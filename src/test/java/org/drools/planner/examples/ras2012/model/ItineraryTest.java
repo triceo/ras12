@@ -29,9 +29,9 @@ public class ItineraryTest extends AbstractItineraryProviderBasedTest {
                     "Cannot call this method when the train didn't yet finish.");
         }
         final Train t = i.getTrain();
-        final BigDecimal distanceTravelled = Converter.getDistanceInMilesFromSpeedAndTime(
+        final BigDecimal distanceTravelled = Converter.getDistanceFromSpeedAndTime(
                 t.getMaximumSpeed(Track.MAIN_0), time - arrivalTime);
-        final BigDecimal remainingTrainLength = t.getLengthInMiles().subtract(distanceTravelled);
+        final BigDecimal remainingTrainLength = t.getLength().subtract(distanceTravelled);
         if (remainingTrainLength.signum() <= 0) {
             return Collections.emptySet();
         }
@@ -41,8 +41,7 @@ public class ItineraryTest extends AbstractItineraryProviderBasedTest {
 
     private static Collection<Arc> calculateOccupiedArcsWithKnownPosition(final Itinerary i,
             final Node n) {
-        return ItineraryTest.calculateOccupiedArcsWithKnownPosition(i, n, i.getTrain()
-                .getLengthInMiles());
+        return ItineraryTest.calculateOccupiedArcsWithKnownPosition(i, n, i.getTrain().getLength());
     }
 
     private static Collection<Arc> calculateOccupiedArcsWithKnownPosition(final Itinerary i,
@@ -55,7 +54,7 @@ public class ItineraryTest extends AbstractItineraryProviderBasedTest {
                 break;
             }
             results.add(arc);
-            remainingTrainLength = remainingTrainLength.subtract(arc.getLengthInMiles());
+            remainingTrainLength = remainingTrainLength.subtract(arc.getLength());
             arc = i.getRoute().getProgression().getPrevious(arc);
         }
         return results;
@@ -69,17 +68,17 @@ public class ItineraryTest extends AbstractItineraryProviderBasedTest {
         if (leadingArc == null) { // journey is over
             return results;
         }
-        final BigDecimal distanceTravelledInLeadingArc = Converter.getDistanceTravelledInTheArc(i,
+        final BigDecimal distanceTravelledInLeadingArc = Converter.getDistanceTravelled(i,
                 leadingArc, time);
         if (distanceTravelledInLeadingArc.signum() > 0) {
             results.add(leadingArc);
         }
         // and add the rest of the train, if necessary
         final boolean travelledMoreThanTrainLength = distanceTravelledInLeadingArc.compareTo(i
-                .getTrain().getLengthInMiles()) > 0;
+                .getTrain().getLength()) > 0;
         if (!travelledMoreThanTrainLength) {
             final Node lastKnownPoint = leadingArc.getOrigin(i.getRoute());
-            final BigDecimal remainingTrainLength = i.getTrain().getLengthInMiles()
+            final BigDecimal remainingTrainLength = i.getTrain().getLength()
                     .subtract(distanceTravelledInLeadingArc);
             results.addAll(ItineraryTest.calculateOccupiedArcsWithKnownPosition(i, lastKnownPoint,
                     remainingTrainLength));
@@ -127,7 +126,7 @@ public class ItineraryTest extends AbstractItineraryProviderBasedTest {
                     this.itinerary.getDelay(timeInterestedIn));
         } else {
             // train didn't finish in time, we need to estimate
-            final BigDecimal actualDistanceTravelled = Converter.calculateActualDistanceTravelled(
+            final BigDecimal actualDistanceTravelled = Converter.getDistanceTravelled(
                     this.itinerary, timeInterestedIn);
             final long travellingTime = Converter.getTimeFromSpeedAndDistance(this.itinerary
                     .getTrain().getMaximumSpeed(), actualDistanceTravelled);

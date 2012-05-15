@@ -95,7 +95,7 @@ public class RAS2012ProblemIO implements ProblemIO {
             final BigDecimal timeInSeconds = RAS2012ProblemIO
                     .convertMillisToSeconds(entry.getKey() - 1);
             if (arc != null) {
-                final BigDecimal distance = arc.getLengthInMiles().add(t.getLengthInMiles());
+                final BigDecimal distance = arc.getLength().add(t.getLength());
                 final long travellingTime = Converter.getTimeFromSpeedAndDistance(
                         t.getMaximumSpeed(arc.getTrack()), distance);
                 final BigDecimal leaveTime = RAS2012ProblemIO

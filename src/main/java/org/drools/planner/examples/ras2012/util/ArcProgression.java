@@ -57,7 +57,7 @@ public class ArcProgression implements Directed {
             this.arcsPerDestination.put(a.getDestination(this), a);
             this.nodes.add(a.getOrigin(this));
             this.nodes.add(a.getDestination(this));
-            milestone = milestone.add(a.getLengthInMiles());
+            milestone = milestone.add(a.getLength());
         }
         // determine whether a particular arc is preferred
         for (final Arc a : this.orderedArcs) {
@@ -159,7 +159,7 @@ public class ArcProgression implements Directed {
         // and then retrieve the actual distance
         BigDecimal result = BigDecimal.ZERO;
         for (final Arc a : this.head(end).tail(start).getArcs()) {
-            result = result.add(a.getLengthInMiles());
+            result = result.add(a.getLength());
         }
         return result;
     }
@@ -167,7 +167,7 @@ public class ArcProgression implements Directed {
     public BigDecimal getLength() {
         BigDecimal length = BigDecimal.ZERO;
         for (final Arc a : this.orderedArcs) {
-            length = length.add(a.getLengthInMiles());
+            length = length.add(a.getLength());
         }
         return length;
     }
@@ -222,15 +222,15 @@ public class ArcProgression implements Directed {
             if (currentArc == null) {
                 break;
             }
-            if (leftToOccupy.compareTo(currentArc.getLengthInMiles()) < 0) {
+            if (leftToOccupy.compareTo(currentArc.getLength()) < 0) {
                 // can no longer occupy the whole arc
-                b.addFrom(currentArc, currentArc.getLengthInMiles().subtract(leftToOccupy));
+                b.addFrom(currentArc, currentArc.getLength().subtract(leftToOccupy));
                 break;
             } else {
                 // occupy the whole arc and continue to another
                 b.addWhole(currentArc);
             }
-            leftToOccupy = leftToOccupy.subtract(currentArc.getLengthInMiles());
+            leftToOccupy = leftToOccupy.subtract(currentArc.getLength());
         }
         return b.build();
     }

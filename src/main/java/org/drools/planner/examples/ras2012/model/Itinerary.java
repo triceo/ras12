@@ -175,7 +175,7 @@ public final class Itinerary extends Visualizable {
         final long actualArrivalTime = horizon;
         final long optimalArrivalTime = this.trainEntryTime
                 + Converter.getTimeFromSpeedAndDistance(this.getTrain().getMaximumSpeed(),
-                        Converter.calculateActualDistanceTravelled(this, horizon));
+                        Converter.getDistanceTravelled(this, horizon));
         return actualArrivalTime - optimalArrivalTime;
     }
 
@@ -244,29 +244,29 @@ public final class Itinerary extends Visualizable {
         if (leadingArc == null) {
             // the train should gradually leave the network through its destination
             final long timeTravelledInArc = time - this.getSchedule().lastKey();
-            final BigDecimal travelledInArc = Converter.getDistanceInMilesFromSpeedAndTime(this
-                    .getTrain().getMaximumSpeed(Track.MAIN_0), timeTravelledInArc);
-            if (travelledInArc.compareTo(this.getTrain().getLengthInMiles()) >= 0) {
+            final BigDecimal travelledInArc = Converter.getDistanceFromSpeedAndTime(this.getTrain()
+                    .getMaximumSpeed(Track.MAIN_0), timeTravelledInArc);
+            if (travelledInArc.compareTo(this.getTrain().getLength()) >= 0) {
                 // the train is gone completely
                 return OccupationTracker.Builder.empty();
             } else {
                 // some part of the train is still in the network
                 return progression.getOccupiedArcs(progression.getLength(), this.getTrain()
-                        .getLengthInMiles().subtract(travelledInArc));
+                        .getLength().subtract(travelledInArc));
             }
         } else if (!this.getScheduleWithArcs().containsValue(leadingArc)) {
             // the train didn't enter the network yet
             return progression.getOccupiedArcs(progression.getDistance(leadingArc
-                    .getDestination(progression)), this.getTrain().getLengthInMiles());
+                    .getDestination(progression)), this.getTrain().getLength());
         } else {
             // the train is in the network
             final long timeTravelledInArc = time - this.getEntryTime(leadingArc);
-            final BigDecimal travelledInArc = Converter.getDistanceInMilesFromSpeedAndTime(
+            final BigDecimal travelledInArc = Converter.getDistanceFromSpeedAndTime(
                     this.getTrain().getMaximumSpeed(leadingArc.getTrack()), timeTravelledInArc)
-                    .min(leadingArc.getLengthInMiles());
+                    .min(leadingArc.getLength());
             return progression.getOccupiedArcs(
                     progression.getDistance(leadingArc.getOrigin(progression)).add(travelledInArc),
-                    this.getTrain().getLengthInMiles());
+                    this.getTrain().getLength());
         }
     }
 

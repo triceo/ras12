@@ -20,7 +20,7 @@ public class SyntheticOccupationTrackerArcRangeTest {
     public void testComplexConstructor() {
         // full
         ArcRange range = new ArcRange(SyntheticOccupationTrackerArcRangeTest.ARC, BigDecimal.ZERO,
-                SyntheticOccupationTrackerArcRangeTest.ARC.getLengthInMiles());
+                SyntheticOccupationTrackerArcRangeTest.ARC.getLength());
         Assert.assertEquals(SyntheticOccupationTrackerArcRangeTest.ARC, range.getArc());
         Assert.assertTrue(range.isFull());
         Assert.assertFalse(range.isEmpty());
@@ -31,8 +31,8 @@ public class SyntheticOccupationTrackerArcRangeTest {
         Assert.assertFalse(range.isFull());
         Assert.assertTrue(range.isEmpty());
         range = new ArcRange(SyntheticOccupationTrackerArcRangeTest.ARC,
-                SyntheticOccupationTrackerArcRangeTest.ARC.getLengthInMiles(),
-                SyntheticOccupationTrackerArcRangeTest.ARC.getLengthInMiles());
+                SyntheticOccupationTrackerArcRangeTest.ARC.getLength(),
+                SyntheticOccupationTrackerArcRangeTest.ARC.getLength());
         Assert.assertEquals(SyntheticOccupationTrackerArcRangeTest.ARC, range.getArc());
         Assert.assertFalse(range.isFull());
         Assert.assertTrue(range.isEmpty());
@@ -41,17 +41,17 @@ public class SyntheticOccupationTrackerArcRangeTest {
     @Test
     public void testEqualsObject() {
         final ArcRange range = new ArcRange(SyntheticOccupationTrackerArcRangeTest.ARC,
-                BigDecimal.ZERO, SyntheticOccupationTrackerArcRangeTest.ARC.getLengthInMiles());
+                BigDecimal.ZERO, SyntheticOccupationTrackerArcRangeTest.ARC.getLength());
         Assert.assertEquals(range, range);
         Assert.assertFalse(range.equals(null));
         Assert.assertFalse(range.equals("nonsense"));
         Assert.assertFalse("nonsense".equals(range));
         final ArcRange range2 = new ArcRange(SyntheticOccupationTrackerArcRangeTest.ARC,
-                BigDecimal.ONE, SyntheticOccupationTrackerArcRangeTest.ARC.getLengthInMiles());
+                BigDecimal.ONE, SyntheticOccupationTrackerArcRangeTest.ARC.getLength());
         Assert.assertFalse(range.equals(range2));
         Assert.assertFalse(range2.equals(range));
         final ArcRange range3 = new ArcRange(SyntheticOccupationTrackerArcRangeTest.ARC2,
-                BigDecimal.ZERO, SyntheticOccupationTrackerArcRangeTest.ARC.getLengthInMiles());
+                BigDecimal.ZERO, SyntheticOccupationTrackerArcRangeTest.ARC.getLength());
         Assert.assertFalse(range3.equals(range));
         Assert.assertFalse(range.equals(range3));
     }
@@ -59,13 +59,13 @@ public class SyntheticOccupationTrackerArcRangeTest {
     @Test(expected = IllegalArgumentException.class)
     public void testNegativeEnd() {
         new ArcRange(SyntheticOccupationTrackerArcRangeTest.ARC, BigDecimal.ZERO,
-                SyntheticOccupationTrackerArcRangeTest.ARC.getLengthInMiles().negate());
+                SyntheticOccupationTrackerArcRangeTest.ARC.getLength().negate());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testNegativeStart() {
         new ArcRange(SyntheticOccupationTrackerArcRangeTest.ARC, BigDecimal.ONE.negate(),
-                SyntheticOccupationTrackerArcRangeTest.ARC.getLengthInMiles());
+                SyntheticOccupationTrackerArcRangeTest.ARC.getLength());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -76,14 +76,14 @@ public class SyntheticOccupationTrackerArcRangeTest {
     @Test(expected = IllegalArgumentException.class)
     public void testOverlongEnd() {
         new ArcRange(SyntheticOccupationTrackerArcRangeTest.ARC, BigDecimal.ZERO,
-                SyntheticOccupationTrackerArcRangeTest.ARC.getLengthInMiles().add(BigDecimal.ONE));
+                SyntheticOccupationTrackerArcRangeTest.ARC.getLength().add(BigDecimal.ONE));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testOverlongStart() {
         new ArcRange(SyntheticOccupationTrackerArcRangeTest.ARC,
-                SyntheticOccupationTrackerArcRangeTest.ARC.getLengthInMiles().add(BigDecimal.ONE),
-                SyntheticOccupationTrackerArcRangeTest.ARC.getLengthInMiles());
+                SyntheticOccupationTrackerArcRangeTest.ARC.getLength().add(BigDecimal.ONE),
+                SyntheticOccupationTrackerArcRangeTest.ARC.getLength());
     }
 
     @Test

@@ -12,7 +12,42 @@ public class Converter {
     public static final int BIGDECIMAL_ROUNDING = BigDecimal.ROUND_HALF_EVEN;
     public static final int BIGDECIMAL_SCALE    = 7;
 
-    public static BigDecimal calculateActualDistanceTravelled(final Itinerary i, final long time) {
+    private static BigDecimal calculateActualDistanceTravelled(final Itinerary i,
+            final Node position) {
+        return i.getRoute().getProgression().getDistance(i.getTrain().getOrigin(), position);
+    }
+
+    public static BigDecimal getDistanceFromSpeedAndTime(final BigDecimal speedInMPH,
+            final long timeInMilliseconds) {
+        final BigDecimal timeInSeconds = BigDecimal.valueOf(timeInMilliseconds)
+                .divide(BigDecimal.valueOf(1000), Converter.BIGDECIMAL_SCALE,
+                        Converter.BIGDECIMAL_ROUNDING);
+        final BigDecimal timeInMinutes = timeInSeconds.divide(BigDecimal.valueOf(60),
+                Converter.BIGDECIMAL_SCALE, Converter.BIGDECIMAL_ROUNDING);
+        final BigDecimal timeInHours = timeInMinutes.divide(BigDecimal.valueOf(60),
+                Converter.BIGDECIMAL_SCALE, Converter.BIGDECIMAL_ROUNDING);
+        return speedInMPH.multiply(timeInHours);
+    }
+
+    public static BigDecimal getDistanceFromSpeedAndTime(final int speedInMPH,
+            final long timeInMilliseconds) {
+        return Converter.getDistanceFromSpeedAndTime(BigDecimal.valueOf(speedInMPH),
+                timeInMilliseconds);
+    }
+
+    public static BigDecimal getDistanceTravelled(final Itinerary i, final Arc a, final long time) {
+        final long timeTravelledInLeadingArc = time - Converter.getNearestPastCheckpoint(i, time);
+        BigDecimal distanceTravelledInLeadingArc = BigDecimal.ZERO;
+        if (timeTravelledInLeadingArc > 0) {
+            // if we're inside the leading arc (and not exactly in the origin node), count it
+            distanceTravelledInLeadingArc = Converter.getDistanceFromSpeedAndTime(i.getTrain()
+                    .getMaximumSpeed(a.getTrack()), timeTravelledInLeadingArc);
+        }
+        // train cannot travel more than the arc's length; if it does, there must be some wait times in play
+        return distanceTravelledInLeadingArc.min(a.getLength());
+    }
+
+    public static BigDecimal getDistanceTravelled(final Itinerary i, final long time) {
         final SortedMap<Long, Node> schedule = i.getSchedule();
         final SortedMap<Long, Node> head = schedule.headMap(time);
         if (head.size() == 0) {
@@ -26,45 +61,9 @@ public class Converter {
                     .getWithOriginNode(schedule.get(head.lastKey()));
             BigDecimal result = Converter.calculateActualDistanceTravelled(i,
                     leadingArc.getOrigin(i.getRoute()));
-            result = result.add(Converter.getDistanceTravelledInTheArc(i, leadingArc, time));
+            result = result.add(Converter.getDistanceTravelled(i, leadingArc, time));
             return result;
         }
-    }
-
-    private static BigDecimal calculateActualDistanceTravelled(final Itinerary i,
-            final Node position) {
-        return i.getRoute().getProgression().getDistance(i.getTrain().getOrigin(), position);
-    }
-
-    public static BigDecimal getDistanceInMilesFromSpeedAndTime(final BigDecimal speedInMPH,
-            final long timeInMilliseconds) {
-        final BigDecimal timeInSeconds = BigDecimal.valueOf(timeInMilliseconds)
-                .divide(BigDecimal.valueOf(1000), Converter.BIGDECIMAL_SCALE,
-                        Converter.BIGDECIMAL_ROUNDING);
-        final BigDecimal timeInMinutes = timeInSeconds.divide(BigDecimal.valueOf(60),
-                Converter.BIGDECIMAL_SCALE, Converter.BIGDECIMAL_ROUNDING);
-        final BigDecimal timeInHours = timeInMinutes.divide(BigDecimal.valueOf(60),
-                Converter.BIGDECIMAL_SCALE, Converter.BIGDECIMAL_ROUNDING);
-        return speedInMPH.multiply(timeInHours);
-    }
-
-    public static BigDecimal getDistanceInMilesFromSpeedAndTime(final int speedInMPH,
-            final long timeInMilliseconds) {
-        return Converter.getDistanceInMilesFromSpeedAndTime(BigDecimal.valueOf(speedInMPH),
-                timeInMilliseconds);
-    }
-
-    public static BigDecimal getDistanceTravelledInTheArc(final Itinerary i, final Arc a,
-            final long time) {
-        final long timeTravelledInLeadingArc = time - Converter.getNearestPastCheckpoint(i, time);
-        BigDecimal distanceTravelledInLeadingArc = BigDecimal.ZERO;
-        if (timeTravelledInLeadingArc > 0) {
-            // if we're inside the leading arc (and not exactly in the origin node), count it
-            distanceTravelledInLeadingArc = Converter.getDistanceInMilesFromSpeedAndTime(i
-                    .getTrain().getMaximumSpeed(a.getTrack()), timeTravelledInLeadingArc);
-        }
-        // train cannot travel more than the arc's length; if it does, there must be some wait times in play
-        return distanceTravelledInLeadingArc.min(a.getLengthInMiles());
     }
 
     private static long getNearestPastCheckpoint(final Itinerary i, final long time) {

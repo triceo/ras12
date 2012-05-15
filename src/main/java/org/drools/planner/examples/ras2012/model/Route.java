@@ -126,7 +126,7 @@ public class Route extends Visualizable implements Comparable<Route>, Directed {
         if (this.travellingTimeInMilliseconds == -1) {
             long result = 0;
             for (final Arc a : this.progression.getArcs()) {
-                final BigDecimal length = a.getLengthInMiles();
+                final BigDecimal length = a.getLength();
                 final int speed = this.isEastbound() ? a.getTrack().getSpeedEastbound() : a
                         .getTrack().getSpeedWestbound();
                 result += Converter.getTimeFromSpeedAndDistance(speed, length);
@@ -194,7 +194,7 @@ public class Route extends Visualizable implements Comparable<Route>, Directed {
                 return false;
             }
             // make sure the route doesn't contain a siding shorter than the train
-            final int result = a.getLengthInMiles().compareTo(t.getLengthInMiles());
+            final int result = a.getLength().compareTo(t.getLength());
             if (result < 0) {
                 return false;
             }

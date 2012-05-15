@@ -215,7 +215,7 @@ public class TrainTest {
         final BigDecimal length = new BigDecimal("1.5");
         for (final Arc a : this.getArcs(n1, n2, length)) {
             for (final Train t : this.getTrains(n1, n2)) {
-                final BigDecimal distanceInMiles = a.getLengthInMiles();
+                final BigDecimal distanceInMiles = a.getLength();
                 final BigDecimal trainSpeedInMph = t.getMaximumSpeed(a.getTrack());
                 final BigDecimal timeInHours = distanceInMiles.divide(trainSpeedInMph, 7,
                         BigDecimal.ROUND_HALF_EVEN);

@@ -166,7 +166,7 @@ public class Train implements Comparable<Train>, Directed {
         }
         return unit.convert(
                 Converter.getTimeFromSpeedAndDistance(this.getMaximumSpeed(a.getTrack()),
-                        a.getLengthInMiles()), TimeUnit.MILLISECONDS);
+                        a.getLength()), TimeUnit.MILLISECONDS);
     }
 
     public Node getDestination() {
@@ -177,7 +177,7 @@ public class Train implements Comparable<Train>, Directed {
         return unit.convert(this.entryTime, Train.DEFAULT_TIME_UNIT);
     }
 
-    public BigDecimal getLengthInMiles() {
+    public BigDecimal getLength() {
         return this.length;
     }
 

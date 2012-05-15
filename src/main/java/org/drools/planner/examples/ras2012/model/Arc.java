@@ -47,7 +47,7 @@ public class Arc extends Section {
         return true;
     }
 
-    public BigDecimal getLengthInMiles() {
+    public BigDecimal getLength() {
         return this.lengthInMiles;
     }
 

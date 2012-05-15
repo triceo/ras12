@@ -35,20 +35,20 @@ public class OccupationTracker {
             this.arc = a;
             if (start.signum() < 0) {
                 throw new IllegalArgumentException("Arc range start must be in the range of <0,"
-                        + a.getLengthInMiles() + ">.");
+                        + a.getLength() + ">.");
             }
             this.start = start;
             if (end == null) {
-                this.end = a.getLengthInMiles();
+                this.end = a.getLength();
             } else {
-                if (end.compareTo(this.start) < 0 || end.compareTo(a.getLengthInMiles()) > 0) {
+                if (end.compareTo(this.start) < 0 || end.compareTo(a.getLength()) > 0) {
                     throw new IllegalArgumentException("Arc range end must be in the range of <"
-                            + this.start + "," + a.getLengthInMiles() + ">.");
+                            + this.start + "," + a.getLength() + ">.");
                 }
                 this.end = end;
             }
             this.full = this.getStart().equals(BigDecimal.ZERO)
-                    && this.getEnd().equals(a.getLengthInMiles());
+                    && this.getEnd().equals(a.getLength());
             this.empty = this.getStart().equals(this.getEnd());
         }
 
@@ -95,7 +95,7 @@ public class OccupationTracker {
                 return BigDecimal.ZERO;
             } else if (this.isFull() && other.isFull()) {
                 // full conflict
-                return this.getArc().getLengthInMiles();
+                return this.getArc().getLength();
             } else {
                 // we need to calculate the actual conflicting range
                 final BigDecimal start = this.getStart().max(other.getStart());
@@ -173,7 +173,7 @@ public class OccupationTracker {
         }
 
         public void addFrom(final Arc a, final BigDecimal start) {
-            this.add(this.create(a, start, a.getLengthInMiles()));
+            this.add(this.create(a, start, a.getLength()));
         }
 
         public void addTo(final Arc a, final BigDecimal end) {
@@ -192,8 +192,7 @@ public class OccupationTracker {
             if (this.directed.isEastbound()) {
                 return new ArcRange(a, start, end);
             } else {
-                return new ArcRange(a, a.getLengthInMiles().subtract(end), a.getLengthInMiles()
-                        .subtract(start));
+                return new ArcRange(a, a.getLength().subtract(end), a.getLength().subtract(start));
             }
         }
     }
