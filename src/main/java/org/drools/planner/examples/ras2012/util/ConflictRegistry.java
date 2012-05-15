@@ -1,10 +1,10 @@
 package org.drools.planner.examples.ras2012.util;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.drools.planner.examples.ras2012.model.Train;
 
@@ -16,13 +16,12 @@ public class ConflictRegistry {
 
         public BigDecimal getConflicts() {
             BigDecimal conflicts = BigDecimal.ZERO;
-            final Set<OccupationTracker> used = new HashSet<OccupationTracker>();
-            for (final OccupationTracker oa : this.occupiedArcs.values()) {
-                used.add(oa);
-                for (final OccupationTracker oa2 : this.occupiedArcs.values()) {
-                    if (used.contains(oa2)) {
-                        continue;
-                    }
+            final Collection<OccupationTracker> all = new HashSet<OccupationTracker>(
+                    this.occupiedArcs.values());
+            final Collection<OccupationTracker> unvisited = new HashSet<OccupationTracker>(all);
+            for (final OccupationTracker oa : all) {
+                unvisited.remove(oa);
+                for (final OccupationTracker oa2 : unvisited) {
                     conflicts = conflicts.add(oa.getConflictingMileage(oa2));
                 }
             }
