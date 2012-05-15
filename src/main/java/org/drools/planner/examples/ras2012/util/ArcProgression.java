@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,9 +25,9 @@ public class ArcProgression implements Directed {
 
     private final LinkedList<Arc>            orderedArcs        = new LinkedList<Arc>();
     private final SortedMap<BigDecimal, Arc> milestones         = new TreeMap<BigDecimal, Arc>();
-    private final Map<Node, Arc>             arcsPerOrigin      = new HashMap<Node, Arc>();
-    private final Map<Node, Arc>             arcsPerDestination = new HashMap<Node, Arc>();
-    private final Map<Arc, Boolean>          isArcPreferred     = new HashMap<Arc, Boolean>();
+    private final Map<Node, Arc>             arcsPerOrigin      = new LinkedHashMap<Node, Arc>();
+    private final Map<Node, Arc>             arcsPerDestination = new LinkedHashMap<Node, Arc>();
+    private final Map<Arc, Boolean>          isArcPreferred     = new LinkedHashMap<Arc, Boolean>();
     private final Collection<Node>           nodes              = new LinkedHashSet<Node>();
     private final Collection<Node>           waitPoints;
     private final Directed                   directed;
@@ -158,8 +158,12 @@ public class ArcProgression implements Directed {
         }
         // and then retrieve the actual distance
         BigDecimal result = BigDecimal.ZERO;
-        for (final Arc a : this.head(end).tail(start).getArcs()) {
+        for (final Node n : nodes.subList(startIndex, endIndex + 1)) {
+            Arc a = this.arcsPerOrigin.get(n);
             result = result.add(a.getLength());
+            if (a.getDestination(this) == end) {
+                break;
+            }
         }
         return result;
     }
