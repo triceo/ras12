@@ -68,7 +68,7 @@ public class ItineraryTest extends AbstractItineraryProviderBasedTest {
         if (leadingArc == null) { // journey is over
             return results;
         }
-        final BigDecimal distanceTravelledInLeadingArc = Converter.getDistanceTravelled(i,
+        final BigDecimal distanceTravelledInLeadingArc = ItineraryTest.getDistanceTravelled(i,
                 leadingArc, time);
         if (distanceTravelledInLeadingArc.signum() > 0) {
             results.add(leadingArc);
@@ -84,6 +84,17 @@ public class ItineraryTest extends AbstractItineraryProviderBasedTest {
                     remainingTrainLength));
         }
         return results;
+    }
+
+    private static BigDecimal getDistanceTravelled(final Itinerary i, final Arc a, final long time) {
+        final SortedMap<Long, Node> schedule = i.getSchedule().headMap(time);
+        final long nearestPastCheckpoint = schedule.headMap(time).lastKey();
+        if (schedule.get(nearestPastCheckpoint) != a.getOrigin(i.getRoute())) {
+            throw new IllegalArgumentException("Arc is not a leading arc at the given time.");
+        }
+        final long timeTravelledInLeadingArc = time - nearestPastCheckpoint;
+        return Converter.getDistanceFromSpeedAndTime(i.getTrain().getMaximumSpeed(a.getTrack()),
+                timeTravelledInLeadingArc).min(a.getLength());
     }
 
     @Parameters
@@ -110,32 +121,6 @@ public class ItineraryTest extends AbstractItineraryProviderBasedTest {
     public ItineraryTest(final Itinerary i, final RAS2012Solution solution) {
         this.itinerary = i;
         this.solution = solution;
-    }
-
-    @Test
-    @Ignore
-    public void testGetDelay() {
-        final long timeInterestedIn = this.solution.getPlanningHorizon(TimeUnit.MILLISECONDS);
-        final SortedMap<Long, Node> schedulePast = this.itinerary.getSchedule().headMap(
-                timeInterestedIn + 1);
-        if (schedulePast.values().contains(this.itinerary.getTrain().getDestination())) {
-            // train did finish in time, we don't need to estimate
-            final long actualTimeOfArrival = this.itinerary.getSchedule().lastKey();
-            final long wantTime = this.itinerary.getTrain().getWantTime(TimeUnit.MILLISECONDS);
-            final long delay = actualTimeOfArrival - wantTime;
-            Assert.assertEquals("Exact delay for " + this.itinerary, delay,
-                    this.itinerary.getDelay());
-        } else {
-            // train didn't finish in time, we need to estimate
-            final BigDecimal actualDistanceTravelled = Converter.getDistanceTravelled(
-                    this.itinerary, timeInterestedIn);
-            final long travellingTime = Converter.getTimeFromSpeedAndDistance(this.itinerary
-                    .getTrain().getMaximumSpeed(), actualDistanceTravelled);
-            final long totalTravellingTime = travellingTime
-                    + this.itinerary.getTrain().getEntryTime(TimeUnit.MILLISECONDS);
-            Assert.assertEquals("Estimated delay for " + this.itinerary, timeInterestedIn
-                    - totalTravellingTime, this.itinerary.getDelay());
-        }
     }
 
     /**
@@ -231,12 +216,6 @@ public class ItineraryTest extends AbstractItineraryProviderBasedTest {
     @Ignore
     @Test
     public void testGetSchedule() {
-        Assert.fail("Not yet implemented"); // TODO
-    }
-
-    @Ignore
-    @Test
-    public void testWaitTimes() {
         Assert.fail("Not yet implemented"); // TODO
     }
 

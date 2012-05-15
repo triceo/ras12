@@ -123,7 +123,7 @@ public class Train implements Comparable<Train>, Directed {
         this.carriesHazardousMaterials = hazmat;
         this.isWestbound = isWestbound;
         if (sars != null) {
-            for (ScheduleAdherenceRequirement sa : sars) {
+            for (final ScheduleAdherenceRequirement sa : sars) {
                 this.scheduleAdherenceRequirements.put(sa.getDestination(), sa);
             }
         }
