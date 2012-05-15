@@ -21,7 +21,11 @@ public class OccupationTracker {
         private final BigDecimal start, end;
 
         public ArcRange(final Arc a) {
-            this(a, BigDecimal.ZERO, a.getLengthInMiles());
+            this(a, BigDecimal.ZERO);
+        }
+
+        public ArcRange(final Arc a, final BigDecimal start) {
+            this(a, start, null);
         }
 
         public ArcRange(final Arc a, final BigDecimal start, final BigDecimal end) {
@@ -30,16 +34,22 @@ public class OccupationTracker {
             }
             this.arc = a;
             if (start.signum() < 0) {
-                throw new IllegalArgumentException("Arc range start must be >= 0.");
-            }
-            this.start = start;
-            if (end.signum() < 0 || end.compareTo(a.getLengthInMiles()) > 0) {
-                throw new IllegalArgumentException("Arc range end must be in the range of <0,"
+                throw new IllegalArgumentException("Arc range start must be in the range of <0,"
                         + a.getLengthInMiles() + ">.");
             }
-            this.end = end;
-            this.full = start.equals(BigDecimal.ZERO) && end.equals(a.getLengthInMiles());
-            this.empty = start.equals(end);
+            this.start = start;
+            if (end == null) {
+                this.end = a.getLengthInMiles();
+            } else {
+                if (end.compareTo(this.start) < 0 || end.compareTo(a.getLengthInMiles()) > 0) {
+                    throw new IllegalArgumentException("Arc range end must be in the range of <"
+                            + this.start + "," + a.getLengthInMiles() + ">.");
+                }
+                this.end = end;
+            }
+            this.full = this.getStart().equals(BigDecimal.ZERO)
+                    && this.getEnd().equals(a.getLengthInMiles());
+            this.empty = this.getStart().equals(this.getEnd());
         }
 
         @Override
@@ -57,18 +67,13 @@ public class OccupationTracker {
             if (this.arc != other.arc) {
                 return false;
             }
-            if (this.end == null) {
-                if (other.end != null) {
-                    return false;
-                }
-            } else if (!this.end.equals(other.end)) {
+            if (this.isFull() && other.isFull() || this.isEmpty() && other.isEmpty()) {
+                return true;
+            }
+            if (!this.end.equals(other.end)) {
                 return false;
             }
-            if (this.start == null) {
-                if (other.start != null) {
-                    return false;
-                }
-            } else if (!this.start.equals(other.start)) {
+            if (!this.start.equals(other.start)) {
                 return false;
             }
             return true;
@@ -122,11 +127,11 @@ public class OccupationTracker {
             return result;
         }
 
-        private boolean isEmpty() {
+        protected boolean isEmpty() {
             return this.empty;
         }
 
-        private boolean isFull() {
+        protected boolean isFull() {
             return this.full;
         }
 
