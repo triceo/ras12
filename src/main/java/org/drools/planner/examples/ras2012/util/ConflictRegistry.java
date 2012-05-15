@@ -29,11 +29,7 @@ public class ConflictRegistry {
             return conflicts;
         }
 
-        public void reset() {
-            this.occupiedArcs.clear();
-        }
-
-        public void resetTrainData(final Train t) {
+        public void resetOccupiedArcs(final Train t) {
             this.occupiedArcs.remove(t);
         }
 
@@ -57,15 +53,9 @@ public class ConflictRegistry {
         return conflicts.setScale(0, BigDecimal.ROUND_HALF_EVEN).intValue();
     }
 
-    public void reset() {
+    public void resetOccupiedArcs(final Train t) {
         for (final ConflictRegistryItem item : this.items.values()) {
-            item.reset();
-        }
-    }
-
-    public void resetTrainData(final Train t) {
-        for (final ConflictRegistryItem item : this.items.values()) {
-            item.resetTrainData(t);
+            item.resetOccupiedArcs(t);
         }
     }
 

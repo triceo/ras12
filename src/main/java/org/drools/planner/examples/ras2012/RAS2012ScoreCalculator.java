@@ -18,7 +18,9 @@ import org.drools.planner.examples.ras2012.util.Converter;
 
 public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<RAS2012Solution> {
 
-    private static final BigDecimal MILLIS_TO_HOURS = BigDecimal.valueOf(3600000);
+    private static final int        OCCUPATION_CHECKS_PER_MINUTE = 2;
+
+    private static final BigDecimal MILLIS_TO_HOURS              = BigDecimal.valueOf(3600000);
 
     private static BigDecimal roundMillisecondsToHours(final long milliseconds) {
         return BigDecimal.valueOf(milliseconds).divide(RAS2012ScoreCalculator.MILLIS_TO_HOURS,
@@ -39,7 +41,7 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
 
     private HardAndSoftScore          cache                      = null;
 
-    private final ConflictRegistry    conflicts                  = new ConflictRegistry(720 * 2);
+    private ConflictRegistry          conflicts;
 
     @Override
     public void afterAllVariablesChanged(final Object entity) {
@@ -126,7 +128,9 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
         this.scheduleAdherencePenalties.clear();
         this.delayPenalties.clear();
         this.didTrainArrive.clear();
-        this.conflicts.reset();
+        this.conflicts = new ConflictRegistry(
+                (int) this.solution.getPlanningHorizon(TimeUnit.MINUTES)
+                        * RAS2012ScoreCalculator.OCCUPATION_CHECKS_PER_MINUTE);
     }
 
     private boolean didTrainArrive(final Itinerary producer) {
@@ -222,8 +226,9 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
     }
 
     private void recalculateOccupiedArcs(final ItineraryAssignment ia) {
+        final int scanEveryXMillis = 60000 / RAS2012ScoreCalculator.OCCUPATION_CHECKS_PER_MINUTE;
         // insert the number of conflicts for the given assignments
-        for (long time = 0; this.isInPlanningHorizon(time); time += 30000) {
+        for (long time = 0; this.isInPlanningHorizon(time); time += scanEveryXMillis) {
             this.conflicts.setOccupiedArcs(time, ia.getTrain(),
                     ia.getItinerary().getOccupiedArcs(time));
         }
@@ -231,8 +236,8 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
 
     @Override
     public void resetWorkingSolution(final RAS2012Solution workingSolution) {
-        this.clearEveryCache();
         this.solution = workingSolution;
+        this.clearEveryCache();
         for (final ItineraryAssignment ia : this.solution.getAssignments()) {
             this.insert(ia);
         }
@@ -246,6 +251,6 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
         this.scheduleAdherencePenalties.remove(t);
         this.delayPenalties.remove(t);
         this.didTrainArrive.remove(t);
-        this.conflicts.resetTrainData(t);
+        this.conflicts.resetOccupiedArcs(t);
     }
 }
