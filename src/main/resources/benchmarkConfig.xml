@@ -21,7 +21,6 @@
       </scoreDirectorFactory>
       <termination>
         <terminationCompositionStyle>OR</terminationCompositionStyle>
-        <maximumMinutesSpend>5</maximumMinutesSpend>
       </termination>
     </solver>
   </inheritedSolverBenchmark>
@@ -31,7 +30,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -55,7 +54,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -79,7 +78,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -103,7 +102,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -127,7 +126,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -151,7 +150,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -175,7 +174,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -200,7 +199,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -224,7 +223,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -248,7 +247,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -272,7 +271,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -296,7 +295,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -320,7 +319,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -344,7 +343,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -369,7 +368,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -393,7 +392,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -417,7 +416,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -441,7 +440,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -465,7 +464,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -489,7 +488,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -513,7 +512,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -538,7 +537,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -562,7 +561,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -586,7 +585,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -610,7 +609,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -634,7 +633,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -658,7 +657,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -682,7 +681,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -707,7 +706,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -731,7 +730,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -755,7 +754,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -779,7 +778,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -803,7 +802,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -827,7 +826,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -851,7 +850,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -876,7 +875,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -900,7 +899,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -924,7 +923,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -948,7 +947,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -972,7 +971,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -996,7 +995,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -1020,7 +1019,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -1045,7 +1044,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -1069,7 +1068,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -1093,7 +1092,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -1117,7 +1116,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -1141,7 +1140,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -1165,7 +1164,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -1189,7 +1188,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -1214,7 +1213,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -1238,7 +1237,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -1262,7 +1261,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -1286,7 +1285,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -1310,7 +1309,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -1334,7 +1333,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -1358,7 +1357,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -1383,7 +1382,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -1407,7 +1406,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -1431,7 +1430,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -1455,7 +1454,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -1479,7 +1478,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -1503,7 +1502,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -1527,7 +1526,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -1552,7 +1551,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -1576,7 +1575,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -1600,7 +1599,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -1624,7 +1623,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -1648,7 +1647,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -1672,7 +1671,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
@@ -1696,7 +1695,7 @@
     <solver>
       <localSearch>
         <termination>
-          <maximumUnimprovedStepCount>150</maximumUnimprovedStepCount>
+          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
