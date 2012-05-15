@@ -172,7 +172,7 @@ public class Route extends Visualizable implements Comparable<Route>, Directed {
             return false;
         }
         // make sure that the route leads through every node where the train is expected
-        for (final ScheduleAdherenceRequirement sar : t.getScheduleAdherenceRequirements()) {
+        for (final ScheduleAdherenceRequirement sar : t.getScheduleAdherenceRequirements().values()) {
             if (!nodes.contains(sar.getDestination())) {
                 return false;
             }

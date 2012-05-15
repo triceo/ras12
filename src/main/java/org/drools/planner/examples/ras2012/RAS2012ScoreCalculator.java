@@ -153,8 +153,18 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
     private int getScheduleAdherencePenalty(final Itinerary i) {
         int penalty = 0;
         if (i.getTrain().getType().adhereToSchedule()) {
-            for (final long difference : i.getScheduleAdherenceStatus().values()) {
+            for (final Map.Entry<Node, Long> arrivals : i.getScheduleAdherenceStatus().entrySet()) {
+                final Node node = arrivals.getKey();
+                final long arrival = arrivals.getValue();
+                if (!this.isInPlanningHorizon(arrival)) {
+                    // doesn't count when it's outside the horizon
+                    continue;
+                }
+                final long expectedArrival = i.getTrain().getScheduleAdherenceRequirements()
+                        .get(node).getTimeSinceStartOfWorld(TimeUnit.MILLISECONDS);
+                final long difference = arrival - expectedArrival;
                 if (difference < 1) {
+                    // doesn't count when we're ahead
                     continue;
                 }
                 BigDecimal hourlyDifference = RAS2012ScoreCalculator

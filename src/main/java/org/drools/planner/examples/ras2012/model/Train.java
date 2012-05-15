@@ -1,8 +1,9 @@
 package org.drools.planner.examples.ras2012.model;
 
 import java.math.BigDecimal;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.drools.planner.examples.ras2012.Directed;
@@ -56,21 +57,21 @@ public class Train implements Comparable<Train>, Directed {
         }
     }
 
-    private final String                             name;
+    private final String                                  name;
 
-    private final BigDecimal                         length;
-    private final BigDecimal                         speedMultiplier;
-    private final Type                               type;
-    private final int                                tob;
-    private final Node                               origin;
-    private final Node                               destination;
-    private final long                               entryTime;
-    private final long                               wantTime;
-    private final long                               originalDelay;
-    private final List<ScheduleAdherenceRequirement> scheduleAdherenceRequirements;
-    private final boolean                            carriesHazardousMaterials;
+    private final BigDecimal                              length;
+    private final BigDecimal                              speedMultiplier;
+    private final Type                                    type;
+    private final int                                     tob;
+    private final Node                                    origin;
+    private final Node                                    destination;
+    private final long                                    entryTime;
+    private final long                                    wantTime;
+    private final long                                    originalDelay;
+    private final Map<Node, ScheduleAdherenceRequirement> scheduleAdherenceRequirements = new HashMap<Node, ScheduleAdherenceRequirement>();
+    private final boolean                                 carriesHazardousMaterials;
 
-    private final boolean                            isWestbound;
+    private final boolean                                 isWestbound;
 
     public Train(final String name, final BigDecimal length, final BigDecimal speedMultiplier,
             final int tob, final Node origin, final Node destination, final int entryTime,
@@ -118,10 +119,14 @@ public class Train implements Comparable<Train>, Directed {
         this.wantTime = Train.DEFAULT_TIME_UNIT.convert(wantTime, TimeUnit.MINUTES);
         this.originalDelay = Train.DEFAULT_TIME_UNIT.convert(originalScheduleAdherence,
                 TimeUnit.MINUTES);
-        this.scheduleAdherenceRequirements = sars == null ? Collections
-                .<ScheduleAdherenceRequirement> emptyList() : Collections.unmodifiableList(sars);
+
         this.carriesHazardousMaterials = hazmat;
         this.isWestbound = isWestbound;
+        if (sars != null) {
+            for (ScheduleAdherenceRequirement sa : sars) {
+                this.scheduleAdherenceRequirements.put(sa.getDestination(), sa);
+            }
+        }
     }
 
     public boolean carriesHazardousMaterials() {
@@ -207,7 +212,7 @@ public class Train implements Comparable<Train>, Directed {
         return unit.convert(this.originalDelay, Train.DEFAULT_TIME_UNIT);
     }
 
-    public List<ScheduleAdherenceRequirement> getScheduleAdherenceRequirements() {
+    public Map<Node, ScheduleAdherenceRequirement> getScheduleAdherenceRequirements() {
         return this.scheduleAdherenceRequirements;
     }
 

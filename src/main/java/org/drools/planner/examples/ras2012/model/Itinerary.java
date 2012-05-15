@@ -199,18 +199,34 @@ public final class Itinerary extends Visualizable {
 
     private long getEntryTime(final Arc a) {
         final SortedMap<Long, Arc> nodeEntryTimes = this.getScheduleWithArcs();
-        long timeArcEntered = -1;
+        long timeEntered = -1;
         for (final SortedMap.Entry<Long, Arc> entry : nodeEntryTimes.entrySet()) {
             if (entry.getValue() == a) {
-                timeArcEntered = entry.getKey() - 1;
+                timeEntered = entry.getKey() - 1;
                 break;
             }
         }
-        if (timeArcEntered < this.trainEntryTime) {
+        if (timeEntered < this.trainEntryTime) {
             throw new IllegalStateException(
                     "Proper arc cannot be found! Possibly a bug in the algoritm.");
         }
-        return timeArcEntered;
+        return timeEntered;
+    }
+
+    private long getEntryTime(final Node n) {
+        final SortedMap<Long, Node> nodeEntryTimes = this.getSchedule();
+        long timeEntered = -1;
+        for (final SortedMap.Entry<Long, Node> entry : nodeEntryTimes.entrySet()) {
+            if (entry.getValue() == n) {
+                timeEntered = entry.getKey();
+                break;
+            }
+        }
+        if (timeEntered < this.trainEntryTime) {
+            throw new IllegalStateException(
+                    "Proper node cannot be found! Possibly a bug in the algoritm.");
+        }
+        return timeEntered;
     }
 
     protected Arc getLeadingArc(final long time) {
@@ -284,10 +300,9 @@ public final class Itinerary extends Visualizable {
     public Map<Node, Long> getScheduleAdherenceStatus() {
         final Map<Node, Long> result = new HashMap<Node, Long>();
         for (final ScheduleAdherenceRequirement sa : this.getTrain()
-                .getScheduleAdherenceRequirements()) {
+                .getScheduleAdherenceRequirements().values()) {
             final Node expectedDestination = sa.getDestination();
-            final long expectedArrival = sa.getTimeSinceStartOfWorld(Itinerary.DEFAULT_TIME_UNIT);
-            result.put(expectedDestination, this.getDelay(expectedDestination, expectedArrival));
+            result.put(expectedDestination, this.getEntryTime(expectedDestination));
         }
         return Collections.unmodifiableMap(result);
     }
