@@ -6,7 +6,8 @@ import java.util.Map;
 // TODO rework so that speeds aren't static
 public enum Track {
 
-    MAIN_0, MAIN_1, MAIN_2, SWITCH(false), SIDING(false), CROSSOVER(false);
+    MAIN_0('='), MAIN_1('<'), MAIN_2('>'), SWITCH('S', false), SIDING('/', false), CROSSOVER('C',
+            false);
 
     private final boolean                    isMainTrack;
 
@@ -43,11 +44,14 @@ public enum Track {
         Track.speedsWestbound.put(t, speed);
     }
 
-    Track() {
-        this(true);
+    private final char symbol;
+
+    Track(final char symbol) {
+        this(symbol, true);
     }
 
-    Track(final boolean isMain) {
+    Track(final char symbol, final boolean isMain) {
+        this.symbol = symbol;
         this.isMainTrack = isMain;
     }
 
@@ -57,6 +61,10 @@ public enum Track {
 
     public int getSpeedWestbound() {
         return Track.speedsWestbound.get(this);
+    }
+
+    public char getSymbol() {
+        return this.symbol;
     }
 
     public boolean isMainTrack() {

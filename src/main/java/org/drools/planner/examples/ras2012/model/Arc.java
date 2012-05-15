@@ -70,7 +70,7 @@ public class Arc extends Section {
 
     private String toStringInternal() {
         final StringBuilder builder = new StringBuilder();
-        builder.append("Arc [").append(this.track).append(", lengthInMiles=")
+        builder.append("Arc (").append(this.track.getSymbol()).append(") [lengthInMiles=")
                 .append(this.lengthInMiles).append(", section=").append(super.toString())
                 .append("]");
         return builder.toString();

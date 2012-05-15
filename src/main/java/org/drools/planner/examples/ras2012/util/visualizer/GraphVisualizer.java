@@ -33,28 +33,9 @@ public class GraphVisualizer {
 
     private static class ArcLabeller implements Transformer<Arc, String> {
 
-        private String getTrackId(final Arc input) {
-            switch (input.getTrack()) {
-                case MAIN_0:
-                    return "M0";
-                case MAIN_1:
-                    return "M1";
-                case MAIN_2:
-                    return "M2";
-                case SWITCH:
-                    return "SW";
-                case SIDING:
-                    return "S";
-                case CROSSOVER:
-                    return "C";
-                default:
-                    throw new IllegalArgumentException("Unknown track type: " + input.getTrack());
-            }
-        }
-
         @Override
         public String transform(final Arc input) {
-            return input.getLength() + this.getTrackId(input);
+            return input.getTrack().getSymbol() + "" + input.getLength();
         }
 
     }
