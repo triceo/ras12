@@ -142,6 +142,10 @@ public final class Itinerary extends Visualizable {
         return true;
     }
 
+    public long getArrivalTime() {
+        return this.getSchedule().lastKey();
+    }
+
     /**
      * Return the delay at the end of the horizon.
      * 
@@ -155,7 +159,7 @@ public final class Itinerary extends Visualizable {
             // train not en route yet, delay must be zero
             return 0;
         }
-        final long originalDelay = this.getTrain().getOriginalDelay(Itinerary.DEFAULT_TIME_UNIT);
+        final long originalDelay = this.getTrain().getOriginalSA(Itinerary.DEFAULT_TIME_UNIT);
         final SortedMap<Long, Node> schedule = this.getSchedule();
         final SortedMap<Long, Node> scheduleInHorizon = schedule.headMap(horizon + 1);
         if (scheduleInHorizon.size() == 0) {
@@ -297,7 +301,7 @@ public final class Itinerary extends Visualizable {
         return Collections.unmodifiableSortedMap(this.scheduleCache);
     }
 
-    public Map<Node, Long> getScheduleAdherenceStatus() {
+    public Map<Node, Long> getArrivalsAtSANodes() {
         final Map<Node, Long> result = new HashMap<Node, Long>();
         for (final ScheduleAdherenceRequirement sa : this.getTrain()
                 .getScheduleAdherenceRequirements().values()) {
@@ -351,10 +355,6 @@ public final class Itinerary extends Visualizable {
 
     public Map<Node, WaitTime> getWaitTimes() {
         return Collections.unmodifiableMap(this.nodeWaitTimes);
-    }
-
-    public long getArrivalTime() {
-        return this.getSchedule().lastKey();
     }
 
     @Override

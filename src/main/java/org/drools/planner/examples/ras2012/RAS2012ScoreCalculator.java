@@ -153,7 +153,7 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
     private int getScheduleAdherencePenalty(final Itinerary i) {
         int penalty = 0;
         if (i.getTrain().getType().adhereToSchedule()) {
-            for (final Map.Entry<Node, Long> arrivals : i.getScheduleAdherenceStatus().entrySet()) {
+            for (final Map.Entry<Node, Long> arrivals : i.getArrivalsAtSANodes().entrySet()) {
                 final Node node = arrivals.getKey();
                 final long arrival = arrivals.getValue();
                 if (!this.isInPlanningHorizon(arrival)) {
@@ -162,11 +162,11 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
                 }
                 final long expectedArrival = i.getTrain().getScheduleAdherenceRequirements()
                         .get(node).getTimeSinceStartOfWorld(TimeUnit.MILLISECONDS);
-                final long difference = arrival - expectedArrival;
-                if (difference < 1) {
+                if (arrival <= expectedArrival) {
                     // doesn't count when we're ahead
                     continue;
                 }
+                final long difference = arrival - expectedArrival;
                 BigDecimal hourlyDifference = RAS2012ScoreCalculator
                         .roundMillisecondsToHours(difference);
                 hourlyDifference = hourlyDifference.subtract(BigDecimal.valueOf(2));
@@ -181,8 +181,7 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
     private int getTrainArrivalMetrics() {
         int actual = 0, full = 0;
         for (final Map.Entry<Train, Boolean> entry : this.didTrainArrive.entrySet()) {
-            final int trainValue = (int) Math
-                    .ceil(entry.getKey().getType().getDelayPenalty() / 100.0);
+            final int trainValue = 1;
             full += trainValue;
             if (entry.getValue()) {
                 actual += trainValue;

@@ -208,7 +208,8 @@ public class Train implements Comparable<Train>, Directed {
         return this.origin;
     }
 
-    public long getOriginalDelay(final TimeUnit unit) {
+    // negative means train is running late
+    public long getOriginalSA(final TimeUnit unit) {
         return unit.convert(this.originalDelay, Train.DEFAULT_TIME_UNIT);
     }
 
