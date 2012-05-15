@@ -29,22 +29,15 @@ public class Converter {
         return speedInMPH.multiply(timeInHours);
     }
 
-    public static BigDecimal getDistanceFromSpeedAndTime(final int speedInMPH,
-            final long timeInMilliseconds) {
-        return Converter.getDistanceFromSpeedAndTime(BigDecimal.valueOf(speedInMPH),
-                timeInMilliseconds);
-    }
-
     public static BigDecimal getDistanceTravelled(final Itinerary i, final Arc a, final long time) {
-        final long timeTravelledInLeadingArc = time - Converter.getNearestPastCheckpoint(i, time);
-        BigDecimal distanceTravelledInLeadingArc = BigDecimal.ZERO;
-        if (timeTravelledInLeadingArc > 0) {
-            // if we're inside the leading arc (and not exactly in the origin node), count it
-            distanceTravelledInLeadingArc = Converter.getDistanceFromSpeedAndTime(i.getTrain()
-                    .getMaximumSpeed(a.getTrack()), timeTravelledInLeadingArc);
+        final SortedMap<Long, Node> schedule = i.getSchedule().headMap(time);
+        final long nearestPastCheckpoint = schedule.headMap(time).lastKey();
+        if (schedule.get(nearestPastCheckpoint) != a.getOrigin(i.getRoute())) {
+            throw new IllegalArgumentException("Arc is not a leading arc at the given time.");
         }
-        // train cannot travel more than the arc's length; if it does, there must be some wait times in play
-        return distanceTravelledInLeadingArc.min(a.getLength());
+        final long timeTravelledInLeadingArc = time - nearestPastCheckpoint;
+        return Converter.getDistanceFromSpeedAndTime(i.getTrain().getMaximumSpeed(a.getTrack()),
+                timeTravelledInLeadingArc).min(a.getLength());
     }
 
     public static BigDecimal getDistanceTravelled(final Itinerary i, final long time) {
@@ -64,10 +57,6 @@ public class Converter {
             result = result.add(Converter.getDistanceTravelled(i, leadingArc, time));
             return result;
         }
-    }
-
-    private static long getNearestPastCheckpoint(final Itinerary i, final long time) {
-        return i.getSchedule().headMap(time).lastKey();
     }
 
     public static long getTimeFromSpeedAndDistance(final BigDecimal speedInMPH,
