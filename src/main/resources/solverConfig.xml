@@ -13,10 +13,10 @@
       <maximumMinutesSpend>5</maximumMinutesSpend>
     </termination> 
     <acceptor>
-      <simulatedAnnealingStartingTemperature>10hard/500soft</simulatedAnnealingStartingTemperature>
+      <simulatedAnnealingStartingTemperature>10hard/10soft</simulatedAnnealingStartingTemperature>
     </acceptor>
     <forager>
-      <minimalAcceptedSelection>16</minimalAcceptedSelection>
+      <minimalAcceptedSelection>4</minimalAcceptedSelection>
     </forager>    
     <selector>
       <selector>
