@@ -1,4 +1,4 @@
-package org.drools.planner.examples.ras2012.util;
+package org.drools.planner.examples.ras2012.util.visualizer;
 
 import org.drools.planner.examples.ras2012.model.Route;
 

@@ -1,11 +1,11 @@
-package org.drools.planner.examples.ras2012.util;
+package org.drools.planner.examples.ras2012.util.model;
 
 import java.math.BigDecimal;
 
 import org.drools.planner.examples.ras2012.model.Arc;
 import org.drools.planner.examples.ras2012.model.Node;
 import org.drools.planner.examples.ras2012.model.Track;
-import org.drools.planner.examples.ras2012.util.OccupationTracker.ArcRange;
+import org.drools.planner.examples.ras2012.util.model.OccupationTracker.ArcRange;
 import org.junit.Assert;
 import org.junit.Test;
 

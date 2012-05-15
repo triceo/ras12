@@ -1,4 +1,4 @@
-package org.drools.planner.examples.ras2012.util;
+package org.drools.planner.examples.ras2012.util.visualizer;
 
 import java.awt.Color;
 import java.awt.Paint;
@@ -10,6 +10,7 @@ import org.apache.commons.collections15.Transformer;
 import org.drools.planner.examples.ras2012.model.Arc;
 import org.drools.planner.examples.ras2012.model.Itinerary;
 import org.drools.planner.examples.ras2012.model.Node;
+import org.drools.planner.examples.ras2012.util.model.OccupationTracker;
 
 public class ItineraryVisualizer extends RouteVisualizer {
 

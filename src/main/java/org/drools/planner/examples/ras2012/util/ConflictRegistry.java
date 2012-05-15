@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 import org.drools.planner.examples.ras2012.model.Train;
+import org.drools.planner.examples.ras2012.util.model.OccupationTracker;
 
 public class ConflictRegistry {
 

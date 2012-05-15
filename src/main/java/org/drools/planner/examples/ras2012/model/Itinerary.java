@@ -12,10 +12,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.drools.planner.examples.ras2012.Visualizable;
-import org.drools.planner.examples.ras2012.util.ArcProgression;
 import org.drools.planner.examples.ras2012.util.Converter;
-import org.drools.planner.examples.ras2012.util.ItineraryVisualizer;
-import org.drools.planner.examples.ras2012.util.OccupationTracker;
+import org.drools.planner.examples.ras2012.util.model.ArcProgression;
+import org.drools.planner.examples.ras2012.util.model.OccupationTracker;
+import org.drools.planner.examples.ras2012.util.visualizer.ItineraryVisualizer;
 
 public final class Itinerary extends Visualizable {
 

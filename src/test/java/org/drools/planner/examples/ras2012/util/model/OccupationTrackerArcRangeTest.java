@@ -1,4 +1,4 @@
-package org.drools.planner.examples.ras2012.util;
+package org.drools.planner.examples.ras2012.util.model;
 
 import java.math.BigDecimal;
 import java.util.Collection;
@@ -8,7 +8,7 @@ import junit.framework.Assert;
 import org.drools.planner.examples.ras2012.model.Arc;
 import org.drools.planner.examples.ras2012.model.Node;
 import org.drools.planner.examples.ras2012.model.Track;
-import org.drools.planner.examples.ras2012.util.OccupationTracker.ArcRange;
+import org.drools.planner.examples.ras2012.util.model.OccupationTracker.ArcRange;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;

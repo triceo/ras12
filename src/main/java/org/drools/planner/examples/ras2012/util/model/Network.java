@@ -1,4 +1,4 @@
-package org.drools.planner.examples.ras2012.util;
+package org.drools.planner.examples.ras2012.util.model;
 
 import java.io.File;
 import java.util.Collection;
@@ -17,6 +17,7 @@ import org.drools.planner.examples.ras2012.model.Arc;
 import org.drools.planner.examples.ras2012.model.Node;
 import org.drools.planner.examples.ras2012.model.Route;
 import org.drools.planner.examples.ras2012.model.Train;
+import org.drools.planner.examples.ras2012.util.visualizer.GraphVisualizer;
 
 public class Network extends Visualizable {
 

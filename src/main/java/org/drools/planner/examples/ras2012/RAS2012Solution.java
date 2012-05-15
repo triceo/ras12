@@ -17,8 +17,8 @@ import org.drools.planner.examples.ras2012.model.Arc;
 import org.drools.planner.examples.ras2012.model.ItineraryAssignment;
 import org.drools.planner.examples.ras2012.model.MaintenanceWindow;
 import org.drools.planner.examples.ras2012.model.Train;
-import org.drools.planner.examples.ras2012.util.GraphVisualizer;
-import org.drools.planner.examples.ras2012.util.Network;
+import org.drools.planner.examples.ras2012.util.model.Network;
+import org.drools.planner.examples.ras2012.util.visualizer.GraphVisualizer;
 
 public class RAS2012Solution extends Visualizable implements Solution<HardAndSoftScore> {
 

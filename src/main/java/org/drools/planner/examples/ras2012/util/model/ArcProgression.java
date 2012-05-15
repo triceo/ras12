@@ -1,4 +1,4 @@
-package org.drools.planner.examples.ras2012.util;
+package org.drools.planner.examples.ras2012.util.model;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -19,7 +19,7 @@ import org.drools.planner.examples.ras2012.Directed;
 import org.drools.planner.examples.ras2012.model.Arc;
 import org.drools.planner.examples.ras2012.model.Node;
 import org.drools.planner.examples.ras2012.model.Track;
-import org.drools.planner.examples.ras2012.util.OccupationTracker.Builder;
+import org.drools.planner.examples.ras2012.util.model.OccupationTracker.Builder;
 
 public class ArcProgression implements Directed {
 
@@ -159,7 +159,7 @@ public class ArcProgression implements Directed {
         // and then retrieve the actual distance
         BigDecimal result = BigDecimal.ZERO;
         for (final Node n : nodes.subList(startIndex, endIndex + 1)) {
-            Arc a = this.arcsPerOrigin.get(n);
+            final Arc a = this.arcsPerOrigin.get(n);
             result = result.add(a.getLength());
             if (a.getDestination(this) == end) {
                 break;

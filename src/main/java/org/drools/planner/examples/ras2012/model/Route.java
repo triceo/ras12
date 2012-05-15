@@ -11,9 +11,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.drools.planner.examples.ras2012.Directed;
 import org.drools.planner.examples.ras2012.Visualizable;
-import org.drools.planner.examples.ras2012.util.ArcProgression;
 import org.drools.planner.examples.ras2012.util.Converter;
-import org.drools.planner.examples.ras2012.util.RouteVisualizer;
+import org.drools.planner.examples.ras2012.util.model.ArcProgression;
+import org.drools.planner.examples.ras2012.util.visualizer.RouteVisualizer;
 
 /**
  * Note: this class has a natural ordering that is inconsistent with equals.
