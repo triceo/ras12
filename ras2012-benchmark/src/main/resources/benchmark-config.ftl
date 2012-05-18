@@ -2,7 +2,7 @@
 <plannerBenchmark>
   <parallelBenchmarkCount>AUTO</parallelBenchmarkCount>
   <solverBenchmarkRankingType>TOTAL_RANKING</solverBenchmarkRankingType>  
-  <benchmarkDirectory>data/benchmarks/</benchmarkDirectory>
+  <benchmarkDirectory>data/</benchmarkDirectory>
   <warmUpSecondsSpend>30</warmUpSecondsSpend>
   <inheritedSolverBenchmark>
     <problemBenchmarks>
