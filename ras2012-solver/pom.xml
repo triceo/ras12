@@ -89,7 +89,6 @@
                 <exclude>ch/qos/logback/**/*.class</exclude>
                 <!-- exclude app files -->
                 <exclude>org/drools/planner/examples/ras2012/App*.class</exclude>
-                <exclude>org/drools/planner/examples/ras2012/Benchmark.class</exclude>
                 <exclude>org/drools/planner/examples/ras2012/Directed.class</exclude>
                 <!-- exclude generated parser files -->
                 <exclude>org/drools/planner/examples/ras2012/parser/**/*.class</exclude>
