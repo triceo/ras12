@@ -39,8 +39,6 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
 
     private final Map<Train, Integer> unpreferredTracksPenalties = new HashMap<Train, Integer>();
 
-    private HardAndSoftScore          cache                      = null;
-
     private ConflictRegistry          conflicts;
 
     @Override
@@ -96,14 +94,7 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
     }
 
     @Override
-    public synchronized HardAndSoftScore calculateScore() {
-        if (this.cache == null) {
-            this.cache = this.calculateScoreUncached();
-        }
-        return this.cache;
-    }
-
-    private HardAndSoftScore calculateScoreUncached() {
+    public HardAndSoftScore calculateScore() {
         int penalty = 0;
         for (final Train t : this.solution.getTrains()) {
             penalty += this.wantTimePenalties.containsKey(t) ? this.wantTimePenalties.get(t) : 0;
@@ -122,7 +113,6 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
     }
 
     private void clearEveryCache() {
-        this.cache = null;
         this.wantTimePenalties.clear();
         this.unpreferredTracksPenalties.clear();
         this.scheduleAdherencePenalties.clear();
@@ -256,7 +246,6 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
 
     private void retract(final ItineraryAssignment ia) {
         final Train t = ia.getTrain();
-        this.cache = null;
         this.wantTimePenalties.remove(t);
         this.unpreferredTracksPenalties.remove(t);
         this.scheduleAdherencePenalties.remove(t);
