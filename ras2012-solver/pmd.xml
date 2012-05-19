@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd version="4.3" timestamp="2012-05-19T10:15:22.852">
+<file name="/home/lpetrovi/Workspaces/Stuff/ras2012/ras2012-solver/src/main/java/org/drools/planner/examples/ras2012/RAS2012ProblemIO.java">
+<violation beginline="267" endline="269" begincolumn="19" endcolumn="17" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.drools.planner.examples.ras2012" class="RAS2012ProblemIO" method="read" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+Avoid empty catch blocks
+</violation>
+<violation beginline="303" endline="305" begincolumn="19" endcolumn="17" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.drools.planner.examples.ras2012" class="RAS2012ProblemIO" method="write" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+Avoid empty catch blocks
+</violation>
+</file>
+<file name="/home/lpetrovi/Workspaces/Stuff/ras2012/ras2012-solver/src/main/java/org/drools/planner/examples/ras2012/RAS2012ScoreCalculator.java">
+<violation beginline="142" endline="151" begincolumn="13" endcolumn="5" rule="UnusedFormalParameter" ruleset="Unused Code Rules" package="org.drools.planner.examples.ras2012" class="RAS2012ScoreCalculator" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedFormalParameter" priority="3">
+Avoid unused method parameters such as 'solution'.
+</violation>
+</file>
+<file name="/home/lpetrovi/Workspaces/Stuff/ras2012/ras2012-solver/src/main/java/org/drools/planner/examples/ras2012/Visualizable.java">
+<violation beginline="39" endline="41" begincolumn="19" endcolumn="17" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.drools.planner.examples.ras2012" class="Visualizable" method="visualize" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+Avoid empty catch blocks
+</violation>
+</file>
+</pmd>
