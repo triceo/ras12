@@ -1,6 +1,5 @@
 package org.drools.planner.examples.ras2012.util;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,14 +15,14 @@ public class ConflictRegistry {
         private final Map<Train, OccupationTracker> occupiedArcsByTrain = new HashMap<Train, OccupationTracker>();
         private final List<OccupationTracker> occupiedArcs = new ArrayList<OccupationTracker>();
 
-        public BigDecimal getConflicts() {
-            BigDecimal conflicts = BigDecimal.ZERO;
+        public double getConflicts() {
+            double conflicts = 0;
             int size = occupiedArcs.size();
             for (int position = 0; position < size; position++) {
                 OccupationTracker left = occupiedArcs.get(position);
                 for (int i = position + 1; i < size; i++) {
                     OccupationTracker right = occupiedArcs.get(i);
-                    conflicts = conflicts.add(left.getConflictingMileage(right));
+                    conflicts += left.getConflictingMileage(right).doubleValue();
                 }
             }
             return conflicts;
@@ -51,11 +50,11 @@ public class ConflictRegistry {
     }
 
     public int countConflicts() {
-        BigDecimal conflicts = BigDecimal.ZERO;
+        double conflicts = 0;
         for (final ConflictRegistryItem item : items.values()) {
-            conflicts = conflicts.add(item.getConflicts());
+            conflicts += item.getConflicts();
         }
-        return conflicts.setScale(0, BigDecimal.ROUND_HALF_EVEN).intValue();
+        return (int) Math.round(conflicts);
     }
 
     public void resetOccupiedArcs(final Train t) {
