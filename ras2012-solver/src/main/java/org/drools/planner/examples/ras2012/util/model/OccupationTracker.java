@@ -5,6 +5,7 @@ import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import org.drools.planner.examples.ras2012.Directed;
@@ -32,7 +33,7 @@ public class OccupationTracker {
             if (a == null) {
                 throw new IllegalArgumentException("Arc must not be null.");
             }
-            arc = a;
+            this.arc = a;
             if (start.signum() < 0) {
                 throw new IllegalArgumentException("Arc range start must be in the range of <0,"
                         + a.getLength() + ">.");
@@ -47,9 +48,9 @@ public class OccupationTracker {
                 }
                 this.end = end;
             }
-            full = getStart().equals(BigDecimal.ZERO)
-                    && getEnd().equals(a.getLength());
-            empty = getStart().equals(getEnd());
+            this.full = this.getStart().equals(BigDecimal.ZERO)
+                    && this.getEnd().equals(a.getLength());
+            this.empty = this.getStart().equals(this.getEnd());
         }
 
         @Override
@@ -64,42 +65,42 @@ public class OccupationTracker {
                 return false;
             }
             final ArcRange other = (ArcRange) obj;
-            if (arc != other.arc) {
+            if (this.arc != other.arc) {
                 return false;
             }
-            if (isFull() && other.isFull() || isEmpty() && other.isEmpty()) {
+            if (this.isFull() && other.isFull() || this.isEmpty() && other.isEmpty()) {
                 return true;
             }
-            if (!end.equals(other.end)) {
+            if (!this.end.equals(other.end)) {
                 return false;
             }
-            if (!start.equals(other.start)) {
+            if (!this.start.equals(other.start)) {
                 return false;
             }
             return true;
         }
 
         public Arc getArc() {
-            return arc;
+            return this.arc;
         }
 
         public BigDecimal getConflictingMileage(final ArcRange other) {
-            if (getArc() != other.getArc()) {
+            if (this.getArc() != other.getArc()) {
                 // ranges cannot conflict when they're of two different arcs
                 return BigDecimal.ZERO;
-            } else if (isFull() && other.isEmpty()) {
+            } else if (this.isFull() && other.isEmpty()) {
                 // the intersection is empty
                 return BigDecimal.ZERO;
-            } else if (other.isFull() && isEmpty()) {
+            } else if (other.isFull() && this.isEmpty()) {
                 // the intersection is empty
                 return BigDecimal.ZERO;
-            } else if (isFull() && other.isFull()) {
+            } else if (this.isFull() && other.isFull()) {
                 // full conflict
-                return getArc().getLength();
+                return this.getArc().getLength();
             } else {
                 // we need to calculate the actual conflicting range
-                final BigDecimal start = getStart().max(other.getStart());
-                final BigDecimal end = getEnd().min(other.getEnd());
+                final BigDecimal start = this.getStart().max(other.getStart());
+                final BigDecimal end = this.getEnd().min(other.getEnd());
                 final BigDecimal result = end.subtract(start);
                 if (result.signum() < 0) {
                     // ranges don't overlap
@@ -110,36 +111,36 @@ public class OccupationTracker {
         }
 
         private BigDecimal getEnd() {
-            return end;
+            return this.end;
         }
 
         private BigDecimal getStart() {
-            return start;
+            return this.start;
         }
 
         @Override
         public int hashCode() {
             final int prime = 31;
             int result = 1;
-            result = prime * result + (arc == null ? 0 : arc.hashCode());
-            result = prime * result + (end == null ? 0 : end.hashCode());
-            result = prime * result + (start == null ? 0 : start.hashCode());
+            result = prime * result + (this.arc == null ? 0 : this.arc.hashCode());
+            result = prime * result + (this.end == null ? 0 : this.end.hashCode());
+            result = prime * result + (this.start == null ? 0 : this.start.hashCode());
             return result;
         }
 
         protected boolean isEmpty() {
-            return empty;
+            return this.empty;
         }
 
         protected boolean isFull() {
-            return full;
+            return this.full;
         }
 
         @Override
         public String toString() {
             final StringBuilder builder = new StringBuilder();
-            builder.append("ArcRange [arc=").append(arc).append(", start=").append(start)
-                    .append(", end=").append(end).append("]");
+            builder.append("ArcRange [arc=").append(this.arc).append(", start=").append(this.start)
+                    .append(", end=").append(this.end).append("]");
             return builder.toString();
         }
 
@@ -153,31 +154,31 @@ public class OccupationTracker {
             return Builder.EMPTY;
         }
 
-        private final Directed directed;
+        private final Directed        directed;
         private final Deque<ArcRange> ranges = new ArrayDeque<ArcRange>();
 
         public Builder(final Directed d) {
-            directed = d;
+            this.directed = d;
         }
 
         public void add(final Arc a, final BigDecimal start, final BigDecimal end) {
-            this.add(create(a, start, end));
+            this.add(this.create(a, start, end));
         }
 
         private void add(final ArcRange range) {
-            if (directed.isEastbound()) {
-                ranges.addLast(range);
+            if (this.directed.isEastbound()) {
+                this.ranges.addLast(range);
             } else {
-                ranges.addFirst(range);
+                this.ranges.addFirst(range);
             }
         }
 
         public void addFrom(final Arc a, final BigDecimal start) {
-            this.add(create(a, start, a.getLength()));
+            this.add(this.create(a, start, a.getLength()));
         }
 
         public void addTo(final Arc a, final BigDecimal end) {
-            this.add(create(a, BigDecimal.ZERO, end));
+            this.add(this.create(a, BigDecimal.ZERO, end));
         }
 
         public void addWhole(final Arc a) {
@@ -185,11 +186,11 @@ public class OccupationTracker {
         }
 
         public OccupationTracker build() {
-            return new OccupationTracker(ranges.toArray(new ArcRange[ranges.size()]));
+            return new OccupationTracker(this.ranges.toArray(new ArcRange[this.ranges.size()]));
         }
 
         protected ArcRange create(final Arc a, final BigDecimal start, final BigDecimal end) {
-            if (directed.isEastbound()) {
+            if (this.directed.isEastbound()) {
                 return new ArcRange(a, start, end);
             } else {
                 return new ArcRange(a, a.getLength().subtract(end), a.getLength().subtract(start));
@@ -198,38 +199,18 @@ public class OccupationTracker {
     }
 
     private final Map<Arc, ArcRange> ranges = new HashMap<Arc, ArcRange>();
+    private final Collection<Arc>    arcs   = new HashSet<Arc>();
 
     private OccupationTracker(final ArcRange... arcRanges) {
         for (final ArcRange range : arcRanges) {
-            ranges.put(range.getArc(), range);
+            final Arc a = range.getArc();
+            this.ranges.put(a, range);
+            this.arcs.add(a);
         }
-    }
-
-    public BigDecimal getConflictingMileage(final OccupationTracker other) {
-        BigDecimal mileage = BigDecimal.ZERO;
-        if (isEmpty() || other.isEmpty()) {
-            return mileage;
-        }
-        final Collection<Arc> otherIncludedArcs = other.getIncludedArcs();
-        for (final Arc a : getIncludedArcs()) {
-            if (!otherIncludedArcs.contains(a)) {
-                continue;
-            }
-            mileage = mileage.add(getRange(a).getConflictingMileage(other.getRange(a)));
-        }
-        return mileage;
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((ranges == null) ? 0 : ranges.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -239,27 +220,50 @@ public class OccupationTracker {
         if (!(obj instanceof OccupationTracker)) {
             return false;
         }
-        OccupationTracker other = (OccupationTracker) obj;
-        if (ranges == null) {
+        final OccupationTracker other = (OccupationTracker) obj;
+        if (this.ranges == null) {
             if (other.ranges != null) {
                 return false;
             }
-        } else if (!ranges.equals(other.ranges)) {
+        } else if (!this.ranges.equals(other.ranges)) {
             return false;
         }
         return true;
     }
 
+    public BigDecimal getConflictingMileage(final OccupationTracker other) {
+        BigDecimal mileage = BigDecimal.ZERO;
+        if (this.isEmpty() || other.isEmpty()) {
+            return mileage;
+        }
+        final Collection<Arc> otherIncludedArcs = other.getIncludedArcs();
+        for (final Arc a : this.getIncludedArcs()) {
+            if (!otherIncludedArcs.contains(a)) {
+                continue;
+            }
+            mileage = mileage.add(this.getRange(a).getConflictingMileage(other.getRange(a)));
+        }
+        return mileage;
+    }
+
     public Collection<Arc> getIncludedArcs() {
-        return ranges.keySet();
+        return this.arcs;
     }
 
     private ArcRange getRange(final Arc a) {
-        return ranges.get(a);
+        return this.ranges.get(a);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (this.ranges == null ? 0 : this.ranges.hashCode());
+        return result;
     }
 
     public boolean isEmpty() {
-        return ranges.size() == 0;
+        return this.ranges.size() == 0;
     }
 
 }
