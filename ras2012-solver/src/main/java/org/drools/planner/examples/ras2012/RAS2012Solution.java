@@ -31,6 +31,8 @@ public class RAS2012Solution extends Visualizable implements Solution<HardAndSof
 
     private HardAndSoftScore                      score;
 
+    private long                                  horizon     = 0;
+
     public RAS2012Solution(final String name, final Network net,
             final Collection<MaintenanceWindow> maintenances, final Collection<Train> trains) {
         this.name = name;
@@ -66,6 +68,7 @@ public class RAS2012Solution extends Visualizable implements Solution<HardAndSof
     public Solution<HardAndSoftScore> cloneSolution() {
         final RAS2012Solution solution = new RAS2012Solution(this.name, this.network,
                 this.maintenances, this.trains, this.getAssignments());
+        solution.horizon = this.horizon;
         solution.setScore(this.getScore());
         return solution;
     }
@@ -114,12 +117,18 @@ public class RAS2012Solution extends Visualizable implements Solution<HardAndSof
     }
 
     public long getPlanningHorizon(final TimeUnit unit) {
-        if (this.getName().endsWith("TOY")) {
-            // FIXME ugly hack
-            return unit.convert(150, TimeUnit.MINUTES);
-        } else {
-            return unit.convert(12, TimeUnit.HOURS);
+        if (this.horizon == 0) {
+            if (this.getName().endsWith("TOY")) {
+                // FIXME ugly hack
+                this.horizon = TimeUnit.MILLISECONDS.convert(150, TimeUnit.MINUTES);
+            } else {
+                this.horizon = TimeUnit.MILLISECONDS.convert(12, TimeUnit.HOURS);
+            }
+            if (this.horizon > Integer.MAX_VALUE) {
+                throw new IllegalStateException("Your planning horizon doesn't fit into int!");
+            }
         }
+        return unit.convert(this.horizon, TimeUnit.MILLISECONDS);
     }
 
     @Override
