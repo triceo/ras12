@@ -200,6 +200,7 @@ public class OccupationTracker {
 
     private final Map<Arc, ArcRange> ranges = new HashMap<Arc, ArcRange>();
     private final Collection<Arc>    arcs   = new HashSet<Arc>();
+    private final boolean            isEmpty;
 
     private OccupationTracker(final ArcRange... arcRanges) {
         for (final ArcRange range : arcRanges) {
@@ -207,6 +208,7 @@ public class OccupationTracker {
             this.ranges.put(a, range);
             this.arcs.add(a);
         }
+        this.isEmpty = this.ranges.size() == 0;
     }
 
     @Override
@@ -263,7 +265,7 @@ public class OccupationTracker {
     }
 
     public boolean isEmpty() {
-        return this.ranges.size() == 0;
+        return this.isEmpty;
     }
 
 }
