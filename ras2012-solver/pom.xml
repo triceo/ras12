@@ -8,7 +8,7 @@
     <version>0.3-SNAPSHOT</version>
   </parent>
   <artifactId>ras2012-solver</artifactId>
-  <name>The Solver</name>
+  <name>RAS2012: The Solver</name>
   <dependencies>
     <dependency>
       <groupId>org.drools.planner</groupId>
@@ -81,7 +81,6 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>cobertura-maven-plugin</artifactId>
-          <version>${cobertura.version}</version>
           <configuration>
             <instrumentation>
               <excludes>
@@ -104,7 +103,6 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>cobertura-maven-plugin</artifactId>
-        <version>${cobertura.version}</version>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -160,4 +158,5 @@
       </plugin>
     </plugins>
   </reporting>
+  <description>The core application that solves the RAS challenge and serves as the competition entry.</description>
 </project>

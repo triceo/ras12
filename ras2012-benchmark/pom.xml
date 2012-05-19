@@ -8,7 +8,7 @@
     <version>0.3-SNAPSHOT</version>
   </parent>
   <artifactId>ras2012-benchmark</artifactId>
-  <name>The Benchmark</name>
+  <name>RAS2012: The Benchmark</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
@@ -43,4 +43,5 @@
       </plugin>
     </plugins>
   </build>
+  <description>Benchmark app to compare various Planner settings against each other for best runtime results.</description>
 </project>
