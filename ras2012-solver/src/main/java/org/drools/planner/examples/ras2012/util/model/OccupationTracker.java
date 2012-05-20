@@ -2,10 +2,10 @@ package org.drools.planner.examples.ras2012.util.model;
 
 import java.math.BigDecimal;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 import org.drools.planner.examples.ras2012.Directed;
@@ -203,7 +203,7 @@ public class OccupationTracker {
     }
 
     private final Map<Arc, ArcRange> ranges = new HashMap<Arc, ArcRange>();
-    private final Collection<Arc>    arcs   = new HashSet<Arc>();
+    private final Collection<Arc>    arcs   = new ArrayList<Arc>();
     private final boolean            isEmpty;
 
     private OccupationTracker(final ArcRange... arcRanges) {
@@ -238,26 +238,26 @@ public class OccupationTracker {
     }
 
     public BigDecimal getConflictingMileage(final OccupationTracker other) {
-        BigDecimal mileage = BigDecimal.ZERO;
         if (this.isEmpty() || other.isEmpty()) {
-            return mileage;
+            return BigDecimal.ZERO;
         }
-        final Collection<Arc> otherIncludedArcs = other.getIncludedArcs();
+        BigDecimal mileage = BigDecimal.ZERO;
         for (final Arc a : this.getIncludedArcs()) {
-            if (!otherIncludedArcs.contains(a)) {
+            final ArcRange r2 = other.ranges.get(a);
+            if (r2 == null || r2.isEmpty()) {
                 continue;
             }
-            mileage = mileage.add(this.getRange(a).getConflictingMileage(other.getRange(a)));
+            final ArcRange r = this.ranges.get(a);
+            if (r.isEmpty()) {
+                continue;
+            }
+            mileage = mileage.add(r.getConflictingMileage(r2));
         }
         return mileage;
     }
 
     public Collection<Arc> getIncludedArcs() {
         return this.arcs;
-    }
-
-    private ArcRange getRange(final Arc a) {
-        return this.ranges.get(a);
     }
 
     @Override
