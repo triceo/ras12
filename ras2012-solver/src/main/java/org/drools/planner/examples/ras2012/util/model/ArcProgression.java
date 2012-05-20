@@ -1,12 +1,12 @@
 package org.drools.planner.examples.ras2012.util.model;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +28,7 @@ public class ArcProgression implements Directed {
     private final Map<Node, Arc>             arcsPerOrigin      = new LinkedHashMap<Node, Arc>();
     private final Map<Node, Arc>             arcsPerDestination = new LinkedHashMap<Node, Arc>();
     private final Map<Arc, Boolean>          isArcPreferred     = new LinkedHashMap<Arc, Boolean>();
-    private final Collection<Node>           nodes              = new LinkedHashSet<Node>();
+    private final List<Node>                 nodes              = new ArrayList<Node>();
     private final Collection<Node>           waitPoints;
     private final Directed                   directed;
 
@@ -56,8 +56,10 @@ public class ArcProgression implements Directed {
             this.arcsPerOrigin.put(a.getOrigin(this), a);
             this.arcsPerDestination.put(a.getDestination(this), a);
             this.nodes.add(a.getOrigin(this));
-            this.nodes.add(a.getDestination(this));
             milestone = milestone.add(a.getLength());
+        }
+        if (this.orderedArcs.size() > 0) {
+            this.nodes.add(this.getDestination().getDestination(this));
         }
         // determine whether a particular arc is preferred
         for (final Arc a : this.orderedArcs) {
@@ -150,15 +152,14 @@ public class ArcProgression implements Directed {
             return BigDecimal.ZERO;
         }
         // then make sure nodes are in a proper order
-        final List<Node> nodes = new LinkedList<Node>(this.getNodes());
-        final int startIndex = nodes.indexOf(start);
-        final int endIndex = nodes.indexOf(end);
+        final int startIndex = this.nodes.indexOf(start);
+        final int endIndex = this.nodes.indexOf(end);
         if (startIndex > endIndex) {
             return this.getDistance(end, start);
         }
         // and then retrieve the actual distance
         BigDecimal result = BigDecimal.ZERO;
-        for (final Node n : nodes.subList(startIndex, endIndex + 1)) {
+        for (final Node n : this.nodes.subList(startIndex, endIndex + 1)) {
             final Arc a = this.arcsPerOrigin.get(n);
             result = result.add(a.getLength());
             if (a.getDestination(this) == end) {
@@ -193,8 +194,8 @@ public class ArcProgression implements Directed {
 
     }
 
-    public Collection<Node> getNodes() {
-        return Collections.unmodifiableCollection(this.nodes);
+    public List<Node> getNodes() {
+        return Collections.unmodifiableList(this.nodes);
     }
 
     public OccupationTracker getOccupiedArcs(final BigDecimal endingMilestone,
