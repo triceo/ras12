@@ -186,7 +186,11 @@ public class OccupationTracker {
         }
 
         public OccupationTracker build() {
-            return new OccupationTracker(this.ranges.toArray(new ArcRange[this.ranges.size()]));
+            if (this.ranges.size() == 0) {
+                return Builder.empty();
+            } else {
+                return new OccupationTracker(this.ranges.toArray(new ArcRange[this.ranges.size()]));
+            }
         }
 
         protected ArcRange create(final Arc a, final BigDecimal start, final BigDecimal end) {

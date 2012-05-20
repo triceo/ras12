@@ -67,13 +67,23 @@ public class ConflictRegistry {
     }
 
     public void setOccupiedArcs(final long time, final Train t, final OccupationTracker occupiedArcs) {
-        if (!this.itemsByTime.containsKey(time)) {
-            final ConflictRegistryItem item = new ConflictRegistryItem();
-            this.itemsByTime.put(time, item);
-            this.items.add(item);
-            item.setOccupiedArcs(t, occupiedArcs);
+        if (occupiedArcs.isEmpty()) {
+            /*
+             * empty occupied arcs can cause no conflicts, ignore them; this will save some memory and a lot of looping later
+             */
+            if (this.itemsByTime.containsKey(time)) {
+                // in a situation where there's already some occupied arcs set, we need to empty them
+                this.itemsByTime.get(time).resetOccupiedArcs(t);
+            }
         } else {
-            this.itemsByTime.get(time).setOccupiedArcs(t, occupiedArcs);
+            if (!this.itemsByTime.containsKey(time)) {
+                final ConflictRegistryItem item = new ConflictRegistryItem();
+                this.itemsByTime.put(time, item);
+                this.items.add(item);
+                item.setOccupiedArcs(t, occupiedArcs);
+            } else {
+                this.itemsByTime.get(time).setOccupiedArcs(t, occupiedArcs);
+            }
         }
     }
 }
