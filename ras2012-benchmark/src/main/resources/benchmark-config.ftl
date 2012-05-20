@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plannerBenchmark>
-  <parallelBenchmarkCount>AUTO</parallelBenchmarkCount>
+  <parallelBenchmarkCount>7</parallelBenchmarkCount>
   <solverBenchmarkRankingType>TOTAL_RANKING</solverBenchmarkRankingType>  
   <benchmarkDirectory>data/</benchmarkDirectory>
   <warmUpSecondsSpend>30</warmUpSecondsSpend>
@@ -20,7 +20,7 @@
         <incrementalScoreCalculatorClass>org.drools.planner.examples.ras2012.RAS2012ScoreCalculator</incrementalScoreCalculatorClass>
       </scoreDirectorFactory>
       <termination>
-        <maximumMinutesSpend>5</maximumMinutesSpend>
+        <maximumMinutesSpend>2</maximumMinutesSpend>
         <terminationCompositionStyle>OR</terminationCompositionStyle>
       </termination>
     </solver>
