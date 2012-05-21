@@ -3,7 +3,6 @@ package org.drools.planner.examples.ras2012;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.SortedMap;
 import java.util.concurrent.TimeUnit;
 
 import org.drools.planner.core.score.buildin.hardandsoft.DefaultHardAndSoftScore;
@@ -108,7 +107,7 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
         if (conflicts > 0) {
             return DefaultHardAndSoftScore.valueOf(-conflicts, -penalty);
         } else {
-            return DefaultHardAndSoftScore.valueOf(this.getTrainArrivalMetrics(), -penalty);
+            return DefaultHardAndSoftScore.valueOf(0, -penalty);
         }
     }
 
@@ -121,12 +120,6 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
         this.conflicts = new ConflictRegistry(
                 (int) this.solution.getPlanningHorizon(TimeUnit.MINUTES)
                         * RAS2012ScoreCalculator.OCCUPATION_CHECKS_PER_MINUTE);
-    }
-
-    private boolean didTrainArrive(final Itinerary producer) {
-        final SortedMap<Long, Node> nodes = producer.getSchedule().headMap(
-                this.solution.getPlanningHorizon(TimeUnit.MILLISECONDS) + 1);
-        return nodes.values().contains(producer.getTrain().getDestination());
     }
 
     private int getDelayPenalty(final Itinerary i, final RAS2012Solution solution) {
@@ -168,19 +161,6 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
         return penalty;
     }
 
-    private int getTrainArrivalMetrics() {
-        int actual = 0, full = 0;
-        for (final Map.Entry<Train, Boolean> entry : this.didTrainArrive.entrySet()) {
-            final int trainValue = (int) Math
-                    .ceil(entry.getKey().getType().getDelayPenalty() / 100.0);
-            full += trainValue;
-            if (entry.getValue()) {
-                actual += trainValue;
-            }
-        }
-        return actual * 100 / full;
-    }
-
     private int getUnpreferredTracksPenalty(final Itinerary i) {
         final BigDecimal hours = RAS2012ScoreCalculator.roundMillisecondsToHours(i
                 .getTimeSpentOnUnpreferredTracks(this.solution
@@ -216,7 +196,6 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
         final Itinerary i = ia.getItinerary();
         this.unpreferredTracksPenalties.put(t, this.getUnpreferredTracksPenalty(i));
         this.scheduleAdherencePenalties.put(t, this.getScheduleAdherencePenalty(i));
-        this.didTrainArrive.put(t, this.didTrainArrive(i));
         this.wantTimePenalties.put(t, this.getWantTimePenalty(i));
         this.delayPenalties.put(t, this.getDelayPenalty(i, this.solution));
         this.recalculateOccupiedArcs(ia);
