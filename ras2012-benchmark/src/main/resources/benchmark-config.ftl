@@ -11,6 +11,8 @@
       <inputSolutionFile>src/main/resources/org/drools/planner/examples/ras2012/RDS1.txt</inputSolutionFile>
       <inputSolutionFile>src/main/resources/org/drools/planner/examples/ras2012/RDS2.txt</inputSolutionFile>
       <inputSolutionFile>src/main/resources/org/drools/planner/examples/ras2012/RDS3.txt</inputSolutionFile>
+      <problemStatisticType>BEST_SOLUTION_CHANGED</problemStatisticType>
+      <problemStatisticType>CALCULATE_COUNT_PER_SECOND</problemStatisticType>
     </problemBenchmarks>
     <solver>
       <solutionClass>org.drools.planner.examples.ras2012.RAS2012Solution</solutionClass>
@@ -20,7 +22,7 @@
         <incrementalScoreCalculatorClass>org.drools.planner.examples.ras2012.RAS2012ScoreCalculator</incrementalScoreCalculatorClass>
       </scoreDirectorFactory>
       <termination>
-        <maximumMinutesSpend>2</maximumMinutesSpend>
+        <maximumMinutesSpend>3</maximumMinutesSpend>
         <terminationCompositionStyle>OR</terminationCompositionStyle>
       </termination>
     </solver>
@@ -28,12 +30,9 @@
 
 <#list sa as item>
   <solverBenchmark>
-    <name>hard${item[0]}-soft${item[1]}-sa${item[2]}</name>
+    <name>hard${item[0]}-soft${item[1]}</name>
     <solver>
       <localSearch>
-        <termination>
-          <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
-        </termination>
         <forager>
           <minimalAcceptedSelection>${item[2]}</minimalAcceptedSelection>
         </forager>
