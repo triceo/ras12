@@ -2,8 +2,8 @@ package org.drools.planner.examples.ras2012;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.SortedSet;
@@ -26,7 +26,7 @@ public class RAS2012Solution extends Visualizable implements Solution<HardAndSof
 
     private final Network                         network;
     private final Collection<MaintenanceWindow>   maintenances;
-    private final Map<Train, ItineraryAssignment> assignments = new HashMap<Train, ItineraryAssignment>();
+    private final Map<Train, ItineraryAssignment> assignments = new LinkedHashMap<Train, ItineraryAssignment>();
     private final Collection<Train>               trains;
 
     private HardAndSoftScore                      score;
