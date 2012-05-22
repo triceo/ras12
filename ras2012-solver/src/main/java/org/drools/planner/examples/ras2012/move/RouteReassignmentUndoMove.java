@@ -57,18 +57,10 @@ public class RouteReassignmentUndoMove implements Move {
             return false;
         }
         final RouteReassignmentUndoMove other = (RouteReassignmentUndoMove) obj;
-        if (this.routeToUndo == null) {
-            if (other.routeToUndo != null) {
-                return false;
-            }
-        } else if (!this.routeToUndo.equals(other.routeToUndo)) {
+        if (this.routeToUndo != other.routeToUndo) {
             return false;
         }
-        if (this.train == null) {
-            if (other.train != null) {
-                return false;
-            }
-        } else if (!this.train.equals(other.train)) {
+        if (this.train != other.train) {
             return false;
         }
         return true;
@@ -76,6 +68,9 @@ public class RouteReassignmentUndoMove implements Move {
 
     @Override
     public Collection<? extends Object> getPlanningEntities() {
+        if (this.assignment == null) {
+            throw new IllegalStateException("Move not yet initialized!");
+        }
         return Collections.singletonList(this.assignment);
     }
 
