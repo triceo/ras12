@@ -23,8 +23,10 @@ public class WaitTimeAssignmentMoveFactory extends AbstractMoveFactory {
 
     /**
      * Specifies what change there will be between two consecutive wait times. Please keep it between 0 and 1, both exclusive.
+     * 
+     * The current value has been carefully benchmarked against many other values and found to bring the best results.
      */
-    private static final float DECREASE_TO = 6.0f / 7.0f;
+    private static final float DECREASE_TO = 4.0f / 5.0f;
 
     private static List<WaitTime> getAllowedWaitTimes(final long horizon) {
         final List<WaitTime> waitTimes = new LinkedList<WaitTime>();
