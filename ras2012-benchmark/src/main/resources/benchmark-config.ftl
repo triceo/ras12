@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plannerBenchmark>
-  <parallelBenchmarkCount>7</parallelBenchmarkCount>
+  <parallelBenchmarkCount>AUTO</parallelBenchmarkCount>
   <solverBenchmarkRankingType>TOTAL_RANKING</solverBenchmarkRankingType>  
   <benchmarkDirectory>data/</benchmarkDirectory>
   <warmUpSecondsSpend>30</warmUpSecondsSpend>
@@ -11,8 +11,6 @@
       <inputSolutionFile>src/main/resources/org/drools/planner/examples/ras2012/RDS1.txt</inputSolutionFile>
       <inputSolutionFile>src/main/resources/org/drools/planner/examples/ras2012/RDS2.txt</inputSolutionFile>
       <inputSolutionFile>src/main/resources/org/drools/planner/examples/ras2012/RDS3.txt</inputSolutionFile>
-      <problemStatisticType>BEST_SOLUTION_CHANGED</problemStatisticType>
-      <problemStatisticType>CALCULATE_COUNT_PER_SECOND</problemStatisticType>
     </problemBenchmarks>
     <solver>
       <solutionClass>org.drools.planner.examples.ras2012.RAS2012Solution</solutionClass>
@@ -34,7 +32,7 @@
     <solver>
       <localSearch>
         <forager>
-          <minimalAcceptedSelection>${item[2]}</minimalAcceptedSelection>
+          <minimalAcceptedSelection>4</minimalAcceptedSelection>
         </forager>
         <acceptor>
           <simulatedAnnealingStartingTemperature>${item[0]}hard/${item[1]}soft</simulatedAnnealingStartingTemperature>

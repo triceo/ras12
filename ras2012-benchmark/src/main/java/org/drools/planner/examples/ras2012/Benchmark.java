@@ -17,13 +17,10 @@ public class Benchmark {
     private static Map getTemplateData() {
         int[] hardSA = new int[] { 0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 };
         int[] softSA = new int[] { 0, 5, 10, 50, 100, 500, 1000, 5000, 10000 };
-        int[] minimalSA = new int[] { 4 };
         Collection<int[]> SAs = new LinkedList<int[]>();
         for (int hard : hardSA) {
             for (int soft : softSA) {
-                for (int minimal : minimalSA) {
-                    SAs.add(new int[] { hard, soft, minimal });
-                }
+                SAs.add(new int[] { hard, soft });
             }
         }
         Map result = new HashMap();
