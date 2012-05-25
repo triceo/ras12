@@ -237,11 +237,11 @@ public class OccupationTracker {
         return true;
     }
 
-    public BigDecimal getConflictingMileage(final OccupationTracker other) {
+    public double getConflictingMileage(final OccupationTracker other) {
         if (this.isEmpty() || other.isEmpty()) {
-            return BigDecimal.ZERO;
+            return 0;
         }
-        BigDecimal mileage = BigDecimal.ZERO;
+        double mileage = 0;
         for (final Arc a : this.getIncludedArcs()) {
             final ArcRange r2 = other.ranges.get(a);
             if (r2 == null || r2.isEmpty()) {
@@ -251,7 +251,7 @@ public class OccupationTracker {
             if (r.isEmpty()) {
                 continue;
             }
-            mileage = mileage.add(r.getConflictingMileage(r2));
+            mileage += r.getConflictingMileage(r2).doubleValue();
         }
         return mileage;
     }

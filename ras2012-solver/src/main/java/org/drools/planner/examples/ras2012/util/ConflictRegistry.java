@@ -23,7 +23,7 @@ public class ConflictRegistry {
                 final OccupationTracker left = this.occupiedArcs.get(position);
                 for (int i = position + 1; i < size; i++) {
                     final OccupationTracker right = this.occupiedArcs.get(i);
-                    conflicts += left.getConflictingMileage(right).doubleValue();
+                    conflicts += left.getConflictingMileage(right);
                 }
             }
             return conflicts;
