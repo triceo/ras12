@@ -6,8 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.drools.planner.examples.ras2012.RAS2012ProblemIO;
 import org.drools.planner.examples.ras2012.RAS2012Solution;
+import org.drools.planner.examples.ras2012.util.SolutionIO;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
@@ -26,7 +26,7 @@ public class ToyItineraryProvider extends ItineraryProvider {
 
     @Override
     protected RAS2012Solution fetchSolution() {
-        return new RAS2012ProblemIO().read(new File(
+        return new SolutionIO().read(new File(
                 "src/main/resources/org/drools/planner/examples/ras2012/TOY.txt"));
     }
 

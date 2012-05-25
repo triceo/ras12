@@ -14,6 +14,10 @@
   </properties>
   <dependencies>
     <dependency>
+      <groupId>org.drools.planner</groupId>
+      <artifactId>drools-planner-benchmark</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.drools.planner.examples</groupId>
       <artifactId>ras2012-solver</artifactId>
     </dependency>

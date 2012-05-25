@@ -1,4 +1,4 @@
-package org.drools.planner.examples.ras2012;
+package org.drools.planner.examples.ras2012.util;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -17,8 +17,8 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
-import org.drools.planner.benchmark.api.ProblemIO;
 import org.drools.planner.core.solution.Solution;
+import org.drools.planner.examples.ras2012.RAS2012Solution;
 import org.drools.planner.examples.ras2012.model.Arc;
 import org.drools.planner.examples.ras2012.model.MaintenanceWindow;
 import org.drools.planner.examples.ras2012.model.Node;
@@ -29,14 +29,15 @@ import org.drools.planner.examples.ras2012.parser.DataSetParser;
 import org.drools.planner.examples.ras2012.parser.DataSetParser.ParsedTrain;
 import org.drools.planner.examples.ras2012.parser.ParseException;
 import org.drools.planner.examples.ras2012.parser.Token;
-import org.drools.planner.examples.ras2012.util.Converter;
 import org.drools.planner.examples.ras2012.util.model.Network;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RAS2012ProblemIO implements ProblemIO {
+public class SolutionIO {
 
-    private static final Logger logger = LoggerFactory.getLogger(RAS2012ProblemIO.class);
+    private Map<Integer, Node>  nodes;
+
+    private static final Logger logger = LoggerFactory.getLogger(SolutionIO.class);
 
     private static BigDecimal convertMillisToSeconds(final long time) {
         return BigDecimal
@@ -46,7 +47,7 @@ public class RAS2012ProblemIO implements ProblemIO {
     }
 
     private static Track getArcType(final Token t) {
-        final String value = RAS2012ProblemIO.tokenToString(t);
+        final String value = SolutionIO.tokenToString(t);
         if (value.equals("0")) {
             return Track.MAIN_0;
         } else if (value.equals("1")) {
@@ -65,15 +66,15 @@ public class RAS2012ProblemIO implements ProblemIO {
     }
 
     private static BigDecimal tokenToBigDecimal(final Token t) {
-        return new BigDecimal(RAS2012ProblemIO.tokenToString(t));
+        return new BigDecimal(SolutionIO.tokenToString(t));
     }
 
     private static boolean tokenToBoolean(final Token t) {
-        return Boolean.valueOf(RAS2012ProblemIO.tokenToString(t));
+        return Boolean.valueOf(SolutionIO.tokenToString(t));
     }
 
     private static Integer tokenToInteger(final Token t) {
-        return Integer.valueOf(RAS2012ProblemIO.tokenToString(t));
+        return Integer.valueOf(SolutionIO.tokenToString(t));
     }
 
     private static String tokenToString(final Token t) {
@@ -92,14 +93,13 @@ public class RAS2012ProblemIO implements ProblemIO {
             if (entry.getKey() >= solution.getPlanningHorizon(TimeUnit.MILLISECONDS)) {
                 continue;
             }
-            final BigDecimal timeInSeconds = RAS2012ProblemIO
-                    .convertMillisToSeconds(entry.getKey() - 1);
+            final BigDecimal timeInSeconds = SolutionIO.convertMillisToSeconds(entry.getKey() - 1);
             if (arc != null) {
                 final BigDecimal distance = arc.getLength().add(t.getLength());
                 final long travellingTime = Converter.getTimeFromSpeedAndDistance(
                         t.getMaximumSpeed(arc.getTrack()), distance);
-                final BigDecimal leaveTime = RAS2012ProblemIO
-                        .convertMillisToSeconds(travellingTime).add(timeInSeconds);
+                final BigDecimal leaveTime = SolutionIO.convertMillisToSeconds(travellingTime).add(
+                        timeInSeconds);
                 if (leaveTime.intValue() > solution.getPlanningHorizon(TimeUnit.MILLISECONDS)) {
                     continue;
                 }
@@ -118,14 +118,12 @@ public class RAS2012ProblemIO implements ProblemIO {
         w.newLine();
     }
 
-    private Map<Integer, Node> nodes;
-
     private RAS2012Solution createSolution(final DataSetParser p) {
         // retrieve speeds for different track types
-        final int eastboundSpeed = RAS2012ProblemIO.tokenToInteger(p.getSpeedEastbound());
-        final int westboundSpeed = RAS2012ProblemIO.tokenToInteger(p.getSpeedWestbound());
-        final int sidingsSpeed = RAS2012ProblemIO.tokenToInteger(p.getSpeedSidings());
-        final int crossoverSpeed = RAS2012ProblemIO.tokenToInteger(p.getSpeedCrossovers());
+        final int eastboundSpeed = SolutionIO.tokenToInteger(p.getSpeedEastbound());
+        final int westboundSpeed = SolutionIO.tokenToInteger(p.getSpeedWestbound());
+        final int sidingsSpeed = SolutionIO.tokenToInteger(p.getSpeedSidings());
+        final int crossoverSpeed = SolutionIO.tokenToInteger(p.getSpeedCrossovers());
         // set speeds for different track types
         for (final Track t : Track.values()) {
             if (t.isMainTrack()) {
@@ -136,16 +134,11 @@ public class RAS2012ProblemIO implements ProblemIO {
                 Track.setSpeed(t, crossoverSpeed);
             }
         }
-        final String name = RAS2012ProblemIO.tokenToString(p.getName());
+        final String name = SolutionIO.tokenToString(p.getName());
         final Collection<Arc> arcs = this.initArcs(p);
         final Collection<MaintenanceWindow> mows = this.initMOW(p);
         final Collection<Train> trains = this.initTrains(name, p);
         return new RAS2012Solution(name, new Network(this.nodes.values(), arcs), mows, trains);
-    }
-
-    @Override
-    public String getFileExtension() {
-        return "xml";
     }
 
     private Collection<Arc> initArcs(final DataSetParser p) {
@@ -164,11 +157,11 @@ public class RAS2012ProblemIO implements ProblemIO {
         final List<Arc> newArcs = new ArrayList<Arc>();
         final Map<Integer, Node> newNodes = new TreeMap<Integer, Node>();
         for (int i = 0; i < numberOfItems; i++) {
-            final Track t = RAS2012ProblemIO.getArcType(trackTypes.get(i));
-            final BigDecimal length = RAS2012ProblemIO.tokenToBigDecimal(trackLengths.get(i));
+            final Track t = SolutionIO.getArcType(trackTypes.get(i));
+            final BigDecimal length = SolutionIO.tokenToBigDecimal(trackLengths.get(i));
             // now convert node numbers to Node instances
-            final int startNodeId = RAS2012ProblemIO.tokenToInteger(arcs.get(i).get(0));
-            final int endNodeId = RAS2012ProblemIO.tokenToInteger(arcs.get(i).get(1));
+            final int startNodeId = SolutionIO.tokenToInteger(arcs.get(i).get(0));
+            final int endNodeId = SolutionIO.tokenToInteger(arcs.get(i).get(1));
             if (!newNodes.containsKey(startNodeId)) {
                 newNodes.put(startNodeId, Node.getNode(startNodeId));
             }
@@ -187,34 +180,31 @@ public class RAS2012ProblemIO implements ProblemIO {
     private Collection<MaintenanceWindow> initMOW(final DataSetParser p) {
         final List<MaintenanceWindow> mows = new ArrayList<MaintenanceWindow>();
         for (final List<Token> mow : p.getMows()) {
-            final MaintenanceWindow newMow = new MaintenanceWindow(this.nodes.get(RAS2012ProblemIO
-                    .tokenToInteger(mow.get(0))), this.nodes.get(RAS2012ProblemIO
-                    .tokenToInteger(mow.get(1))), RAS2012ProblemIO.tokenToInteger(mow.get(2)),
-                    RAS2012ProblemIO.tokenToInteger(mow.get(3)));
+            final MaintenanceWindow newMow = new MaintenanceWindow(this.nodes.get(SolutionIO
+                    .tokenToInteger(mow.get(0))), this.nodes.get(SolutionIO.tokenToInteger(mow
+                    .get(1))), SolutionIO.tokenToInteger(mow.get(2)), SolutionIO.tokenToInteger(mow
+                    .get(3)));
             mows.add(newMow);
         }
         return mows;
     }
 
     private Train initTrain(final String solutionName, final ParsedTrain t) {
-        final boolean hazmat = RAS2012ProblemIO.tokenToBoolean(t.getHazmat());
-        final boolean isWestbound = RAS2012ProblemIO.tokenToString(t.getDirection()).equals(
-                "WESTBOUND");
-        final int originalScheduleAdherence = RAS2012ProblemIO.tokenToInteger(t.getSaStatus());
-        final int entryTime = RAS2012ProblemIO.tokenToInteger(t.getTimeEntry());
-        final int wantTime = RAS2012ProblemIO.tokenToInteger(t.getWantTime().get(1));
-        final int tob = RAS2012ProblemIO.tokenToInteger(t.getTOB());
-        final String name = RAS2012ProblemIO.tokenToString(t.getHeader());
-        final BigDecimal length = RAS2012ProblemIO.tokenToBigDecimal(t.getLength());
-        final BigDecimal speedMultiplier = RAS2012ProblemIO.tokenToBigDecimal(t
-                .getSpeedMultiplier());
-        final Node origin = this.nodes.get(RAS2012ProblemIO.tokenToInteger(t.getNodeOrigin()));
-        final Node destination = this.nodes.get(RAS2012ProblemIO.tokenToInteger(t
-                .getNodeDestination()));
+        final boolean hazmat = SolutionIO.tokenToBoolean(t.getHazmat());
+        final boolean isWestbound = SolutionIO.tokenToString(t.getDirection()).equals("WESTBOUND");
+        final int originalScheduleAdherence = SolutionIO.tokenToInteger(t.getSaStatus());
+        final int entryTime = SolutionIO.tokenToInteger(t.getTimeEntry());
+        final int wantTime = SolutionIO.tokenToInteger(t.getWantTime().get(1));
+        final int tob = SolutionIO.tokenToInteger(t.getTOB());
+        final String name = SolutionIO.tokenToString(t.getHeader());
+        final BigDecimal length = SolutionIO.tokenToBigDecimal(t.getLength());
+        final BigDecimal speedMultiplier = SolutionIO.tokenToBigDecimal(t.getSpeedMultiplier());
+        final Node origin = this.nodes.get(SolutionIO.tokenToInteger(t.getNodeOrigin()));
+        final Node destination = this.nodes.get(SolutionIO.tokenToInteger(t.getNodeDestination()));
         // just checking; make sure that the direction and target depot match
-        final String wantDepot = RAS2012ProblemIO.tokenToString(t.getWantTime().get(0));
+        final String wantDepot = SolutionIO.tokenToString(t.getWantTime().get(0));
         if (wantDepot.equals("WEST") && !isWestbound || wantDepot.equals("EAST") && isWestbound) {
-            RAS2012ProblemIO.logger.info("Train " + name
+            SolutionIO.logger.info("Train " + name
                     + " is headed away from the target destination. This bug in " + solutionName
                     + " will be corrected by directing the train to the proper destination.");
         }
@@ -222,8 +212,8 @@ public class RAS2012ProblemIO implements ProblemIO {
         final List<ScheduleAdherenceRequirement> sars = new ArrayList<ScheduleAdherenceRequirement>();
         for (int i = 0; i < t.getSchedule().size(); i++) {
             final List<Token> data = t.getSchedule().get(i);
-            final Node n = this.nodes.get(RAS2012ProblemIO.tokenToInteger(data.get(0)));
-            final int time = RAS2012ProblemIO.tokenToInteger(data.get(1));
+            final Node n = this.nodes.get(SolutionIO.tokenToInteger(data.get(0)));
+            final int time = SolutionIO.tokenToInteger(data.get(1));
             final ScheduleAdherenceRequirement sar = new ScheduleAdherenceRequirement(n, time);
             sars.add(sar);
         }
@@ -234,7 +224,7 @@ public class RAS2012ProblemIO implements ProblemIO {
     private Collection<Train> initTrains(final String solutionName, final DataSetParser p) {
         // first make sure there's as much trains as stated
         final List<ParsedTrain> origTrains = p.getTrains();
-        if (!RAS2012ProblemIO.tokenToInteger(p.getNumTrains()).equals(origTrains.size())) {
+        if (!SolutionIO.tokenToInteger(p.getNumTrains()).equals(origTrains.size())) {
             throw new IllegalStateException(
                     "Number of trains specified doesn't match the actual number of trains!");
         }
@@ -246,7 +236,6 @@ public class RAS2012ProblemIO implements ProblemIO {
         return trains;
     }
 
-    @Override
     public RAS2012Solution read(final File inputSolutionFile) {
         InputStream is = null;
         try {
@@ -272,7 +261,6 @@ public class RAS2012ProblemIO implements ProblemIO {
         }
     }
 
-    @Override
     public void write(@SuppressWarnings("rawtypes") final Solution solution,
             final File outputSolutionFile) {
         final RAS2012Solution sol = (RAS2012Solution) solution;
@@ -286,7 +274,7 @@ public class RAS2012ProblemIO implements ProblemIO {
             w.write("\t<trains>");
             w.newLine();
             for (final Train t : sol.getTrains()) {
-                RAS2012ProblemIO.writeTrain(t, sol, w);
+                SolutionIO.writeTrain(t, sol, w);
             }
             w.write("\t</trains>");
             w.newLine();
@@ -294,8 +282,7 @@ public class RAS2012ProblemIO implements ProblemIO {
             w.newLine();
             w.write("###########################################################################");
         } catch (final IOException e) {
-            RAS2012ProblemIO.logger.error("Failed writing solution into file: "
-                    + outputSolutionFile, e);
+            SolutionIO.logger.error("Failed writing solution into file: " + outputSolutionFile, e);
         } finally {
             if (w != null) {
                 try {
@@ -306,4 +293,5 @@ public class RAS2012ProblemIO implements ProblemIO {
             }
         }
     }
+
 }

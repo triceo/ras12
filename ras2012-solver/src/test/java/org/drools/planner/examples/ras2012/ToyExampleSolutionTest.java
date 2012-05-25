@@ -12,12 +12,13 @@ import org.drools.planner.examples.ras2012.model.Node;
 import org.drools.planner.examples.ras2012.model.Route;
 import org.drools.planner.examples.ras2012.model.Train;
 import org.drools.planner.examples.ras2012.model.WaitTime;
+import org.drools.planner.examples.ras2012.util.SolutionIO;
 import org.junit.Before;
 import org.junit.Test;
 
 public class ToyExampleSolutionTest {
 
-    private final RAS2012Solution SOLUTION = new RAS2012ProblemIO()
+    private final RAS2012Solution SOLUTION = new SolutionIO()
                                                    .read(new File(
                                                            "src/main/resources/org/drools/planner/examples/ras2012/TOY.txt"));
 
