@@ -124,7 +124,7 @@ public class ItineraryAssignmentTest extends AbstractItineraryProviderBasedTest 
     public void testRouteSetterImpossible() {
         final ItineraryAssignment ia = new ItineraryAssignment(this.expectedTrain,
                 this.solution.getMaintenances());
-        ia.setRoute(new Route(this.expectedTrain.isWestbound()));
+        ia.setRoute(new Route.Builder(this.expectedTrain.isWestbound()).build());
     }
 
     @Test(expected = IllegalArgumentException.class)

@@ -89,7 +89,6 @@ public abstract class ItineraryProvider {
                     return this.getItinerary(entry.getKey(), r);
                 }
             }
-
         }
         throw new IllegalArgumentException("Itinerary for train " + trainName + ", route "
                 + routeId + " not found.");

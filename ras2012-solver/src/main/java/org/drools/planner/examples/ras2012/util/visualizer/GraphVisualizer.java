@@ -28,6 +28,7 @@ import org.apache.commons.collections15.Transformer;
 import org.drools.planner.examples.ras2012.model.Arc;
 import org.drools.planner.examples.ras2012.model.Node;
 import org.drools.planner.examples.ras2012.model.Route;
+import org.drools.planner.examples.ras2012.model.Route.Builder;
 
 public class GraphVisualizer {
 
@@ -117,10 +118,10 @@ public class GraphVisualizer {
         }
         final boolean isGraphDirected = g instanceof DirectedGraph;
         for (final Arc a : this.edges) {
-            final Node origin = isGraphDirected ? a.getOrigin(this.route) : a.getOrigin(new Route(
-                    false));
+            Route westbound = new Builder(false).build();
+            final Node origin = isGraphDirected ? a.getOrigin(this.route) : a.getOrigin(westbound);
             final Node destination = isGraphDirected ? a.getDestination(this.route) : a
-                    .getDestination(new Route(false));
+                    .getDestination(westbound);
             g.addVertex(origin);
             g.addVertex(destination);
             g.addEdge(a, origin, destination);

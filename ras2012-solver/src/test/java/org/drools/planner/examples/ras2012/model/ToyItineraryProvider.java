@@ -18,11 +18,11 @@ public class ToyItineraryProvider extends ItineraryProvider {
     private static final String TRAIN2        = "B1";
     private static final String TRAIN3        = "A1";
 
-    private static final int    TRAIN1_ROUTE0 = 13;
-    private static final int    TRAIN1_ROUTE1 = 9;
-    private static final int    TRAIN2_ROUTE0 = 49;
-    private static final int    TRAIN2_ROUTE1 = 33;
-    private static final int    TRAIN3_ROUTE0 = 20;
+    private static final int    TRAIN1_ROUTE0 = 2;
+    private static final int    TRAIN1_ROUTE1 = 0;
+    private static final int    TRAIN2_ROUTE0 = 7;
+    private static final int    TRAIN2_ROUTE1 = 1;
+    private static final int    TRAIN3_ROUTE0 = 4;
 
     @Override
     protected RAS2012Solution fetchSolution() {

@@ -30,14 +30,14 @@ public class ArcProgression implements Directed {
     private final Map<Arc, Boolean>          isArcPreferred     = new LinkedHashMap<Arc, Boolean>();
     private final List<Node>                 nodes              = new ArrayList<Node>();
     private final Collection<Node>           waitPoints;
-    private final Directed                   directed;
+    private final boolean                    isEastbound;
 
     public ArcProgression(final Directed directed, final Arc... arcs) {
         this(directed, Arrays.asList(arcs));
     }
 
     public ArcProgression(final Directed directed, final Collection<Arc> arcs) {
-        this.directed = directed;
+        this.isEastbound = directed.isEastbound();
         // put arcs in proper order
         Node startingNode = this.getStartingNode(directed, arcs);
         while (arcs.size() != this.orderedArcs.size()) {
@@ -312,7 +312,7 @@ public class ArcProgression implements Directed {
 
     @Override
     public boolean isEastbound() {
-        return this.directed.isEastbound();
+        return this.isEastbound;
     }
 
     public boolean isPreferred(final Arc a) {
@@ -321,7 +321,7 @@ public class ArcProgression implements Directed {
 
     @Override
     public boolean isWestbound() {
-        return this.directed.isWestbound();
+        return !this.isEastbound();
     }
 
     /**

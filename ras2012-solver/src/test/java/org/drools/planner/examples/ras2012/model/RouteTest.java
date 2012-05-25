@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 import junit.framework.Assert;
+import org.drools.planner.examples.ras2012.model.Route.Builder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -33,49 +34,50 @@ public class RouteTest {
         this.isEastbound = isEastbound;
     }
 
+    private Builder getBuilder() {
+        return this.isEastbound ? new Builder(true) : new Builder(false);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testBuilderNotWithSameArc() {
+        final Arc a = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
+        this.getBuilder().add(a).add(a);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testBuilderNull() {
+        this.getBuilder().add(null);
+    }
+
+    @Test
+    public void testBuilderResultsInNewRoute() {
+        final Builder b = this.getBuilder();
+        final Builder b2 = b.add(new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node
+                .getNode(1)));
+        Assert.assertNotSame("Extended route should be a clone of the original one.", b2, b);
+        Assert.assertFalse("Old and extended routes shouldn't be equal.", b2.equals(b));
+        Assert.assertFalse("Old and extended routes shouldn't be equal.", b.equals(b2));
+    }
+
     @Test
     public void testConstructor() {
-        Assert.assertEquals("Directions should match. ", new Route(this.isEastbound).isEastbound(),
+        Assert.assertEquals("Directions should match. ", this.getBuilder().build().isEastbound(),
                 this.isEastbound);
     }
 
     @Test
     public void testEquals() {
-        Route.resetCounter();
-        final Route r = new Route(this.isEastbound);
-        final Route r2 = new Route(this.isEastbound);
+        Builder b = this.getBuilder();
+        final Route r = b.build();
+        final Route r2 = b.build();
         Assert.assertEquals("Route should be equal to itself.", r, r);
         Assert.assertFalse("Route should not equal null.", r.equals(null));
         Assert.assertFalse("No two routes should be equal.", r.equals(r2));
         Assert.assertFalse("No two routes should be equal.", r2.equals(r));
         Assert.assertFalse("Route shouldn't equal non-Route.", r.equals("nonsense"));
-        // route that's been reset should have the same ID as the original first route
-        Route.resetCounter();
-        final Route r3 = new Route(this.isEastbound);
+        // route from a fresh root builder should have the same ID as the original first route
+        final Route r3 = this.getBuilder().build();
         Assert.assertEquals(r, r3);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testExtendNotWithSameArc() {
-        final Arc a = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
-        final Route r = new Route(this.isEastbound);
-        final Route r2 = r.extend(a);
-        r2.extend(a);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testExtendNull() {
-        final Route r = new Route(this.isEastbound);
-        r.extend(null);
-    }
-
-    @Test
-    public void testExtendResultsInNewRoute() {
-        final Route r = new Route(this.isEastbound);
-        final Route r2 = r.extend(new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node
-                .getNode(1)));
-        Assert.assertNotSame("Extended route should be a clone of the original one.", r2, r);
-        Assert.assertFalse("Old and extended routes shouldn't be equal.", r2.equals(r));
     }
 
     @Test
@@ -84,8 +86,7 @@ public class RouteTest {
         final Node n1 = Node.getNode(0);
         final Node n2 = Node.getNode(1);
         final Arc a = new Arc(Track.SIDING, BigDecimal.ONE, n1, n2);
-        Route r = new Route(this.isEastbound);
-        r = r.extend(a);
+        final Route r = this.getBuilder().add(a).build();
         final boolean isWestbound = !this.isEastbound;
         final Node originNode = isWestbound ? n2 : n1;
         final Node destinationNode = isWestbound ? n1 : n2;
@@ -101,13 +102,23 @@ public class RouteTest {
     }
 
     @Test
+    public void testBuilderRouteId() {
+        Builder b = this.getBuilder();
+        Route r1 = b.build();
+        Route r2 = b.build();
+        Assert.assertEquals("Eastbound routes have even numbers.", r1.getId() % 2,
+                this.isEastbound ? 0 : 1);
+        Assert.assertEquals("Eastbound routes have even numbers.", r2.getId() % 2,
+                this.isEastbound ? 0 : 1);
+    }
+
+    @Test
     public void testIsPossibleForTrainDirection() {
         // prepare route
         final Node n1 = Node.getNode(0);
         final Node n2 = Node.getNode(1);
         final Arc a = new Arc(Track.MAIN_0, BigDecimal.ONE, n1, n2);
-        Route r = new Route(this.isEastbound);
-        r = r.extend(a);
+        final Route r = this.getBuilder().add(a).build();
         // prepare trains
         final Train eastbound = new Train("A1", BigDecimal.ONE, BigDecimal.ONE, 90, n1, n2, 0, 1,
                 0, Collections.<ScheduleAdherenceRequirement> emptyList(), true, false);
@@ -132,8 +143,7 @@ public class RouteTest {
         final Node n1 = Node.getNode(0);
         final Node n2 = Node.getNode(1);
         final Arc a = new Arc(Track.SIDING, BigDecimal.ONE, n1, n2);
-        Route r = new Route(this.isEastbound);
-        r = r.extend(a);
+        final Route r = this.getBuilder().add(a).build();
         final boolean isWestbound = !this.isEastbound;
         final Node originNode = isWestbound ? n2 : n1;
         final Node destinationNode = isWestbound ? n1 : n2;
@@ -154,8 +164,7 @@ public class RouteTest {
         final Node n1 = Node.getNode(0);
         final Node n2 = Node.getNode(1);
         final Arc a = new Arc(Track.SIDING, BigDecimal.ONE, n1, n2);
-        Route r = new Route(this.isEastbound);
-        r = r.extend(a);
+        final Route r = this.getBuilder().add(a).build();
         final boolean isWestbound = !this.isEastbound;
         final Node originNode = isWestbound ? n2 : n1;
         final Node destinationNode = isWestbound ? n1 : n2;
@@ -179,8 +188,7 @@ public class RouteTest {
         final Node n3 = Node.getNode(2);
         final Node n4 = Node.getNode(3);
         final Arc a = new Arc(Track.MAIN_0, BigDecimal.ONE, n1, n2);
-        Route r = new Route(this.isEastbound);
-        r = r.extend(a);
+        final Route r = this.getBuilder().add(a).build();
         final boolean isWestbound = !this.isEastbound;
         final Node originNode = isWestbound ? n2 : n1;
         final Node destinationNode = isWestbound ? n1 : n2;

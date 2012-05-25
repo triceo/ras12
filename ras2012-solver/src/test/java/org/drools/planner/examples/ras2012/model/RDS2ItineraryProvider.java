@@ -23,28 +23,28 @@ public class RDS2ItineraryProvider extends ItineraryProvider {
     private static final String TRAIN10        = "F1";
     private static final String TRAIN11        = "F2";
 
-    private static final int    TRAIN1_ROUTE0  = 50;
-    private static final int    TRAIN1_ROUTE1  = 2446;
-    private static final int    TRAIN2_ROUTE0  = 2519;
-    private static final int    TRAIN2_ROUTE1  = 4705;
-    private static final int    TRAIN3_ROUTE0  = 198;
-    private static final int    TRAIN3_ROUTE1  = 2468;
-    private static final int    TRAIN4_ROUTE0  = 2612;
-    private static final int    TRAIN4_ROUTE1  = 3288;
-    private static final int    TRAIN5_ROUTE0  = 72;
-    private static final int    TRAIN5_ROUTE1  = 2298;
-    private static final int    TRAIN6_ROUTE0  = 3096;
-    private static final int    TRAIN6_ROUTE1  = 4128;
-    private static final int    TRAIN7_ROUTE0  = 220;
-    private static final int    TRAIN7_ROUTE1  = 2320;
-    private static final int    TRAIN8_ROUTE0  = 662;
-    private static final int    TRAIN8_ROUTE1  = 1834;
-    private static final int    TRAIN9_ROUTE0  = 3189;
-    private static final int    TRAIN9_ROUTE1  = 4416;
-    private static final int    TRAIN10_ROUTE0 = 122;
-    private static final int    TRAIN10_ROUTE1 = 248;
-    private static final int    TRAIN11_ROUTE0 = 2535;
-    private static final int    TRAIN11_ROUTE1 = 4798;
+    private static final int    TRAIN1_ROUTE0  = 0;
+    private static final int    TRAIN1_ROUTE1  = 378;
+    private static final int    TRAIN2_ROUTE0  = 1;
+    private static final int    TRAIN2_ROUTE1  = 367;
+    private static final int    TRAIN3_ROUTE0  = 24;
+    private static final int    TRAIN3_ROUTE1  = 382;
+    private static final int    TRAIN4_ROUTE0  = 17;
+    private static final int    TRAIN4_ROUTE1  = 129;
+    private static final int    TRAIN5_ROUTE0  = 4;
+    private static final int    TRAIN5_ROUTE1  = 354;
+    private static final int    TRAIN6_ROUTE0  = 97;
+    private static final int    TRAIN6_ROUTE1  = 271;
+    private static final int    TRAIN7_ROUTE0  = 28;
+    private static final int    TRAIN7_ROUTE1  = 358;
+    private static final int    TRAIN8_ROUTE0  = 96;
+    private static final int    TRAIN8_ROUTE1  = 282;
+    private static final int    TRAIN9_ROUTE0  = 113;
+    private static final int    TRAIN9_ROUTE1  = 319;
+    private static final int    TRAIN10_ROUTE0 = 12;
+    private static final int    TRAIN10_ROUTE1 = 32;
+    private static final int    TRAIN11_ROUTE0 = 5;
+    private static final int    TRAIN11_ROUTE1 = 383;
 
     @Override
     protected RAS2012Solution fetchSolution() {

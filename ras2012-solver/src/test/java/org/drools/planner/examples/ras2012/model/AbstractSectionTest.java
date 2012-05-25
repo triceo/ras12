@@ -3,6 +3,7 @@ package org.drools.planner.examples.ras2012.model;
 import java.math.BigDecimal;
 import java.util.Collections;
 
+import org.drools.planner.examples.ras2012.model.Route.Builder;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -10,8 +11,8 @@ public abstract class AbstractSectionTest {
 
     protected void actuallyTestInitialAndTerminalNodesOnRoute(final Section s) {
         // prepare routes, one eastbound and one westbound
-        final Route eastbound = new Route(true);
-        final Route westbound = new Route(false);
+        final Route eastbound = new Builder(true).build();
+        final Route westbound = new Builder(false).build();
         // and validate their starting and ending nodes
         Assert.assertSame(s.getWestNode(), s.getOrigin(eastbound));
         Assert.assertSame(s.getEastNode(), s.getDestination(eastbound));

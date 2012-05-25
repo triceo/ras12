@@ -16,6 +16,7 @@ import org.drools.planner.examples.ras2012.Visualizable;
 import org.drools.planner.examples.ras2012.model.Arc;
 import org.drools.planner.examples.ras2012.model.Node;
 import org.drools.planner.examples.ras2012.model.Route;
+import org.drools.planner.examples.ras2012.model.Route.Builder;
 import org.drools.planner.examples.ras2012.model.Train;
 import org.drools.planner.examples.ras2012.util.visualizer.GraphVisualizer;
 
@@ -31,7 +32,7 @@ public class Network extends Visualizable {
         // now map every connection node
         final SortedMap<Node, SortedMap<Node, Arc>> eastboundConnections = new TreeMap<Node, SortedMap<Node, Arc>>();
         final SortedMap<Node, SortedMap<Node, Arc>> westboundConnections = new TreeMap<Node, SortedMap<Node, Arc>>();
-        final Route eastbound = new Route(true);
+        final Route eastbound = new Builder(true).build();
         for (final Arc a : edges) {
             final Node east = a.getDestination(eastbound);
             final Node west = a.getOrigin(eastbound);
@@ -61,9 +62,9 @@ public class Network extends Visualizable {
         if (eastDepo == null || westDepo == null) {
             throw new IllegalStateException("Cannot find depot in one of the directions.");
         }
-        Route.resetCounter(); // FIXME get this outside somewhere
-        this.eastboundRoutes = this.getAllRoutes(new Route(true), eastboundConnections, westDepo);
-        this.westboundRoutes = this.getAllRoutes(new Route(false), westboundConnections, eastDepo);
+        this.eastboundRoutes = this.getAllRoutes(new Builder(true), eastboundConnections, westDepo);
+        this.westboundRoutes = this
+                .getAllRoutes(new Builder(false), westboundConnections, eastDepo);
     }
 
     public Collection<Route> getAllRoutes() {
@@ -81,7 +82,7 @@ public class Network extends Visualizable {
      * @param startingNode
      * @return
      */
-    private Collection<Route> getAllRoutes(final Route r,
+    private Collection<Route> getAllRoutes(final Builder b,
             final SortedMap<Node, SortedMap<Node, Arc>> connections, final Node startingNode) {
         final Collection<Route> routes = new LinkedList<Route>();
         if (connections.get(startingNode) == null) {
@@ -92,15 +93,16 @@ public class Network extends Visualizable {
         for (final Node n : keys) {
             final Node nextNode = n;
             final Arc edge = connections.get(startingNode).get(n);
-            if (r.getProgression().contains(edge)) {
+            if (b.isAdded(edge)) {
                 continue; // we'we been there already; skip this branch
             }
-            final Route newRoute = r.extend(edge);
-            final Collection<Route> newRoutes = this.getAllRoutes(newRoute, connections, nextNode);
+            final Builder newBuilder = b.add(edge);
+            final Collection<Route> newRoutes = this
+                    .getAllRoutes(newBuilder, connections, nextNode);
             if (newRoutes.size() > 0) {
                 routes.addAll(newRoutes);
             } else {
-                routes.add(newRoute);
+                routes.add(newBuilder.build());
             }
         }
         return routes;

@@ -20,17 +20,92 @@ import org.drools.planner.examples.ras2012.util.visualizer.RouteVisualizer;
  */
 public class Route extends Visualizable implements Comparable<Route>, Directed {
 
-    private static final AtomicInteger idGenerator = new AtomicInteger(0);
+    public static class Builder implements Directed {
 
-    public static int resetCounter() {
-        return Route.idGenerator.getAndSet(0);
+        private final AtomicInteger   idGenerator;
+
+        private final boolean         isEastbound;
+        private final Collection<Arc> arcs = new ArrayList<Arc>();
+
+        private Builder(final AtomicInteger id, final boolean isEastbound, final Arc... arcs) {
+            this.idGenerator = id;
+            this.isEastbound = isEastbound;
+            for (final Arc a : arcs) {
+                this.arcs.add(a);
+            }
+
+        }
+
+        public Builder(final boolean isEastbound, final Arc... arcs) {
+            this(isEastbound ? new AtomicInteger(0) : new AtomicInteger(1), isEastbound, arcs);
+        }
+
+        public Builder add(final Arc arc) {
+            if (arc == null) {
+                throw new IllegalArgumentException("Cannot extend route with a null arc!");
+            }
+            if (this.arcs.contains(arc)) {
+                throw new IllegalArgumentException("Cannot extend route with the same arc twice!");
+            }
+            final List<Arc> arcs = new ArrayList<Arc>(this.arcs);
+            arcs.add(arc);
+            return new Builder(this.idGenerator, this.isEastbound,
+                    arcs.toArray(new Arc[arcs.size()]));
+        }
+
+        public Route build() {
+            return new Route(this.idGenerator.getAndAdd(2), this.isEastbound,
+                    this.arcs.toArray(new Arc[this.arcs.size()]));
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (!(obj instanceof Builder)) {
+                return false;
+            }
+            final Builder other = (Builder) obj;
+            if (this.isEastbound != other.isEastbound) {
+                return false;
+            }
+            if (!this.arcs.equals(other.arcs)) {
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + (this.arcs == null ? 0 : this.arcs.hashCode());
+            result = prime * result + (this.isEastbound ? 1231 : 1237);
+            return result;
+        }
+
+        public boolean isAdded(final Arc arc) {
+            return this.arcs.contains(arc);
+        }
+
+        @Override
+        public boolean isEastbound() {
+            return this.isEastbound;
+        }
+
+        @Override
+        public boolean isWestbound() {
+            return !this.isEastbound();
+        }
     }
 
-    private final boolean             isEastbound;
     private final ArcProgression      progression;
 
-    private final int                 id                           = Route.idGenerator
-                                                                           .getAndIncrement();
+    private final int                 id;
 
     private int                       numberOfPreferredTracks      = -1;
 
@@ -38,18 +113,14 @@ public class Route extends Visualizable implements Comparable<Route>, Directed {
 
     private final Map<Train, Boolean> routePossibilitiesCache      = new HashMap<Train, Boolean>();
 
-    public Route(final boolean isEastbound) {
-        this(isEastbound, new Arc[0]);
-    }
-
-    private Route(final boolean isEastbound, final Arc... e) {
-        this.isEastbound = isEastbound;
+    private Route(final int id, final boolean isEastbound, final Arc... e) {
+        this.id = id;
         this.progression = new ArcProgression(this, e);
     }
 
     @Override
     public int compareTo(final Route o) {
-        if (this.isEastbound == o.isEastbound) { // less tracks = better
+        if (this.isEastbound() == o.isEastbound()) { // less tracks = better
             final int comparison = o.progression.countArcs() - this.progression.countArcs();
             if (comparison == 0) { // shorter = better
                 if (this.getTravellingTimeInMillis() == o.getTravellingTimeInMillis()) { // more preferred tracks = better
@@ -86,19 +157,6 @@ public class Route extends Visualizable implements Comparable<Route>, Directed {
             return false;
         }
         return true;
-    }
-
-    public Route extend(final Arc add) {
-        if (add == null) {
-            throw new IllegalArgumentException("Cannot extend route with a null arc!");
-        }
-        if (this.progression.contains(add)) {
-            throw new IllegalArgumentException("Cannot extend route with the same arc twice!");
-        }
-        final List<Arc> newParts = new ArrayList<Arc>(this.progression.getArcs());
-        newParts.add(add);
-        final Arc[] result = newParts.toArray(new Arc[newParts.size()]);
-        return new Route(this.isEastbound(), result);
     }
 
     public int getId() {
@@ -146,7 +204,7 @@ public class Route extends Visualizable implements Comparable<Route>, Directed {
 
     @Override
     public boolean isEastbound() {
-        return this.isEastbound;
+        return this.getId() % 2 == 0;
     }
 
     public boolean isPossibleForTrain(final Train t) {
@@ -211,7 +269,7 @@ public class Route extends Visualizable implements Comparable<Route>, Directed {
     public String toString() {
         final StringBuilder builder = new StringBuilder();
         builder.append("Route [id=").append(this.id).append(", isEastbound=")
-                .append(this.isEastbound).append(", arcs=").append(this.progression).append("]");
+                .append(this.isEastbound()).append(", arcs=").append(this.progression).append("]");
         return builder.toString();
     }
 

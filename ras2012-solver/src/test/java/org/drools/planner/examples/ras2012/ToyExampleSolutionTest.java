@@ -59,7 +59,7 @@ public class ToyExampleSolutionTest {
         // prepare B1 according to the example
         final Train b1 = this.locateTrain("B1");
         final ItineraryAssignment b1Assignment = this.SOLUTION.getAssignment(b1);
-        b1Assignment.setRoute(this.locateRoute(45));
+        b1Assignment.setRoute(this.locateRoute(5));
         // we must be at node 6 precisely at 5110576
         long delay = 5110576 - this.getArrivalAtNode(b1Assignment.getItinerary(), Node.getNode(6));
         b1Assignment.getItinerary().setWaitTime(Node.getNode(9),
@@ -67,7 +67,7 @@ public class ToyExampleSolutionTest {
         // prepare C1 according to the example
         final Train c1 = this.locateTrain("C1");
         final ItineraryAssignment c1Assignment = this.SOLUTION.getAssignment(c1);
-        c1Assignment.setRoute(this.locateRoute(9));
+        c1Assignment.setRoute(this.locateRoute(2));
         // we must be at node 6 precisely at 7713668
         delay = 7713668 - this.getArrivalAtNode(c1Assignment.getItinerary(), Node.getNode(6));
         c1Assignment.getItinerary().setWaitTime(Node.getNode(4),
@@ -75,13 +75,13 @@ public class ToyExampleSolutionTest {
         // prepare A1 according to the example
         final Train a1 = this.locateTrain("A1");
         final ItineraryAssignment a1Assignment = this.SOLUTION.getAssignment(a1);
-        a1Assignment.setRoute(this.locateRoute(20));
+        a1Assignment.setRoute(this.locateRoute(4));
     }
 
     @Test
     public void test() {
         final HardAndSoftScore score = this.getScoreForSolution(this.SOLUTION);
-        Assert.assertEquals(73, score.getHardScore());
+        Assert.assertEquals(0, score.getHardScore());
         Assert.assertTrue("Account for rounding differences.",
                 score.getSoftScore() < -920 && score.getSoftScore() > -925);
     }

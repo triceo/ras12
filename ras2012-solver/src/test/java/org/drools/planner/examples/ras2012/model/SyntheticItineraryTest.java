@@ -30,10 +30,12 @@ public class SyntheticItineraryTest {
     private static final Arc     ARC2             = new Arc(Track.MAIN_0, BigDecimal.ONE,
                                                           SyntheticItineraryTest.END,
                                                           SyntheticItineraryTest.NOT_ON_ROUTE);
-    private static final Route   ROUTE_IMPOSSIBLE = new Route(!SyntheticItineraryTest.EASTBOUND)
-                                                          .extend(SyntheticItineraryTest.ARC1);
-    private static final Route   ROUTE_POSSIBLE   = new Route(SyntheticItineraryTest.EASTBOUND)
-                                                          .extend(SyntheticItineraryTest.ARC1);
+    private static final Route   ROUTE_IMPOSSIBLE = new Route.Builder(
+                                                          !SyntheticItineraryTest.EASTBOUND).add(
+                                                          SyntheticItineraryTest.ARC1).build();
+    private static final Route   ROUTE_POSSIBLE   = new Route.Builder(
+                                                          SyntheticItineraryTest.EASTBOUND).add(
+                                                          SyntheticItineraryTest.ARC1).build();
 
     @Test
     public void testConstructor() {

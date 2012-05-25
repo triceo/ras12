@@ -11,6 +11,7 @@ import java.util.List;
 import org.drools.planner.examples.ras2012.model.Arc;
 import org.drools.planner.examples.ras2012.model.Node;
 import org.drools.planner.examples.ras2012.model.Route;
+import org.drools.planner.examples.ras2012.model.Route.Builder;
 import org.drools.planner.examples.ras2012.model.Track;
 import org.junit.Assert;
 import org.junit.Test;
@@ -37,15 +38,17 @@ public class ArcProgressionTest {
     @Parameters
     public static Collection<Object[]> getDirections() {
         final Collection<Object[]> directions = new ArrayList<Object[]>();
-        directions.add(new Route[] { new Route(false) });
-        directions.add(new Route[] { new Route(true) });
+        directions.add(new Builder[] { new Builder(false) });
+        directions.add(new Builder[] { new Builder(true) });
         return directions;
     }
 
-    private final Route route;
+    private final Route   route;
+    private final Builder builder;
 
-    public ArcProgressionTest(final Route r) {
-        this.route = r;
+    public ArcProgressionTest(final Builder b) {
+        this.builder = b;
+        this.route = b.build();
     }
 
     @Test
@@ -100,7 +103,7 @@ public class ArcProgressionTest {
         Route r = this.route;
         Assert.assertFalse("Empty collection shouldn't contain the arc.", r.getProgression()
                 .contains(arc));
-        r = r.extend(arc);
+        r = this.builder.add(arc).build();
         Assert.assertTrue("Collection should now contain the arc.", r.getProgression()
                 .contains(arc));
         Assert.assertFalse("Collection should not contain the never-inserted arc.", r
@@ -133,13 +136,13 @@ public class ArcProgressionTest {
         // validate
         final Arc firstExtend = this.route.isEastbound() ? a1 : a2;
         final Arc secondExtend = this.route.isEastbound() ? a2 : a1;
-        Route r = this.route;
-        r = r.extend(firstExtend);
+        final Builder b = this.builder.add(firstExtend);
+        Route r = b.build();
         Assert.assertNull("On a route with single arc, next arc to the first one is null.", r
                 .getProgression().getNext(firstExtend));
         Assert.assertNull("On a route with single arc, previous arc to the first one is null.", r
                 .getProgression().getPrevious(firstExtend));
-        r = r.extend(secondExtend);
+        r = b.add(secondExtend).build();
         Assert.assertNull("On route with two arcs, next arc to the second one is null.", r
                 .getProgression().getNext(secondExtend));
         Assert.assertSame("On route with two arcs, next arc to the first one is the second.",
@@ -161,7 +164,7 @@ public class ArcProgressionTest {
     public void testGetNextInvalid() {
         final Arc a1 = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
         final Arc a2 = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(1), Node.getNode(2));
-        final Route r = this.route.extend(a1);
+        final Route r = this.builder.add(a1).build();
         r.getProgression().getNext(a2);
     }
 
@@ -174,11 +177,11 @@ public class ArcProgressionTest {
         final Arc a1 = new Arc(Track.MAIN_0, BigDecimal.ONE, n1, n2);
         final Arc a2 = new Arc(Track.MAIN_0, BigDecimal.ONE, n2, n3);
         // validate
-        Route r = this.route;
-        r = r.extend(a1);
+        final Builder b = this.builder.add(a1);
+        Route r = b.build();
         Assert.assertSame("On a route with single arc, null next arc is the first one.", r
                 .getProgression().getOrigin(), r.getProgression().getNext(null));
-        r = r.extend(a2);
+        r = b.add(a2).build();
         Assert.assertSame("On a route with two arcs, null next arc is still the first one.", r
                 .getProgression().getOrigin(), r.getProgression().getNext(null));
     }
@@ -199,20 +202,22 @@ public class ArcProgressionTest {
         final Arc a2 = new Arc(Track.MAIN_0, BigDecimal.ONE, n2, n3);
         final Arc a3 = new Arc(Track.MAIN_0, BigDecimal.ONE, n3, n4);
 
-        Route r = this.route.extend(a1);
+        Builder b = this.builder.add(a1);
+        Route r = b.build();
         Assert.assertSame("With just one arc, initial and terminal arcs should be the same. ", r
                 .getProgression().getDestination(), r.getProgression().getOrigin());
         Assert.assertSame("With just one arc, initial and terminal arcs should equal. ", r
                 .getProgression().getDestination(), r.getProgression().getOrigin());
 
-        r = r.extend(a2);
+        b = b.add(a2);
+        r = b.build();
         Assert.assertSame("With two arcs, the one with no incoming connections should be initial.",
                 this.route.isEastbound() ? a1 : a2, r.getProgression().getOrigin());
         Assert.assertSame(
                 "With two arcs, the one with no outgoing connections should be terminal.",
                 this.route.isEastbound() ? a2 : a1, r.getProgression().getDestination());
 
-        r = r.extend(a3);
+        r = b.add(a3).build();
         Assert.assertSame(
                 "With three arcs, the one with no incoming connections should be initial.",
                 this.route.isEastbound() ? a1 : a3, r.getProgression().getOrigin());
@@ -232,7 +237,7 @@ public class ArcProgressionTest {
     public void testGetPreviousInvalid() {
         final Arc a1 = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
         final Arc a2 = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(1), Node.getNode(2));
-        final Route r = this.route.extend(a1);
+        final Route r = this.builder.add(a1).build();
         r.getProgression().getPrevious(a2);
     }
 
@@ -245,11 +250,11 @@ public class ArcProgressionTest {
         final Arc a1 = new Arc(Track.MAIN_0, BigDecimal.ONE, n1, n2);
         final Arc a2 = new Arc(Track.MAIN_0, BigDecimal.ONE, n2, n3);
         // validate
-        Route r = this.route;
-        r = r.extend(a1);
+        final Builder b = this.builder.add(a1);
+        Route r = b.build();
         Assert.assertSame("On a route with single arc, null previous arc is the first one.", r
                 .getProgression().getDestination(), r.getProgression().getPrevious(null));
-        r = r.extend(a2);
+        r = b.add(a2).build();
         Assert.assertSame("On a route with two arcs, null previous arc is the last one.", r
                 .getProgression().getDestination(), r.getProgression().getPrevious(null));
     }
@@ -269,7 +274,7 @@ public class ArcProgressionTest {
         final Arc a1 = new Arc(Track.MAIN_0, BigDecimal.ONE, n1, n2);
         final Arc a2 = new Arc(Track.CROSSOVER, BigDecimal.ONE, n2, n3);
         final Arc a3 = new Arc(Track.MAIN_0, BigDecimal.ONE, n3, n4);
-        final Route r = this.route.extend(a1).extend(a2).extend(a3);
+        final Route r = this.builder.add(a1).add(a2).add(a3).build();
         final Collection<Node> wp = r.getProgression().getWaitPoints();
         Assert.assertEquals("One C means two wait points, start + C.", 2, wp.size());
         Assert.assertTrue("One of the wait points should be the route start.",
@@ -286,7 +291,7 @@ public class ArcProgressionTest {
         final Arc a1 = new Arc(Track.MAIN_0, BigDecimal.ONE, n1, n2);
         final Arc a2 = new Arc(Track.MAIN_1, BigDecimal.ONE, n2, n3);
         final Arc a3 = new Arc(Track.MAIN_2, BigDecimal.ONE, n3, n4);
-        final Route r = this.route.extend(a1).extend(a2).extend(a3);
+        final Route r = this.builder.add(a1).add(a2).add(a3).build();
         final Collection<Node> wp = r.getProgression().getWaitPoints();
         Assert.assertEquals("Only main tracks means just one wait point at the beginning.", 1,
                 wp.size());
@@ -303,11 +308,11 @@ public class ArcProgressionTest {
         final Arc a1 = new Arc(Track.MAIN_0, BigDecimal.ONE, n1, n2);
         final Arc a2 = new Arc(Track.SIDING, BigDecimal.ONE, n2, n3);
         final Arc a3 = new Arc(Track.MAIN_0, BigDecimal.ONE, n3, n4);
-        Route r = this.route;
-        if (r.isEastbound()) {
-            r = r.extend(a1).extend(a2).extend(a3);
+        Route r = null;
+        if (this.builder.isEastbound()) {
+            r = this.builder.add(a1).add(a2).add(a3).build();
         } else {
-            r = r.extend(a3).extend(a2).extend(a1);
+            r = this.builder.add(a3).add(a2).add(a1).build();
         }
         final Collection<Node> wp = r.getProgression().getWaitPoints();
         Assert.assertEquals("One siding means two wait points, start + siding.", 2, wp.size());
