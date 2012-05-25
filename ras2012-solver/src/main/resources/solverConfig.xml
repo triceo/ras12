@@ -9,11 +9,14 @@
   </scoreDirectorFactory>
   <localSearch>
     <termination>
-      <terminationCompositionStyle>OR</terminationCompositionStyle>
-      <maximumMinutesSpend>5</maximumMinutesSpend>
+      <terminationCompositionStyle>AND</terminationCompositionStyle>
+      <maximumMinutesSpend>3</maximumMinutesSpend>
+      <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
     </termination> 
     <acceptor>
-      <simulatedAnnealingStartingTemperature>10hard/10soft</simulatedAnnealingStartingTemperature>
+      <moveTabuSize>13</moveTabuSize>
+      <undoMoveTabuSize>13</undoMoveTabuSize>
+      <simulatedAnnealingStartingTemperature>40hard/1000soft</simulatedAnnealingStartingTemperature>
     </acceptor>
     <forager>
       <minimalAcceptedSelection>4</minimalAcceptedSelection>
