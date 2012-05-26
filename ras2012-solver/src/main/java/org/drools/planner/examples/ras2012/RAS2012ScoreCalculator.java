@@ -94,12 +94,10 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
     public HardAndSoftScore calculateScore() {
         int penalty = 0;
         for (final Train t : this.solution.getTrains()) {
-            penalty += this.wantTimePenalties.containsKey(t) ? this.wantTimePenalties.get(t) : 0;
-            penalty += this.delayPenalties.containsKey(t) ? this.delayPenalties.get(t) : 0;
-            penalty += this.scheduleAdherencePenalties.containsKey(t) ? this.scheduleAdherencePenalties
-                    .get(t) : 0;
-            penalty += this.unpreferredTracksPenalties.containsKey(t) ? this.unpreferredTracksPenalties
-                    .get(t) : 0;
+            penalty += this.wantTimePenalties.get(t);
+            penalty += this.delayPenalties.get(t);
+            penalty += this.scheduleAdherencePenalties.get(t);
+            penalty += this.unpreferredTracksPenalties.get(t);
         }
         final int conflicts = this.conflicts.countConflicts();
         if (conflicts > 0) {
