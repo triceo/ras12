@@ -57,7 +57,6 @@ public class ItineraryAssignmentTest extends AbstractItineraryProviderBasedTest 
         ia.setRoute(this.expectedRoute);
         final ItineraryAssignment ia2 = ia.clone();
         Assert.assertNotSame(ia2, ia);
-        Assert.assertEquals(ia2, ia);
         Assert.assertSame(ia.getItinerary(), ia2.getItinerary());
     }
 
@@ -78,31 +77,6 @@ public class ItineraryAssignmentTest extends AbstractItineraryProviderBasedTest 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorWithNullTrain() {
         new ItineraryAssignment(null, this.solution.getMaintenances());
-    }
-
-    @Test
-    public void testEqualsExisting() {
-        final ItineraryAssignment ia = new ItineraryAssignment(this.expectedTrain,
-                this.solution.getMaintenances());
-        Assert.assertEquals(ia, ia); // equals itself
-        final ItineraryAssignment ia2 = new ItineraryAssignment(this.expectedTrain,
-                this.solution.getMaintenances());
-        Assert.assertEquals(ia2, ia2);
-        Assert.assertEquals(ia, ia2);
-        ia2.setRoute(this.expectedRoute);
-        Assert.assertEquals(ia2, ia2);
-        Assert.assertFalse(ia2.equals(ia));
-        Assert.assertFalse(ia.equals(ia2));
-        ia.setRoute(this.expectedRoute);
-        Assert.assertEquals(ia, ia2);
-    }
-
-    @Test
-    public void testEqualsNonsense() {
-        final ItineraryAssignment ia = new ItineraryAssignment(this.expectedTrain,
-                this.solution.getMaintenances());
-        Assert.assertFalse(ia.equals(null));
-        Assert.assertFalse(ia.equals("Testing string"));
     }
 
     @Test

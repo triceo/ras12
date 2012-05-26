@@ -37,28 +37,6 @@ public final class ItineraryAssignment implements Cloneable {
         return ia;
     }
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (!(obj instanceof ItineraryAssignment)) {
-            return false;
-        }
-        final ItineraryAssignment other = (ItineraryAssignment) obj;
-        if (this.itinerary == null) {
-            if (other.itinerary != null) {
-                return false;
-            }
-        } else if (!this.itinerary.equals(other.itinerary)) {
-            return false;
-        }
-        return true;
-    }
-
     public Itinerary getItinerary() {
         if (this.itinerary == null) {
             throw new IllegalStateException("No itinerary available, provide a route first.");
@@ -74,14 +52,6 @@ public final class ItineraryAssignment implements Cloneable {
 
     public Train getTrain() {
         return this.train;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (this.itinerary == null ? 0 : this.itinerary.hashCode());
-        return result;
     }
 
     public synchronized void setRoute(final Route route) {
