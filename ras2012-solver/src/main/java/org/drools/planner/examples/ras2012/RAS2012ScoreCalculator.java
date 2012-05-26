@@ -117,7 +117,7 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
                         * RAS2012ScoreCalculator.OCCUPATION_CHECKS_PER_MINUTE);
     }
 
-    public int getDelayPenalty(final Itinerary i, final RAS2012Solution solution) {
+    public int getDelayPenalty(final Itinerary i) {
         final long delay = i.getDelay();
         if (delay <= 0) {
             return 0;
@@ -196,7 +196,7 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
         this.unpreferredTracksPenalties.put(t, this.getUnpreferredTracksPenalty(i));
         this.scheduleAdherencePenalties.put(t, this.getScheduleAdherencePenalty(i));
         this.wantTimePenalties.put(t, this.getWantTimePenalty(i));
-        this.delayPenalties.put(t, this.getDelayPenalty(i, this.solution));
+        this.delayPenalties.put(t, this.getDelayPenalty(i));
         this.recalculateOccupiedArcs(ia);
     }
 
