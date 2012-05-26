@@ -192,5 +192,6 @@
   <modules>
     <module>ras2012-solver</module>
     <module>ras2012-benchmark</module>
+    <module>ras2012-paper</module>
   </modules>
 </project>
