@@ -23,6 +23,6 @@ public class RAS2012ProblemIO implements ProblemIO {
     @Override
     public void write(@SuppressWarnings("rawtypes") final Solution solution,
             final File outputSolutionFile) {
-        this.io.write(solution, outputSolutionFile);
+        this.io.writeXML((RAS2012Solution) solution, outputSolutionFile);
     }
 }

@@ -146,16 +146,6 @@ public final class Itinerary extends Visualizable {
         return true;
     }
 
-    public Map<Node, Long> getArrivalsAtSANodes() {
-        final Map<Node, Long> result = new HashMap<Node, Long>();
-        for (final ScheduleAdherenceRequirement sa : this.getTrain()
-                .getScheduleAdherenceRequirements().values()) {
-            final Node expectedDestination = sa.getDestination();
-            result.put(expectedDestination, this.getEntryTime(expectedDestination));
-        }
-        return Collections.unmodifiableMap(result);
-    }
-
     public long getArrivalTime() {
         return this.getSchedule().lastKey();
     }
@@ -167,7 +157,7 @@ public final class Itinerary extends Visualizable {
         return this.delay;
     }
 
-    private long getEntryTime(final Arc a) {
+    public long getArrivalTime(final Arc a) {
         final SortedMap<Long, Arc> nodeEntryTimes = this.getScheduleWithArcs();
         long timeEntered = -1;
         for (final SortedMap.Entry<Long, Arc> entry : nodeEntryTimes.entrySet()) {
@@ -183,7 +173,7 @@ public final class Itinerary extends Visualizable {
         return timeEntered;
     }
 
-    private long getEntryTime(final Node n) {
+    public long getArrivalTime(final Node n) {
         final SortedMap<Long, Node> nodeEntryTimes = this.getSchedule();
         long timeEntered = -1;
         for (final SortedMap.Entry<Long, Node> entry : nodeEntryTimes.entrySet()) {
@@ -246,7 +236,7 @@ public final class Itinerary extends Visualizable {
                     .getDestination(progression)), this.getTrain().getLength());
         } else {
             // the train is in the network
-            final long timeTravelledInArc = time - this.getEntryTime(leadingArc);
+            final long timeTravelledInArc = time - this.getArrivalTime(leadingArc);
             final BigDecimal travelledInArc = Converter.getDistanceFromSpeedAndTime(
                     this.getTrain().getMaximumSpeed(leadingArc.getTrack()), timeTravelledInArc)
                     .min(leadingArc.getLength());

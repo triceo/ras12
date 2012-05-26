@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import org.drools.planner.config.XmlSolverFactory;
 import org.drools.planner.core.Solver;
+import org.drools.planner.core.score.buildin.hardandsoft.HardAndSoftScore;
 import org.drools.planner.examples.ras2012.util.SolutionIO;
 
 /**
@@ -31,7 +32,19 @@ public class App {
             targetFolder.mkdirs();
         }
         final RAS2012Solution solution = (RAS2012Solution) solver.getBestSolution();
-        io.write(solution, new File(targetFolder, f.getName()));
-        solution.visualize(new File(targetFolder, f.getName() + ".png"));
+        final HardAndSoftScore score = App.recaculateScore(solution);
+        if (score.getHardScore() >= 0) { // don't write score that isn't feasible
+            io.writeXML(solution, new File(targetFolder, f.getName() + score.getSoftScore()
+                    + ".xml"));
+            io.writeTex(solution, new File(targetFolder, f.getName() + score.getSoftScore()
+                    + ".tex"));
+            solution.visualize(new File(targetFolder, f.getName() + ".png"));
+        }
+    }
+
+    private static HardAndSoftScore recaculateScore(final RAS2012Solution solution) {
+        final RAS2012ScoreCalculator calc = new RAS2012ScoreCalculator();
+        calc.resetWorkingSolution(solution);
+        return calc.calculateScore();
     }
 }

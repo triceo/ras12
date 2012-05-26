@@ -11,15 +11,23 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
-import org.drools.planner.core.solution.Solution;
+import freemarker.template.Configuration;
+import freemarker.template.DefaultObjectWrapper;
+import freemarker.template.TemplateException;
+import org.drools.planner.examples.ras2012.RAS2012ScoreCalculator;
 import org.drools.planner.examples.ras2012.RAS2012Solution;
 import org.drools.planner.examples.ras2012.model.Arc;
+import org.drools.planner.examples.ras2012.model.Itinerary;
 import org.drools.planner.examples.ras2012.model.MaintenanceWindow;
 import org.drools.planner.examples.ras2012.model.Node;
 import org.drools.planner.examples.ras2012.model.ScheduleAdherenceRequirement;
@@ -34,6 +42,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SolutionIO {
+
+    private final Configuration freemarker;
 
     private Map<Integer, Node>  nodes;
 
@@ -116,6 +126,14 @@ public class SolutionIO {
         w.newLine();
         w.write("\t\t</train>");
         w.newLine();
+    }
+
+    public SolutionIO() {
+        this.freemarker = new Configuration();
+        this.freemarker.setClassForTemplateLoading(SolutionIO.class, "");
+        this.freemarker.setObjectWrapper(new DefaultObjectWrapper());
+        this.freemarker.setLocale(Locale.US);
+        this.freemarker.setNumberFormat("computer");
     }
 
     private RAS2012Solution createSolution(final DataSetParser p) {
@@ -236,6 +254,86 @@ public class SolutionIO {
         return trains;
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private Map prepareTexData(final RAS2012Solution solution) {
+        final RAS2012ScoreCalculator calc = new RAS2012ScoreCalculator();
+        calc.resetWorkingSolution(solution);
+        final Map map = new HashMap();
+        map.put("name", solution.getName());
+        final Set trainsMap = new LinkedHashSet();
+        for (final Train t : solution.getTrains()) {
+            trainsMap.add(this.prepareTexTrain(solution.getAssignment(t).getItinerary(), solution,
+                    calc));
+        }
+        map.put("trains", trainsMap);
+        map.put("cost", -calc.calculateScore().getSoftScore());
+        return map;
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private Map prepareTexTrain(final Itinerary itinerary, final RAS2012Solution solution,
+            final RAS2012ScoreCalculator calculator) {
+        final Train train = itinerary.getTrain();
+        final Map map = new HashMap();
+        map.put("name", train.getName());
+        map.put("delay", SolutionIO.convertMillisToSeconds(itinerary.getDelay()));
+        map.put("unpreferredPenalty", calculator.getUnpreferredTracksPenalty(itinerary));
+        map.put("stops", this.prepareTexTrainStops(itinerary, solution, calculator));
+        map.put("numStops", ((Collection) map.get("stops")).size());
+        final long horizon = solution.getPlanningHorizon(TimeUnit.MILLISECONDS);
+        final long arrival = itinerary.getArrivalTime();
+        final boolean isInHorizon = arrival <= horizon;
+        final long wantTime = train.getWantTime(TimeUnit.MILLISECONDS);
+        map.put("twt", SolutionIO.convertMillisToSeconds(wantTime));
+        map.put("twtDiff", isInHorizon ? SolutionIO.convertMillisToSeconds(wantTime - arrival)
+                : null);
+        map.put("twtPenalty", isInHorizon ? calculator.getWantTimePenalty(itinerary) : "");
+        return map;
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private Map prepareTexTrainStop(final Itinerary itinerary, final Node n,
+            final RAS2012Solution solution, final RAS2012ScoreCalculator calculator) {
+        final Train t = itinerary.getTrain();
+        final long horizon = solution.getPlanningHorizon(TimeUnit.MILLISECONDS);
+        final long arrival = itinerary.getArrivalTime(n);
+        final boolean isInHorizon = arrival <= horizon;
+        final Map stop = new HashMap();
+        stop.put("node", n.getId());
+        stop.put("arrive", SolutionIO.convertMillisToSeconds(arrival));
+        if (t.getScheduleAdherenceRequirements().containsKey(n)) {
+            final long wantTime = t.getScheduleAdherenceRequirements().get(n)
+                    .getTimeSinceStartOfWorld(TimeUnit.MILLISECONDS);
+            stop.put("sa", SolutionIO.convertMillisToSeconds(wantTime));
+            stop.put("saDiff", isInHorizon ? SolutionIO.convertMillisToSeconds(wantTime - arrival)
+                    : null);
+            stop.put("saPenalty",
+                    isInHorizon ? calculator.getScheduleAdherencePenalty(itinerary, n) : "");
+        }
+        return stop;
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private Collection prepareTexTrainStops(final Itinerary itinerary,
+            final RAS2012Solution solution, final RAS2012ScoreCalculator calculator) {
+        final Train train = itinerary.getTrain();
+        // prepare the set of stops, make sure they are in a proper order
+        final List<Node> nodes = new ArrayList<Node>();
+        Map<Node, ScheduleAdherenceRequirement> sa = train.getScheduleAdherenceRequirements();
+        for (Node n : itinerary.getRoute().getProgression().getNodes()) {
+            if (sa.containsKey(n)) {
+                nodes.add(n);
+            }
+        }
+        // and now populate the stop data
+        final List stops = new ArrayList();
+        for (final Node node : nodes) {
+            final Map stop = this.prepareTexTrainStop(itinerary, node, solution, calculator);
+            stops.add(stop);
+        }
+        return stops;
+    }
+
     public RAS2012Solution read(final File inputSolutionFile) {
         InputStream is = null;
         try {
@@ -261,20 +359,33 @@ public class SolutionIO {
         }
     }
 
-    public void write(@SuppressWarnings("rawtypes") final Solution solution,
-            final File outputSolutionFile) {
-        final RAS2012Solution sol = (RAS2012Solution) solution;
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public void writeTex(final RAS2012Solution solution, final File outputSolutionFile) {
+        try {
+            final Map map = this.prepareTexData(solution);
+            map.put("id", outputSolutionFile.getName());
+            this.freemarker.getTemplate("schedule.tex.ftl").process(map,
+                    new FileWriter(outputSolutionFile));
+        } catch (final TemplateException e) {
+            SolutionIO.logger.error("Failed processing LaTeX schedule template.", e);
+        } catch (final IOException e) {
+            SolutionIO.logger.error("Failed writing " + solution.getName() + " into "
+                    + outputSolutionFile, e);
+        }
+    }
+
+    public void writeXML(final RAS2012Solution solution, final File outputSolutionFile) {
         BufferedWriter w = null;
         try {
             w = new BufferedWriter(new FileWriter(outputSolutionFile));
             w.write("###########################################################################");
             w.newLine();
-            w.write("<solution territory='" + sol.getName() + "'>");
+            w.write("<solution territory='" + solution.getName() + "'>");
             w.newLine();
             w.write("\t<trains>");
             w.newLine();
-            for (final Train t : sol.getTrains()) {
-                SolutionIO.writeTrain(t, sol, w);
+            for (final Train t : solution.getTrains()) {
+                SolutionIO.writeTrain(t, solution, w);
             }
             w.write("\t</trains>");
             w.newLine();
@@ -293,5 +404,4 @@ public class SolutionIO {
             }
         }
     }
-
 }

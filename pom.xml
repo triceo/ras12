@@ -50,6 +50,12 @@
         <artifactId>logback-classic</artifactId>
         <version>1.0.1</version>
       </dependency>
+      <!-- Solution output -->
+      <dependency>
+        <groupId>org.freemarker</groupId>
+        <artifactId>freemarker</artifactId>
+        <version>2.3.19</version>
+      </dependency>
       <!-- Testing -->
       <dependency>
         <groupId>junit</groupId>

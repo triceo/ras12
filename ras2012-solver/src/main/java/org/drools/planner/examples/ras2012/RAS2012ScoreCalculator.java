@@ -122,7 +122,7 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
                         * RAS2012ScoreCalculator.OCCUPATION_CHECKS_PER_MINUTE);
     }
 
-    private int getDelayPenalty(final Itinerary i, final RAS2012Solution solution) {
+    public int getDelayPenalty(final Itinerary i, final RAS2012Solution solution) {
         final long delay = i.getDelay();
         if (delay <= 0) {
             return 0;
@@ -133,42 +133,46 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
                 .intValue();
     }
 
-    private int getScheduleAdherencePenalty(final Itinerary i) {
+    public int getScheduleAdherencePenalty(final Itinerary i) {
         int penalty = 0;
         if (i.getTrain().getType().adhereToSchedule()) {
-            for (final Map.Entry<Node, Long> arrivals : i.getArrivalsAtSANodes().entrySet()) {
-                final Node node = arrivals.getKey();
-                final long arrival = arrivals.getValue();
-                if (!this.isInPlanningHorizon(arrival)) {
-                    // doesn't count when it's outside the horizon
-                    continue;
-                }
-                final long expectedArrival = i.getTrain().getScheduleAdherenceRequirements()
-                        .get(node).getTimeSinceStartOfWorld(TimeUnit.MILLISECONDS);
-                if (arrival <= expectedArrival) {
-                    // doesn't count when we're ahead
-                    continue;
-                }
-                final long difference = arrival - expectedArrival;
-                BigDecimal hourlyDifference = RAS2012ScoreCalculator
-                        .roundMillisecondsToHours(difference);
-                hourlyDifference = hourlyDifference.subtract(BigDecimal.valueOf(2));
-                if (hourlyDifference.signum() > 0) {
-                    penalty += hourlyDifference.multiply(BigDecimal.valueOf(200)).intValue();
-                }
+            for (final Node node : i.getTrain().getScheduleAdherenceRequirements().keySet()) {
+                penalty += this.getScheduleAdherencePenalty(i, node);
             }
         }
         return penalty;
     }
 
-    private int getUnpreferredTracksPenalty(final Itinerary i) {
+    public int getScheduleAdherencePenalty(final Itinerary i, final Node node) {
+        if (i.getTrain().getType().adhereToSchedule()) {
+            return 0;
+        }
+        final long arrival = i.getArrivalTime(node);
+        if (!this.isInPlanningHorizon(arrival)) {
+            return 0;
+        }
+        final long expectedArrival = i.getTrain().getScheduleAdherenceRequirements().get(node)
+                .getTimeSinceStartOfWorld(TimeUnit.MILLISECONDS);
+        if (arrival <= expectedArrival) {
+            return 0;
+        }
+        final long difference = arrival - expectedArrival;
+        BigDecimal hourlyDifference = RAS2012ScoreCalculator.roundMillisecondsToHours(difference);
+        hourlyDifference = hourlyDifference.subtract(BigDecimal.valueOf(2));
+        if (hourlyDifference.signum() > 0) {
+            return hourlyDifference.multiply(BigDecimal.valueOf(200)).intValue();
+        }
+        return 0;
+    }
+
+    public int getUnpreferredTracksPenalty(final Itinerary i) {
         final BigDecimal hours = RAS2012ScoreCalculator.roundMillisecondsToHours(i
                 .getTimeSpentOnUnpreferredTracks(this.solution
                         .getPlanningHorizon(TimeUnit.MILLISECONDS)));
         return hours.multiply(BigDecimal.valueOf(50)).intValue();
     }
 
-    private int getWantTimePenalty(final Itinerary i) {
+    public int getWantTimePenalty(final Itinerary i) {
         final long actualTime = i.getArrivalTime();
         if (!this.isInPlanningHorizon(actualTime)) {
             // arrivals outside of the planning horizon aren't counted
