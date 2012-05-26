@@ -24,7 +24,7 @@ public class RAS2012Solution extends Visualizable implements Solution<HardAndSof
 
     private final String                          name;
 
-    private final Territory                         territory;
+    private final Territory                       territory;
     private final Collection<MaintenanceWindow>   maintenances;
     private final Map<Train, ItineraryAssignment> assignments = new LinkedHashMap<Train, ItineraryAssignment>();
     private final Collection<Train>               trains;
@@ -69,7 +69,7 @@ public class RAS2012Solution extends Visualizable implements Solution<HardAndSof
         final RAS2012Solution solution = new RAS2012Solution(this.name, this.territory,
                 this.maintenances, this.trains, this.getAssignments());
         solution.horizon = this.horizon;
-        solution.setScore(this.getScore());
+        solution.score = this.score;
         return solution;
     }
 
@@ -164,10 +164,6 @@ public class RAS2012Solution extends Visualizable implements Solution<HardAndSof
         final StringBuilder builder = new StringBuilder();
         builder.append("RAS2012Solution [name=");
         builder.append(this.name);
-        builder.append(", network=");
-        builder.append(this.territory);
-        builder.append(", maintenances=");
-        builder.append(this.maintenances);
         builder.append(", assignments=");
         builder.append(this.assignments);
         builder.append(", score=");
