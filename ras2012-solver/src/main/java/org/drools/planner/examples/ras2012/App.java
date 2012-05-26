@@ -23,7 +23,7 @@ public class App {
         // read solution
         final File f = new File("src/main/resources/org/drools/planner/examples/ras2012/RDS2.txt");
         final SolutionIO io = new SolutionIO();
-        final RAS2012Solution sol = io.read(f);
+        RAS2012Solution sol = io.read(f);
         // and now start solving
         final XmlSolverFactory configurer = new XmlSolverFactory();
         configurer.configure(App.class.getResourceAsStream("/solverConfig.xml"));
@@ -35,14 +35,12 @@ public class App {
         if (!targetFolder.exists()) {
             targetFolder.mkdirs();
         }
-        final RAS2012Solution solution = (RAS2012Solution) solver.getBestSolution();
-        final HardAndSoftScore score = App.recaculateScore(solution);
+        sol = (RAS2012Solution) solver.getBestSolution();
+        final HardAndSoftScore score = App.recaculateScore(sol);
         if (score.getHardScore() >= 0) { // don't write score that isn't feasible
-            io.writeXML(solution, new File(targetFolder, f.getName() + score.getSoftScore()
-                    + ".xml"));
-            io.writeTex(solution, new File(targetFolder, f.getName() + score.getSoftScore()
-                    + ".tex"));
-            solution.visualize(new File(targetFolder, f.getName() + ".png"));
+            io.writeXML(sol, new File(targetFolder, f.getName() + score.getSoftScore() + ".xml"));
+            io.writeTex(sol, new File(targetFolder, f.getName() + score.getSoftScore() + ".tex"));
+            sol.visualize(new File(targetFolder, f.getName() + score.getSoftScore() + ".png"));
         } else {
             logger.warn("Not writing results because solution wasn't feasible: " + score);
         }
