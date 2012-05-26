@@ -8,12 +8,16 @@ import org.drools.planner.config.XmlSolverFactory;
 import org.drools.planner.core.Solver;
 import org.drools.planner.core.score.buildin.hardandsoft.HardAndSoftScore;
 import org.drools.planner.examples.ras2012.util.SolutionIO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Hello world!
  * 
  */
 public class App {
+
+    private static final Logger logger = LoggerFactory.getLogger(App.class);
 
     public static void main(final String[] args) throws FileNotFoundException, IOException {
         // read solution
@@ -39,6 +43,8 @@ public class App {
             io.writeTex(solution, new File(targetFolder, f.getName() + score.getSoftScore()
                     + ".tex"));
             solution.visualize(new File(targetFolder, f.getName() + ".png"));
+        } else {
+            logger.warn("Not writing results because solution wasn't feasible: " + score);
         }
     }
 

@@ -144,7 +144,7 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
     }
 
     public int getScheduleAdherencePenalty(final Itinerary i, final Node node) {
-        if (i.getTrain().getType().adhereToSchedule()) {
+        if (!i.getTrain().getType().adhereToSchedule()) {
             return 0;
         }
         final long arrival = i.getArrivalTime(node);
