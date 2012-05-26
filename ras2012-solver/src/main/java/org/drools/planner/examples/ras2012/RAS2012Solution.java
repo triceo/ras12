@@ -75,28 +75,6 @@ public class RAS2012Solution extends Visualizable implements Solution<HardAndSof
         return solution;
     }
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (!(obj instanceof RAS2012Solution)) {
-            return false;
-        }
-        final RAS2012Solution other = (RAS2012Solution) obj;
-        if (this.assignments == null) {
-            if (other.assignments != null) {
-                return false;
-            }
-        } else if (!this.assignments.equals(other.assignments)) {
-            return false;
-        }
-        return true;
-    }
-
     public ItineraryAssignment getAssignment(final Train t) {
         return this.assignments.get(t);
     }
@@ -146,14 +124,6 @@ public class RAS2012Solution extends Visualizable implements Solution<HardAndSof
 
     public SortedSet<Train> getTrains() {
         return new TreeSet<Train>(this.trains);
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (this.assignments == null ? 0 : this.assignments.hashCode());
-        return result;
     }
 
     @Override
