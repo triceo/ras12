@@ -28,8 +28,6 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
 
     private RAS2012Solution           solution                   = null;
 
-    private final Map<Train, Boolean> didTrainArrive             = new HashMap<Train, Boolean>();
-
     private final Map<Train, Integer> wantTimePenalties          = new HashMap<Train, Integer>();
 
     private final Map<Train, Integer> delayPenalties             = new HashMap<Train, Integer>();
@@ -116,7 +114,6 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
         this.unpreferredTracksPenalties.clear();
         this.scheduleAdherencePenalties.clear();
         this.delayPenalties.clear();
-        this.didTrainArrive.clear();
         this.conflicts = new ConflictRegistry(
                 (int) this.solution.getPlanningHorizon(TimeUnit.MINUTES)
                         * RAS2012ScoreCalculator.OCCUPATION_CHECKS_PER_MINUTE);
@@ -233,7 +230,6 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
         this.unpreferredTracksPenalties.remove(t);
         this.scheduleAdherencePenalties.remove(t);
         this.delayPenalties.remove(t);
-        this.didTrainArrive.remove(t);
         this.conflicts.resetOccupiedArcs(t);
     }
 }
