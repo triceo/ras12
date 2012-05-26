@@ -2,7 +2,7 @@
 \caption{Statistics for resolved system ``${name}'', costing \$${cost}.}
 \centering
 \begin{tabular}{c||c|c||c|c|c|c|c||c|c|c}
-  \hline 
+  \hline \hline
   &
   Unpref. & 
   Delay &
