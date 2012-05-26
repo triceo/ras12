@@ -20,14 +20,14 @@ import org.drools.planner.examples.ras2012.model.Route.Builder;
 import org.drools.planner.examples.ras2012.model.Train;
 import org.drools.planner.examples.ras2012.util.visualizer.GraphVisualizer;
 
-public class Network extends Visualizable {
+public class Territory extends Visualizable {
 
     private final GraphVisualizer   visualizer;
     private final Collection<Route> westboundRoutes;
     private final Collection<Route> eastboundRoutes;
     private final Map<Train, Route> bestRoutes = new HashMap<Train, Route>();
 
-    public Network(final Collection<Node> nodes, final Collection<Arc> edges) {
+    public Territory(final Collection<Node> nodes, final Collection<Arc> edges) {
         this.visualizer = new GraphVisualizer(edges);
         // now map every connection node
         final SortedMap<Node, SortedMap<Node, Arc>> eastboundConnections = new TreeMap<Node, SortedMap<Node, Arc>>();

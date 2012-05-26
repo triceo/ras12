@@ -17,14 +17,14 @@ import org.drools.planner.examples.ras2012.model.Arc;
 import org.drools.planner.examples.ras2012.model.ItineraryAssignment;
 import org.drools.planner.examples.ras2012.model.MaintenanceWindow;
 import org.drools.planner.examples.ras2012.model.Train;
-import org.drools.planner.examples.ras2012.util.model.Network;
+import org.drools.planner.examples.ras2012.util.model.Territory;
 import org.drools.planner.examples.ras2012.util.visualizer.GraphVisualizer;
 
 public class RAS2012Solution extends Visualizable implements Solution<HardAndSoftScore> {
 
     private final String                          name;
 
-    private final Network                         network;
+    private final Territory                         territory;
     private final Collection<MaintenanceWindow>   maintenances;
     private final Map<Train, ItineraryAssignment> assignments = new LinkedHashMap<Train, ItineraryAssignment>();
     private final Collection<Train>               trains;
@@ -33,10 +33,10 @@ public class RAS2012Solution extends Visualizable implements Solution<HardAndSof
 
     private long                                  horizon     = 0;
 
-    public RAS2012Solution(final String name, final Network net,
+    public RAS2012Solution(final String name, final Territory territory,
             final Collection<MaintenanceWindow> maintenances, final Collection<Train> trains) {
         this.name = name;
-        this.network = net;
+        this.territory = territory;
         this.maintenances = maintenances;
         this.trains = trains;
         /*
@@ -46,16 +46,16 @@ public class RAS2012Solution extends Visualizable implements Solution<HardAndSof
         // TODO separate into a solution initializer, for the sake of clarity
         for (final Train t : this.getTrains()) {
             final ItineraryAssignment ia = new ItineraryAssignment(t, maintenances);
-            ia.setRoute(this.getNetwork().getBestRoute(t));
+            ia.setRoute(this.getTerritory().getBestRoute(t));
             this.assignments.put(t, ia);
         }
     }
 
-    private RAS2012Solution(final String name, final Network net,
+    private RAS2012Solution(final String name, final Territory territory,
             final Collection<MaintenanceWindow> maintenances, final Collection<Train> trains,
             final Collection<ItineraryAssignment> assignments) {
         this.name = name;
-        this.network = net;
+        this.territory = territory;
         this.maintenances = maintenances;
         this.trains = trains;
         // clone assignments
@@ -66,7 +66,7 @@ public class RAS2012Solution extends Visualizable implements Solution<HardAndSof
 
     @Override
     public Solution<HardAndSoftScore> cloneSolution() {
-        final RAS2012Solution solution = new RAS2012Solution(this.name, this.network,
+        final RAS2012Solution solution = new RAS2012Solution(this.name, this.territory,
                 this.maintenances, this.trains, this.getAssignments());
         solution.horizon = this.horizon;
         solution.setScore(this.getScore());
@@ -112,8 +112,8 @@ public class RAS2012Solution extends Visualizable implements Solution<HardAndSof
         return this.name;
     }
 
-    public Network getNetwork() {
-        return this.network;
+    public Territory getTerritory() {
+        return this.territory;
     }
 
     public long getPlanningHorizon(final TimeUnit unit) {
@@ -165,7 +165,7 @@ public class RAS2012Solution extends Visualizable implements Solution<HardAndSof
         builder.append("RAS2012Solution [name=");
         builder.append(this.name);
         builder.append(", network=");
-        builder.append(this.network);
+        builder.append(this.territory);
         builder.append(", maintenances=");
         builder.append(this.maintenances);
         builder.append(", assignments=");

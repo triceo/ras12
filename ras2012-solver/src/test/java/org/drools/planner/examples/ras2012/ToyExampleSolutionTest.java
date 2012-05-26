@@ -38,7 +38,7 @@ public class ToyExampleSolutionTest {
     }
 
     private Route locateRoute(final int id) {
-        for (final Route r : this.SOLUTION.getNetwork().getAllRoutes()) {
+        for (final Route r : this.SOLUTION.getTerritory().getAllRoutes()) {
             if (r.getId() == id) {
                 return r;
             }

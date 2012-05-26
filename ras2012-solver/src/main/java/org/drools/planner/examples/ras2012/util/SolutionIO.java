@@ -37,7 +37,7 @@ import org.drools.planner.examples.ras2012.parser.DataSetParser;
 import org.drools.planner.examples.ras2012.parser.DataSetParser.ParsedTrain;
 import org.drools.planner.examples.ras2012.parser.ParseException;
 import org.drools.planner.examples.ras2012.parser.Token;
-import org.drools.planner.examples.ras2012.util.model.Network;
+import org.drools.planner.examples.ras2012.util.model.Territory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -156,7 +156,7 @@ public class SolutionIO {
         final Collection<Arc> arcs = this.initArcs(p);
         final Collection<MaintenanceWindow> mows = this.initMOW(p);
         final Collection<Train> trains = this.initTrains(name, p);
-        return new RAS2012Solution(name, new Network(this.nodes.values(), arcs), mows, trains);
+        return new RAS2012Solution(name, new Territory(this.nodes.values(), arcs), mows, trains);
     }
 
     private Collection<Arc> initArcs(final DataSetParser p) {

@@ -37,7 +37,7 @@ public abstract class ItineraryProvider {
         final RAS2012Solution sol = this.getSolution();
         Type lastUsedWestboundTrainType = null;
         Type lastUsedEastboundTrainType = null;
-        final Collection<Route> routes = new LinkedHashSet<Route>(sol.getNetwork().getAllRoutes());
+        final Collection<Route> routes = new LinkedHashSet<Route>(sol.getTerritory().getAllRoutes());
         for (final Train t : sol.getTrains()) {
             /*
              * pick only one train for every train type and direction; depends on the assumption that the trains are sorted by
@@ -50,7 +50,7 @@ public abstract class ItineraryProvider {
             }
             // take only the possible routes that are yet unused
             final SortedSet<Route> routeSet = new TreeSet<Route>();
-            for (final Route r : sol.getNetwork().getRoutes(t)) {
+            for (final Route r : sol.getTerritory().getRoutes(t)) {
                 if (routes.contains(r)) {
                     routeSet.add(r);
                 }
@@ -160,7 +160,7 @@ public abstract class ItineraryProvider {
             if (!folder.exists()) {
                 folder.mkdirs();
             }
-            this.getSolution().getNetwork().visualize(new File(folder, "network.png"));
+            this.getSolution().getTerritory().visualize(new File(folder, "network.png"));
             for (final Set<Route> routes : this.testedRoutes.values()) {
                 for (final Route route : routes) {
                     final File f = new File(folder, "route" + route.getId() + ".png");
