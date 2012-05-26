@@ -11,6 +11,7 @@ import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 
 import org.drools.planner.api.domain.solution.PlanningEntityCollectionProperty;
+import org.drools.planner.core.score.buildin.hardandsoft.DefaultHardAndSoftScore;
 import org.drools.planner.core.score.buildin.hardandsoft.HardAndSoftScore;
 import org.drools.planner.core.solution.Solution;
 import org.drools.planner.examples.ras2012.model.Arc;
@@ -69,7 +70,8 @@ public class RAS2012Solution extends Visualizable implements Solution<HardAndSof
         final RAS2012Solution solution = new RAS2012Solution(this.name, this.territory,
                 this.maintenances, this.trains, this.getAssignments());
         solution.horizon = this.horizon;
-        solution.score = this.score;
+        solution.score = (this.score == null) ? null : DefaultHardAndSoftScore.valueOf(
+                this.score.getHardScore(), this.score.getSoftScore());
         return solution;
     }
 
