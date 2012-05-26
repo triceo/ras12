@@ -1,4 +1,3 @@
-%\usepackage{multirow}
 \begin{table}
 \caption{Statistics for resolved system ``${name}'', costing \$${cost}.}
 \centering
