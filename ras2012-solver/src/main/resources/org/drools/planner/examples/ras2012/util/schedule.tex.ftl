@@ -1,4 +1,5 @@
-\begin{table}
+\begin{sidewaystable}
+\footnotesize
 \caption{Statistics for resolved system ``${name}'', costing \$${cost}.}
 \centering
 \begin{tabular}{c||c|c||c|c|c|c|c||c|c|c}
@@ -29,20 +30,19 @@
         ${stop.saDiff} &
         ${stop.saPenalty} &
       <#else>
-        \multicolumn{2}{|c||}{Outside horizon} &
+        \multicolumn{2}{|c||}{N/A} &
       </#if>
       <#if i == 1>\multirow{${num}}{*}{${train.twt}} &</#if>
       <#if train.twtDiff??>
         <#if i == 1>\multirow{${num}}{*}{${train.twtDiff}}</#if> &
         <#if i == 1>\multirow{${num}}{*}{${train.twtPenalty}}</#if>
       <#else>
-        <#if i == 1>\multicolumn{2}{c}{\multirow{${num}}{*}{Outside horizon}}</#if>
+        <#if i == 1>\multicolumn{2}{c}{\multirow{${num}}{*}{N/A}}</#if>
       </#if>
       \\
       <#assign i = i + 1>
     </#list> 
   </#list> 
-  \hline 
 \end{tabular}
 \label{table:${id}} 
-\end{table}
+\end{sidewaystable}
