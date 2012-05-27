@@ -17,6 +17,12 @@ import org.drools.planner.examples.ras2012.util.Converter;
 
 public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<RAS2012Solution> {
 
+    public static HardAndSoftScore oneTimeCalculation(RAS2012Solution solution) {
+        RAS2012ScoreCalculator calc = new RAS2012ScoreCalculator();
+        calc.resetWorkingSolution(solution);
+        return calc.calculateScore();
+    }
+
     private static final int        OCCUPATION_CHECKS_PER_MINUTE = 2;
 
     private static final BigDecimal MILLIS_TO_HOURS              = BigDecimal.valueOf(3600000);
@@ -211,6 +217,28 @@ public class RAS2012ScoreCalculator extends AbstractIncrementalScoreCalculator<R
             this.conflicts.setOccupiedArcs(time, ia.getTrain(),
                     ia.getItinerary().getOccupiedArcs(time));
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("ScoreCalculator, TWT: ");
+        for (Map.Entry<Train, Integer> entry : this.wantTimePenalties.entrySet()) {
+            sb.append(entry.getKey().getName()).append(">").append(entry.getValue()).append("; ");
+        }
+        sb.append(System.lineSeparator()).append("SA:  ");
+        for (Map.Entry<Train, Integer> entry : this.scheduleAdherencePenalties.entrySet()) {
+            sb.append(entry.getKey().getName()).append(">").append(entry.getValue()).append("; ");
+        }
+        sb.append(System.lineSeparator()).append("+-:  ");
+        for (Map.Entry<Train, Integer> entry : this.delayPenalties.entrySet()) {
+            sb.append(entry.getKey().getName()).append(">").append(entry.getValue()).append("; ");
+        }
+        sb.append(System.lineSeparator()).append("Prf: ");
+        for (Map.Entry<Train, Integer> entry : this.unpreferredTracksPenalties.entrySet()) {
+            sb.append(entry.getKey().getName()).append(">").append(entry.getValue()).append("; ");
+        }
+        return sb.append(System.lineSeparator()).toString();
     }
 
     @Override
