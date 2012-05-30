@@ -1,6 +1,5 @@
 package org.drools.planner.examples.ras2012.util;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -89,43 +88,6 @@ public class SolutionIO {
 
     private static String tokenToString(final Token t) {
         return t.toString();
-    }
-
-    private static final void writeTrain(final Train t, final RAS2012Solution solution,
-            final BufferedWriter w) throws IOException {
-        w.write("\t\t<train id='" + t.getName() + "'>");
-        w.newLine();
-        w.write("\t\t\t<movements>");
-        w.newLine();
-        for (final SortedMap.Entry<Long, Arc> entry : solution.getAssignment(t).getItinerary()
-                .getScheduleWithArcs().entrySet()) {
-            final Arc arc = entry.getValue();
-            if (entry.getKey() >= solution.getPlanningHorizon(TimeUnit.MILLISECONDS)) {
-                continue;
-            }
-            final BigDecimal timeInSeconds = SolutionIO.convertMillisToSeconds(entry.getKey() - 1);
-            if (arc != null) {
-                final BigDecimal distance = arc.getLength().add(t.getLength());
-                final long travellingTime = Converter.getTimeFromSpeedAndDistance(
-                        t.getMaximumSpeed(arc.getTrack()), distance);
-                final BigDecimal leaveTime = SolutionIO.convertMillisToSeconds(travellingTime).add(
-                        timeInSeconds);
-                if (leaveTime.intValue() > solution.getPlanningHorizon(TimeUnit.MILLISECONDS)) {
-                    continue;
-                }
-                w.write("\t\t\t\t<movement arc='(" + arc.getOrigin(t).getId() + ","
-                        + arc.getDestination(t).getId() + ")' entry='" + timeInSeconds + "' exit='"
-                        + leaveTime + "' />");
-                w.newLine();
-            } else {
-                w.write("\t\t\t\t<destination entry='" + timeInSeconds + "' />");
-                w.newLine();
-            }
-        }
-        w.write("\t\t\t</movements>");
-        w.newLine();
-        w.write("\t\t</train>");
-        w.newLine();
     }
 
     public SolutionIO() {
@@ -319,8 +281,8 @@ public class SolutionIO {
         final Train train = itinerary.getTrain();
         // prepare the set of stops, make sure they are in a proper order
         final List<Node> nodes = new ArrayList<Node>();
-        Map<Node, ScheduleAdherenceRequirement> sa = train.getScheduleAdherenceRequirements();
-        for (Node n : itinerary.getRoute().getProgression().getNodes()) {
+        final Map<Node, ScheduleAdherenceRequirement> sa = train.getScheduleAdherenceRequirements();
+        for (final Node n : itinerary.getRoute().getProgression().getNodes()) {
             if (sa.containsKey(n)) {
                 nodes.add(n);
             }
@@ -332,6 +294,56 @@ public class SolutionIO {
             stops.add(stop);
         }
         return stops;
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private Set prepareXmlData(final RAS2012Solution solution) throws IOException {
+        final Set set = new LinkedHashSet();
+        for (final Train t : solution.getTrains()) {
+            final Map map = new HashMap();
+            map.put("name", t.getName());
+            map.put("movements", this.prepareXmlMovements(t, solution));
+            final Itinerary i = solution.getAssignment(t).getItinerary();
+            if (i.getArrivalTime() <= solution.getPlanningHorizon(TimeUnit.MILLISECONDS)) {
+                final BigDecimal timeInSeconds = SolutionIO.convertMillisToSeconds(i
+                        .getArrivalTime(t.getDestination()) - 1);
+                map.put("destinationEntry", timeInSeconds.toString());
+            }
+            set.add(map);
+        }
+        return set;
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private Set prepareXmlMovements(final Train t, final RAS2012Solution solution) {
+        final Set set = new LinkedHashSet();
+        for (final SortedMap.Entry<Long, Arc> entry : solution.getAssignment(t).getItinerary()
+                .getScheduleWithArcs().entrySet()) {
+            final Map map = new HashMap();
+            final Arc arc = entry.getValue();
+            if (arc == null) {
+                // this is the move into the destination; ignore here, handle elsewhere
+                continue;
+            }
+            if (entry.getKey() >= solution.getPlanningHorizon(TimeUnit.MILLISECONDS)) {
+                continue;
+            }
+            final BigDecimal timeInSeconds = SolutionIO.convertMillisToSeconds(entry.getKey() - 1);
+            final BigDecimal distance = arc.getLength().add(t.getLength());
+            final long travellingTime = Converter.getTimeFromSpeedAndDistance(
+                    t.getMaximumSpeed(arc.getTrack()), distance);
+            final BigDecimal leaveTime = SolutionIO.convertMillisToSeconds(travellingTime).add(
+                    timeInSeconds);
+            if (leaveTime.intValue() > solution.getPlanningHorizon(TimeUnit.MILLISECONDS)) {
+                continue;
+            }
+            map.put("origin", arc.getOrigin(t).getId());
+            map.put("destination", arc.getDestination(t).getId());
+            map.put("entry", timeInSeconds.toString());
+            map.put("exit", leaveTime.toString());
+            set.add(map);
+        }
+        return set;
     }
 
     public RAS2012Solution read(final File inputSolutionFile) {
@@ -374,34 +386,19 @@ public class SolutionIO {
         }
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public void writeXML(final RAS2012Solution solution, final File outputSolutionFile) {
-        BufferedWriter w = null;
         try {
-            w = new BufferedWriter(new FileWriter(outputSolutionFile));
-            w.write("###########################################################################");
-            w.newLine();
-            w.write("<solution territory='" + solution.getName() + "'>");
-            w.newLine();
-            w.write("\t<trains>");
-            w.newLine();
-            for (final Train t : solution.getTrains()) {
-                SolutionIO.writeTrain(t, solution, w);
-            }
-            w.write("\t</trains>");
-            w.newLine();
-            w.write("</solution>");
-            w.newLine();
-            w.write("###########################################################################");
+            final Map map = new HashMap();
+            map.put("trains", this.prepareXmlData(solution));
+            map.put("name", solution.getName());
+            this.freemarker.getTemplate("schedule.xml.ftl").process(map,
+                    new FileWriter(outputSolutionFile));
+        } catch (final TemplateException e) {
+            SolutionIO.logger.error("Failed processing XML schedule template.", e);
         } catch (final IOException e) {
-            SolutionIO.logger.error("Failed writing solution into file: " + outputSolutionFile, e);
-        } finally {
-            if (w != null) {
-                try {
-                    w.close();
-                } catch (final IOException e) {
-                    // nothing to do here
-                }
-            }
+            SolutionIO.logger.error("Failed writing " + solution.getName() + " into "
+                    + outputSolutionFile, e);
         }
     }
 }
