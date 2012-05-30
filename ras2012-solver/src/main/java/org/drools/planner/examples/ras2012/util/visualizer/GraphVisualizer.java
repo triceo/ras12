@@ -118,7 +118,7 @@ public class GraphVisualizer {
         }
         final boolean isGraphDirected = g instanceof DirectedGraph;
         for (final Arc a : this.edges) {
-            Route westbound = new Builder(false).build();
+            final Route westbound = new Builder(false).build();
             final Node origin = isGraphDirected ? a.getOrigin(this.route) : a.getOrigin(westbound);
             final Node destination = isGraphDirected ? a.getDestination(this.route) : a
                     .getDestination(westbound);

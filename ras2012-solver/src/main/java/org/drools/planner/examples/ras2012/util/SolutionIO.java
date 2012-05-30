@@ -23,8 +23,8 @@ import java.util.concurrent.TimeUnit;
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.TemplateException;
-import org.drools.planner.examples.ras2012.RAS2012ScoreCalculator;
-import org.drools.planner.examples.ras2012.RAS2012Solution;
+import org.drools.planner.examples.ras2012.ProblemSolution;
+import org.drools.planner.examples.ras2012.ScoreCalculator;
 import org.drools.planner.examples.ras2012.model.Arc;
 import org.drools.planner.examples.ras2012.model.Itinerary;
 import org.drools.planner.examples.ras2012.model.MaintenanceWindow;
@@ -98,7 +98,7 @@ public class SolutionIO {
         this.freemarker.setNumberFormat("computer");
     }
 
-    private RAS2012Solution createSolution(final DataSetParser p) {
+    private ProblemSolution createSolution(final DataSetParser p) {
         // retrieve speeds for different track types
         final int eastboundSpeed = SolutionIO.tokenToInteger(p.getSpeedEastbound());
         final int westboundSpeed = SolutionIO.tokenToInteger(p.getSpeedWestbound());
@@ -118,7 +118,7 @@ public class SolutionIO {
         final Collection<Arc> arcs = this.initArcs(p);
         final Collection<MaintenanceWindow> mows = this.initMOW(p);
         final Collection<Train> trains = this.initTrains(name, p);
-        return new RAS2012Solution(name, new Territory(this.nodes.values(), arcs), mows, trains);
+        return new ProblemSolution(name, new Territory(this.nodes.values(), arcs), mows, trains);
     }
 
     private Collection<Arc> initArcs(final DataSetParser p) {
@@ -217,8 +217,8 @@ public class SolutionIO {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private Map prepareTexData(final RAS2012Solution solution) {
-        final RAS2012ScoreCalculator calc = new RAS2012ScoreCalculator();
+    private Map prepareTexData(final ProblemSolution solution) {
+        final ScoreCalculator calc = new ScoreCalculator();
         calc.resetWorkingSolution(solution);
         final Map map = new HashMap();
         map.put("name", solution.getName());
@@ -233,8 +233,8 @@ public class SolutionIO {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private Map prepareTexTrain(final Itinerary itinerary, final RAS2012Solution solution,
-            final RAS2012ScoreCalculator calculator) {
+    private Map prepareTexTrain(final Itinerary itinerary, final ProblemSolution solution,
+            final ScoreCalculator calculator) {
         final Train train = itinerary.getTrain();
         final Map map = new HashMap();
         map.put("name", train.getName());
@@ -255,7 +255,7 @@ public class SolutionIO {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private Map prepareTexTrainStop(final Itinerary itinerary, final Node n,
-            final RAS2012Solution solution, final RAS2012ScoreCalculator calculator) {
+            final ProblemSolution solution, final ScoreCalculator calculator) {
         final Train t = itinerary.getTrain();
         final long horizon = solution.getPlanningHorizon(TimeUnit.MILLISECONDS);
         final long arrival = itinerary.getArrivalTime(n);
@@ -277,7 +277,7 @@ public class SolutionIO {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private Collection prepareTexTrainStops(final Itinerary itinerary,
-            final RAS2012Solution solution, final RAS2012ScoreCalculator calculator) {
+            final ProblemSolution solution, final ScoreCalculator calculator) {
         final Train train = itinerary.getTrain();
         // prepare the set of stops, make sure they are in a proper order
         final List<Node> nodes = new ArrayList<Node>();
@@ -297,7 +297,7 @@ public class SolutionIO {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private Set prepareXmlData(final RAS2012Solution solution) throws IOException {
+    private Set prepareXmlData(final ProblemSolution solution) throws IOException {
         final Set set = new LinkedHashSet();
         for (final Train t : solution.getTrains()) {
             final Map map = new HashMap();
@@ -315,7 +315,7 @@ public class SolutionIO {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private Set prepareXmlMovements(final Train t, final RAS2012Solution solution) {
+    private Set prepareXmlMovements(final Train t, final ProblemSolution solution) {
         final Set set = new LinkedHashSet();
         for (final SortedMap.Entry<Long, Arc> entry : solution.getAssignment(t).getItinerary()
                 .getScheduleWithArcs().entrySet()) {
@@ -346,7 +346,7 @@ public class SolutionIO {
         return set;
     }
 
-    public RAS2012Solution read(final File inputSolutionFile) {
+    public ProblemSolution read(final File inputSolutionFile) {
         InputStream is = null;
         try {
             is = new FileInputStream(inputSolutionFile);
@@ -372,7 +372,7 @@ public class SolutionIO {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public void writeTex(final RAS2012Solution solution, final File outputSolutionFile) {
+    public void writeTex(final ProblemSolution solution, final File outputSolutionFile) {
         try {
             final Map map = this.prepareTexData(solution);
             map.put("id", outputSolutionFile.getName());
@@ -387,7 +387,7 @@ public class SolutionIO {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public void writeXML(final RAS2012Solution solution, final File outputSolutionFile) {
+    public void writeXML(final ProblemSolution solution, final File outputSolutionFile) {
         try {
             final Map map = new HashMap();
             map.put("trains", this.prepareXmlData(solution));

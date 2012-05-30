@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 import org.drools.planner.core.move.Move;
 import org.drools.planner.core.move.factory.AbstractMoveFactory;
 import org.drools.planner.core.solution.Solution;
-import org.drools.planner.examples.ras2012.RAS2012Solution;
+import org.drools.planner.examples.ras2012.ProblemSolution;
 import org.drools.planner.examples.ras2012.model.ItineraryAssignment;
 import org.drools.planner.examples.ras2012.model.Node;
 import org.drools.planner.examples.ras2012.model.WaitTime;
@@ -44,7 +44,7 @@ public class WaitTimeAssignmentMoveFactory extends AbstractMoveFactory {
 
     @Override
     public List<Move> createMoveList(@SuppressWarnings("rawtypes") final Solution solution) {
-        final RAS2012Solution sol = (RAS2012Solution) solution;
+        final ProblemSolution sol = (ProblemSolution) solution;
         final long horizon = sol.getPlanningHorizon(TimeUnit.MINUTES);
         // enumerate every possible wait time value
         final List<WaitTime> waitTimes = WaitTimeAssignmentMoveFactory.getAllowedWaitTimes(horizon);

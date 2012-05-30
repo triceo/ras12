@@ -18,7 +18,7 @@ import org.junit.Test;
 
 public class ToyExampleSolutionTest {
 
-    private final RAS2012Solution SOLUTION = new SolutionIO()
+    private final ProblemSolution SOLUTION = new SolutionIO()
                                                    .read(new File(
                                                            "src/main/resources/org/drools/planner/examples/ras2012/TOY.txt"));
 
@@ -31,8 +31,8 @@ public class ToyExampleSolutionTest {
         throw new IllegalArgumentException("Node not found!");
     }
 
-    private HardAndSoftScore getScoreForSolution(final RAS2012Solution solution) {
-        final RAS2012ScoreCalculator calc = new RAS2012ScoreCalculator();
+    private HardAndSoftScore getScoreForSolution(final ProblemSolution solution) {
+        final ScoreCalculator calc = new ScoreCalculator();
         calc.resetWorkingSolution(solution);
         return calc.calculateScore();
     }

@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.drools.planner.examples.ras2012.RAS2012Solution;
+import org.drools.planner.examples.ras2012.ProblemSolution;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
@@ -38,12 +38,12 @@ public class ItineraryAssignmentTest extends AbstractItineraryProviderBasedTest 
         return providers;
     }
 
-    private final RAS2012Solution solution;
+    private final ProblemSolution solution;
     private final Itinerary       expectedItinerary;
     private final Train           expectedTrain;
     private final Route           expectedRoute;
 
-    public ItineraryAssignmentTest(final RAS2012Solution solution, final Itinerary expectedItinerary) {
+    public ItineraryAssignmentTest(final ProblemSolution solution, final Itinerary expectedItinerary) {
         this.solution = solution;
         this.expectedItinerary = expectedItinerary;
         this.expectedRoute = expectedItinerary.getRoute();

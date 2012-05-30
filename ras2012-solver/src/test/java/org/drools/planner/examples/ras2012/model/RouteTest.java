@@ -60,6 +60,17 @@ public class RouteTest {
     }
 
     @Test
+    public void testBuilderRouteId() {
+        final Builder b = this.getBuilder();
+        final Route r1 = b.build();
+        final Route r2 = b.build();
+        Assert.assertEquals("Eastbound routes have even numbers.", r1.getId() % 2,
+                this.isEastbound ? 0 : 1);
+        Assert.assertEquals("Eastbound routes have even numbers.", r2.getId() % 2,
+                this.isEastbound ? 0 : 1);
+    }
+
+    @Test
     public void testConstructor() {
         Assert.assertEquals("Directions should match. ", this.getBuilder().build().isEastbound(),
                 this.isEastbound);
@@ -67,7 +78,7 @@ public class RouteTest {
 
     @Test
     public void testEquals() {
-        Builder b = this.getBuilder();
+        final Builder b = this.getBuilder();
         final Route r = b.build();
         final Route r2 = b.build();
         Assert.assertEquals("Route should be equal to itself.", r, r);
@@ -99,17 +110,6 @@ public class RouteTest {
                 destinationNode, 0, 1, 0, Collections.<ScheduleAdherenceRequirement> emptyList(),
                 true, isWestbound);
         Assert.assertFalse("Hazardous train will be let through.", r.isPossibleForTrain(hazardous));
-    }
-
-    @Test
-    public void testBuilderRouteId() {
-        Builder b = this.getBuilder();
-        Route r1 = b.build();
-        Route r2 = b.build();
-        Assert.assertEquals("Eastbound routes have even numbers.", r1.getId() % 2,
-                this.isEastbound ? 0 : 1);
-        Assert.assertEquals("Eastbound routes have even numbers.", r2.getId() % 2,
-                this.isEastbound ? 0 : 1);
     }
 
     @Test

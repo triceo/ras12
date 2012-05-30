@@ -11,7 +11,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
-import org.drools.planner.examples.ras2012.RAS2012Solution;
+import org.drools.planner.examples.ras2012.ProblemSolution;
 import org.drools.planner.examples.ras2012.util.Converter;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -121,11 +121,11 @@ public class ItineraryTest extends AbstractItineraryProviderBasedTest {
         return itineraries;
     }
 
-    private final RAS2012Solution solution;
+    private final ProblemSolution solution;
 
     private final Itinerary       itinerary;
 
-    public ItineraryTest(final Itinerary i, final RAS2012Solution solution) {
+    public ItineraryTest(final Itinerary i, final ProblemSolution solution) {
         this.itinerary = i;
         this.solution = solution;
     }

@@ -21,7 +21,7 @@ import org.drools.planner.examples.ras2012.model.Train;
 import org.drools.planner.examples.ras2012.util.model.Territory;
 import org.drools.planner.examples.ras2012.util.visualizer.GraphVisualizer;
 
-public class RAS2012Solution extends Visualizable implements Solution<HardAndSoftScore> {
+public class ProblemSolution extends Visualizable implements Solution<HardAndSoftScore> {
 
     private final String                          name;
 
@@ -34,7 +34,7 @@ public class RAS2012Solution extends Visualizable implements Solution<HardAndSof
 
     private long                                  horizon     = 0;
 
-    public RAS2012Solution(final String name, final Territory territory,
+    public ProblemSolution(final String name, final Territory territory,
             final Collection<MaintenanceWindow> maintenances, final Collection<Train> trains) {
         this.name = name;
         this.territory = territory;
@@ -52,7 +52,7 @@ public class RAS2012Solution extends Visualizable implements Solution<HardAndSof
         }
     }
 
-    private RAS2012Solution(final String name, final Territory territory,
+    private ProblemSolution(final String name, final Territory territory,
             final Collection<MaintenanceWindow> maintenances, final Collection<Train> trains,
             final Collection<ItineraryAssignment> assignments) {
         this.name = name;
@@ -67,10 +67,10 @@ public class RAS2012Solution extends Visualizable implements Solution<HardAndSof
 
     @Override
     public Solution<HardAndSoftScore> cloneSolution() {
-        final RAS2012Solution solution = new RAS2012Solution(this.name, this.territory,
+        final ProblemSolution solution = new ProblemSolution(this.name, this.territory,
                 this.maintenances, this.trains, this.getAssignments());
         solution.horizon = this.horizon;
-        solution.score = (this.score == null) ? null : DefaultHardAndSoftScore.valueOf(
+        solution.score = this.score == null ? null : DefaultHardAndSoftScore.valueOf(
                 this.score.getHardScore(), this.score.getSoftScore());
         return solution;
     }
@@ -90,10 +90,6 @@ public class RAS2012Solution extends Visualizable implements Solution<HardAndSof
 
     public String getName() {
         return this.name;
-    }
-
-    public Territory getTerritory() {
-        return this.territory;
     }
 
     public long getPlanningHorizon(final TimeUnit unit) {
@@ -120,6 +116,10 @@ public class RAS2012Solution extends Visualizable implements Solution<HardAndSof
     @Override
     public HardAndSoftScore getScore() {
         return this.score;
+    }
+
+    public Territory getTerritory() {
+        return this.territory;
     }
 
     public SortedSet<Train> getTrains() {

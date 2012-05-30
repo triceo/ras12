@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.drools.planner.examples.ras2012.RAS2012Solution;
+import org.drools.planner.examples.ras2012.ProblemSolution;
 import org.drools.planner.examples.ras2012.util.SolutionIO;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -38,7 +38,7 @@ public class RDS1ItineraryProvider extends ItineraryProvider {
     private static final int    TRAIN7_ROUTE1 = 378;
 
     @Override
-    protected RAS2012Solution fetchSolution() {
+    protected ProblemSolution fetchSolution() {
         return new SolutionIO().read(new File(
                 "src/main/resources/org/drools/planner/examples/ras2012/RDS1.txt"));
     }

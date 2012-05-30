@@ -150,13 +150,6 @@ public final class Itinerary extends Visualizable {
         return this.getSchedule().lastKey();
     }
 
-    public long getDelay() {
-        if (!this.scheduleCacheValid.get() || this.scheduleCache.size() == 0) {
-            this.cacheSchedule();
-        }
-        return this.delay;
-    }
-
     public long getArrivalTime(final Arc a) {
         final SortedMap<Long, Arc> nodeEntryTimes = this.getScheduleWithArcs();
         long timeEntered = -1;
@@ -187,6 +180,13 @@ public final class Itinerary extends Visualizable {
                     "Proper node cannot be found! Possibly a bug in the algoritm.");
         }
         return timeEntered;
+    }
+
+    public long getDelay() {
+        if (!this.scheduleCacheValid.get() || this.scheduleCache.size() == 0) {
+            this.cacheSchedule();
+        }
+        return this.delay;
     }
 
     protected Arc getLeadingArc(final long time) {

@@ -13,11 +13,11 @@
       <inputSolutionFile>src/main/resources/org/drools/planner/examples/ras2012/RDS3.txt</inputSolutionFile>
     </problemBenchmarks>
     <solver>
-      <solutionClass>org.drools.planner.examples.ras2012.RAS2012Solution</solutionClass>
+      <solutionClass>org.drools.planner.examples.ras2012.ProblemSolution</solutionClass>
       <planningEntityClass>org.drools.planner.examples.ras2012.model.ItineraryAssignment</planningEntityClass>
       <scoreDirectorFactory>
         <scoreDefinitionType>HARD_AND_SOFT</scoreDefinitionType>
-        <incrementalScoreCalculatorClass>org.drools.planner.examples.ras2012.RAS2012ScoreCalculator</incrementalScoreCalculatorClass>
+        <incrementalScoreCalculatorClass>org.drools.planner.examples.ras2012.ScoreCalculator</incrementalScoreCalculatorClass>
       </scoreDirectorFactory>
       <termination>
         <maximumMinutesSpend>3</maximumMinutesSpend>

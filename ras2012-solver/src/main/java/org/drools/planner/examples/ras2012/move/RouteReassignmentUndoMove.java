@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.drools.planner.core.move.Move;
 import org.drools.planner.core.score.director.ScoreDirector;
-import org.drools.planner.examples.ras2012.RAS2012Solution;
+import org.drools.planner.examples.ras2012.ProblemSolution;
 import org.drools.planner.examples.ras2012.model.ItineraryAssignment;
 import org.drools.planner.examples.ras2012.model.Node;
 import org.drools.planner.examples.ras2012.model.Route;
@@ -89,7 +89,7 @@ public class RouteReassignmentUndoMove implements Move {
     }
 
     private ItineraryAssignment initializeMove(final ScoreDirector scoreDirector) {
-        this.assignment = ((RAS2012Solution) scoreDirector.getWorkingSolution())
+        this.assignment = ((ProblemSolution) scoreDirector.getWorkingSolution())
                 .getAssignment(this.train);
         return this.assignment;
     }

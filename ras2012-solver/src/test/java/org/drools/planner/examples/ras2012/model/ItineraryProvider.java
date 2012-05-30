@@ -11,13 +11,13 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.drools.planner.examples.ras2012.RAS2012Solution;
+import org.drools.planner.examples.ras2012.ProblemSolution;
 import org.drools.planner.examples.ras2012.model.Train.Type;
 import org.junit.Assert;
 
 public abstract class ItineraryProvider {
 
-    private RAS2012Solution        solution;
+    private ProblemSolution        solution;
     private Map<Train, Set<Route>> testedRoutes;
 
     /**
@@ -25,7 +25,7 @@ public abstract class ItineraryProvider {
      * 
      * @return Solution as a result of parsing a data set.
      */
-    protected abstract RAS2012Solution fetchSolution();
+    protected abstract ProblemSolution fetchSolution();
 
     /**
      * Generate a list of trains and routes that the itinerary should be tested on.
@@ -34,7 +34,7 @@ public abstract class ItineraryProvider {
      */
     private Map<Train, Set<Route>> fetchTestedRoutes() {
         final Map<Train, Set<Route>> results = new TreeMap<Train, Set<Route>>();
-        final RAS2012Solution sol = this.getSolution();
+        final ProblemSolution sol = this.getSolution();
         Type lastUsedWestboundTrainType = null;
         Type lastUsedEastboundTrainType = null;
         final Collection<Route> routes = new LinkedHashSet<Route>(sol.getTerritory().getAllRoutes());
@@ -104,7 +104,7 @@ public abstract class ItineraryProvider {
         return i;
     }
 
-    protected synchronized RAS2012Solution getSolution() {
+    protected synchronized ProblemSolution getSolution() {
         if (this.solution == null) {
             this.solution = this.fetchSolution();
         }

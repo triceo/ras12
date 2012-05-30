@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.drools.planner.core.move.Move;
 import org.drools.planner.core.score.director.ScoreDirector;
-import org.drools.planner.examples.ras2012.RAS2012Solution;
+import org.drools.planner.examples.ras2012.ProblemSolution;
 import org.drools.planner.examples.ras2012.model.ItineraryAssignment;
 import org.drools.planner.examples.ras2012.model.Node;
 import org.drools.planner.examples.ras2012.model.Route;
@@ -92,8 +92,8 @@ public class WaitTimeAssignmentMove implements Move {
         return Collections.singletonList(this.waitTime);
     }
 
-    private RAS2012Solution getSolution(final ScoreDirector scoreDirector) {
-        return (RAS2012Solution) scoreDirector.getWorkingSolution();
+    private ProblemSolution getSolution(final ScoreDirector scoreDirector) {
+        return (ProblemSolution) scoreDirector.getWorkingSolution();
     }
 
     @Override
