@@ -29,6 +29,15 @@ public class WaitTimeAssignmentMove implements Move {
         this.waitTime = wt;
     }
 
+    private WaitTimeAssignmentMove(final Train t, final Route r, final Node n, final WaitTime wt,
+            final WaitTime previousWaitTime) {
+        this.train = t;
+        this.route = r;
+        this.node = n;
+        this.waitTime = wt;
+        this.previousWaitTime = wt;
+    }
+
     private boolean assignmentExists(final ScoreDirector scoreDirector) {
         return this.getAssignment(scoreDirector) != null;
     }
@@ -36,7 +45,8 @@ public class WaitTimeAssignmentMove implements Move {
     @Override
     public Move createUndoMove(final ScoreDirector scoreDirector) {
         this.initializeMove(scoreDirector);
-        return new WaitTimeAssignmentMove(this.train, this.route, this.node, this.previousWaitTime);
+        return new WaitTimeAssignmentMove(this.train, this.route, this.node, this.previousWaitTime,
+                this.waitTime);
     }
 
     @Override
@@ -109,7 +119,9 @@ public class WaitTimeAssignmentMove implements Move {
 
     private ItineraryAssignment initializeMove(final ScoreDirector scoreDirector) {
         this.assignment = this.getAssignment(scoreDirector);
-        this.previousWaitTime = this.assignment.getItinerary().getWaitTime(this.node);
+        if (this.previousWaitTime == null) { // if we don't know the previous wait time
+            this.previousWaitTime = this.assignment.getItinerary().getWaitTime(this.node);
+        }
         return this.assignment;
     }
 
