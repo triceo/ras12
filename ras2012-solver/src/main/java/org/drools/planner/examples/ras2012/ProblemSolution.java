@@ -20,8 +20,13 @@ import org.drools.planner.examples.ras2012.model.MaintenanceWindow;
 import org.drools.planner.examples.ras2012.model.Train;
 import org.drools.planner.examples.ras2012.util.model.Territory;
 import org.drools.planner.examples.ras2012.util.visualizer.GraphVisualizer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ProblemSolution extends Visualizable implements Solution<HardAndSoftScore> {
+
+    private static final Logger                   logger      = LoggerFactory
+                                                                      .getLogger(ProblemSolution.class);
 
     private final String                          name;
 
@@ -67,6 +72,7 @@ public class ProblemSolution extends Visualizable implements Solution<HardAndSof
 
     @Override
     public Solution<HardAndSoftScore> cloneSolution() {
+        ProblemSolution.logger.debug("Cloning solution.");
         final ProblemSolution solution = new ProblemSolution(this.name, this.territory,
                 this.maintenances, this.trains, this.getAssignments());
         solution.horizon = this.horizon;
@@ -128,6 +134,8 @@ public class ProblemSolution extends Visualizable implements Solution<HardAndSof
 
     @Override
     public void setScore(final HardAndSoftScore score) {
+        ProblemSolution.logger.debug("Setting score {} to solution {} (previous score {}.",
+                new Object[] { this.score, this, score });
         this.score = score;
     }
 
@@ -137,7 +145,7 @@ public class ProblemSolution extends Visualizable implements Solution<HardAndSof
         builder.append("RAS2012Solution [name=");
         builder.append(this.name);
         builder.append(", assignments=");
-        builder.append(this.assignments);
+        builder.append(this.assignments.values());
         builder.append(", score=");
         builder.append(this.score);
         builder.append("]");

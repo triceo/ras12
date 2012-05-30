@@ -14,8 +14,13 @@ import org.drools.planner.examples.ras2012.model.Node;
 import org.drools.planner.examples.ras2012.model.Train;
 import org.drools.planner.examples.ras2012.util.ConflictRegistry;
 import org.drools.planner.examples.ras2012.util.Converter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemSolution> {
+
+    private static final Logger     logger                       = LoggerFactory
+                                                                         .getLogger(ScoreCalculator.class);
 
     private static final int        OCCUPATION_CHECKS_PER_MINUTE = 2;
 
@@ -98,6 +103,7 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
 
     @Override
     public HardAndSoftScore calculateScore() {
+        ScoreCalculator.logger.debug("Calculating score.");
         int penalty = 0;
         for (final Train t : this.solution.getTrains()) {
             penalty += this.wantTimePenalties.get(t);
@@ -197,6 +203,7 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
     }
 
     private void insert(final ItineraryAssignment ia) {
+        ScoreCalculator.logger.debug("Inserting entity: " + ia);
         final Train t = ia.getTrain();
         final Itinerary i = ia.getItinerary();
         this.unpreferredTracksPenalties.put(t, this.getUnpreferredTracksPenalty(i));
@@ -221,6 +228,7 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
 
     @Override
     public void resetWorkingSolution(final ProblemSolution workingSolution) {
+        ScoreCalculator.logger.debug("Resetting working solution.");
         this.solution = workingSolution;
         this.clearEveryCache();
         for (final ItineraryAssignment ia : this.solution.getAssignments()) {
@@ -229,6 +237,7 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
     }
 
     private void retract(final ItineraryAssignment ia) {
+        ScoreCalculator.logger.debug("Removing entity: " + ia);
         final Train t = ia.getTrain();
         this.wantTimePenalties.remove(t);
         this.unpreferredTracksPenalties.remove(t);
