@@ -16,13 +16,13 @@ public class RAS2012ProblemIO implements ProblemIO {
     }
 
     @Override
-    public RAS2012Solution read(final File inputSolutionFile) {
+    public ProblemSolution read(final File inputSolutionFile) {
         return this.io.read(inputSolutionFile);
     }
 
     @Override
     public void write(@SuppressWarnings("rawtypes") final Solution solution,
             final File outputSolutionFile) {
-        this.io.writeXML((RAS2012Solution) solution, outputSolutionFile);
+        this.io.writeXML((ProblemSolution) solution, outputSolutionFile);
     }
 }

@@ -30,7 +30,7 @@ public class Benchmark {
 
     public static void main(final String[] args) throws FileNotFoundException, IOException {
         final XmlPlannerBenchmarkFactory fact = new XmlPlannerBenchmarkFactory();
-        fact.addXstreamAnnotations(RAS2012Solution.class);
+        fact.addXstreamAnnotations(ProblemSolution.class);
         fact.addXstreamAnnotations(ItineraryAssignment.class);
         fact.configureFromTemplate(Benchmark.class.getResourceAsStream("/benchmark-config.ftl"),
                 getTemplateData());
