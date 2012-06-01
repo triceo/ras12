@@ -12,8 +12,12 @@ import org.drools.planner.examples.ras2012.model.Node;
 import org.drools.planner.examples.ras2012.model.Route;
 import org.drools.planner.examples.ras2012.model.Train;
 import org.drools.planner.examples.ras2012.model.WaitTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RouteReassignmentMove implements Move {
+
+    private static final Logger logger = LoggerFactory.getLogger(RouteReassignmentMove.class);
 
     private ItineraryAssignment assignment;
     private final Train         train;
@@ -29,8 +33,10 @@ public class RouteReassignmentMove implements Move {
     @Override
     public Move createUndoMove(final ScoreDirector scoreDirector) {
         this.initializeMove(scoreDirector);
-        return new RouteReassignmentUndoMove(this.train, this.route, this.previousRoute,
+        final Move undo = new RouteReassignmentUndoMove(this.train, this.route, this.previousRoute,
                 this.previousWaitTimes);
+        RouteReassignmentMove.logger.debug("Undo move for {} is {}.", new Object[] { this, undo });
+        return undo;
     }
 
     @Override

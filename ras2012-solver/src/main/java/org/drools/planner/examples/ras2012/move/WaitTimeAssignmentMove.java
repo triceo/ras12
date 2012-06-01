@@ -12,9 +12,12 @@ import org.drools.planner.examples.ras2012.model.Node;
 import org.drools.planner.examples.ras2012.model.Route;
 import org.drools.planner.examples.ras2012.model.Train;
 import org.drools.planner.examples.ras2012.model.WaitTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WaitTimeAssignmentMove implements Move {
 
+    private static final Logger logger = LoggerFactory.getLogger(WaitTimeAssignmentMove.class);
     private ItineraryAssignment assignment;
     private final Train         train;
     private final Route         route;
@@ -45,8 +48,10 @@ public class WaitTimeAssignmentMove implements Move {
     @Override
     public Move createUndoMove(final ScoreDirector scoreDirector) {
         this.initializeMove(scoreDirector);
-        return new WaitTimeAssignmentMove(this.train, this.route, this.node, this.previousWaitTime,
-                this.waitTime);
+        final Move undo = new WaitTimeAssignmentMove(this.train, this.route, this.node,
+                this.previousWaitTime, this.waitTime);
+        WaitTimeAssignmentMove.logger.debug("Undo move for {} is {}.", new Object[] { this, undo });
+        return undo;
     }
 
     @Override
@@ -152,13 +157,13 @@ public class WaitTimeAssignmentMove implements Move {
         builder.append(this.node.getId());
         builder.append(", ");
         if (this.previousWaitTime == null) {
-            builder.append(0);
+            builder.append("X");
         } else {
             builder.append(this.previousWaitTime.getWaitFor(TimeUnit.MINUTES));
         }
         builder.append("->");
         if (this.waitTime == null) {
-            builder.append(0);
+            builder.append("X");
         } else {
             builder.append(this.waitTime.getWaitFor(TimeUnit.MINUTES));
         }

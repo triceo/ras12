@@ -16,6 +16,8 @@ import org.drools.planner.examples.ras2012.util.Converter;
 import org.drools.planner.examples.ras2012.util.model.ArcProgression;
 import org.drools.planner.examples.ras2012.util.model.OccupationTracker;
 import org.drools.planner.examples.ras2012.util.visualizer.ItineraryVisualizer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class Itinerary extends Visualizable {
 
@@ -35,6 +37,9 @@ public final class Itinerary extends Visualizable {
 
     // FIXME only one window per node; multiple different windows with same node will get lost
     private final Map<Node, MaintenanceWindow> maintenances          = new HashMap<Node, MaintenanceWindow>();
+
+    private static final Logger                logger                = LoggerFactory
+                                                                             .getLogger(Itinerary.class);
 
     public Itinerary(final Route r, final Train t) {
         this(r, t, null);
@@ -324,15 +329,19 @@ public final class Itinerary extends Visualizable {
 
     public WaitTime removeWaitTime(final Node n) {
         if (this.nodeWaitTimes.containsKey(n)) {
+            Itinerary.logger.debug("Removing wait time for {} from {}.", new Object[] { n, this });
             this.invalidateCaches();
             return this.nodeWaitTimes.remove(n);
         } else {
+            Itinerary.logger.debug("No wait time to remove for {} from {}.",
+                    new Object[] { n, this });
             return null;
         }
     }
 
     public void removeWaitTimes() {
         if (this.nodeWaitTimes.size() > 0) {
+            Itinerary.logger.debug("Removing all wait times from {}.", new Object[] { this });
             this.invalidateCaches();
         }
         this.nodeWaitTimes.clear();
@@ -346,8 +355,9 @@ public final class Itinerary extends Visualizable {
             return this.removeWaitTime(n);
         }
         this.invalidateCaches();
-        final WaitTime previous = this.nodeWaitTimes.get(n);
-        this.nodeWaitTimes.put(n, w);
+        final WaitTime previous = this.nodeWaitTimes.put(n, w);
+        Itinerary.logger.debug("Set wait time on {} in {}, replacing {}.", new Object[] { n, this,
+                previous });
         return previous;
     }
 

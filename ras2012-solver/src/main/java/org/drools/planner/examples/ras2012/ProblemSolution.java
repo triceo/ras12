@@ -134,8 +134,8 @@ public class ProblemSolution extends Visualizable implements Solution<HardAndSof
 
     @Override
     public void setScore(final HardAndSoftScore score) {
-        ProblemSolution.logger.debug("Setting score {} to solution {} (previous score {}.",
-                new Object[] { this.score, this, score });
+        ProblemSolution.logger.debug("Setting score {} to solution {} (previous score {}).",
+                new Object[] { score, this, this.score });
         this.score = score;
     }
 

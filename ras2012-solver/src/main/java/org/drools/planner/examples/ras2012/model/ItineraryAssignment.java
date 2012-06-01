@@ -7,6 +7,8 @@ import org.drools.planner.api.domain.entity.PlanningEntity;
 import org.drools.planner.api.domain.variable.PlanningVariable;
 import org.drools.planner.api.domain.variable.ValueRange;
 import org.drools.planner.api.domain.variable.ValueRangeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @PlanningEntity
 public final class ItineraryAssignment implements Cloneable {
@@ -16,6 +18,9 @@ public final class ItineraryAssignment implements Cloneable {
     private Route                               route;
     private Itinerary                           itinerary;
     private final Collection<MaintenanceWindow> maintenances;
+
+    private static final Logger                 logger = LoggerFactory
+                                                               .getLogger(ItineraryAssignment.class);
 
     public ItineraryAssignment(final Train t) {
         this(t, Collections.<MaintenanceWindow> emptySet());
@@ -60,14 +65,20 @@ public final class ItineraryAssignment implements Cloneable {
         }
         if (this.route != route) {
             this.route = route;
+            ItineraryAssignment.logger.debug("Creating new itinerary for {}.",
+                    new Object[] { this });
             this.itinerary = new Itinerary(this.route, this.train, this.maintenances);
         }
     }
 
     @Override
     public String toString() {
-        return "ItineraryAssignment [train=" + this.train.getName() + ", route="
-                + this.route.getId() + "]";
+        if (this.route == null) {
+            return "ItineraryAssignment [train=" + this.train.getName() + ", no route]";
+        } else {
+            return "ItineraryAssignment [train=" + this.train.getName() + ", route="
+                    + this.route.getId() + "]";
+        }
     }
 
 }
