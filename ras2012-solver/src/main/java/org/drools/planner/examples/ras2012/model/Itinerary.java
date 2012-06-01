@@ -156,19 +156,7 @@ public final class Itinerary extends Visualizable {
     }
 
     public long getArrivalTime(final Arc a) {
-        final SortedMap<Long, Arc> nodeEntryTimes = this.getScheduleWithArcs();
-        long timeEntered = -1;
-        for (final SortedMap.Entry<Long, Arc> entry : nodeEntryTimes.entrySet()) {
-            if (entry.getValue() == a) {
-                timeEntered = entry.getKey() - 1;
-                break;
-            }
-        }
-        if (timeEntered < this.trainEntryTime) {
-            throw new IllegalStateException(
-                    "Proper arc cannot be found! Possibly a bug in the algoritm.");
-        }
-        return timeEntered;
+        return this.getArrivalTime(a.getOrigin(this.getTrain()));
     }
 
     public long getArrivalTime(final Node n) {
@@ -206,6 +194,22 @@ public final class Itinerary extends Visualizable {
         } else {
             return this.getRoute().getProgression().getPrevious(arcs.get(arcs.firstKey()));
         }
+    }
+
+    public long getLeaveTime() {
+        return this.getLeaveTime(this.getSchedule().get(this.getSchedule().lastKey()));
+    }
+
+    public long getLeaveTime(final Arc a) {
+        return this.getLeaveTime(a.getDestination(this.getTrain())) + 1;
+    }
+
+    public long getLeaveTime(final Node n) {
+        final long arrival = this.getArrivalTime(n);
+        final Arc a = this.getRoute().getProgression().getWithDestinationNode(n);
+        final long travel = Converter.getTimeFromSpeedAndDistance(
+                this.getTrain().getMaximumSpeed(a.getTrack()), this.getTrain().getLength());
+        return arrival + travel;
     }
 
     public Map<Node, MaintenanceWindow> getMaintenances() {

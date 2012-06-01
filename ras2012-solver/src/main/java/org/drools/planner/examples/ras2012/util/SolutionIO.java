@@ -317,24 +317,21 @@ public class SolutionIO {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private Set prepareXmlMovements(final Train t, final ProblemSolution solution) {
         final Set set = new LinkedHashSet();
-        for (final SortedMap.Entry<Long, Arc> entry : solution.getAssignment(t).getItinerary()
-                .getScheduleWithArcs().entrySet()) {
+        final Itinerary i = solution.getAssignment(t).getItinerary();
+        final long horizon = solution.getPlanningHorizon(TimeUnit.MILLISECONDS);
+        for (final SortedMap.Entry<Long, Arc> entry : i.getScheduleWithArcs().entrySet()) {
             final Map map = new HashMap();
             final Arc arc = entry.getValue();
             if (arc == null) {
                 // this is the move into the destination; ignore here, handle elsewhere
                 continue;
             }
-            if (entry.getKey() >= solution.getPlanningHorizon(TimeUnit.MILLISECONDS)) {
+            if (entry.getKey() >= horizon) {
                 continue;
             }
             final BigDecimal timeInSeconds = SolutionIO.convertMillisToSeconds(entry.getKey() - 1);
-            final BigDecimal distance = arc.getLength().add(t.getLength());
-            final long travellingTime = Converter.getTimeFromSpeedAndDistance(
-                    t.getMaximumSpeed(arc.getTrack()), distance);
-            final BigDecimal leaveTime = SolutionIO.convertMillisToSeconds(travellingTime).add(
-                    timeInSeconds);
-            if (leaveTime.intValue() > solution.getPlanningHorizon(TimeUnit.MILLISECONDS)) {
+            final BigDecimal leaveTime = SolutionIO.convertMillisToSeconds(i.getLeaveTime(arc));
+            if (leaveTime.intValue() > horizon) {
                 continue;
             }
             map.put("origin", arc.getOrigin(t).getId());

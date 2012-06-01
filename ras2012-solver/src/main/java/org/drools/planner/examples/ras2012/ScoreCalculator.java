@@ -217,12 +217,20 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
         return time <= this.solution.getPlanningHorizon(TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * if it were possible for a train to have at the same time both entrytime > 0 and origin != depo, this code would miss the
+     * arcs occupied by the train before it "magically" appeared in the middle of the territory.
+     */
     private void recalculateOccupiedArcs(final ItineraryAssignment ia) {
         final int scanEveryXMillis = 60000 / ScoreCalculator.OCCUPATION_CHECKS_PER_MINUTE;
         // insert the number of conflicts for the given assignments
-        for (long time = 0; this.isInPlanningHorizon(time); time += scanEveryXMillis) {
-            this.conflicts.setOccupiedArcs(time, ia.getTrain(),
-                    ia.getItinerary().getOccupiedArcs(time));
+        final Itinerary i = ia.getItinerary();
+        final Train t = ia.getTrain();
+        final long startingTime = Math.max(0, i.getArrivalTime(t.getOrigin()));
+        final long endingTime = Math.min(i.getLeaveTime(t.getDestination()),
+                this.solution.getPlanningHorizon(TimeUnit.MILLISECONDS));
+        for (long time = startingTime; time <= endingTime; time += scanEveryXMillis) {
+            this.conflicts.setOccupiedArcs(time, t, i.getOccupiedArcs(time));
         }
     }
 
