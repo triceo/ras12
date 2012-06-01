@@ -15,8 +15,6 @@
         </encoder> 
     </appender> 
     <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
-        <param name="QueueCapacity" value="5000"/>
-        <param name="IncludeCallerData" value="true"/>
         <appender-ref ref="FILE"/>
     </appender>
     <logger name="org.drools.planner" level="DEBUG" />
