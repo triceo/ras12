@@ -66,7 +66,7 @@ public class ConflictRegistry {
         }
     }
 
-    public void setOccupiedArcs(final long time, final Train t, final OccupationTracker occupiedArcs) {
+    public void setOccupiedArcs(final Long time, final Train t, final OccupationTracker occupiedArcs) {
         if (occupiedArcs.isEmpty()) {
             /*
              * empty occupied arcs can cause no conflicts, ignore them; this will save some memory and a lot of looping later
