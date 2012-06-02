@@ -40,7 +40,7 @@ public class WaitTimeAssignmentMove implements Move {
         this.route = r;
         this.node = n;
         this.waitTime = wt;
-        this.previousWaitTime = wt;
+        this.previousWaitTime = previousWaitTime;
     }
 
     private boolean assignmentExists(final ScoreDirector scoreDirector) {
