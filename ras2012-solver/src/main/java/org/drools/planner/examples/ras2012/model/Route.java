@@ -56,8 +56,8 @@ public class Route extends Visualizable implements Comparable<Route>, Directed {
         }
 
         public Route build() {
-            return new Route(this.idGenerator.getAndAdd(2), this.isEastbound,
-                    this.arcs.toArray(new Arc[this.arcs.size()]));
+            return new Route(this.idGenerator.getAndAdd(2), this.arcs.toArray(new Arc[this.arcs
+                    .size()]));
         }
 
         @Override
@@ -115,7 +115,7 @@ public class Route extends Visualizable implements Comparable<Route>, Directed {
 
     private final Map<Train, Boolean> routePossibilitiesCache      = new HashMap<Train, Boolean>();
 
-    private Route(final int id, final boolean isEastbound, final Arc... e) {
+    private Route(final int id, final Arc... e) {
         this.id = id;
         this.progression = new ArcProgression(this, e);
     }
