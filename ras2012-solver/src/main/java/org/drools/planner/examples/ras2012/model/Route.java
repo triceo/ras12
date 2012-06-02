@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.drools.planner.examples.ras2012.Directed;
 import org.drools.planner.examples.ras2012.Visualizable;
@@ -154,10 +155,7 @@ public class Route extends Visualizable implements Comparable<Route>, Directed {
             return false;
         }
         final Route other = (Route) obj;
-        if (this.id != other.id) {
-            return false;
-        }
-        return true;
+        return new EqualsBuilder().append(this.getId(), other.getId()).isEquals();
     }
 
     public int getId() {

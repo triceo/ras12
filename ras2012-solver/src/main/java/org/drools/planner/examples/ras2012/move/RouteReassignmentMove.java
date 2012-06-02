@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.drools.planner.core.move.Move;
 import org.drools.planner.core.score.director.ScoreDirector;
@@ -60,13 +61,8 @@ public class RouteReassignmentMove implements Move {
             return false;
         }
         final RouteReassignmentMove other = (RouteReassignmentMove) obj;
-        if (this.route != other.route) {
-            return false;
-        }
-        if (this.train != other.train) {
-            return false;
-        }
-        return true;
+        return new EqualsBuilder().append(this.route, other.route).append(this.train, other.train)
+                .isEquals();
     }
 
     @Override

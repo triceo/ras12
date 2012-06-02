@@ -11,6 +11,7 @@ import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.drools.planner.examples.ras2012.Visualizable;
 import org.drools.planner.examples.ras2012.util.Converter;
@@ -140,16 +141,9 @@ public final class Itinerary extends Visualizable {
             return false;
         }
         final Itinerary other = (Itinerary) obj;
-        if (this.train != other.train) {
-            return false;
-        }
-        if (this.route != other.route) {
-            return false;
-        }
-        if (!this.nodeWaitTimes.equals(other.nodeWaitTimes)) {
-            return false;
-        }
-        return true;
+        return new EqualsBuilder().append(this.getTrain(), other.getTrain())
+                .append(this.getRoute(), other.getRoute())
+                .append(this.nodeWaitTimes, other.nodeWaitTimes).isEquals();
     }
 
     public long getArrivalTime() {

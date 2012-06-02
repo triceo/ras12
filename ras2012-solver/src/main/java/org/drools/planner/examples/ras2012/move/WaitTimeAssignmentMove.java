@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.drools.planner.core.move.Move;
 import org.drools.planner.core.score.director.ScoreDirector;
@@ -75,20 +76,9 @@ public class WaitTimeAssignmentMove implements Move {
         if (!(obj instanceof WaitTimeAssignmentMove)) {
             return false;
         }
-        final WaitTimeAssignmentMove other = (WaitTimeAssignmentMove) obj;
-        if (this.node != other.node) {
-            return false;
-        }
-        if (this.waitTime != other.waitTime) {
-            return false;
-        }
-        if (this.route != other.route) {
-            return false;
-        }
-        if (this.train != other.train) {
-            return false;
-        }
-        return true;
+        WaitTimeAssignmentMove rhs = (WaitTimeAssignmentMove) obj;
+        return new EqualsBuilder().append(this.route, rhs.route).append(this.train, rhs.train)
+                .append(this.node, rhs.node).append(this.waitTime, rhs.waitTime).isEquals();
     }
 
     private ItineraryAssignment getAssignment(final ScoreDirector scoreDirector) {

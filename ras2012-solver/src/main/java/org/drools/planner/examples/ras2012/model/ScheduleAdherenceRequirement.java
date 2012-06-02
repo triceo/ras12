@@ -2,6 +2,7 @@ package org.drools.planner.examples.ras2012.model;
 
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 public class ScheduleAdherenceRequirement {
@@ -33,13 +34,10 @@ public class ScheduleAdherenceRequirement {
             return false;
         }
         final ScheduleAdherenceRequirement other = (ScheduleAdherenceRequirement) obj;
-        if (this.destination != other.destination) {
-            return false;
-        }
-        if (this.timeSinceStartOfWorld != other.timeSinceStartOfWorld) {
-            return false;
-        }
-        return true;
+        return new EqualsBuilder()
+                .append(this.getDestination(), other.getDestination())
+                .append(this.getTimeSinceStartOfWorld(TimeUnit.MILLISECONDS),
+                        other.getTimeSinceStartOfWorld(TimeUnit.MILLISECONDS)).isEquals();
     }
 
     public Node getDestination() {

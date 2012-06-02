@@ -8,6 +8,7 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.drools.planner.examples.ras2012.Directed;
 import org.drools.planner.examples.ras2012.model.Arc;
@@ -227,15 +228,8 @@ public class OccupationTracker {
         if (!(obj instanceof OccupationTracker)) {
             return false;
         }
-        final OccupationTracker other = (OccupationTracker) obj;
-        if (this.ranges == null) {
-            if (other.ranges != null) {
-                return false;
-            }
-        } else if (!this.ranges.equals(other.ranges)) {
-            return false;
-        }
-        return true;
+        OccupationTracker rhs = (OccupationTracker) obj;
+        return new EqualsBuilder().append(this.ranges, rhs.ranges).isEquals();
     }
 
     public double getConflictingMileage(final OccupationTracker other) {

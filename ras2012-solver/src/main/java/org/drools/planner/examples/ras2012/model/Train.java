@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.drools.planner.examples.ras2012.Directed;
 import org.drools.planner.examples.ras2012.util.Converter;
@@ -163,7 +164,7 @@ public class Train implements Comparable<Train>, Directed {
             return false;
         }
         final Train other = (Train) obj;
-        return this.name.equals(other.name);
+        return new EqualsBuilder().append(this.getName(), other.getName()).isEquals();
     }
 
     public long getArcTravellingTime(final Arc a, final TimeUnit unit) {
