@@ -73,11 +73,12 @@ public class ArcProgression implements Directed {
         this.waitPoints = this.assembleWaitPoints();
     }
 
+    @SuppressWarnings("unchecked")
     private Collection<Node> assembleWaitPoints() {
-        final Collection<Node> points = new TreeSet<Node>();
         if (this.isEmpty) {
-            return Collections.unmodifiableCollection(points);
+            return Collections.unmodifiableSet(Collections.EMPTY_SET);
         }
+        final Collection<Node> points = new TreeSet<Node>();
         // we want to be able to hold the train before it enters the network
         final Arc firstArc = this.getOrigin();
         points.add(firstArc.getOrigin(this));
