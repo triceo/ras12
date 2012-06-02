@@ -31,6 +31,7 @@ public class ArcProgression implements Directed {
     private final List<Node>                 nodes              = new ArrayList<Node>();
     private final Collection<Node>           waitPoints;
     private final boolean                    isEastbound;
+    private final BigDecimal                 length;
 
     public ArcProgression(final Directed directed, final Arc... arcs) {
         this(directed, Arrays.asList(arcs));
@@ -58,6 +59,7 @@ public class ArcProgression implements Directed {
             this.nodes.add(a.getOrigin(this));
             milestone = milestone.add(a.getLength());
         }
+        this.length = milestone;
         if (this.orderedArcs.size() > 0) {
             this.nodes.add(this.getDestination().getDestination(this));
         }
@@ -170,11 +172,7 @@ public class ArcProgression implements Directed {
     }
 
     public BigDecimal getLength() {
-        BigDecimal length = BigDecimal.ZERO;
-        for (final Arc a : this.orderedArcs) {
-            length = length.add(a.getLength());
-        }
-        return length;
+        return this.length;
     }
 
     public Arc getNext(final Arc a) {
