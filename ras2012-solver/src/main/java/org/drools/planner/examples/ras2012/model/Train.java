@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.drools.planner.examples.ras2012.Directed;
@@ -143,13 +144,10 @@ public class Train implements Comparable<Train>, Directed {
      */
     @Override
     public int compareTo(final Train arg0) {
-        if (this.getName().charAt(0) == arg0.getName().charAt(0)) {
-            final Integer thisId = Integer.valueOf(this.getName().substring(1));
-            final Integer otherId = Integer.valueOf(arg0.getName().substring(1));
-            return thisId.compareTo(otherId);
-        } else {
-            return this.getName().compareTo(arg0.getName());
-        }
+        return new CompareToBuilder()
+                .append(this.getName().charAt(0), arg0.getName().charAt(0))
+                .append(Integer.valueOf(this.getName().substring(1)),
+                        Integer.valueOf(arg0.getName().substring(1))).toComparison();
     }
 
     @Override

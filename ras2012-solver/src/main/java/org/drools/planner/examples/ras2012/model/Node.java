@@ -3,6 +3,8 @@ package org.drools.planner.examples.ras2012.model;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.builder.CompareToBuilder;
+
 public class Node implements Comparable<Node> {
 
     private final int                       id;
@@ -30,13 +32,7 @@ public class Node implements Comparable<Node> {
 
     @Override
     public int compareTo(final Node arg0) {
-        if (this.getId() > arg0.getId()) {
-            return 1;
-        } else if (this.getId() == arg0.getId()) {
-            return 0;
-        } else {
-            return -1;
-        }
+        return new CompareToBuilder().append(this.getId(), arg0.getId()).toComparison();
     }
 
     public int getId() {
