@@ -3,7 +3,6 @@ package org.drools.planner.examples.ras2012.model;
 import java.math.BigDecimal;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 public class Arc extends Section {
@@ -44,7 +43,7 @@ public class Arc extends Section {
             return false;
         }
         final Arc rhs = (Arc) obj;
-        return new EqualsBuilder().append(this.id, rhs.id).isEquals();
+        return this.id == rhs.id;
     }
 
     public BigDecimal getLength() {
