@@ -155,7 +155,7 @@ public class ArcProgression implements Directed {
         final int startWith = Math.min(startIndex, endIndex);
         final int endWith = Math.max(startIndex, endIndex);
         BigDecimal result = BigDecimal.ZERO;
-        for (int i = startWith; i <= endWith; i++) {
+        for (int i = startWith; i < endWith; i++) {
             final Arc a = this.getWithOriginNode(this.nodes.get(i));
             result = result.add(a.getLength());
         }
