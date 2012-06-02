@@ -44,6 +44,7 @@ public final class Itinerary extends Visualizable {
 
     private final AtomicBoolean                scheduleCacheValid    = new AtomicBoolean(false);
     private final Collection<Node>             nodesEnRoute;
+    private final Collection<Arc>              arcsEnRoute;
     private final SortedMap<Long, Node>        scheduleCache         = new TreeMap<Long, Node>();
     private final SortedMap<Long, Arc>         scheduleCacheWithArcs = new TreeMap<Long, Arc>();
     private final long                         trainEntryTime;
@@ -71,8 +72,10 @@ public final class Itinerary extends Visualizable {
         this.route = r;
         this.train = t;
         this.trainEntryTime = t.getEntryTime(Itinerary.DEFAULT_TIME_UNIT);
-        this.nodesEnRoute = this.getRoute().getProgression().tail(this.getTrain().getOrigin())
-                .getNodes();
+        final ArcProgression enRoute = this.getRoute().getProgression()
+                .tail(this.getTrain().getOrigin());
+        this.nodesEnRoute = enRoute.getNodes();
+        this.arcsEnRoute = enRoute.getArcs();
         // initialize the maintenance windows
         if (maintenanceWindows != null) {
             for (final MaintenanceWindow mow : maintenanceWindows) {
@@ -90,16 +93,7 @@ public final class Itinerary extends Visualizable {
         int i = 0;
         long previousTime = 0;
         Arc previousArc = null;
-        boolean seekingStart = true;
-        for (final Arc currentArc : this.getRoute().getProgression().getArcs()) {
-            // arc progression begins with the start of the route; the train doesn't necessarily start there
-            if (seekingStart) {
-                if (currentArc.getOrigin(this.getTrain()) != this.getTrain().getOrigin()) {
-                    continue;
-                } else {
-                    seekingStart = false;
-                }
-            }
+        for (final Arc currentArc : this.arcsEnRoute) {
             long time = 0;
             if (i == 0) {
                 // first item needs to be augmented by the train entry time
@@ -196,10 +190,6 @@ public final class Itinerary extends Visualizable {
         return this.lastChange;
     }
 
-    public void resetLatestWaitTimeChange() {
-        this.lastChange = ImmutablePair.of(ChangeType.UNCHANGED, null);
-    }
-
     protected Arc getLeadingArc(final long time) {
         if (time < this.trainEntryTime) {
             return null;
@@ -207,10 +197,13 @@ public final class Itinerary extends Visualizable {
         final SortedMap<Long, Arc> arcs = this.getScheduleWithArcs().tailMap(time);
         if (arcs.size() == 0) {
             return null;
-        } else if (time == arcs.firstKey()) {
-            return arcs.get(arcs.firstKey());
+        }
+        final long arcTime = arcs.firstKey();
+        final Arc arc = arcs.get(arcTime);
+        if (time == arcTime) {
+            return arc;
         } else {
-            return this.getRoute().getProgression().getPrevious(arcs.get(arcs.firstKey()));
+            return this.getRoute().getProgression().getPrevious(arc);
         }
     }
 
@@ -238,34 +231,35 @@ public final class Itinerary extends Visualizable {
     }
 
     public OccupationTracker getOccupiedArcs(final long time) {
-        final boolean trainStarted = time <= this.getSchedule().firstKey();
-        final boolean trainInOrigin = this.getTrain().getOrigin() == this.getRoute()
-                .getProgression().getOrigin().getOrigin(this.getRoute());
+        final SortedMap<Long, Node> schedule = this.getSchedule();
+        final ArcProgression progression = this.getRoute().getProgression();
+        final boolean trainStarted = time <= schedule.firstKey();
+        final boolean trainInOrigin = this.getTrain().getOrigin() == progression.getOrigin()
+                .getOrigin(this.getRoute());
         if (trainStarted && trainInOrigin) {
             // train not yet on the route
             return OccupationTracker.Builder.empty();
         }
-        final ArcProgression progression = this.getRoute().getProgression();
         final Arc leadingArc = this.getLeadingArc(time);
         if (leadingArc == null) {
-            // the train should gradually leave the network through its destination
-            final long timeTravelledInArc = time - this.getSchedule().lastKey();
+            // the train should gradually leave the territory through its destination
+            final long timeTravelledInArc = time - schedule.lastKey();
             final BigDecimal travelledInArc = Converter.getDistanceFromSpeedAndTime(this.getTrain()
                     .getMaximumSpeed(Track.MAIN_0), timeTravelledInArc);
             if (travelledInArc.compareTo(this.getTrain().getLength()) >= 0) {
                 // the train is gone completely
                 return OccupationTracker.Builder.empty();
             } else {
-                // some part of the train is still in the network
+                // some part of the train is still in the territory
                 return progression.getOccupiedArcs(progression.getLength(), this.getTrain()
                         .getLength().subtract(travelledInArc));
             }
-        } else if (!this.getScheduleWithArcs().containsValue(leadingArc)) {
-            // the train didn't enter the network yet
+        } else if (!this.arcsEnRoute.contains(leadingArc)) {
+            // the train didn't enter the territory yet
             return progression.getOccupiedArcs(progression.getDistance(leadingArc
                     .getDestination(progression)), this.getTrain().getLength());
         } else {
-            // the train is in the network
+            // the train is in the territory
             final long timeTravelledInArc = time - this.getArrivalTime(leadingArc);
             final BigDecimal travelledInArc = Converter.getDistanceFromSpeedAndTime(
                     this.getTrain().getMaximumSpeed(leadingArc.getTrack()), timeTravelledInArc)
@@ -368,6 +362,10 @@ public final class Itinerary extends Visualizable {
         }
         this.nodeWaitTimes.clear();
         this.lastChange = ImmutablePair.of(ChangeType.REMOVE_ALL_WAIT_TIMES, null);
+    }
+
+    public void resetLatestWaitTimeChange() {
+        this.lastChange = ImmutablePair.of(ChangeType.UNCHANGED, null);
     }
 
     public WaitTime setWaitTime(final Node n, final WaitTime w) {
