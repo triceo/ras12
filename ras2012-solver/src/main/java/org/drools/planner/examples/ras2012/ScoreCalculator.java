@@ -31,7 +31,7 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
     private static final BigDecimal MILLIS_TO_HOURS              = BigDecimal.valueOf(3600000);
 
     public static HardAndSoftScore oneTimeCalculation(final ProblemSolution solution) {
-        final ScoreCalculator calc = new ScoreCalculator();
+        final ScoreCalculator calc = new ScoreCalculator(true);
         calc.resetWorkingSolution(solution);
         return calc.calculateScore();
     }
@@ -40,6 +40,8 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
         return BigDecimal.valueOf(milliseconds).divide(ScoreCalculator.MILLIS_TO_HOURS,
                 Converter.BIGDECIMAL_SCALE, Converter.BIGDECIMAL_ROUNDING);
     }
+
+    private final boolean             talk;
 
     private ProblemSolution           solution                   = null;
 
@@ -52,6 +54,14 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
     private final Map<Train, Integer> unpreferredTracksPenalties = new HashMap<Train, Integer>();
 
     private ConflictRegistry          conflicts;
+
+    public ScoreCalculator() {
+        this(false);
+    }
+
+    private ScoreCalculator(final boolean silent) {
+        this.talk = !silent;
+    }
 
     @Override
     public void afterAllVariablesChanged(final Object entity) {
@@ -101,7 +111,9 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
 
     @Override
     public HardAndSoftScore calculateScore() {
-        ScoreCalculator.logger.debug("Calculating score.");
+        if (this.talk) {
+            ScoreCalculator.logger.debug("Calculating score.");
+        }
         int penalty = 0;
         for (final Train t : this.solution.getTrains()) {
             penalty += this.wantTimePenalties.get(t);
@@ -144,12 +156,17 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
             case REMOVE_WAIT_TIME:
             case SET_WAIT_TIME:
                 // start re-calculating occupied arcs from the first change in the itinerary
-                ScoreCalculator.logger.debug("Last wait time change registered on {} ({}).",
-                        new Object[] { lastChange.getRight(), lastChange.getLeft() });
+                if (this.talk) {
+                    ScoreCalculator.logger.debug("Last wait time change registered on {} ({}).",
+                            new Object[] { lastChange.getRight(), lastChange.getLeft() });
+                }
                 return i.getArrivalTime(lastChange.getRight());
             default:
                 // re-calculate arcs all across the timeline
-                ScoreCalculator.logger.debug("Fresh itinerary registered, no wait time changes.");
+                if (this.talk) {
+                    ScoreCalculator.logger
+                            .debug("Fresh itinerary registered, no wait time changes.");
+                }
                 return i.getArrivalTime(i.getTrain().getOrigin());
         }
     }
@@ -221,7 +238,9 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
     }
 
     private void modify(final ItineraryAssignment ia) {
-        ScoreCalculator.logger.debug("Modifying entity: " + ia);
+        if (this.talk) {
+            ScoreCalculator.logger.debug("Modifying entity: " + ia);
+        }
         final Train t = ia.getTrain();
         final Itinerary i = ia.getItinerary();
         this.unpreferredTracksPenalties.put(t, this.getUnpreferredTracksPenalty(i));
@@ -244,15 +263,22 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
         final long trainEntryTime = Math.max(0, i.getArrivalTime(i.getTrain().getOrigin()));
         final long startingTime = Math.max(trainEntryTime, this.getFirstChangeTime(i));
         final long endingTime = Math.min(i.getLeaveTime(t.getDestination()), horizon);
-        ScoreCalculator.logger.debug("Calculating occupied arcs for {}, range <{}, {}> ms.",
-                new Object[] { ia, startingTime, endingTime });
+        if (this.talk) {
+            ScoreCalculator.logger.trace("Calculating occupied arcs for {}, range <{}, {}> ms.",
+                    new Object[] { ia, startingTime, endingTime });
+        }
         if (trainEntryTime == 0) {
-            ScoreCalculator.logger.debug(" Re-setting occupied arcs for {}, range ({}, {}> ms.",
-                    new Object[] { ia, endingTime, horizon });
+            if (this.talk) {
+                ScoreCalculator.logger.trace(
+                        " Re-setting occupied arcs for {}, range ({}, {}> ms.", new Object[] { ia,
+                                endingTime, horizon });
+            }
         } else {
-            ScoreCalculator.logger.debug(
-                    " Re-setting occupied arcs for {}, range <0, {}) ms and ({}, {}> ms.",
-                    new Object[] { ia, trainEntryTime, endingTime, horizon });
+            if (this.talk) {
+                ScoreCalculator.logger.trace(
+                        " Re-setting occupied arcs for {}, range <0, {}) ms and ({}, {}> ms.",
+                        new Object[] { ia, trainEntryTime, endingTime, horizon });
+            }
         }
         for (long time = 0; time <= horizon; time += scanEveryXMillis) {
             if (time < trainEntryTime || time > endingTime) {
@@ -269,7 +295,9 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
 
     @Override
     public void resetWorkingSolution(final ProblemSolution workingSolution) {
-        ScoreCalculator.logger.debug("Resetting working solution.");
+        if (this.talk) {
+            ScoreCalculator.logger.debug("Resetting working solution.");
+        }
         this.solution = workingSolution;
         this.clearEveryCache();
         for (final ItineraryAssignment ia : this.solution.getAssignments()) {
