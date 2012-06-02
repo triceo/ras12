@@ -155,12 +155,22 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
         switch (lastChange.getLeft()) {
             case REMOVE_WAIT_TIME:
             case SET_WAIT_TIME:
-                // start re-calculating occupied arcs from the first change in the itinerary
-                if (this.talk) {
-                    ScoreCalculator.logger.debug("Last wait time change registered on {} ({}).",
-                            new Object[] { lastChange.getRight(), lastChange.getLeft() });
+                final Node previousToModifiedNode = i.getRoute().getProgression()
+                        .getPrevious(lastChange.getRight());
+                if (previousToModifiedNode != null) {
+                    // start re-calculating occupied arcs from the first change in the itinerary
+                    if (this.talk) {
+                        ScoreCalculator.logger.debug(
+                                "Last wait time change registered on {} ({}).", new Object[] {
+                                        lastChange.getRight(), lastChange.getLeft() });
+                    }
+                    return i.getArrivalTime(previousToModifiedNode);
+                } else {
+                    if (this.talk) {
+                        ScoreCalculator.logger
+                                .debug("Skipping last wait time change, since it is starting the route.");
+                    }
                 }
-                return i.getArrivalTime(lastChange.getRight());
             default:
                 // re-calculate arcs all across the timeline
                 if (this.talk) {

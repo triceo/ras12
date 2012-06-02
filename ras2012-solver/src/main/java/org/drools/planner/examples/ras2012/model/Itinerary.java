@@ -167,6 +167,9 @@ public final class Itinerary extends Visualizable {
     }
 
     public long getArrivalTime(final Node n) {
+        if (n == null) {
+            throw new IllegalArgumentException("Node cannot be null.");
+        }
         final SortedMap<Long, Node> nodeEntryTimes = this.getSchedule();
         long timeEntered = -1;
         for (final SortedMap.Entry<Long, Node> entry : nodeEntryTimes.entrySet()) {
@@ -220,6 +223,9 @@ public final class Itinerary extends Visualizable {
     }
 
     public long getLeaveTime(final Node n) {
+        if (n == null) {
+            throw new IllegalArgumentException("Node cannot be null.");
+        }
         final long arrival = this.getArrivalTime(n);
         final Arc a = this.getRoute().getProgression().getWithDestinationNode(n);
         final long travel = Converter.getTimeFromSpeedAndDistance(

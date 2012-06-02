@@ -180,16 +180,16 @@ public class ArcProgressionTest {
         final Builder b = this.builder.add(a1);
         Route r = b.build();
         Assert.assertSame("On a route with single arc, null next arc is the first one.", r
-                .getProgression().getOrigin(), r.getProgression().getNext(null));
+                .getProgression().getOrigin(), r.getProgression().getNext((Arc) null));
         r = b.add(a2).build();
         Assert.assertSame("On a route with two arcs, null next arc is still the first one.", r
-                .getProgression().getOrigin(), r.getProgression().getNext(null));
+                .getProgression().getOrigin(), r.getProgression().getNext((Arc) null));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetNextNullEmptyRoute() {
         final Route r = this.route;
-        r.getProgression().getNext(null);
+        r.getProgression().getNext((Arc) null);
     }
 
     @Test
@@ -253,16 +253,16 @@ public class ArcProgressionTest {
         final Builder b = this.builder.add(a1);
         Route r = b.build();
         Assert.assertSame("On a route with single arc, null previous arc is the first one.", r
-                .getProgression().getDestination(), r.getProgression().getPrevious(null));
+                .getProgression().getDestination(), r.getProgression().getPrevious((Arc) null));
         r = b.add(a2).build();
         Assert.assertSame("On a route with two arcs, null previous arc is the last one.", r
-                .getProgression().getDestination(), r.getProgression().getPrevious(null));
+                .getProgression().getDestination(), r.getProgression().getPrevious((Arc) null));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetPreviousNullEmptyRoute() {
         final Route r = this.route;
-        r.getProgression().getPrevious(null);
+        r.getProgression().getPrevious((Arc) null);
     }
 
     @Test
