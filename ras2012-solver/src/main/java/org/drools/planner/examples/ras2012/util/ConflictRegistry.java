@@ -1,7 +1,6 @@
 package org.drools.planner.examples.ras2012.util;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,11 +43,10 @@ public class ConflictRegistry {
 
     }
 
-    private final Map<Long, ConflictRegistryItem>  itemsByTime;
-    private final Collection<ConflictRegistryItem> items;
+    private final List<ConflictRegistryItem> items;
+    private final Map<Long, Integer>         itemsIndex = new HashMap<Long, Integer>();
 
     public ConflictRegistry(final int numberOfItems) {
-        this.itemsByTime = new HashMap<Long, ConflictRegistryItem>(numberOfItems);
         this.items = new ArrayList<ConflictRegistryItem>(numberOfItems);
     }
 
@@ -67,22 +65,23 @@ public class ConflictRegistry {
     }
 
     public void setOccupiedArcs(final Long time, final Train t, final OccupationTracker occupiedArcs) {
+        final boolean itemExists = this.itemsIndex.containsKey(time);
+        final int index = itemExists ? this.itemsIndex.get(time) : this.items.size();
+        final ConflictRegistryItem item = itemExists ? this.items.get(index)
+                : new ConflictRegistryItem();
         if (occupiedArcs.isEmpty()) {
             /*
              * empty occupied arcs can cause no conflicts, ignore them; this will save some memory and a lot of looping later
              */
-            if (this.itemsByTime.containsKey(time)) {
+            if (itemExists) {
                 // in a situation where there's already some occupied arcs set, we need to empty them
-                this.itemsByTime.get(time).resetOccupiedArcs(t);
+                item.resetOccupiedArcs(t);
             }
         } else {
-            if (!this.itemsByTime.containsKey(time)) {
-                final ConflictRegistryItem item = new ConflictRegistryItem();
-                this.itemsByTime.put(time, item);
-                this.items.add(item);
-                item.setOccupiedArcs(t, occupiedArcs);
-            } else {
-                this.itemsByTime.get(time).setOccupiedArcs(t, occupiedArcs);
+            item.setOccupiedArcs(t, occupiedArcs);
+            if (!itemExists) {
+                this.items.add(index, item);
+                this.itemsIndex.put(time, index);
             }
         }
     }
