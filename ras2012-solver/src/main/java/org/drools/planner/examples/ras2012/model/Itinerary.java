@@ -270,14 +270,14 @@ public final class Itinerary extends Visualizable {
         return this.route;
     }
 
-    public synchronized SortedMap<Long, Node> getSchedule() {
+    public SortedMap<Long, Node> getSchedule() {
         if (!this.scheduleCacheValid.get() || this.scheduleCache.size() == 0) {
             this.cacheSchedule();
         }
         return Collections.unmodifiableSortedMap(this.scheduleCache);
     }
 
-    public synchronized SortedMap<Long, Arc> getScheduleWithArcs() {
+    public SortedMap<Long, Arc> getScheduleWithArcs() {
         if (!this.scheduleCacheValid.get() || this.scheduleCache.size() == 0) {
             this.cacheSchedule();
         }
@@ -315,7 +315,7 @@ public final class Itinerary extends Visualizable {
         return this.train;
     }
 
-    public synchronized WaitTime getWaitTime(final Node n) {
+    public WaitTime getWaitTime(final Node n) {
         return this.nodeWaitTimes.get(n);
     }
 
@@ -329,7 +329,7 @@ public final class Itinerary extends Visualizable {
                 .append(this.nodeWaitTimes).build();
     }
 
-    private synchronized void invalidateCaches() {
+    private void invalidateCaches() {
         this.scheduleCache.clear();
         this.scheduleCacheWithArcs.clear();
     }
@@ -360,7 +360,7 @@ public final class Itinerary extends Visualizable {
         this.lastChange = ImmutablePair.of(ChangeType.REMOVE_ALL_WAIT_TIMES, null);
     }
 
-    public synchronized WaitTime setWaitTime(final Node n, final WaitTime w) {
+    public WaitTime setWaitTime(final Node n, final WaitTime w) {
         if (!this.getRoute().getProgression().getWaitPoints().contains(n)) {
             throw new IllegalArgumentException(n + " not a wait point: " + this);
         }
