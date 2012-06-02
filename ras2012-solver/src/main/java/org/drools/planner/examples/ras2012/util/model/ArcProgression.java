@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,7 +22,7 @@ import org.drools.planner.examples.ras2012.util.model.OccupationTracker.Builder;
 
 public class ArcProgression implements Directed {
 
-    private final LinkedList<Arc>            orderedArcs        = new LinkedList<Arc>();
+    private final List<Arc>                  orderedArcs        = new ArrayList<Arc>();
     private final SortedMap<BigDecimal, Arc> milestones         = new TreeMap<BigDecimal, Arc>();
     private final Map<Node, Arc>             arcsPerOrigin      = new LinkedHashMap<Node, Arc>();
     private final Map<Node, Arc>             arcsPerDestination = new LinkedHashMap<Node, Arc>();
@@ -45,8 +44,9 @@ public class ArcProgression implements Directed {
         while (arcs.size() != this.orderedArcs.size()) {
             for (final Arc a : arcs) {
                 if (a.getOrigin(directed) == startingNode) {
-                    this.orderedArcs.addLast(a);
-                    startingNode = this.orderedArcs.peekLast().getDestination(directed);
+                    this.orderedArcs.add(a);
+                    // find the node of the last arc in the progression
+                    startingNode = a.getDestination(directed);
                     break;
                 }
             }
@@ -134,7 +134,10 @@ public class ArcProgression implements Directed {
     }
 
     public Arc getDestination() {
-        return this.orderedArcs.peekLast();
+        if (this.isEmpty) {
+            throw new IllegalStateException("Empty progression has no destination.");
+        }
+        return this.orderedArcs.get(this.orderedArcs.size() - 1);
     }
 
     public BigDecimal getDistance(final Node end) {
@@ -251,7 +254,10 @@ public class ArcProgression implements Directed {
     }
 
     public Arc getOrigin() {
-        return this.orderedArcs.peekFirst();
+        if (this.isEmpty) {
+            throw new IllegalStateException("Empty progression has no origin.");
+        }
+        return this.orderedArcs.get(0);
     }
 
     public Arc getPrevious(final Arc a) {
