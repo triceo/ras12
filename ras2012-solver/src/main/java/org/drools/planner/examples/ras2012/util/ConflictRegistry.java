@@ -14,8 +14,13 @@ public class ConflictRegistry {
 
         private final Map<Train, OccupationTracker> occupiedArcsByTrain = new HashMap<Train, OccupationTracker>();
         private final List<OccupationTracker>       occupiedArcs        = new ArrayList<OccupationTracker>();
+        private double                              cache               = Double.MAX_VALUE;
+        private boolean                             isCacheValid        = false;
 
         public double getConflicts() {
+            if (this.isCacheValid) {
+                return this.cache;
+            }
             double conflicts = 0;
             final int size = this.occupiedArcs.size();
             for (int position = 0; position < size; position++) {
@@ -25,22 +30,45 @@ public class ConflictRegistry {
                     conflicts += left.getConflictingMileage(right);
                 }
             }
-            return conflicts;
+            this.cache = conflicts;
+            this.isCacheValid = true;
+            return this.cache;
         }
 
-        public void resetOccupiedArcs(final Train t) {
+        /**
+         * Mark the train as occupying no arcs.
+         * 
+         * @param t
+         * @return True if this change altered the state of the item.
+         */
+        public boolean resetOccupiedArcs(final Train t) {
             final OccupationTracker toRemove = this.occupiedArcsByTrain.remove(t);
             if (toRemove != null) {
                 this.occupiedArcs.remove(toRemove);
+                this.isCacheValid = false;
+                return true;
             }
+            return false;
         }
 
-        public void setOccupiedArcs(final Train t, final OccupationTracker arcs) {
+        /**
+         * Set arcs occupied by the given train.
+         * 
+         * @param t
+         * @param arcs
+         * @return True if this change altered the state of the item.
+         */
+        public boolean setOccupiedArcs(final Train t, final OccupationTracker arcs) {
+            if (arcs.equals(this.occupiedArcsByTrain.get(t))) {
+                return false;
+            }
+            this.isCacheValid = false;
             final OccupationTracker previous = this.occupiedArcsByTrain.put(t, arcs);
             if (previous != null) {
                 this.occupiedArcs.remove(previous);
             }
             this.occupiedArcs.add(arcs);
+            return true;
         }
 
     }
