@@ -135,11 +135,6 @@ public class ArcProgression implements Directed {
     }
 
     public BigDecimal getDistance(final Node end) {
-        // first solve some corner cases
-        if (!this.nodes.contains(end)) {
-            throw new IllegalArgumentException(end + " not in progression!");
-        }
-        // then make sure nodes are in a proper order
         final Node start = this.getOrigin().getOrigin(this);
         return this.getDistance(start, end);
     }
@@ -156,17 +151,13 @@ public class ArcProgression implements Directed {
         // then make sure nodes are in a proper order
         final int startIndex = this.nodes.indexOf(start);
         final int endIndex = this.nodes.indexOf(end);
-        if (startIndex > endIndex) {
-            return this.getDistance(end, start);
-        }
         // and then retrieve the actual distance
+        final int startWith = Math.min(startIndex, endIndex);
+        final int endWith = Math.max(startIndex, endIndex);
         BigDecimal result = BigDecimal.ZERO;
-        for (final Node n : this.nodes.subList(startIndex, endIndex + 1)) {
-            final Arc a = this.arcsPerOrigin.get(n);
+        for (int i = startWith; i <= endWith; i++) {
+            final Arc a = this.getWithOriginNode(this.nodes.get(i));
             result = result.add(a.getLength());
-            if (a.getDestination(this) == end) {
-                break;
-            }
         }
         return result;
     }
