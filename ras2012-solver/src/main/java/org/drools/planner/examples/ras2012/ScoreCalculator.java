@@ -5,15 +5,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.tuple.Pair;
 import org.drools.planner.core.score.buildin.hardandsoft.DefaultHardAndSoftScore;
 import org.drools.planner.core.score.buildin.hardandsoft.HardAndSoftScore;
 import org.drools.planner.core.score.director.incremental.AbstractIncrementalScoreCalculator;
 import org.drools.planner.examples.ras2012.model.Itinerary;
+import org.drools.planner.examples.ras2012.model.Itinerary.ChangeType;
 import org.drools.planner.examples.ras2012.model.ItineraryAssignment;
 import org.drools.planner.examples.ras2012.model.Node;
 import org.drools.planner.examples.ras2012.model.Train;
 import org.drools.planner.examples.ras2012.util.ConflictRegistry;
 import org.drools.planner.examples.ras2012.util.Converter;
+import org.drools.planner.examples.ras2012.util.model.OccupationTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,53 +56,47 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
     @Override
     public void afterAllVariablesChanged(final Object entity) {
         if (entity instanceof ItineraryAssignment) {
-            this.insert((ItineraryAssignment) entity);
+            this.modify((ItineraryAssignment) entity);
         }
     }
 
     @Override
     public void afterEntityAdded(final Object entity) {
         if (entity instanceof ItineraryAssignment) {
-            this.insert((ItineraryAssignment) entity);
+            this.modify((ItineraryAssignment) entity);
         }
     }
 
     @Override
     public void afterEntityRemoved(final Object entity) {
-        // do nothing
+        throw new NotImplementedException();
     }
 
     @Override
     public void afterVariableChanged(final Object entity, final String variableName) {
         if (entity instanceof ItineraryAssignment) {
-            this.insert((ItineraryAssignment) entity);
+            this.modify((ItineraryAssignment) entity);
         }
     }
 
     @Override
     public void beforeAllVariablesChanged(final Object entity) {
-        if (entity instanceof ItineraryAssignment) {
-            this.retract((ItineraryAssignment) entity);
-        }
+        throw new NotImplementedException();
     }
 
     @Override
     public void beforeEntityAdded(final Object entity) {
-        // do nothing
+        throw new NotImplementedException();
     }
 
     @Override
     public void beforeEntityRemoved(final Object entity) {
-        if (entity instanceof ItineraryAssignment) {
-            this.retract((ItineraryAssignment) entity);
-        }
+        throw new NotImplementedException();
     }
 
     @Override
     public void beforeVariableChanged(final Object entity, final String variableName) {
-        if (entity instanceof ItineraryAssignment) {
-            this.retract((ItineraryAssignment) entity);
-        }
+        throw new NotImplementedException();
     }
 
     @Override
@@ -126,7 +124,7 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
         this.delayPenalties.clear();
         this.conflicts = new ConflictRegistry(
                 (int) this.solution.getPlanningHorizon(TimeUnit.MINUTES)
-                        * ScoreCalculator.OCCUPATION_CHECKS_PER_MINUTE);
+                        * ScoreCalculator.OCCUPATION_CHECKS_PER_MINUTE + 1);
     }
 
     public int getDelayPenalty(final Itinerary i) {
@@ -138,6 +136,22 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
         final BigDecimal maxHoursDelay = hoursDelay.max(BigDecimal.ZERO);
         return maxHoursDelay.multiply(BigDecimal.valueOf(i.getTrain().getType().getDelayPenalty()))
                 .intValue();
+    }
+
+    private long getFirstChangeTime(final Itinerary i) {
+        final Pair<ChangeType, Node> lastChange = i.getLatestWaitTimeChange();
+        switch (lastChange.getLeft()) {
+            case REMOVE_WAIT_TIME:
+            case SET_WAIT_TIME:
+                // start re-calculating occupied arcs from the first change in the itinerary
+                ScoreCalculator.logger.debug("Last wait time change registered on {} ({}).",
+                        new Object[] { lastChange.getRight(), lastChange.getLeft() });
+                return i.getArrivalTime(lastChange.getRight());
+            default:
+                // re-calculate arcs all across the timeline
+                ScoreCalculator.logger.debug("Fresh itinerary registered, no wait time changes.");
+                return i.getArrivalTime(i.getTrain().getOrigin());
+        }
     }
 
     public int getScheduleAdherencePenalty(final Itinerary i) {
@@ -202,8 +216,12 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
         return 0;
     }
 
-    private void insert(final ItineraryAssignment ia) {
-        ScoreCalculator.logger.debug("Inserting entity: " + ia);
+    private boolean isInPlanningHorizon(final long time) {
+        return time <= this.solution.getPlanningHorizon(TimeUnit.MILLISECONDS);
+    }
+
+    private void modify(final ItineraryAssignment ia) {
+        ScoreCalculator.logger.debug("Modifying entity: " + ia);
         final Train t = ia.getTrain();
         final Itinerary i = ia.getItinerary();
         this.unpreferredTracksPenalties.put(t, this.getUnpreferredTracksPenalty(i));
@@ -213,24 +231,39 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
         this.recalculateOccupiedArcs(ia);
     }
 
-    private boolean isInPlanningHorizon(final long time) {
-        return time <= this.solution.getPlanningHorizon(TimeUnit.MILLISECONDS);
-    }
-
     /**
      * if it were possible for a train to have at the same time both entrytime > 0 and origin != depo, this code would miss the
      * arcs occupied by the train before it "magically" appeared in the middle of the territory.
      */
     private void recalculateOccupiedArcs(final ItineraryAssignment ia) {
         final int scanEveryXMillis = 60000 / ScoreCalculator.OCCUPATION_CHECKS_PER_MINUTE;
+        final long horizon = this.solution.getPlanningHorizon(TimeUnit.MILLISECONDS);
         // insert the number of conflicts for the given assignments
         final Itinerary i = ia.getItinerary();
         final Train t = ia.getTrain();
-        final long startingTime = Math.max(0, i.getArrivalTime(t.getOrigin()));
-        final long endingTime = Math.min(i.getLeaveTime(t.getDestination()),
-                this.solution.getPlanningHorizon(TimeUnit.MILLISECONDS));
-        for (long time = startingTime; time <= endingTime; time += scanEveryXMillis) {
-            this.conflicts.setOccupiedArcs(time, t, i.getOccupiedArcs(time));
+        final long trainEntryTime = Math.max(0, i.getArrivalTime(i.getTrain().getOrigin()));
+        final long startingTime = Math.max(trainEntryTime, this.getFirstChangeTime(i));
+        final long endingTime = Math.min(i.getLeaveTime(t.getDestination()), horizon);
+        ScoreCalculator.logger.debug("Calculating occupied arcs for {}, range <{}, {}> ms.",
+                new Object[] { ia, startingTime, endingTime });
+        if (trainEntryTime == 0) {
+            ScoreCalculator.logger.debug(" Re-setting occupied arcs for {}, range ({}, {}> ms.",
+                    new Object[] { ia, endingTime, horizon });
+        } else {
+            ScoreCalculator.logger.debug(
+                    " Re-setting occupied arcs for {}, range <0, {}) ms and ({}, {}> ms.",
+                    new Object[] { ia, trainEntryTime, endingTime, horizon });
+        }
+        for (long time = 0; time <= horizon; time += scanEveryXMillis) {
+            if (time < trainEntryTime || time > endingTime) {
+                // clear everywhere the train isn't en route
+                this.conflicts.setOccupiedArcs(time, t, OccupationTracker.Builder.empty());
+            } else if (time >= startingTime && time <= endingTime) {
+                // re-calculate what's actually changed
+                this.conflicts.setOccupiedArcs(time, t, i.getOccupiedArcs(time));
+            } else {
+                // don't touch stuff that doesn't need recalculating
+            }
         }
     }
 
@@ -240,18 +273,8 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
         this.solution = workingSolution;
         this.clearEveryCache();
         for (final ItineraryAssignment ia : this.solution.getAssignments()) {
-            this.insert(ia);
+            this.modify(ia);
         }
-    }
-
-    private void retract(final ItineraryAssignment ia) {
-        ScoreCalculator.logger.debug("Removing entity: " + ia);
-        final Train t = ia.getTrain();
-        this.wantTimePenalties.remove(t);
-        this.unpreferredTracksPenalties.remove(t);
-        this.scheduleAdherencePenalties.remove(t);
-        this.delayPenalties.remove(t);
-        this.conflicts.resetOccupiedArcs(t);
     }
 
     @Override

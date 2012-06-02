@@ -13,6 +13,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.drools.planner.examples.ras2012.Visualizable;
 import org.drools.planner.examples.ras2012.util.Converter;
 import org.drools.planner.examples.ras2012.util.model.ArcProgression;
@@ -22,6 +24,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class Itinerary extends Visualizable {
+
+    public static enum ChangeType {
+
+        UNCHANGED, REMOVE_ALL_WAIT_TIMES, REMOVE_WAIT_TIME, SET_WAIT_TIME;
+
+    }
+
+    Pair<ChangeType, Node>                     lastChange            = ImmutablePair.of(
+                                                                             ChangeType.UNCHANGED,
+                                                                             null);
 
     private static final TimeUnit              DEFAULT_TIME_UNIT     = TimeUnit.MILLISECONDS;
 
@@ -177,6 +189,10 @@ public final class Itinerary extends Visualizable {
         return this.delay;
     }
 
+    public Pair<ChangeType, Node> getLatestWaitTimeChange() {
+        return this.lastChange;
+    }
+
     protected Arc getLeadingArc(final long time) {
         if (time < this.trainEntryTime) {
             return null;
@@ -326,6 +342,7 @@ public final class Itinerary extends Visualizable {
         if (this.nodeWaitTimes.containsKey(n)) {
             Itinerary.logger.debug("Removing wait time for {} from {}.", new Object[] { n, this });
             this.invalidateCaches();
+            this.lastChange = ImmutablePair.of(ChangeType.REMOVE_WAIT_TIME, n);
             return this.nodeWaitTimes.remove(n);
         } else {
             Itinerary.logger.debug("No wait time to remove for {} from {}.",
@@ -340,6 +357,7 @@ public final class Itinerary extends Visualizable {
             this.invalidateCaches();
         }
         this.nodeWaitTimes.clear();
+        this.lastChange = ImmutablePair.of(ChangeType.REMOVE_ALL_WAIT_TIMES, null);
     }
 
     public synchronized WaitTime setWaitTime(final Node n, final WaitTime w) {
@@ -351,6 +369,7 @@ public final class Itinerary extends Visualizable {
         }
         this.invalidateCaches();
         final WaitTime previous = this.nodeWaitTimes.put(n, w);
+        this.lastChange = ImmutablePair.of(ChangeType.SET_WAIT_TIME, n);
         Itinerary.logger.debug("Set wait time on {} in {}, replacing {}.", new Object[] { n, this,
                 previous });
         return previous;

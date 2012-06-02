@@ -44,9 +44,8 @@ public class RouteReassignmentMove implements Move {
     @Override
     public void doMove(final ScoreDirector scoreDirector) {
         this.assignment = this.initializeMove(scoreDirector);
-        scoreDirector.beforeVariableChanged(this.assignment, "route");
         this.assignment.setRoute(this.route);
-        scoreDirector.afterVariableChanged(this.assignment, "route");
+        scoreDirector.afterEntityAdded(this.assignment);
     }
 
     @Override
