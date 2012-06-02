@@ -374,7 +374,7 @@ public final class Itinerary extends Visualizable {
         this.invalidateCaches();
         final WaitTime previous = this.nodeWaitTimes.put(n, w);
         this.lastChange = ImmutablePair.of(ChangeType.SET_WAIT_TIME, n);
-        Itinerary.logger.debug("Set wait time on {} in {}, replacing {}.", new Object[] { n, this,
+        Itinerary.logger.debug("Set {} on {} in {}, replacing {}.", new Object[] { w, n, this,
                 previous });
         return previous;
     }
