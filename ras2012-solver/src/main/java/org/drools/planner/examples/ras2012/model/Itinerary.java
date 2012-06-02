@@ -11,6 +11,7 @@ import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.drools.planner.examples.ras2012.Visualizable;
 import org.drools.planner.examples.ras2012.util.Converter;
 import org.drools.planner.examples.ras2012.util.model.ArcProgression;
@@ -314,12 +315,8 @@ public final class Itinerary extends Visualizable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + this.nodeWaitTimes.hashCode();
-        result = prime * result + this.route.hashCode();
-        result = prime * result + this.train.hashCode();
-        return result;
+        return new HashCodeBuilder().append(this.getTrain()).append(this.getRoute())
+                .append(this.nodeWaitTimes).build();
     }
 
     private synchronized void invalidateCaches() {

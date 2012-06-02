@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.drools.planner.core.move.Move;
 import org.drools.planner.core.score.director.ScoreDirector;
 import org.drools.planner.examples.ras2012.ProblemSolution;
@@ -83,11 +84,7 @@ public class RouteReassignmentMove implements Move {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (this.route == null ? 0 : this.route.hashCode());
-        result = prime * result + (this.train == null ? 0 : this.train.hashCode());
-        return result;
+        return new HashCodeBuilder().append(this.route).append(this.train).build();
     }
 
     private ItineraryAssignment initializeMove(final ScoreDirector scoreDirector) {

@@ -8,6 +8,7 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.drools.planner.examples.ras2012.Directed;
 import org.drools.planner.examples.ras2012.model.Arc;
 
@@ -262,10 +263,7 @@ public class OccupationTracker {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (this.ranges == null ? 0 : this.ranges.hashCode());
-        return result;
+        return new HashCodeBuilder().append(this.ranges).build();
     }
 
     public boolean isEmpty() {

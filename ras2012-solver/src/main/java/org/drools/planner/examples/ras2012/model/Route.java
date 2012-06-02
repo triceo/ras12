@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.drools.planner.examples.ras2012.Directed;
 import org.drools.planner.examples.ras2012.Visualizable;
 import org.drools.planner.examples.ras2012.util.Converter;
@@ -196,10 +197,7 @@ public class Route extends Visualizable implements Comparable<Route>, Directed {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + this.id;
-        return result;
+        return new HashCodeBuilder().append(this.getId()).build();
     }
 
     @Override

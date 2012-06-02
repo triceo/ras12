@@ -2,6 +2,8 @@ package org.drools.planner.examples.ras2012.model;
 
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 public class ScheduleAdherenceRequirement {
 
     private static final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.MILLISECONDS;
@@ -51,12 +53,8 @@ public class ScheduleAdherenceRequirement {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (this.destination == null ? 0 : this.destination.hashCode());
-        result = prime * result
-                + (int) (this.timeSinceStartOfWorld ^ this.timeSinceStartOfWorld >>> 32);
-        return result;
+        return new HashCodeBuilder().append(this.getDestination())
+                .append(this.getTimeSinceStartOfWorld(TimeUnit.MILLISECONDS)).build();
     }
 
     @Override

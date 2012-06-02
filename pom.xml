@@ -44,6 +44,12 @@
         <artifactId>drools-planner-benchmark</artifactId>
         <version>${drools.version}</version>
       </dependency>
+      <!-- Helpers -->
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>3.1</version>      
+      </dependency>
       <!-- Logging -->
       <dependency>
         <groupId>ch.qos.logback</groupId>

@@ -3,6 +3,8 @@ package org.drools.planner.examples.ras2012.model;
 import java.math.BigDecimal;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 public class Arc extends Section {
 
     private static final AtomicInteger idGenerator = new AtomicInteger();
@@ -57,10 +59,7 @@ public class Arc extends Section {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + this.id;
-        return result;
+        return new HashCodeBuilder().append(this.id).build();
     }
 
     @Override

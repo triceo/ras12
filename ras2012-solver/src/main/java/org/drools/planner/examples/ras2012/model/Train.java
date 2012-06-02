@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.drools.planner.examples.ras2012.Directed;
 import org.drools.planner.examples.ras2012.util.Converter;
 
@@ -231,10 +232,7 @@ public class Train implements Comparable<Train>, Directed {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (this.name == null ? 0 : this.name.hashCode());
-        return result;
+        return new HashCodeBuilder().append(this.getName()).build();
     }
 
     @Override
