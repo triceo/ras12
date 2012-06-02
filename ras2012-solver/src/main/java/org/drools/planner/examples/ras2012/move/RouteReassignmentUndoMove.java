@@ -9,6 +9,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.drools.planner.core.move.Move;
 import org.drools.planner.core.score.director.ScoreDirector;
 import org.drools.planner.examples.ras2012.ProblemSolution;
+import org.drools.planner.examples.ras2012.model.Itinerary;
 import org.drools.planner.examples.ras2012.model.ItineraryAssignment;
 import org.drools.planner.examples.ras2012.model.Node;
 import org.drools.planner.examples.ras2012.model.Route;
@@ -40,9 +41,11 @@ public class RouteReassignmentUndoMove implements Move {
     public void doMove(final ScoreDirector scoreDirector) {
         this.initializeMove(scoreDirector);
         this.assignment.setRoute(this.originalRoute);
+        final Itinerary i = this.assignment.getItinerary();
         for (final Map.Entry<Node, WaitTime> entry : this.originalWaitTimes.entrySet()) {
-            this.assignment.getItinerary().setWaitTime(entry.getKey(), entry.getValue());
+            i.setWaitTime(entry.getKey(), entry.getValue());
         }
+        i.resetLatestWaitTimeChange(); // make sure calculator isn't mistaken the setWaitTime().
         scoreDirector.afterEntityAdded(this.assignment);
     }
 

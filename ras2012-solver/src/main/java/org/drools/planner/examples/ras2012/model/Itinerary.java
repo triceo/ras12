@@ -193,6 +193,10 @@ public final class Itinerary extends Visualizable {
         return this.lastChange;
     }
 
+    public void resetLatestWaitTimeChange() {
+        this.lastChange = ImmutablePair.of(ChangeType.UNCHANGED, null);
+    }
+
     protected Arc getLeadingArc(final long time) {
         if (time < this.trainEntryTime) {
             return null;
