@@ -301,6 +301,7 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
         this.solution = workingSolution;
         this.clearEveryCache();
         for (final ItineraryAssignment ia : this.solution.getAssignments()) {
+            ia.getItinerary().resetLatestWaitTimeChange();
             this.modify(ia);
         }
     }
