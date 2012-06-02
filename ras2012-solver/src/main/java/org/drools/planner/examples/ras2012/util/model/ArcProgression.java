@@ -31,6 +31,7 @@ public class ArcProgression implements Directed {
     private final List<Node>                 nodes              = new ArrayList<Node>();
     private final Collection<Node>           waitPoints;
     private final boolean                    isEastbound;
+    private final boolean                    isEmpty;
     private final BigDecimal                 length;
 
     public ArcProgression(final Directed directed, final Arc... arcs) {
@@ -60,7 +61,8 @@ public class ArcProgression implements Directed {
             milestone = milestone.add(a.getLength());
         }
         this.length = milestone;
-        if (this.orderedArcs.size() > 0) {
+        this.isEmpty = this.orderedArcs.size() == 0;
+        if (!this.isEmpty) {
             this.nodes.add(this.getDestination().getDestination(this));
         }
         // determine whether a particular arc is preferred
@@ -73,7 +75,7 @@ public class ArcProgression implements Directed {
 
     private Collection<Node> assembleWaitPoints() {
         final Collection<Node> points = new TreeSet<Node>();
-        if (this.orderedArcs.size() == 0) {
+        if (this.isEmpty) {
             return Collections.unmodifiableCollection(points);
         }
         // we want to be able to hold the train before it enters the network
@@ -167,7 +169,7 @@ public class ArcProgression implements Directed {
     }
 
     public Arc getNext(final Arc a) {
-        if (this.orderedArcs.size() == 0) {
+        if (this.isEmpty) {
             throw new IllegalArgumentException("No next arc on an empty route.");
         } else if (a == null) {
             return this.getOrigin();
@@ -184,7 +186,7 @@ public class ArcProgression implements Directed {
     }
 
     public Node getNext(final Node n) {
-        if (this.nodes.size() == 0) {
+        if (this.isEmpty) {
             throw new IllegalArgumentException("No next node on an empty route.");
         } else if (n == null) {
             return this.getOrigin().getOrigin(this);
@@ -250,7 +252,7 @@ public class ArcProgression implements Directed {
     }
 
     public Arc getPrevious(final Arc a) {
-        if (this.orderedArcs.size() == 0) {
+        if (this.isEmpty) {
             throw new IllegalArgumentException("No previous arc on an empty route.");
         } else if (a == null) {
             return this.getDestination();
@@ -266,7 +268,7 @@ public class ArcProgression implements Directed {
     }
 
     public Node getPrevious(final Node n) {
-        if (this.nodes.size() == 0) {
+        if (this.isEmpty) {
             throw new IllegalArgumentException("No previous node on an empty route.");
         } else if (n == null) {
             return this.getDestination().getDestination(this);
