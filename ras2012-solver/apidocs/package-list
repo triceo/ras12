@@ -1,4 +1,3 @@
-ch.qos.logback.classic
 org.drools.planner.examples.ras2012
 org.drools.planner.examples.ras2012.model
 org.drools.planner.examples.ras2012.move
