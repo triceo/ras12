@@ -183,6 +183,22 @@ public class ArcProgression implements Directed {
 
     }
 
+    public Node getNext(final Node n) {
+        if (this.nodes.size() == 0) {
+            throw new IllegalArgumentException("No next node on an empty route.");
+        } else if (n == null) {
+            return this.getOrigin().getOrigin(this);
+        }
+        final int indexOf = this.nodes.indexOf(n);
+        if (indexOf < 0) {
+            throw new IllegalArgumentException("Node not in the progression!");
+        } else if (indexOf == this.nodes.size() - 1) {
+            return null;
+        } else {
+            return this.nodes.get(indexOf + 1);
+        }
+    }
+
     public List<Node> getNodes() {
         return Collections.unmodifiableList(this.nodes);
     }
@@ -233,38 +249,6 @@ public class ArcProgression implements Directed {
         return this.orderedArcs.peekFirst();
     }
 
-    public Node getPrevious(final Node n) {
-        if (this.nodes.size() == 0) {
-            throw new IllegalArgumentException("No previous node on an empty route.");
-        } else if (n == null) {
-            return this.getDestination().getDestination(this);
-        }
-        final int indexOf = this.nodes.indexOf(n);
-        if (indexOf < 0) {
-            throw new IllegalArgumentException("Node not in the progression!");
-        } else if (indexOf == 0) {
-            return null;
-        } else {
-            return this.nodes.get(indexOf - 1);
-        }
-    }
-
-    public Node getNext(final Node n) {
-        if (this.nodes.size() == 0) {
-            throw new IllegalArgumentException("No next node on an empty route.");
-        } else if (n == null) {
-            return this.getOrigin().getOrigin(this);
-        }
-        final int indexOf = this.nodes.indexOf(n);
-        if (indexOf < 0) {
-            throw new IllegalArgumentException("Node not in the progression!");
-        } else if (indexOf == (this.nodes.size() - 1)) {
-            return null;
-        } else {
-            return this.nodes.get(indexOf + 1);
-        }
-    }
-
     public Arc getPrevious(final Arc a) {
         if (this.orderedArcs.size() == 0) {
             throw new IllegalArgumentException("No previous arc on an empty route.");
@@ -278,6 +262,22 @@ public class ArcProgression implements Directed {
             return null;
         } else {
             return this.orderedArcs.get(indexOf - 1);
+        }
+    }
+
+    public Node getPrevious(final Node n) {
+        if (this.nodes.size() == 0) {
+            throw new IllegalArgumentException("No previous node on an empty route.");
+        } else if (n == null) {
+            return this.getDestination().getDestination(this);
+        }
+        final int indexOf = this.nodes.indexOf(n);
+        if (indexOf < 0) {
+            throw new IllegalArgumentException("Node not in the progression!");
+        } else if (indexOf == 0) {
+            return null;
+        } else {
+            return this.nodes.get(indexOf - 1);
         }
     }
 
