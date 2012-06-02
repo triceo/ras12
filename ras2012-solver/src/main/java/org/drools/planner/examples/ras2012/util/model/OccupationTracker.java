@@ -228,7 +228,7 @@ public class OccupationTracker {
         if (!(obj instanceof OccupationTracker)) {
             return false;
         }
-        OccupationTracker rhs = (OccupationTracker) obj;
+        final OccupationTracker rhs = (OccupationTracker) obj;
         return new EqualsBuilder().append(this.ranges, rhs.ranges).isEquals();
     }
 

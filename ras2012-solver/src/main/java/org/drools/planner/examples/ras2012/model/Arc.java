@@ -40,10 +40,10 @@ public class Arc extends Section {
         if (obj == this) {
             return true;
         }
-        if (obj.getClass() != getClass()) {
+        if (!(obj instanceof Arc)) {
             return false;
         }
-        Arc rhs = (Arc) obj;
+        final Arc rhs = (Arc) obj;
         return new EqualsBuilder().append(this.id, rhs.id).isEquals();
     }
 

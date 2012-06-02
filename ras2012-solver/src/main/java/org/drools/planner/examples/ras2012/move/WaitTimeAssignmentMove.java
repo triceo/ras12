@@ -76,7 +76,7 @@ public class WaitTimeAssignmentMove implements Move {
         if (!(obj instanceof WaitTimeAssignmentMove)) {
             return false;
         }
-        WaitTimeAssignmentMove rhs = (WaitTimeAssignmentMove) obj;
+        final WaitTimeAssignmentMove rhs = (WaitTimeAssignmentMove) obj;
         return new EqualsBuilder().append(this.route, rhs.route).append(this.train, rhs.train)
                 .append(this.node, rhs.node).append(this.waitTime, rhs.waitTime).isEquals();
     }
