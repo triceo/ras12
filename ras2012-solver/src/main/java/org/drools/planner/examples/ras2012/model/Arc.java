@@ -3,8 +3,6 @@ package org.drools.planner.examples.ras2012.model;
 import java.math.BigDecimal;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 public class Arc extends Section {
 
     private static final AtomicInteger idGenerator = new AtomicInteger();
@@ -33,17 +31,17 @@ public class Arc extends Section {
 
     @Override
     public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
         if (obj == null) {
             return false;
-        }
-        if (obj == this) {
-            return true;
         }
         if (!(obj instanceof Arc)) {
             return false;
         }
-        final Arc rhs = (Arc) obj;
-        return this.id == rhs.id;
+        final Arc other = (Arc) obj;
+        return this.id == other.id;
     }
 
     public BigDecimal getLength() {
@@ -56,7 +54,10 @@ public class Arc extends Section {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(this.id).build();
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + this.id;
+        return result;
     }
 
     @Override
