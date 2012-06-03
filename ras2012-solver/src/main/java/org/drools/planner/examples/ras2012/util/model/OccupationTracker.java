@@ -86,19 +86,19 @@ public class OccupationTracker {
             return this.arc;
         }
 
-        public BigDecimal getConflictingMileage(final ArcRange other) {
+        public double getConflictingMileage(final ArcRange other) {
             if (this.getArc() != other.getArc()) {
                 // ranges cannot conflict when they're of two different arcs
-                return BigDecimal.ZERO;
+                return 0;
             } else if (this.isFull() && other.isEmpty()) {
                 // the intersection is empty
-                return BigDecimal.ZERO;
+                return 0;
             } else if (other.isFull() && this.isEmpty()) {
                 // the intersection is empty
-                return BigDecimal.ZERO;
+                return 0;
             } else if (this.isFull() && other.isFull()) {
                 // full conflict
-                return this.getArc().getLength();
+                return this.getArc().getLength().doubleValue();
             } else {
                 // we need to calculate the actual conflicting range
                 final BigDecimal start = this.getStart().max(other.getStart());
@@ -106,9 +106,10 @@ public class OccupationTracker {
                 final BigDecimal result = end.subtract(start);
                 if (result.signum() < 0) {
                     // ranges don't overlap
-                    return BigDecimal.ZERO;
+                    return 0;
+                } else {
+                    return result.doubleValue();
                 }
-                return end.subtract(start);
             }
         }
 
@@ -246,7 +247,7 @@ public class OccupationTracker {
             if (r.isEmpty()) {
                 continue;
             }
-            mileage += r.getConflictingMileage(r2).doubleValue();
+            mileage += r.getConflictingMileage(r2);
         }
         return mileage;
     }
