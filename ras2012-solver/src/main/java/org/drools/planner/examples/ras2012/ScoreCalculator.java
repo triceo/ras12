@@ -157,7 +157,7 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
             case SET_WAIT_TIME:
                 final Node previousToModifiedNode = i.getRoute().getProgression()
                         .getPrevious(lastChange.getRight());
-                if (previousToModifiedNode != null) {
+                if (previousToModifiedNode != null && i.isNodeOnRoute(previousToModifiedNode)) {
                     // start re-calculating occupied arcs from the first change in the itinerary
                     if (this.talk) {
                         ScoreCalculator.logger.debug(

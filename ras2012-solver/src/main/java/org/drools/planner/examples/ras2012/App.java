@@ -21,7 +21,7 @@ public class App {
 
     public static void main(final String[] args) throws FileNotFoundException, IOException {
         // read solution
-        final File f = new File("src/main/resources/org/drools/planner/examples/ras2012/RDS2.txt");
+        final File f = new File("src/main/resources/org/drools/planner/examples/ras2012/RDS3.txt");
         final SolutionIO io = new SolutionIO();
         ProblemSolution sol = io.read(f);
         // and now start solving
