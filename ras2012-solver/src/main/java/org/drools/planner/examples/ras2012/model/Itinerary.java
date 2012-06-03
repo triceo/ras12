@@ -203,7 +203,7 @@ public final class Itinerary extends Visualizable {
         if (time == arcTime) {
             return arc;
         } else {
-            return this.getRoute().getProgression().getPrevious(arc);
+            return this.getRoute().getProgression().getPreviousArc(arc);
         }
     }
 

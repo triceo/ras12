@@ -58,7 +58,7 @@ public class ItineraryTest extends AbstractItineraryProviderBasedTest {
             }
             results.add(arc);
             remainingTrainLength = remainingTrainLength.subtract(arc.getLength());
-            arc = i.getRoute().getProgression().getPrevious(arc);
+            arc = i.getRoute().getProgression().getPreviousArc(arc);
         }
         if (i.getTrain().isWestbound()) {
             Collections.reverse(results);
@@ -147,7 +147,7 @@ public class ItineraryTest extends AbstractItineraryProviderBasedTest {
             expecteds.put((long) 0, null);
             expecteds.put(totalTime / 2, null);
         }
-        while ((currentArc = r.getProgression().getNext(currentArc)) != null) {
+        while ((currentArc = r.getProgression().getNextArc(currentArc)) != null) {
             // account for possible maintenance windows
             final Node n = currentArc.getOrigin(r);
             if (!this.itinerary.isNodeOnRoute(n)) { // sometimes a train doesn't start at the beginning of a route

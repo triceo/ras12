@@ -27,6 +27,10 @@ public class ArcProgression implements Directed {
     private final SortedMap<BigDecimal, Arc> milestones         = new TreeMap<BigDecimal, Arc>();
     private final Map<Node, Arc>             arcsPerOrigin      = new LinkedHashMap<Node, Arc>();
     private final Map<Node, Arc>             arcsPerDestination = new LinkedHashMap<Node, Arc>();
+    private final Map<Arc, Arc>              nextArcs           = new LinkedHashMap<Arc, Arc>();
+    private final Map<Arc, Arc>              previousArcs       = new LinkedHashMap<Arc, Arc>();
+    private final Map<Node, Node>            nextNodes          = new LinkedHashMap<Node, Node>();
+    private final Map<Node, Node>            previousNodes      = new LinkedHashMap<Node, Node>();
     private final Map<Arc, Boolean>          isArcPreferred     = new LinkedHashMap<Arc, Boolean>();
     private final List<Node>                 nodes              = new ArrayList<Node>();
     private final Collection<Node>           waitPoints;
@@ -56,16 +60,26 @@ public class ArcProgression implements Directed {
         }
         // cache information about nodes related to arcs
         BigDecimal milestone = BigDecimal.ZERO;
+        Arc previousArc = null;
         for (final Arc a : this.orderedArcs) {
             this.milestones.put(milestone, a);
             this.arcsPerOrigin.put(a.getOrigin(this), a);
             this.arcsPerDestination.put(a.getDestination(this), a);
+            this.previousArcs.put(a, previousArc);
+            this.nextArcs.put(previousArc, a);
+            this.nextNodes.put(a.getOrigin(this), a.getDestination(this));
+            this.previousNodes.put(a.getDestination(this), a.getOrigin(this));
             this.nodes.add(a.getOrigin(this));
             milestone = milestone.add(a.getLength());
+            previousArc = a;
         }
         this.length = milestone;
         this.isEmpty = this.orderedArcs.size() == 0;
         if (!this.isEmpty) {
+            this.previousNodes.put(this.getOrigin().getOrigin(this), null);
+            this.nextNodes.put(this.getDestination().getDestination(this), null);
+            this.previousArcs.put(this.getOrigin(), null);
+            this.nextArcs.put(this.getDestination(), null);
             this.nodes.add(this.getDestination().getDestination(this));
         }
         // determine whether a particular arc is preferred
@@ -123,7 +137,7 @@ public class ArcProgression implements Directed {
             return this.isWestbound();
         } else {
             // preference of SIDING/SWITCH/CROSSOVER is based on which track are those coming off of
-            final Arc previousArc = this.getPrevious(a);
+            final Arc previousArc = this.getPreviousArc(a);
             if (previousArc == null) {
                 return true;
             } else {
@@ -155,7 +169,8 @@ public class ArcProgression implements Directed {
             if (a == null) {
                 throw new IllegalArgumentException(end + " not in progression.");
             }
-            this.distanceCache.put(end, this.getDistance(this.getPrevious(end)).add(a.getLength()));
+            this.distanceCache.put(end,
+                    this.getDistance(this.getPreviousNode(end)).add(a.getLength()));
             return this.distanceCache.get(end);
         }
     }
@@ -164,36 +179,29 @@ public class ArcProgression implements Directed {
         return this.length;
     }
 
-    public Arc getNext(final Arc a) {
+    public Arc getNextArc(final Arc a) {
         if (this.isEmpty) {
             throw new IllegalArgumentException("No next arc on an empty route.");
         } else if (a == null) {
             return this.getOrigin();
         }
-        final int indexOf = this.orderedArcs.indexOf(a);
-        if (indexOf < 0) {
-            throw new IllegalArgumentException("Arc not in the progression!");
-        } else if (indexOf == this.orderedArcs.size() - 1) {
-            return null;
+        if (this.nextArcs.containsKey(a)) {
+            return this.nextArcs.get(a);
         } else {
-            return this.orderedArcs.get(indexOf + 1);
+            throw new IllegalArgumentException(a + " not in the progression!");
         }
-
     }
 
-    public Node getNext(final Node n) {
+    public Node getNextNode(final Node n) {
         if (this.isEmpty) {
             throw new IllegalArgumentException("No next node on an empty route.");
         } else if (n == null) {
             return this.getOrigin().getOrigin(this);
         }
-        final int indexOf = this.nodes.indexOf(n);
-        if (indexOf < 0) {
-            throw new IllegalArgumentException("Node not in the progression!");
-        } else if (indexOf == this.nodes.size() - 1) {
-            return null;
+        if (this.nextNodes.containsKey(n)) {
+            return this.nextNodes.get(n);
         } else {
-            return this.nodes.get(indexOf + 1);
+            throw new IllegalArgumentException(n + " not in the progression!");
         }
     }
 
@@ -226,7 +234,7 @@ public class ArcProgression implements Directed {
         }
         while (leftToOccupy.signum() > 0) {
             // now occupy every other arc for as long as necessary
-            currentArc = this.getPrevious(currentArc);
+            currentArc = this.getPreviousArc(currentArc);
             if (currentArc == null) {
                 break;
             }
@@ -250,35 +258,29 @@ public class ArcProgression implements Directed {
         return this.orderedArcs.get(0);
     }
 
-    public Arc getPrevious(final Arc a) {
+    public Arc getPreviousArc(final Arc a) {
         if (this.isEmpty) {
             throw new IllegalArgumentException("No previous arc on an empty route.");
         } else if (a == null) {
             return this.getDestination();
         }
-        final int indexOf = this.orderedArcs.indexOf(a);
-        if (indexOf < 0) {
-            throw new IllegalArgumentException("Arc not in the progression!");
-        } else if (indexOf == 0) {
-            return null;
+        if (this.previousArcs.containsKey(a)) {
+            return this.previousArcs.get(a);
         } else {
-            return this.orderedArcs.get(indexOf - 1);
+            throw new IllegalArgumentException(a + " not in the progression!");
         }
     }
 
-    public Node getPrevious(final Node n) {
+    public Node getPreviousNode(final Node n) {
         if (this.isEmpty) {
             throw new IllegalArgumentException("No previous node on an empty route.");
         } else if (n == null) {
             return this.getDestination().getDestination(this);
         }
-        final int indexOf = this.nodes.indexOf(n);
-        if (indexOf < 0) {
-            throw new IllegalArgumentException("Node not in the progression!");
-        } else if (indexOf == 0) {
-            return null;
+        if (this.previousNodes.containsKey(n)) {
+            return this.previousNodes.get(n);
         } else {
-            return this.nodes.get(indexOf - 1);
+            throw new IllegalArgumentException(n + " not in the progression!");
         }
     }
 
