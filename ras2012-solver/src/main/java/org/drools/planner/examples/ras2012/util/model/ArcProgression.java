@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -32,6 +33,8 @@ public class ArcProgression implements Directed {
     private final boolean                    isEastbound;
     private final boolean                    isEmpty;
     private final BigDecimal                 length;
+
+    private final Map<Node, BigDecimal>      distanceCache      = new HashMap<Node, BigDecimal>();
 
     public ArcProgression(final Directed directed, final Arc... arcs) {
         this(directed, Arrays.asList(arcs));
@@ -141,33 +144,20 @@ public class ArcProgression implements Directed {
     }
 
     public BigDecimal getDistance(final Node end) {
-        final Node start = this.getOrigin().getOrigin(this);
-        return this.getDistance(start, end);
-    }
-
-    public BigDecimal getDistance(final Node start, final Node end) {
-        if (start == end) {
+        final BigDecimal cached = this.distanceCache.get(end);
+        if (cached != null) {
+            return cached;
+        }
+        if (end == this.getOrigin().getOrigin(this)) {
             return BigDecimal.ZERO;
+        } else {
+            final Arc a = this.arcsPerDestination.get(end);
+            if (a == null) {
+                throw new IllegalArgumentException(end + " not in progression.");
+            }
+            this.distanceCache.put(end, this.getDistance(this.getPrevious(end)).add(a.getLength()));
+            return this.distanceCache.get(end);
         }
-        // locate nodes in the collection
-        final int startIndex = this.nodes.indexOf(start);
-        if (startIndex < 0) {
-            throw new IllegalArgumentException(start + " not in progression.");
-        }
-        final int endIndex = this.nodes.indexOf(end);
-        if (endIndex < 0) {
-            throw new IllegalArgumentException(end + " not in progression.");
-        }
-        // make sure they are in a proper order
-        final int startWith = Math.min(startIndex, endIndex);
-        final int endWith = Math.max(startIndex, endIndex);
-        // and then retrieve the actual distance
-        BigDecimal result = BigDecimal.ZERO;
-        for (int i = startWith; i < endWith; i++) {
-            final Arc a = this.getWithOriginNode(this.nodes.get(i));
-            result = result.add(a.getLength());
-        }
-        return result;
     }
 
     public BigDecimal getLength() {
