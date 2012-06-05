@@ -2,7 +2,7 @@ package org.drools.planner.examples.ras2012;
 
 import java.io.File;
 
-import org.drools.planner.benchmark.api.ProblemIO;
+import org.drools.planner.core.solution.ProblemIO;
 import org.drools.planner.core.solution.Solution;
 import org.drools.planner.examples.ras2012.util.SolutionIO;
 
