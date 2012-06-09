@@ -89,7 +89,12 @@ public final class Itinerary extends Visualizable {
     }
 
     private void cacheSchedule() {
+        if (this.scheduleCacheValid.get()) {
+            return;
+        }
         this.delay = 0;
+        this.scheduleCache.clear();
+        this.scheduleCacheWithArcs.clear();
         int i = 0;
         long previousTime = 0;
         Arc previousArc = null;
@@ -180,9 +185,7 @@ public final class Itinerary extends Visualizable {
     }
 
     public long getDelay() {
-        if (!this.scheduleCacheValid.get() || this.scheduleCache.size() == 0) {
-            this.cacheSchedule();
-        }
+        this.cacheSchedule();
         return this.delay;
     }
 
@@ -272,16 +275,12 @@ public final class Itinerary extends Visualizable {
     }
 
     public SortedMap<Long, Node> getSchedule() {
-        if (!this.scheduleCacheValid.get() || this.scheduleCache.size() == 0) {
-            this.cacheSchedule();
-        }
+        this.cacheSchedule();
         return Collections.unmodifiableSortedMap(this.scheduleCache);
     }
 
     public SortedMap<Long, Arc> getScheduleWithArcs() {
-        if (!this.scheduleCacheValid.get() || this.scheduleCache.size() == 0) {
-            this.cacheSchedule();
-        }
+        this.cacheSchedule();
         return Collections.unmodifiableSortedMap(this.scheduleCacheWithArcs);
     }
 
@@ -331,8 +330,7 @@ public final class Itinerary extends Visualizable {
     }
 
     private void invalidateCaches() {
-        this.scheduleCache.clear();
-        this.scheduleCacheWithArcs.clear();
+        this.scheduleCacheValid.set(false);
     }
 
     public boolean isNodeOnRoute(final Node n) {
