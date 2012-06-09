@@ -142,8 +142,8 @@ public class OccupationTracker {
         @Override
         public String toString() {
             final StringBuilder builder = new StringBuilder();
-            builder.append("ArcRange [arc=").append(this.arc).append(", start=").append(this.start)
-                    .append(", end=").append(this.end).append("]");
+            builder.append("ArcRange [arc=").append(this.arc.getId()).append(", start=")
+                    .append(this.start).append(", end=").append(this.end).append("]");
             return builder.toString();
         }
 
@@ -263,6 +263,13 @@ public class OccupationTracker {
 
     public boolean isEmpty() {
         return this.isEmpty;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder builder2 = new StringBuilder();
+        builder2.append("OccupationTracker [ranges=").append(this.ranges).append("]");
+        return builder2.toString();
     }
 
 }

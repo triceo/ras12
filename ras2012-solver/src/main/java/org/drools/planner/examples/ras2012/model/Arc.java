@@ -44,6 +44,10 @@ public class Arc extends Section {
         return this.id == other.id;
     }
 
+    public int getId() {
+        return this.id;
+    }
+
     public BigDecimal getLength() {
         return this.lengthInMiles;
     }
