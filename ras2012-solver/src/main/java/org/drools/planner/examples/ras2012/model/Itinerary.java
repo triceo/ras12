@@ -207,23 +207,20 @@ public final class Itinerary extends Visualizable {
         }
     }
 
-    public long getLeaveTime() {
-        return this.getLeaveTime(this.getSchedule().get(this.getSchedule().lastKey()));
-    }
-
     public long getLeaveTime(final Arc a) {
-        return this.getLeaveTime(a.getDestination(this.getTrain())) + 1;
+        Arc nextArc = this.route.getProgression().getNextArc(a);
+        if (nextArc == null) {
+            return this.getArrivalTime();
+        }
+        return this.getArrivalTime(nextArc);
     }
 
     public long getLeaveTime(final Node n) {
-        if (n == null) {
-            throw new IllegalArgumentException("Node cannot be null.");
+        Node nextNode = this.route.getProgression().getNextNode(n);
+        if (nextNode == null) {
+            return this.getArrivalTime();
         }
-        final long arrival = this.getArrivalTime(n);
-        final Arc a = this.getRoute().getProgression().getWithDestinationNode(n);
-        final long travel = Converter.getTimeFromSpeedAndDistance(
-                this.getTrain().getMaximumSpeed(a.getTrack()), this.getTrain().getLength());
-        return arrival + travel;
+        return this.getArrivalTime(nextNode);
     }
 
     public Map<Node, MaintenanceWindow> getMaintenances() {
