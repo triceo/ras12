@@ -57,7 +57,7 @@ public class ItineraryAssignmentTest extends AbstractItineraryProviderBasedTest 
         ia.setRoute(this.expectedRoute);
         final ItineraryAssignment ia2 = ia.clone();
         Assert.assertNotSame(ia2, ia);
-        Assert.assertSame(ia.getItinerary(), ia2.getItinerary());
+        Assert.assertNotSame(ia.getItinerary(), ia2.getItinerary());
     }
 
     @Test
