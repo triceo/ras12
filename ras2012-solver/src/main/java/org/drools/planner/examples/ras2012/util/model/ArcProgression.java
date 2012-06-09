@@ -230,7 +230,7 @@ public class ArcProgression implements Directed {
         BigDecimal leftToOccupy = backtrack.subtract(occupied);
         Arc currentArc = this.milestones.get(endingWith);
         if (!leftToOccupy.equals(backtrack)) { // something has been occupied
-            b.addTo(currentArc, occupied);
+            b.addWhole(currentArc);
         }
         while (leftToOccupy.signum() > 0) {
             // now occupy every other arc for as long as necessary
@@ -238,14 +238,8 @@ public class ArcProgression implements Directed {
             if (currentArc == null) {
                 break;
             }
-            if (leftToOccupy.compareTo(currentArc.getLength()) < 0) {
-                // can no longer occupy the whole arc
-                b.addFrom(currentArc, currentArc.getLength().subtract(leftToOccupy));
-                break;
-            } else {
-                // occupy the whole arc and continue to another
-                b.addWhole(currentArc);
-            }
+            // occupy the whole arc and continue to another
+            b.addWhole(currentArc);
             leftToOccupy = leftToOccupy.subtract(currentArc.getLength());
         }
         return b.build();
