@@ -272,7 +272,7 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
         final Train t = ia.getTrain();
         final long trainEntryTime = Math.max(0, i.getArrivalTime(i.getTrain().getOrigin()));
         final long startingTime = Math.max(trainEntryTime, this.getFirstChangeTime(i));
-        final long endingTime = Math.min(i.getLeaveTime(t.getDestination()), horizon);
+        final long endingTime = Math.min(i.getArrivalTime(t.getDestination()), horizon);
         if (this.talk) {
             ScoreCalculator.logger.trace("Calculating occupied arcs for {}, range <{}, {}> ms.",
                     new Object[] { ia, startingTime, endingTime });

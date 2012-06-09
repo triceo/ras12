@@ -128,7 +128,7 @@ public final class Itinerary extends Visualizable {
             this.delay += time - preDelaying; // difference between 'preDelaying' is a sum of MOWs and WTs
             // and store
             this.scheduleCache.put(time, n);
-            this.scheduleCacheWithArcs.put(time + 1, currentArc);
+            this.scheduleCacheWithArcs.put(time, currentArc);
             previousTime = time;
             previousArc = currentArc;
             i++;
@@ -213,7 +213,7 @@ public final class Itinerary extends Visualizable {
     public long getLeaveTime(final Arc a) {
         Arc nextArc = this.route.getProgression().getNextArc(a);
         if (nextArc == null) {
-            return this.getArrivalTime();
+            return -1;
         }
         return this.getArrivalTime(nextArc);
     }
@@ -221,7 +221,7 @@ public final class Itinerary extends Visualizable {
     public long getLeaveTime(final Node n) {
         Node nextNode = this.route.getProgression().getNextNode(n);
         if (nextNode == null) {
-            return this.getArrivalTime();
+            return -1;
         }
         return this.getArrivalTime(nextNode);
     }
