@@ -2,6 +2,7 @@ package org.drools.planner.examples.ras2012.model;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 
 import org.drools.planner.api.domain.entity.PlanningEntity;
 import org.drools.planner.api.domain.variable.PlanningVariable;
@@ -36,10 +37,12 @@ public final class ItineraryAssignment implements Cloneable {
 
     @Override
     public ItineraryAssignment clone() {
-        final ItineraryAssignment ia = new ItineraryAssignment(this.train, this.maintenances);
-        ia.route = this.route;
-        ia.itinerary = this.itinerary;
-        return ia;
+        final ItineraryAssignment clone = new ItineraryAssignment(this.train, this.maintenances);
+        clone.setRoute(this.route);
+        for (final Map.Entry<Node, WaitTime> entry : this.getItinerary().getWaitTimes().entrySet()) {
+            clone.getItinerary().setWaitTime(entry.getKey(), entry.getValue());
+        }
+        return clone;
     }
 
     public Itinerary getItinerary() {
