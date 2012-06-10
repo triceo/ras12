@@ -17,6 +17,7 @@ import org.drools.planner.examples.ras2012.model.Node;
 import org.drools.planner.examples.ras2012.model.Train;
 import org.drools.planner.examples.ras2012.util.ConflictRegistry;
 import org.drools.planner.examples.ras2012.util.Converter;
+import org.drools.planner.examples.ras2012.util.EntryRegistry;
 import org.drools.planner.examples.ras2012.util.model.OccupationTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +55,8 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
     private final Map<Train, Integer> unpreferredTracksPenalties = new HashMap<Train, Integer>();
 
     private ConflictRegistry          conflicts;
+
+    private EntryRegistry             entries;
 
     public ScoreCalculator() {
         this(false);
@@ -121,7 +124,7 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
             penalty += this.scheduleAdherencePenalties.get(t);
             penalty += this.unpreferredTracksPenalties.get(t);
         }
-        final int conflicts = this.conflicts.countConflicts();
+        final int conflicts = this.entries.countConflicts() + this.conflicts.countConflicts();
         return DefaultHardAndSoftScore.valueOf(-conflicts, -penalty);
     }
 
@@ -133,6 +136,7 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
         this.conflicts = new ConflictRegistry(
                 (int) this.solution.getPlanningHorizon(TimeUnit.MINUTES)
                         * ScoreCalculator.OCCUPATION_CHECKS_PER_MINUTE + 1);
+        this.entries = new EntryRegistry(Node.count());
     }
 
     public int getDelayPenalty(final Itinerary i) {
@@ -254,6 +258,19 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
         this.wantTimePenalties.put(t, this.getWantTimePenalty(i));
         this.delayPenalties.put(t, this.getDelayPenalty(i));
         this.recalculateOccupiedArcs(ia);
+        this.recalculateEntries(ia);
+    }
+
+    private void recalculateEntries(final ItineraryAssignment ia) {
+        final Train t = ia.getTrain();
+        final Itinerary i = ia.getItinerary();
+        this.entries.resetTimes(t);
+        for (final Node n : ia.getRoute().getProgression().getNodes()) {
+            if (!i.isNodeOnRoute(n)) {
+                continue;
+            }
+            this.entries.setTimes(n, t, i.getArrivalTime(n), i.getLeaveTime(n));
+        }
     }
 
     /**

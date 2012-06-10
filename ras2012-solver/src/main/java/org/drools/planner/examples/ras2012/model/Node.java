@@ -12,6 +12,10 @@ public class Node implements Comparable<Node> {
 
     private static final Map<Integer, Node> nodes = new HashMap<Integer, Node>();
 
+    public static int count() {
+        return Node.nodes.size();
+    }
+
     public static synchronized Node getNode(final int id) {
         if (id < 0) {
             throw new IllegalArgumentException("Node ID cannot be less than zero!");
