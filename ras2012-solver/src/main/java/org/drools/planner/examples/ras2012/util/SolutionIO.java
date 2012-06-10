@@ -338,8 +338,8 @@ public class SolutionIO {
             }
             map.put("origin", arc.getOrigin(t).getId());
             map.put("destination", arc.getDestination(t).getId());
-            map.put("entry", timeInSeconds.toString());
-            map.put("exit", leaveTime.toString());
+            map.put("entry", timeInSeconds);
+            map.put("exit", leaveTime);
             set.add(map);
         }
         return set;
