@@ -122,11 +122,7 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
             penalty += this.unpreferredTracksPenalties.get(t);
         }
         final int conflicts = this.conflicts.countConflicts();
-        if (conflicts > 0) {
-            return DefaultHardAndSoftScore.valueOf(-conflicts, -penalty);
-        } else {
-            return DefaultHardAndSoftScore.valueOf(0, -penalty);
-        }
+        return DefaultHardAndSoftScore.valueOf(-conflicts, -penalty);
     }
 
     private void clearEveryCache() {
