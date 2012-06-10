@@ -14,14 +14,14 @@ public class ConflictRegistry {
 
         private final Map<Train, OccupationTracker> occupiedArcsByTrain = new HashMap<Train, OccupationTracker>();
         private final List<OccupationTracker>       occupiedArcs        = new ArrayList<OccupationTracker>();
-        private double                              cache               = Double.MAX_VALUE;
+        private int                                 cache               = Integer.MAX_VALUE;
         private boolean                             isCacheValid        = false;
 
-        public double getConflicts() {
+        public int getConflicts() {
             if (this.isCacheValid) {
                 return this.cache;
             }
-            double conflicts = 0;
+            int conflicts = 0;
             final int size = this.occupiedArcs.size();
             for (int position = 0; position < size; position++) {
                 final OccupationTracker left = this.occupiedArcs.get(position);
@@ -82,14 +82,14 @@ public class ConflictRegistry {
     }
 
     public int countConflicts() {
-        double conflicts = 0;
+        int conflicts = 0;
         for (final ConflictRegistryItem item : this.items) {
             if (item == null) {
                 continue;
             }
             conflicts += item.getConflicts();
         }
-        return (int) Math.round(conflicts);
+        return conflicts;
     }
 
     public void setOccupiedArcs(final Long time, final Train t, final OccupationTracker occupiedArcs) {

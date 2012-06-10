@@ -86,7 +86,7 @@ public class OccupationTracker {
             return this.arc;
         }
 
-        public double getConflictingMileage(final ArcRange other) {
+        public int getConflictingMileage(final ArcRange other) {
             if (this.getArc() != other.getArc()) {
                 // ranges cannot conflict when they're of two different arcs
                 return 0;
@@ -98,7 +98,7 @@ public class OccupationTracker {
                 return 0;
             } else if (this.isFull() && other.isFull()) {
                 // full conflict
-                return this.getArc().getLength().doubleValue();
+                return this.getArc().getLength().setScale(0, BigDecimal.ROUND_UP).intValue();
             } else {
                 // we need to calculate the actual conflicting range
                 final BigDecimal start = this.getStart().max(other.getStart());
@@ -108,7 +108,7 @@ public class OccupationTracker {
                     // ranges don't overlap
                     return 0;
                 } else {
-                    return result.doubleValue();
+                    return result.setScale(0, BigDecimal.ROUND_UP).intValue();
                 }
             }
         }
@@ -233,11 +233,11 @@ public class OccupationTracker {
         return new EqualsBuilder().append(this.ranges, rhs.ranges).isEquals();
     }
 
-    public double getConflictingMileage(final OccupationTracker other) {
+    public int getConflictingMileage(final OccupationTracker other) {
         if (this.isEmpty() || other.isEmpty()) {
             return 0;
         }
-        double mileage = 0;
+        int mileage = 0;
         for (final Arc a : this.getIncludedArcs()) {
             final ArcRange r2 = other.ranges.get(a);
             if (r2 == null || r2.isEmpty()) {
