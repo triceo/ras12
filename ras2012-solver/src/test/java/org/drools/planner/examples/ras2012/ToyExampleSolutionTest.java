@@ -90,7 +90,7 @@ public class ToyExampleSolutionTest {
 
     @Test
     public void testTrainA1Times() {
-        Itinerary i = SOLUTION.getAssignment(this.locateTrain("A1")).getItinerary();
+        final Itinerary i = this.SOLUTION.getAssignment(this.locateTrain("A1")).getItinerary();
         Assert.assertEquals(1200000, i.getArrivalTime(Node.getNode(0)));
         Assert.assertEquals(2010000, i.getArrivalTime(Node.getNode(1)));
         Assert.assertEquals(2055000, i.getArrivalTime(Node.getNode(3)));
@@ -113,7 +113,7 @@ public class ToyExampleSolutionTest {
 
     @Test
     public void testTrainB1Times() {
-        Itinerary i = SOLUTION.getAssignment(this.locateTrain("B1")).getItinerary();
+        final Itinerary i = this.SOLUTION.getAssignment(this.locateTrain("B1")).getItinerary();
         Assert.assertEquals(1200000, i.getArrivalTime(Node.getNode(12)));
         Assert.assertEquals(2410084, i.getArrivalTime(Node.getNode(11)));
         Assert.assertEquals(2482084, i.getArrivalTime(Node.getNode(10)));
@@ -138,7 +138,7 @@ public class ToyExampleSolutionTest {
 
     @Test
     public void testTrainC1Times() {
-        Itinerary i = SOLUTION.getAssignment(this.locateTrain("C1")).getItinerary();
+        final Itinerary i = this.SOLUTION.getAssignment(this.locateTrain("C1")).getItinerary();
         Assert.assertEquals(2310000, i.getArrivalTime(Node.getNode(0)));
         Assert.assertEquals(3390000, i.getArrivalTime(Node.getNode(1)));
         Assert.assertEquals(3462000, i.getArrivalTime(Node.getNode(2)));

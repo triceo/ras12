@@ -211,7 +211,7 @@ public final class Itinerary extends Visualizable {
     }
 
     public long getLeaveTime(final Arc a) {
-        Arc nextArc = this.route.getProgression().getNextArc(a);
+        final Arc nextArc = this.route.getProgression().getNextArc(a);
         if (nextArc == null) {
             return -1;
         }
@@ -219,7 +219,7 @@ public final class Itinerary extends Visualizable {
     }
 
     public long getLeaveTime(final Node n) {
-        Node nextNode = this.route.getProgression().getNextNode(n);
+        final Node nextNode = this.route.getProgression().getNextNode(n);
         if (nextNode == null) {
             return -1;
         }
