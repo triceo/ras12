@@ -262,7 +262,7 @@ public class SolutionIO {
         final boolean isInHorizon = arrival <= horizon;
         final Map stop = new HashMap();
         stop.put("node", n.getId());
-        stop.put("arrive", SolutionIO.convertMillisToSeconds(arrival));
+        stop.put("arrive", SolutionIO.convertMillisToSeconds(arrival).stripTrailingZeros());
         if (t.getScheduleAdherenceRequirements().containsKey(n)) {
             final long wantTime = t.getScheduleAdherenceRequirements().get(n)
                     .getTimeSinceStartOfWorld(TimeUnit.MILLISECONDS);
@@ -306,8 +306,8 @@ public class SolutionIO {
             final Itinerary i = solution.getAssignment(t).getItinerary();
             if (i.getArrivalTime() <= solution.getPlanningHorizon(TimeUnit.MILLISECONDS)) {
                 final BigDecimal timeInSeconds = SolutionIO.convertMillisToSeconds(i
-                        .getArrivalTime(t.getDestination()) - 1);
-                map.put("destinationEntry", timeInSeconds.toString());
+                        .getArrivalTime(t.getDestination()));
+                map.put("destinationEntry", timeInSeconds.stripTrailingZeros());
             }
             set.add(map);
         }
@@ -322,15 +322,17 @@ public class SolutionIO {
         for (final SortedMap.Entry<Long, Arc> entry : i.getScheduleWithArcs().entrySet()) {
             final Map map = new HashMap();
             final Arc arc = entry.getValue();
-            if (arc == null) {
+            if (arc.getDestination(t) == t.getDestination()) {
                 // this is the move into the destination; ignore here, handle elsewhere
-                continue;
+                break;
             }
             if (entry.getKey() >= horizon) {
                 continue;
             }
-            final BigDecimal timeInSeconds = SolutionIO.convertMillisToSeconds(entry.getKey() - 1);
-            final BigDecimal leaveTime = SolutionIO.convertMillisToSeconds(i.getLeaveTime(arc));
+            final BigDecimal timeInSeconds = SolutionIO.convertMillisToSeconds(
+                    i.getArrivalTime(arc)).stripTrailingZeros();
+            final BigDecimal leaveTime = SolutionIO.convertMillisToSeconds(i.getLeaveTime(arc))
+                    .stripTrailingZeros();
             if (leaveTime.intValue() > horizon) {
                 continue;
             }
