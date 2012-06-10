@@ -36,7 +36,7 @@ public class App {
             targetFolder.mkdirs();
         }
         sol = (ProblemSolution) solver.getBestSolution();
-        final HardAndSoftScore score = App.recaculateScore(sol);
+        final HardAndSoftScore score = sol.getScore();
         if (score.getHardScore() >= 0) { // don't write score that isn't feasible
             io.writeXML(sol, new File(targetFolder, f.getName() + score.getSoftScore() + ".xml"));
             io.writeTex(sol, new File(targetFolder, f.getName() + score.getSoftScore() + ".tex"));
@@ -46,9 +46,4 @@ public class App {
         }
     }
 
-    private static HardAndSoftScore recaculateScore(final ProblemSolution solution) {
-        final ScoreCalculator calc = new ScoreCalculator();
-        calc.resetWorkingSolution(solution);
-        return calc.calculateScore();
-    }
 }
