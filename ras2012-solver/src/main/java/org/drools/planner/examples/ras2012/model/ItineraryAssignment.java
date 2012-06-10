@@ -38,10 +38,12 @@ public final class ItineraryAssignment implements Cloneable {
     @Override
     public ItineraryAssignment clone() {
         final ItineraryAssignment clone = new ItineraryAssignment(this.train, this.maintenances);
-        clone.setRoute(this.route);
+        clone.route = this.route;
+        clone.itinerary = new Itinerary(this.route, this.train, this.maintenances);
         for (final Map.Entry<Node, WaitTime> entry : this.getItinerary().getWaitTimes().entrySet()) {
-            clone.getItinerary().setWaitTime(entry.getKey(), entry.getValue());
+            clone.itinerary.setWaitTime(entry.getKey(), entry.getValue());
         }
+        clone.itinerary.resetLatestWaitTimeChange();
         return clone;
     }
 
