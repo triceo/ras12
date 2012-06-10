@@ -20,11 +20,11 @@ public class OccupationTrackerArcRangeTest {
     private static final class TestInfo {
 
         private final BigDecimal start1, start2, end1, end2;
-        private final double     result;
+        private final int        result;
         private final String     description;
 
         public TestInfo(final int start1, final int start2, final int end1, final int end2,
-                final double result, final String description) {
+                final int result, final String description) {
             this.start1 = BigDecimal.valueOf(start1);
             this.start2 = BigDecimal.valueOf(start2);
             this.end1 = BigDecimal.valueOf(end1);
@@ -50,7 +50,7 @@ public class OccupationTrackerArcRangeTest {
             return this.start1.max(this.start2.max(this.end1.max(this.end2)));
         }
 
-        public double getResult() {
+        public int getResult() {
             return this.result;
         }
 
@@ -68,31 +68,29 @@ public class OccupationTrackerArcRangeTest {
     public static Collection<Object[]> getInput() {
         final Collection<Object[]> infos = new LinkedList<Object[]>();
         // ranges may overlap; all combinations possible
-        infos.add(new Object[] { new TestInfo(1, 0, 2, 3, 1.0, "start1 > start2,end1 < end2") });
-        infos.add(new Object[] { new TestInfo(0, 0, 2, 3, 2.0, "start1 = start2,end1 < end2") });
-        infos.add(new Object[] { new TestInfo(0, 1, 2, 3, 1.0, "start1 < start2,end1 < end2") });
-        infos.add(new Object[] { new TestInfo(1, 0, 2, 2, 1.0, "start1 > start2,end1 = end2") });
-        infos.add(new Object[] { new TestInfo(0, 0, 2, 2, 2.0, "start1 = start2,end1 = end2") });
-        infos.add(new Object[] { new TestInfo(0, 1, 2, 2, 1.0, "start1 < start2,end1 = end2") });
-        infos.add(new Object[] { new TestInfo(1, 0, 3, 2, 1.0, "start1 > start2,end1 > end2") });
-        infos.add(new Object[] { new TestInfo(0, 0, 3, 2, 2.0, "start1 = start2,end1 > end2") });
-        infos.add(new Object[] { new TestInfo(0, 1, 3, 2, 1.0, "start1 < start2,end1 > end2") });
+        infos.add(new Object[] { new TestInfo(1, 0, 2, 3, 1, "start1 > start2,end1 < end2") });
+        infos.add(new Object[] { new TestInfo(0, 0, 2, 3, 2, "start1 = start2,end1 < end2") });
+        infos.add(new Object[] { new TestInfo(0, 1, 2, 3, 1, "start1 < start2,end1 < end2") });
+        infos.add(new Object[] { new TestInfo(1, 0, 2, 2, 1, "start1 > start2,end1 = end2") });
+        infos.add(new Object[] { new TestInfo(0, 0, 2, 2, 2, "start1 = start2,end1 = end2") });
+        infos.add(new Object[] { new TestInfo(0, 1, 2, 2, 1, "start1 < start2,end1 = end2") });
+        infos.add(new Object[] { new TestInfo(1, 0, 3, 2, 1, "start1 > start2,end1 > end2") });
+        infos.add(new Object[] { new TestInfo(0, 0, 3, 2, 2, "start1 = start2,end1 > end2") });
+        infos.add(new Object[] { new TestInfo(0, 1, 3, 2, 1, "start1 < start2,end1 > end2") });
         // ranges don't overlap; some combinations are impossible
-        infos.add(new Object[] { new TestInfo(0, 2, 1, 3, 0.0,
-                "overlap, start1 < start2,end1 < end2") });
-        infos.add(new Object[] { new TestInfo(2, 0, 3, 1, 0.0,
-                "overlap, start1 > start2,end1 > end2") });
+        infos.add(new Object[] { new TestInfo(0, 2, 1, 3, 0, "overlap, start1 < start2,end1 < end2") });
+        infos.add(new Object[] { new TestInfo(2, 0, 3, 1, 0, "overlap, start1 > start2,end1 > end2") });
         // ranges are equal; only one combination possible
-        infos.add(new Object[] { new TestInfo(0, 0, 0, 0, 0.0, "equal, start1 = start2,end1 = end2") });
-        infos.add(new Object[] { new TestInfo(0, 0, 1, 1, 1.0, "equal, start1 = start2,end1 = end2") });
-        infos.add(new Object[] { new TestInfo(0, 0, 2, 2, 2.0, "equal, start1 = start2,end1 = end2") });
+        infos.add(new Object[] { new TestInfo(0, 0, 0, 0, 0, "equal, start1 = start2,end1 = end2") });
+        infos.add(new Object[] { new TestInfo(0, 0, 1, 1, 1, "equal, start1 = start2,end1 = end2") });
+        infos.add(new Object[] { new TestInfo(0, 0, 2, 2, 2, "equal, start1 = start2,end1 = end2") });
         // ranges touch; some combinations are impossible
-        infos.add(new Object[] { new TestInfo(0, 0, 0, 1, 0.0, "touch, start1 = start2,end1 < end2") });
-        infos.add(new Object[] { new TestInfo(0, 1, 1, 2, 0.0, "touch, start1 < start2,end1 < end2") });
-        infos.add(new Object[] { new TestInfo(1, 0, 1, 1, 0.0, "touch, start1 > start2,end1 = end2") });
-        infos.add(new Object[] { new TestInfo(1, 2, 2, 2, 0.0, "touch, start1 < start2,end1 = end2") });
-        infos.add(new Object[] { new TestInfo(1, 0, 2, 1, 0.0, "touch, start1 > start2,end1 > end2") });
-        infos.add(new Object[] { new TestInfo(0, 0, 1, 0, 0.0, "touch, start1 = start2,end1 > end2") });
+        infos.add(new Object[] { new TestInfo(0, 0, 0, 1, 0, "touch, start1 = start2,end1 < end2") });
+        infos.add(new Object[] { new TestInfo(0, 1, 1, 2, 0, "touch, start1 < start2,end1 < end2") });
+        infos.add(new Object[] { new TestInfo(1, 0, 1, 1, 0, "touch, start1 > start2,end1 = end2") });
+        infos.add(new Object[] { new TestInfo(1, 2, 2, 2, 0, "touch, start1 < start2,end1 = end2") });
+        infos.add(new Object[] { new TestInfo(1, 0, 2, 1, 0, "touch, start1 > start2,end1 > end2") });
+        infos.add(new Object[] { new TestInfo(0, 0, 1, 0, 0, "touch, start1 = start2,end1 > end2") });
         return infos;
     }
 
