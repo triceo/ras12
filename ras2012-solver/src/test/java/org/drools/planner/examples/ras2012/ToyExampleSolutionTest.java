@@ -62,15 +62,17 @@ public class ToyExampleSolutionTest {
         final ItineraryAssignment b1Assignment = this.SOLUTION.getAssignment(b1);
         b1Assignment.setRoute(this.locateRoute(5));
         // we must be at node 6 precisely at 5021076
-        long delay = 5021076 - this.getArrivalAtNode(b1Assignment.getItinerary(), Node.getNode(6));
+        long delay = 5316076 - this.getArrivalAtNode(b1Assignment.getItinerary(), Node.getNode(6));
         b1Assignment.getItinerary().setWaitTime(Node.getNode(9),
                 WaitTime.getWaitTime(delay, TimeUnit.MILLISECONDS));
         // prepare C1 according to the example
         final Train c1 = this.locateTrain("C1");
         final ItineraryAssignment c1Assignment = this.SOLUTION.getAssignment(c1);
         c1Assignment.setRoute(this.locateRoute(0));
+        c1Assignment.getItinerary().setWaitTime(Node.getNode(0),
+                WaitTime.getWaitTime(2310000, TimeUnit.MILLISECONDS));
         // we must be at node 6 precisely at 7568664
-        delay = 7568664 - this.getArrivalAtNode(c1Assignment.getItinerary(), Node.getNode(6));
+        delay = 8158664 - this.getArrivalAtNode(c1Assignment.getItinerary(), Node.getNode(6));
         c1Assignment.getItinerary().setWaitTime(Node.getNode(4),
                 WaitTime.getWaitTime(delay, TimeUnit.MILLISECONDS));
         // prepare A1 according to the example
@@ -83,8 +85,7 @@ public class ToyExampleSolutionTest {
     public void testScore() {
         final HardAndSoftScore score = this.getScoreForSolution(this.SOLUTION);
         Assert.assertEquals(0, score.getHardScore());
-        Assert.assertTrue("Account for rounding differences.",
-                score.getSoftScore() < -888 && score.getSoftScore() > -895);
+        Assert.assertEquals(-1014.0, score.getSoftScore(), 5);
     }
 
     @Test
@@ -116,47 +117,47 @@ public class ToyExampleSolutionTest {
         Assert.assertEquals(1200000, i.getArrivalTime(Node.getNode(12)));
         Assert.assertEquals(2410084, i.getArrivalTime(Node.getNode(11)));
         Assert.assertEquals(2482084, i.getArrivalTime(Node.getNode(10)));
-        Assert.assertEquals(3860000, i.getArrivalTime(Node.getNode(9)));
-        Assert.assertEquals(3932000, i.getArrivalTime(Node.getNode(7)));
-        Assert.assertEquals(5021076, i.getArrivalTime(Node.getNode(6)));
-        Assert.assertEquals(6231160, i.getArrivalTime(Node.getNode(5)));
-        Assert.assertEquals(6291664, i.getArrivalTime(Node.getNode(3)));
-        Assert.assertEquals(6352168, i.getArrivalTime(Node.getNode(1)));
-        Assert.assertEquals(7441244, i.getArrivalTime(Node.getNode(0)));
+        Assert.assertEquals(4155000, i.getArrivalTime(Node.getNode(9)));
+        Assert.assertEquals(4227000, i.getArrivalTime(Node.getNode(7)));
+        Assert.assertEquals(5316076, i.getArrivalTime(Node.getNode(6)));
+        Assert.assertEquals(6526160, i.getArrivalTime(Node.getNode(5)));
+        Assert.assertEquals(6586664, i.getArrivalTime(Node.getNode(3)));
+        Assert.assertEquals(6647168, i.getArrivalTime(Node.getNode(1)));
+        Assert.assertEquals(7736244, i.getArrivalTime(Node.getNode(0)));
         Assert.assertEquals(2410084, i.getLeaveTime(Node.getNode(12)));
         Assert.assertEquals(2482084, i.getLeaveTime(Node.getNode(11)));
-        Assert.assertEquals(3860000, i.getLeaveTime(Node.getNode(10)));
-        Assert.assertEquals(3932000, i.getLeaveTime(Node.getNode(9)));
-        Assert.assertEquals(5021076, i.getLeaveTime(Node.getNode(7)));
-        Assert.assertEquals(6231160, i.getLeaveTime(Node.getNode(6)));
-        Assert.assertEquals(6291664, i.getLeaveTime(Node.getNode(5)));
-        Assert.assertEquals(6352168, i.getLeaveTime(Node.getNode(3)));
-        Assert.assertEquals(7441244, i.getLeaveTime(Node.getNode(1)));
+        Assert.assertEquals(4155000, i.getLeaveTime(Node.getNode(10)));
+        Assert.assertEquals(4227000, i.getLeaveTime(Node.getNode(9)));
+        Assert.assertEquals(5316076, i.getLeaveTime(Node.getNode(7)));
+        Assert.assertEquals(6526160, i.getLeaveTime(Node.getNode(6)));
+        Assert.assertEquals(6586664, i.getLeaveTime(Node.getNode(5)));
+        Assert.assertEquals(6647168, i.getLeaveTime(Node.getNode(3)));
+        Assert.assertEquals(7736244, i.getLeaveTime(Node.getNode(1)));
         Assert.assertEquals(-1, i.getLeaveTime(Node.getNode(0)));
     }
 
     @Test
     public void testTrainC1Times() {
         Itinerary i = SOLUTION.getAssignment(this.locateTrain("C1")).getItinerary();
-        Assert.assertEquals(0, i.getArrivalTime(Node.getNode(0)));
-        Assert.assertEquals(1080000, i.getArrivalTime(Node.getNode(1)));
-        Assert.assertEquals(1152000, i.getArrivalTime(Node.getNode(2)));
-        Assert.assertEquals(6296664, i.getArrivalTime(Node.getNode(4)));
-        Assert.assertEquals(6368664, i.getArrivalTime(Node.getNode(5)));
-        Assert.assertEquals(7568664, i.getArrivalTime(Node.getNode(6)));
-        Assert.assertEquals(8648664, i.getArrivalTime(Node.getNode(7)));
-        Assert.assertEquals(8708664, i.getArrivalTime(Node.getNode(8)));
-        Assert.assertEquals(8768664, i.getArrivalTime(Node.getNode(11)));
-        Assert.assertEquals(9968664, i.getArrivalTime(Node.getNode(12)));
-        Assert.assertEquals(1080000, i.getLeaveTime(Node.getNode(0)));
-        Assert.assertEquals(1152000, i.getLeaveTime(Node.getNode(1)));
-        Assert.assertEquals(6296664, i.getLeaveTime(Node.getNode(2)));
-        Assert.assertEquals(6368664, i.getLeaveTime(Node.getNode(4)));
-        Assert.assertEquals(7568664, i.getLeaveTime(Node.getNode(5)));
-        Assert.assertEquals(8648664, i.getLeaveTime(Node.getNode(6)));
-        Assert.assertEquals(8708664, i.getLeaveTime(Node.getNode(7)));
-        Assert.assertEquals(8768664, i.getLeaveTime(Node.getNode(8)));
-        Assert.assertEquals(9968664, i.getLeaveTime(Node.getNode(11)));
+        Assert.assertEquals(2310000, i.getArrivalTime(Node.getNode(0)));
+        Assert.assertEquals(3390000, i.getArrivalTime(Node.getNode(1)));
+        Assert.assertEquals(3462000, i.getArrivalTime(Node.getNode(2)));
+        Assert.assertEquals(6886664, i.getArrivalTime(Node.getNode(4)));
+        Assert.assertEquals(6958664, i.getArrivalTime(Node.getNode(5)));
+        Assert.assertEquals(8158664, i.getArrivalTime(Node.getNode(6)));
+        Assert.assertEquals(9238664, i.getArrivalTime(Node.getNode(7)));
+        Assert.assertEquals(9298664, i.getArrivalTime(Node.getNode(8)));
+        Assert.assertEquals(9358664, i.getArrivalTime(Node.getNode(11)));
+        Assert.assertEquals(10558664, i.getArrivalTime(Node.getNode(12)));
+        Assert.assertEquals(3390000, i.getLeaveTime(Node.getNode(0)));
+        Assert.assertEquals(3462000, i.getLeaveTime(Node.getNode(1)));
+        Assert.assertEquals(6886664, i.getLeaveTime(Node.getNode(2)));
+        Assert.assertEquals(6958664, i.getLeaveTime(Node.getNode(4)));
+        Assert.assertEquals(8158664, i.getLeaveTime(Node.getNode(5)));
+        Assert.assertEquals(9238664, i.getLeaveTime(Node.getNode(6)));
+        Assert.assertEquals(9298664, i.getLeaveTime(Node.getNode(7)));
+        Assert.assertEquals(9358664, i.getLeaveTime(Node.getNode(8)));
+        Assert.assertEquals(10558664, i.getLeaveTime(Node.getNode(11)));
         Assert.assertEquals(-1, i.getLeaveTime(Node.getNode(12)));
     }
 }
