@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plannerBenchmark>
   <parallelBenchmarkCount>AUTO</parallelBenchmarkCount>
-  <solverBenchmarkRankingType>TOTAL_RANKING</solverBenchmarkRankingType>  
   <benchmarkDirectory>data/</benchmarkDirectory>
   <warmUpSecondsSpend>30</warmUpSecondsSpend>
   <inheritedSolverBenchmark>
     <problemBenchmarks>
       <problemIOClass>org.drools.planner.examples.ras2012.RAS2012ProblemIO</problemIOClass>
-      <inputSolutionFile>src/main/resources/org/drools/planner/examples/ras2012/TOY.txt</inputSolutionFile>
       <inputSolutionFile>src/main/resources/org/drools/planner/examples/ras2012/RDS1.txt</inputSolutionFile>
       <inputSolutionFile>src/main/resources/org/drools/planner/examples/ras2012/RDS2.txt</inputSolutionFile>
       <inputSolutionFile>src/main/resources/org/drools/planner/examples/ras2012/RDS3.txt</inputSolutionFile>
@@ -19,10 +17,6 @@
         <scoreDefinitionType>HARD_AND_SOFT</scoreDefinitionType>
         <incrementalScoreCalculatorClass>org.drools.planner.examples.ras2012.ScoreCalculator</incrementalScoreCalculatorClass>
       </scoreDirectorFactory>
-      <termination>
-        <maximumMinutesSpend>3</maximumMinutesSpend>
-        <terminationCompositionStyle>OR</terminationCompositionStyle>
-      </termination>
     </solver>
   </inheritedSolverBenchmark>
 
@@ -31,6 +25,11 @@
     <name>hard${item[0]}-soft${item[1]}</name>
     <solver>
       <localSearch>
+      <termination>
+        <maximumMinutesSpend>3</maximumMinutesSpend>
+        <maximumUnimprovedStepCount>250</maximumUnimprovedStepCount>
+        <terminationCompositionStyle>AND</terminationCompositionStyle>
+      </termination>
         <forager>
           <minimalAcceptedSelection>4</minimalAcceptedSelection>
         </forager>
