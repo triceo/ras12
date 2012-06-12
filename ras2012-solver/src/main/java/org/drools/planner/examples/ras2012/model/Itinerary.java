@@ -170,18 +170,13 @@ public final class Itinerary extends Visualizable {
             throw new IllegalArgumentException("Node cannot be null.");
         }
         final SortedMap<Long, Node> nodeEntryTimes = this.getSchedule();
-        long timeEntered = -1;
         for (final SortedMap.Entry<Long, Node> entry : nodeEntryTimes.entrySet()) {
             if (entry.getValue() == n) {
-                timeEntered = entry.getKey();
-                break;
+                return entry.getKey();
             }
         }
-        if (timeEntered < this.trainEntryTime) {
-            throw new IllegalStateException(
-                    "Proper node cannot be found! Possibly a bug in the algoritm.");
-        }
-        return timeEntered;
+        throw new IllegalStateException(
+                "Proper node cannot be found! Possibly a bug in the algoritm.");
     }
 
     public long getDelay() {
