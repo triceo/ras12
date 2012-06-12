@@ -233,21 +233,26 @@ public class Route extends Visualizable implements Comparable<Route>, Directed {
         }
         // now traverse arcs to make sure every other condition is met
         for (final Arc a : this.progression.getArcs()) {
-            if (a.getTrack() != Track.SIDING) { // we only have rules for sidings
+            final boolean isSiding = a.getTrack() == Track.SIDING;
+            final boolean isSwitch = a.getTrack() == Track.SWITCH;
+            if (!isSwitch && !isSiding) { // we only have rules for sidings/switches
                 continue;
             }
             if (t.isHeavy()) {
                 /*
-                 * heavy trains must never use a siding when there is a meet-pass with another NSA train. this is the easiest
-                 * way to fulfill the requirement.
+                 * heavy trains must never use a siding/switch when there is a meet-pass with another NSA train. this is the
+                 * easiest way to fulfill the requirement.
                  */
                 return false;
             }
-            // hazmat trains disallowed to take sidings
+            // hazmat trains disallowed to take sidings/switches
             if (t.carriesHazardousMaterials()) {
                 return false;
             }
             // make sure the route doesn't contain a siding shorter than the train
+            if (isSwitch) {
+                continue;
+            }
             final int result = a.getLength().compareTo(t.getLength());
             if (result < 0) {
                 return false;
