@@ -9,22 +9,49 @@
 \begin{document}
 
 \maketitle
-\listoffigures
-\listoftables
-\tableofcontents
- 
-\section{Hello...}
 
-...world!
+\begin{abstract}
+This article describes an entry to the 2012 RAS Problem Solving Competition, concerning dispatching on multi-track territories. The entry is based on the Drools Planner, a Java-based solver. On a reasonably recent computer, the resulting algorithm is able to produce feasible results within a minute and has been fine-tuned to provide best results in under 3 minutes. Source code to the entry is open source and well documented.
+\end{abstract}
+
+\section{Introduction}
+
+\section{Describing the solution}
+
+\section{Implementation}
+
+\section{Conclusion}
 
 \appendix
 
 \section{Resolved systems}
 
-\input{RDS1.txt-1582.tex}.
-\input{RDS2.txt-8948.tex}.
-\input{RDS3.txt-11697.tex}.
-\input{TOY.txt-808.tex}.
+In this section, we show the best solutions reached for each data set. All these were reached within 3 minutes in a single-threaded run, using Intel i7 Q820 processor running Fedora 17 and 1 GB of heap space inside Java 7 runtime environment. The specific solver configurations used to reach these solutions may not have been the same every time.
 
+Please note that via the benchmarking functionality of Drools planner (see above), users may be able to fine-tune the algorithm. This fine-tuning can be focused either on providing better solutions or on faster turnaround times.
+
+\include{RDS1.txt-1582}.
+
+\include{RDS2.txt-8948}.
+
+\include{RDS3.txt-11697}.
+
+\include{TOY.txt-808}.
+
+\section{Visualizations}
+
+\begin{figure}
+\centering
+\includegraphics[width=150mm,angle=90]{solution.png}
+\caption{RAS DATA SET TOY example territory. Undirected graph, arcs have descriptions.}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=150mm,angle=90]{B1.png}
+\centering
+\caption{RAS DATA SET TOY example, route of Train B1. Directed graph where green marks the origin, red the destination and blue is where the train is allowed to wait.}
+\end{figure}
+
+In this section, we show examples of visualizations that the solution is capable of providing. These visualizations have been rendered on the fly using the JUNG library\footnote{Java Universal Network/Graph framework, http://jung.sourceforge.net}.
 
 \end{document}
