@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plannerBenchmark>
+  <environmentMode>REPRODUCIBLE</environmentMode>
   <parallelBenchmarkCount>AUTO</parallelBenchmarkCount>
   <benchmarkDirectory>data/</benchmarkDirectory>
   <warmUpSecondsSpend>30</warmUpSecondsSpend>
@@ -22,18 +23,19 @@
 
 <#list sa as item>
   <solverBenchmark>
-    <name>hard${item[0]}-soft${item[1]}</name>
+    <name>hard${item[0]}-soft${item[1]}-selection${item[2]}-tabu${item[3]}</name>
     <solver>
       <localSearch>
       <termination>
         <maximumMinutesSpend>3</maximumMinutesSpend>
-        <maximumUnimprovedStepCount>250</maximumUnimprovedStepCount>
+        <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
         <terminationCompositionStyle>AND</terminationCompositionStyle>
       </termination>
         <forager>
-          <minimalAcceptedSelection>4</minimalAcceptedSelection>
+          <minimalAcceptedSelection>${item[2]}</minimalAcceptedSelection>
         </forager>
         <acceptor>
+          <solutionTabuSize>${item[3]}</solutionTabuSize>
           <simulatedAnnealingStartingTemperature>${item[0]}hard/${item[1]}soft</simulatedAnnealingStartingTemperature>
         </acceptor>
     <selector>

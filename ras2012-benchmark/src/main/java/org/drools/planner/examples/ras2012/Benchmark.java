@@ -15,12 +15,18 @@ public class Benchmark {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private static Map getTemplateData() {
-        int[] hardSA = new int[] { 0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 };
-        int[] softSA = new int[] { 0, 5, 10, 50, 100, 500, 1000, 5000, 10000 };
+        int[] hardSA = new int[] { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 };
+        int[] softSA = new int[] { 10, 100, 1000 };
+        int[] selections = new int[] { 4, 8, 16 };
+        int[] tabus = new int[] { 100, 1000, 10000 };
         Collection<int[]> SAs = new LinkedList<int[]>();
         for (int hard : hardSA) {
             for (int soft : softSA) {
-                SAs.add(new int[] { hard, soft });
+                for (int selection : selections) {
+                    for (int tabu : tabus) {
+                        SAs.add(new int[] { hard, soft, selection, tabu });
+                    }
+                }
             }
         }
         Map result = new HashMap();
