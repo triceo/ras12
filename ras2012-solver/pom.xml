@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.drools.planner.examples</groupId>
     <artifactId>ras2012</artifactId>
-    <version>0.3-SNAPSHOT</version>
+    <version>0.3.Final</version>
   </parent>
   <artifactId>ras2012-solver</artifactId>
   <name>RAS2012: The Solver</name>
