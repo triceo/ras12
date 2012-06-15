@@ -122,7 +122,7 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
     }
 
     public int getDelayPenalty(final Itinerary i) {
-        final long delay = i.getDelay();
+        final long delay = i.getDelay(this.solution.getPlanningHorizon(TimeUnit.MILLISECONDS));
         if (delay <= 0) {
             return 0;
         }

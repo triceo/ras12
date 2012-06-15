@@ -40,7 +40,6 @@ public final class Itinerary extends Visualizable {
     private final Route                        route;
 
     private final Train                        train;
-    private long                               delay                 = 0;
 
     private final AtomicBoolean                scheduleCacheValid    = new AtomicBoolean(false);
     private final Collection<Node>             nodesEnRoute;
@@ -92,7 +91,6 @@ public final class Itinerary extends Visualizable {
         if (this.scheduleCacheValid.get()) {
             return;
         }
-        this.delay = 0;
         this.scheduleCache.clear();
         this.scheduleCacheWithArcs.clear();
         int i = 0;
@@ -109,7 +107,6 @@ public final class Itinerary extends Visualizable {
                         Itinerary.DEFAULT_TIME_UNIT);
                 time += previousTime;
             }
-            final long preDelaying = time;
             // now adjust for node wait time, should there be any
             final Node n = currentArc.getOrigin(this.getTrain());
             final WaitTime wt = this.nodeWaitTimes.get(n);
@@ -125,7 +122,6 @@ public final class Itinerary extends Visualizable {
                     time = w.getEnd(Itinerary.DEFAULT_TIME_UNIT);
                 }
             }
-            this.delay += time - preDelaying; // difference between 'preDelaying' is a sum of MOWs and WTs
             // and store
             this.scheduleCache.put(time, n);
             this.scheduleCacheWithArcs.put(time, currentArc);
@@ -179,9 +175,31 @@ public final class Itinerary extends Visualizable {
                 "Proper node cannot be found! Possibly a bug in the algoritm.");
     }
 
-    public long getDelay() {
+    public long getDelay(final long horizon) {
         this.cacheSchedule();
-        return this.delay;
+        long delay = 0;
+        for (final Node n : this.getRoute().getProgression().getNodes()) {
+            if (!this.isNodeOnRoute(n) || n == this.getTrain().getDestination()) {
+                continue;
+            }
+            long arrivalTime = -1;
+            if (n == this.getTrain().getOrigin()) {
+                arrivalTime = this.getTrain().getEntryTime(TimeUnit.MILLISECONDS);
+            } else if (arrivalTime > horizon) {
+                // arrival outside horizon; we don't care
+                continue;
+            } else {
+                arrivalTime = this.getArrivalTime(n);
+            }
+            final long leaveTime = this.getLeaveTime(n);
+            final long travellingTime = leaveTime - arrivalTime;
+            final Arc currentArc = this.getRoute().getProgression().getWithOriginNode(n);
+            final BigDecimal currentSpeed = this.getTrain().getMaximumSpeed(currentArc.getTrack());
+            final long optimalTravellingTime = Converter.getTimeFromSpeedAndDistance(currentSpeed,
+                    currentArc.getLength());
+            delay += travellingTime - optimalTravellingTime;
+        }
+        return delay;
     }
 
     public Pair<ChangeType, Node> getLatestWaitTimeChange() {

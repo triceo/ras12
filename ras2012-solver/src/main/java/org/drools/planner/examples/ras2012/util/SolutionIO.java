@@ -147,11 +147,11 @@ public class SolutionIO {
         // first locate the route we are on
         final Collection<Route> availableRoutes = solution.getTerritory().getRoutes(train);
         final Collection<Route> routes = new HashSet<Route>(availableRoutes);
-        Iterator<Element> it = movements.iterator();
+        final Iterator<Element> it = movements.iterator();
         Arc lastArc = null;
         long lastTravellingTime = Long.MAX_VALUE;
         while (it.hasNext()) {
-            Element e = it.next();
+            final Element e = it.next();
             if (e.getAttribute("arc") == null) {
                 lastArc = null;
                 lastTravellingTime = Long.MAX_VALUE;
@@ -173,8 +173,8 @@ public class SolutionIO {
         }
         Route properRoute = null;
         if (lastArc == null
-                || (Converter.getTimeFromSpeedAndDistance(
-                        train.getMaximumSpeed(lastArc.getTrack()), lastArc.getLength()) >= lastTravellingTime)) {
+                || Converter.getTimeFromSpeedAndDistance(train.getMaximumSpeed(lastArc.getTrack()),
+                        lastArc.getLength()) >= lastTravellingTime) {
             properRoute = routes.iterator().next();
         } else {
             /*
@@ -182,7 +182,7 @@ public class SolutionIO {
              * applies only in cases where the delay that took the exit out of the horizon did actually happen at the end of the
              * arc. that's what the time comparions above are for.
              */
-            for (Route r : routes) {
+            for (final Route r : routes) {
                 if (r.getProgression().getWaitPoints().contains(lastArc.getDestination(train))) {
                     properRoute = r;
                     break;
@@ -430,7 +430,8 @@ public class SolutionIO {
         final Train train = itinerary.getTrain();
         final Map map = new HashMap();
         map.put("name", train.getName());
-        map.put("delay", SolutionIO.convertMillisToSeconds(itinerary.getDelay()));
+        map.put("delay", SolutionIO.convertMillisToSeconds(itinerary.getDelay(solution
+                .getPlanningHorizon(TimeUnit.MILLISECONDS))));
         map.put("unpreferredPenalty", calculator.getUnpreferredTracksPenalty(itinerary));
         map.put("stops", this.prepareTexTrainStops(itinerary, solution, calculator));
         map.put("numStops", ((Collection) map.get("stops")).size());
