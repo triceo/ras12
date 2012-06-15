@@ -234,7 +234,10 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
             if (!i.isNodeOnRoute(n)) {
                 continue;
             }
-            this.entries.setTimes(n, t, i.getArrivalTime(n), i.getLeaveTime(n));
+            long leaveTime = i.getLeaveTime(n);
+            if (leaveTime <= this.solution.getPlanningHorizon(TimeUnit.MILLISECONDS)) {
+                this.entries.setTimes(n, t, i.getArrivalTime(n), i.getLeaveTime(n));
+            }
         }
     }
 
