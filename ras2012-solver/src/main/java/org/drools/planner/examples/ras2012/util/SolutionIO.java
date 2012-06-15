@@ -1,5 +1,6 @@
 package org.drools.planner.examples.ras2012.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -11,14 +12,21 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
@@ -27,18 +35,27 @@ import org.drools.planner.examples.ras2012.ProblemSolution;
 import org.drools.planner.examples.ras2012.ScoreCalculator;
 import org.drools.planner.examples.ras2012.model.Arc;
 import org.drools.planner.examples.ras2012.model.Itinerary;
+import org.drools.planner.examples.ras2012.model.ItineraryAssignment;
 import org.drools.planner.examples.ras2012.model.MaintenanceWindow;
 import org.drools.planner.examples.ras2012.model.Node;
+import org.drools.planner.examples.ras2012.model.Route;
 import org.drools.planner.examples.ras2012.model.ScheduleAdherenceRequirement;
 import org.drools.planner.examples.ras2012.model.Track;
 import org.drools.planner.examples.ras2012.model.Train;
+import org.drools.planner.examples.ras2012.model.WaitTime;
 import org.drools.planner.examples.ras2012.parser.DataSetParser;
 import org.drools.planner.examples.ras2012.parser.DataSetParser.ParsedTrain;
 import org.drools.planner.examples.ras2012.parser.ParseException;
 import org.drools.planner.examples.ras2012.parser.Token;
 import org.drools.planner.examples.ras2012.util.model.Territory;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.filter.ElementFilter;
+import org.jdom2.input.DOMBuilder;
+import org.jdom2.util.IteratorIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 public class SolutionIO {
 
@@ -71,6 +88,181 @@ public class SolutionIO {
             return Track.CROSSOVER;
         } else {
             throw new IllegalArgumentException("Invalid value for track type: " + value);
+        }
+    }
+
+    private static Arc locateArc(final ProblemSolution solution, final String arc) {
+        final String arcId = arc.substring(1, arc.length() - 1); // convert "(A,B)" into "A,B"
+        final String[] nodeIds = arcId.split("\\Q,\\E");
+        if (nodeIds.length != 2) {
+            throw new IllegalArgumentException("Invalid Arc id: " + arc);
+        }
+        // we need to browse all routes to look for the particular arc
+        for (final Route r : solution.getTerritory().getAllRoutes()) {
+            for (final Arc a : r.getProgression().getArcs()) {
+                final int leftNode = Integer.valueOf(nodeIds[0]);
+                final int rightNode = Integer.valueOf(nodeIds[1]);
+                final boolean matches = a.getOrigin(r).getId() == leftNode
+                        && a.getDestination(r).getId() == rightNode;
+                final boolean reverseMatches = a.getOrigin(r).getId() == rightNode
+                        && a.getDestination(r).getId() == leftNode;
+                if (matches || reverseMatches) {
+                    return a;
+                }
+            }
+        }
+        throw new IllegalArgumentException("Arc not found: " + arc);
+    }
+
+    private static Train locateTrain(final ProblemSolution solution, final String trainId) {
+        for (final Train t : solution.getTrains()) {
+            if (t.getName().equals(trainId)) {
+                return t;
+            }
+        }
+        return null;
+    }
+
+    private static Document parseXml(final File result) throws SAXException, IOException,
+            ParserConfigurationException {
+        // read the document and strip unnecessary stuff
+        String content = SolutionIO.readFile(result);
+        if (content.length() == 0) {
+            throw new IOException("There was a problem reading the XML file.");
+        }
+        final int documentStart = content.indexOf('<');
+        final int documentEnd = content.lastIndexOf('>');
+        content = content.substring(documentStart, documentEnd + 1);
+        // prepare DOM
+        final DocumentBuilderFactory domfactory = DocumentBuilderFactory.newInstance();
+        domfactory.setNamespaceAware(false);
+        final DocumentBuilder dombuilder = domfactory.newDocumentBuilder();
+        final org.w3c.dom.Document doc = dombuilder.parse(new ByteArrayInputStream(content
+                .getBytes("UTF-8")));
+        return new DOMBuilder().build(doc);
+    }
+
+    private static void processXmlMovements(final ProblemSolution solution, final Train train,
+            final IteratorIterable<Element> movements) {
+        // first locate the route we are on
+        final Collection<Route> availableRoutes = solution.getTerritory().getRoutes(train);
+        final Collection<Route> routes = new HashSet<Route>(availableRoutes);
+        Iterator<Element> it = movements.iterator();
+        Arc lastArc = null;
+        long lastTravellingTime = Long.MAX_VALUE;
+        while (it.hasNext()) {
+            Element e = it.next();
+            if (e.getAttribute("arc") == null) {
+                lastArc = null;
+                lastTravellingTime = Long.MAX_VALUE;
+                continue;
+            }
+            lastArc = SolutionIO.locateArc(solution, e.getAttribute("arc").getValue());
+            lastTravellingTime = new BigDecimal(e.getAttributeValue("exit")).multiply(
+                    BigDecimal.valueOf(1000)).longValue()
+                    - new BigDecimal(e.getAttributeValue("entry")).multiply(
+                            BigDecimal.valueOf(1000)).longValue();
+            for (final Route r : availableRoutes) {
+                if (!r.getProgression().contains(lastArc)) {
+                    routes.remove(r);
+                }
+            }
+        }
+        if (routes.size() == 0) {
+            throw new IllegalStateException("No route found for train: " + train.getName());
+        }
+        Route properRoute = null;
+        if (lastArc == null
+                || (Converter.getTimeFromSpeedAndDistance(
+                        train.getMaximumSpeed(lastArc.getTrack()), lastArc.getLength()) >= lastTravellingTime)) {
+            properRoute = routes.iterator().next();
+        } else {
+            /*
+             * the proper route not ending in a terminal but still must have the last node as a wait point. but this rule
+             * applies only in cases where the delay that took the exit out of the horizon did actually happen at the end of the
+             * arc. that's what the time comparions above are for.
+             */
+            for (Route r : routes) {
+                if (r.getProgression().getWaitPoints().contains(lastArc.getDestination(train))) {
+                    properRoute = r;
+                    break;
+                }
+            }
+        }
+        if (properRoute == null) {
+            throw new IllegalStateException("No proper route found for train: " + train.getName());
+        }
+        // now create the proper itinerary
+        final ItineraryAssignment ia = solution.getAssignment(train);
+        ia.setRoute(properRoute);
+        final Itinerary i = ia.getItinerary();
+        // and then set the wait times
+        int movementCount = 0;
+        boolean reachedDestination = false;
+        for (final Element e : movements) {
+            final boolean isMovement = e.getName().equals("movement");
+            final boolean isDestination = e.getName().equals("destination");
+            reachedDestination = reachedDestination || isDestination;
+            if (isMovement || isDestination) {
+                movementCount++;
+                final long time = new BigDecimal(e.getAttributeValue("entry")).multiply(
+                        BigDecimal.valueOf(1000)).longValue();
+                final Node n = isDestination ? train.getDestination() : SolutionIO.locateArc(
+                        solution, e.getAttribute("arc").getValue()).getOrigin(train);
+                final long actualTime = i.getArrivalTime(n);
+                final long delay = time - actualTime;
+                if (delay != 0) {
+                    i.setWaitTime(n, WaitTime.getWaitTime(delay, TimeUnit.MILLISECONDS));
+                }
+            } else {
+                throw new IllegalStateException("Train " + train.getName()
+                        + " has illegal element: " + e);
+            }
+        }
+        if (movementCount == 0) {
+            /* we need so big delay that the train completely falls out of the planning horizon. */
+            i.setWaitTime(train.getOrigin(), WaitTime.getWaitTime(
+                    solution.getPlanningHorizon(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS));
+        } else if (!reachedDestination) {
+            /*
+             * train needs to get so big a delay at the first node out the horizon so that every other node falls right out too.
+             * but only when the exit time actually falls inside the planning horizon.
+             */
+            Element e = null;
+            final Iterator<Element> it2 = movements.iterator();
+            while (it2.hasNext()) {
+                e = it2.next();
+            }
+            final Node n = SolutionIO.locateArc(solution, e.getAttribute("arc").getValue())
+                    .getDestination(train);
+            final long time = new BigDecimal(e.getAttributeValue("exit")).multiply(
+                    BigDecimal.valueOf(1000)).longValue();
+            final long delay = time - i.getArrivalTime(n);
+            if (delay != 0) {
+                i.setWaitTime(n, WaitTime.getWaitTime(delay, TimeUnit.MILLISECONDS));
+            }
+        }
+        i.resetLatestWaitTimeChange();
+    }
+
+    private static void processXmlTrains(final Document doc, final ProblemSolution solution) {
+        final IteratorIterable<Element> trains = doc.getDescendants(new ElementFilter("train"));
+        for (final Element e : trains) {
+            final String trainId = e.getAttribute("id").getValue();
+            final Train t = SolutionIO.locateTrain(solution, trainId);
+            if (t == null) {
+                throw new IllegalStateException("Train not in solution: " + t);
+            }
+            SolutionIO.processXmlMovements(solution, t,
+                    e.getChild("movements").getDescendants(new ElementFilter()));
+        }
+    }
+
+    private static String readFile(final File file) {
+        try {
+            return new Scanner(new FileInputStream(file)).useDelimiter("\\A").next();
+        } catch (final FileNotFoundException e) {
+            return "";
         }
     }
 
@@ -366,8 +558,17 @@ public class SolutionIO {
                     // nothing to do here
                 }
             }
-
         }
+    }
+
+    public ProblemSolution read(final File inputSolutionFile, final File result) {
+        final ProblemSolution solution = this.read(inputSolutionFile);
+        try {
+            SolutionIO.processXmlTrains(SolutionIO.parseXml(result), solution);
+        } catch (final Exception e) {
+            throw new IllegalStateException("Problem reading XML file.", e);
+        }
+        return solution;
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })

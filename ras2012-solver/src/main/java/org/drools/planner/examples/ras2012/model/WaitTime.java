@@ -29,7 +29,7 @@ public class WaitTime {
      */
     public static synchronized WaitTime getWaitTime(final long i, final TimeUnit unit) {
         if (i < 1) {
-            throw new IllegalArgumentException("Wait time must be bigger than zero.");
+            throw new IllegalArgumentException("Wait time must be bigger than zero: " + i);
         }
         final long actualTime = WaitTime.DEFAULT_TIME_UNIT.convert(i, unit);
         if (!WaitTime.waitTimes.containsKey(actualTime)) {
