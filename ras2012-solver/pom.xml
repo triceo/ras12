@@ -15,6 +15,10 @@
       <artifactId>drools-planner-core</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.jdom</groupId>
+      <artifactId>jdom</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
     </dependency>
