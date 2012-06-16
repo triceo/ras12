@@ -15,7 +15,7 @@
     </termination> 
     <acceptor>
       <solutionTabuSize>1000</solutionTabuSize>
-      <simulatedAnnealingStartingTemperature>100hard/100soft</simulatedAnnealingStartingTemperature>
+      <simulatedAnnealingStartingTemperature>40hard/100soft</simulatedAnnealingStartingTemperature>
     </acceptor>
     <forager>
       <minimalAcceptedSelection>8</minimalAcceptedSelection>
