@@ -185,11 +185,11 @@ public final class Itinerary extends Visualizable {
             long arrivalTime = -1;
             if (n == this.getTrain().getOrigin()) {
                 arrivalTime = this.getTrain().getEntryTime(TimeUnit.MILLISECONDS);
-            } else if (arrivalTime > horizon) {
-                // arrival outside horizon; we don't care
-                continue;
             } else {
                 arrivalTime = this.getArrivalTime(n);
+            }
+            if (arrivalTime > horizon) {
+                continue;
             }
             final long leaveTime = this.getLeaveTime(n);
             final long travellingTime = leaveTime - arrivalTime;
@@ -197,7 +197,13 @@ public final class Itinerary extends Visualizable {
             final BigDecimal currentSpeed = this.getTrain().getMaximumSpeed(currentArc.getTrack());
             final long optimalTravellingTime = Converter.getTimeFromSpeedAndDistance(currentSpeed,
                     currentArc.getLength());
-            delay += travellingTime - optimalTravellingTime;
+            final long difference = travellingTime - optimalTravellingTime;
+            if (difference > 0) {
+                // make sure the delay is never so large that it includes parts outside the planning horizon
+                delay += Math.min(arrivalTime + difference, horizon) - arrivalTime;
+            } else if (difference < 0) {
+                throw new IllegalStateException("Delay was smaller than zero! This must be a bug.");
+            }
         }
         return delay;
     }
