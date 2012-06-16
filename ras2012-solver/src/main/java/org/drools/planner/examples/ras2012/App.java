@@ -42,7 +42,7 @@ public class App {
             try {
                 sol = io.read(this.dataset);
             } catch (final Exception e) {
-                App.logger.error("Solver " + this.name + " died. Cause: ", e);
+                App.logger.error("Solver " + this.name + " finished unexpectedly. Cause: ", e);
                 return;
             }
             // and now start solving
@@ -62,7 +62,7 @@ public class App {
                 io.writeXML(sol, new File(targetFolder, this.name + score.getSoftScore() + ".xml"));
                 io.writeTex(sol, new File(targetFolder, this.name + score.getSoftScore() + ".tex"));
                 sol.visualize(new File(targetFolder, this.name + score.getSoftScore() + ".png"));
-                App.logger.warn("Solver finished. Score: " + score);
+                App.logger.info("Solver finished. Score: " + score);
             } else {
                 App.logger.warn("Not writing results because solution wasn't feasible: " + score);
             }
