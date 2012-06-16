@@ -378,7 +378,8 @@ public final class Itinerary extends Visualizable {
 
     public WaitTime setWaitTime(final Node n, final WaitTime w) {
         if (!this.getRoute().getProgression().getWaitPoints().contains(n)) {
-            throw new IllegalArgumentException(n + " not a wait point: " + this);
+            throw new IllegalArgumentException(n + " not a wait point: " + this + ". Cannot set "
+                    + w + ".");
         }
         if (w == null) {
             return this.removeWaitTime(n);
