@@ -70,9 +70,12 @@ public class App {
 
     }
 
-    private static final ExecutorService executor = Executors.newFixedThreadPool(Math.max(1,
+    /**
+     * Only use up to 2 threads, otherwise the increased GC would negatively impact performance.
+     */
+    private static final ExecutorService executor = Executors.newFixedThreadPool(Math.min(2,
                                                           Runtime.getRuntime()
-                                                                  .availableProcessors() - 1));
+                                                                  .availableProcessors()));
     private static final Logger          logger   = LoggerFactory.getLogger(App.class);
 
     public static void main(final String[] args) {
