@@ -213,16 +213,27 @@ public class SolutionIO {
             final boolean isMovement = e.getName().equals("movement");
             final boolean isDestination = e.getName().equals("destination");
             reachedDestination = reachedDestination || isDestination;
-            if (isMovement || isDestination) {
+            if (isMovement) {
                 movementCount++;
                 final long time = new BigDecimal(e.getAttributeValue("entry")).multiply(
                         BigDecimal.valueOf(1000)).longValue();
-                final Node n = isDestination ? train.getDestination() : SolutionIO.locateArc(
-                        solution, e.getAttribute("arc").getValue()).getOrigin(train);
+                final Node n = SolutionIO.locateArc(solution, e.getAttribute("arc").getValue())
+                        .getOrigin(train);
                 final long actualTime = i.getArrivalTime(n);
                 final long delay = time - actualTime;
                 if (delay != 0) {
                     i.setWaitTime(n, WaitTime.getWaitTime(delay, TimeUnit.MILLISECONDS));
+                }
+            } else if (isDestination) {
+                movementCount++;
+                final long time = new BigDecimal(e.getAttributeValue("entry")).multiply(
+                        BigDecimal.valueOf(1000)).longValue();
+                final Node n = train.getDestination();
+                final long actualTime = i.getArrivalTime(n);
+                final long delay = time - actualTime;
+                if (delay != 0) {
+                    i.setWaitTime(properRoute.getProgression().getPreviousNode(n),
+                            WaitTime.getWaitTime(delay, TimeUnit.MILLISECONDS));
                 }
             } else {
                 throw new IllegalStateException("Train " + train.getName()
