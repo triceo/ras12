@@ -125,8 +125,18 @@ public class SolutionIO {
 
     private static Document parseXml(final File result) throws SAXException, IOException,
             ParserConfigurationException {
-        // read the document and strip unnecessary stuff
-        String content = SolutionIO.readFile(result);
+        final String content = SolutionIO.readFile(result);
+        return SolutionIO.parseXml(content);
+    }
+
+    private static Document parseXml(final InputStream result) throws IOException,
+            ParserConfigurationException, SAXException {
+        final String content = SolutionIO.readStream(result);
+        return SolutionIO.parseXml(content);
+    }
+
+    private static Document parseXml(String content) throws IOException,
+            ParserConfigurationException, SAXException {
         if (content.length() == 0) {
             throw new IOException("There was a problem reading the XML file.");
         }
@@ -264,6 +274,10 @@ public class SolutionIO {
         } catch (final FileNotFoundException e) {
             return "";
         }
+    }
+
+    private static String readStream(final InputStream is) {
+        return new Scanner(is).useDelimiter("\\A").next();
     }
 
     private static BigDecimal tokenToBigDecimal(final Token t) {
@@ -542,9 +556,7 @@ public class SolutionIO {
         InputStream is = null;
         try {
             is = new FileInputStream(inputSolutionFile);
-            final DataSetParser p = new DataSetParser(is);
-            p.parse();
-            return this.createSolution(p);
+            return this.read(is);
         } catch (final FileNotFoundException e) {
             throw new IllegalArgumentException("Solution file doesn't exist: " + inputSolutionFile,
                     e);
@@ -570,6 +582,22 @@ public class SolutionIO {
             throw new IllegalStateException("Problem reading XML file.", e);
         }
         return solution;
+    }
+
+    public ProblemSolution read(final InputStream inputSolution) throws ParseException {
+        final DataSetParser p = new DataSetParser(inputSolution);
+        p.parse();
+        return this.createSolution(p);
+    }
+
+    public ProblemSolution read(final InputStream inputSolution, final InputStream result) {
+        try {
+            final ProblemSolution solution = this.read(inputSolution);
+            SolutionIO.processXmlTrains(SolutionIO.parseXml(result), solution);
+            return solution;
+        } catch (final Exception e) {
+            throw new IllegalStateException("Problem reading XML file.", e);
+        }
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
