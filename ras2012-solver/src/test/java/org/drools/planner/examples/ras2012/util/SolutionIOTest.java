@@ -48,35 +48,35 @@ public class SolutionIOTest {
     @Parameters
     public static Collection<Object[]> getResources() {
         final List<Object[]> resources = new LinkedList<Object[]>();
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -1280));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -1848));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -2107));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -2146));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -3030));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -3478));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -3541));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -3694));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -4027));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -4132));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -11115));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -11316));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -12151));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -14615));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -17827));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -7867));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -9228));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -9695));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -9954));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -12873));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -12942));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -13460));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -14030));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -14855));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -15605));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -15848));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -16326));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -16747));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -17000));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -1160));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -1459));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -1570));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -2271));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -2623));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -2673));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -2943));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -5253));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -5502));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -7124));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -8764));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -8822));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -10767));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -11340));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -11483));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -13049));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -15089));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -16135));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -17326));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -18031));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -11669));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -15144));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -15524));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -16093));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -16671));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -17307));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -17367));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -18026));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -19966));
         return resources;
     }
 
@@ -117,6 +117,5 @@ public class SolutionIOTest {
         // compare scores
         Assert.assertEquals("Scores don't match, even though XML files do.", this.score,
                 ScoreCalculator.oneTimeCalculation(result));
-        // and write the result for future comparison
     }
 }
