@@ -1,10 +1,13 @@
 package org.drools.planner.examples.ras2012.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Scanner;
 
 import org.drools.planner.core.score.buildin.hardandsoft.DefaultHardAndSoftScore;
 import org.drools.planner.core.score.buildin.hardandsoft.HardAndSoftScore;
@@ -38,10 +41,8 @@ public class SolutionIOTest {
 
     private static Object[] getResource(final SolutionType solutionType, final int hard,
             final int soft) {
-        return new Object[] {
-                solutionType.getDefinition(),
-                SolutionIOTest.class.getResourceAsStream(solutionType.name() + ".txt" + soft
-                        + ".xml"), hard, soft };
+        return new Object[] { solutionType.getDefinition(),
+                solutionType.name() + ".txt" + soft + ".xml", hard, soft };
     }
 
     @Parameters
@@ -79,30 +80,43 @@ public class SolutionIOTest {
         return resources;
     }
 
-    private final InputStream      solution, definition;
+    private final InputStream      definition;
+    private final String           solutionResource;
     private final HardAndSoftScore score;
 
     private static final File      parent = new File("data/tests/"
                                                   + SolutionIOTest.class.getCanonicalName());
 
-    public SolutionIOTest(final InputStream solutionDefinition, final InputStream solution,
+    public SolutionIOTest(final InputStream solutionDefinition, final String solution,
             final int hardScore, final int softScore) {
         this.definition = solutionDefinition;
-        this.solution = solution;
+        this.solutionResource = solution;
         this.score = DefaultHardAndSoftScore.valueOf(hardScore, softScore);
     }
 
+    @SuppressWarnings("resource")
     @Test
-    public void testSolutionValidation() {
+    public void testSolutionValidation() throws IOException {
         final SolutionIO io = new SolutionIO();
-        final ProblemSolution result = io.read(this.definition, this.solution);
+        final ProblemSolution result = io.read(this.definition,
+                SolutionIOTest.class.getResourceAsStream(this.solutionResource));
         if (!SolutionIOTest.parent.exists()) {
             SolutionIOTest.parent.mkdirs();
         }
-        io.writeXML(result,
-                new File(SolutionIOTest.parent, result.getName() + this.score.getSoftScore()
-                        + ".xml"));
-        Assert.assertEquals(this.score, ScoreCalculator.oneTimeCalculation(result));
-        // FIXME compare the two files
+        // compare XML results
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        io.writeXML(result, baos);
+        String oldContent = new Scanner(
+                SolutionIOTest.class.getResourceAsStream(this.solutionResource))
+                .useDelimiter("\\A").next();
+        String newContent = baos.toString();
+        File f = new File(SolutionIOTest.parent, result.getName() + this.score.getSoftScore()
+                + ".xml");
+        io.writeXML(result, f);
+        Assert.assertTrue("XML files do not match. Check " + f, newContent.equals(oldContent));
+        // compare scores
+        Assert.assertEquals("Scores don't match, even though XML files do.", this.score,
+                ScoreCalculator.oneTimeCalculation(result));
+        // and write the result for future comparison
     }
 }

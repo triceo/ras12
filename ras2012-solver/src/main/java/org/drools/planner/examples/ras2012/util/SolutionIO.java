@@ -4,9 +4,12 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -287,6 +290,7 @@ public class SolutionIO {
         }
     }
 
+    @SuppressWarnings("resource")
     private static String readStream(final InputStream is) {
         return new Scanner(is).useDelimiter("\\A").next();
     }
@@ -626,19 +630,28 @@ public class SolutionIO {
         }
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     public void writeXML(final ProblemSolution solution, final File outputSolutionFile) {
+        try {
+            writeXML(solution, new FileOutputStream(outputSolutionFile));
+        } catch (FileNotFoundException e) {
+            SolutionIO.logger.error("Failed writing " + solution.getName() + " into "
+                    + outputSolutionFile, e);
+        }
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public void writeXML(final ProblemSolution solution, final OutputStream outputSolution) {
         try {
             final Map map = new HashMap();
             map.put("trains", this.prepareXmlData(solution));
             map.put("name", solution.getName());
             this.freemarker.getTemplate("schedule.xml.ftl").process(map,
-                    new FileWriter(outputSolutionFile));
+                    new OutputStreamWriter(outputSolution));
         } catch (final TemplateException e) {
             SolutionIO.logger.error("Failed processing XML schedule template.", e);
         } catch (final IOException e) {
             SolutionIO.logger.error("Failed writing " + solution.getName() + " into "
-                    + outputSolutionFile, e);
+                    + outputSolution, e);
         }
     }
 }
