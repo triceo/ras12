@@ -277,25 +277,4 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
         }
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append("ScoreCalculator, TWT: ");
-        for (final Map.Entry<Train, Integer> entry : this.wantTimePenalties.entrySet()) {
-            sb.append(entry.getKey().getName()).append(">").append(entry.getValue()).append("; ");
-        }
-        sb.append(System.lineSeparator()).append("SA:  ");
-        for (final Map.Entry<Train, Integer> entry : this.scheduleAdherencePenalties.entrySet()) {
-            sb.append(entry.getKey().getName()).append(">").append(entry.getValue()).append("; ");
-        }
-        sb.append(System.lineSeparator()).append("+-:  ");
-        for (final Map.Entry<Train, Integer> entry : this.delayPenalties.entrySet()) {
-            sb.append(entry.getKey().getName()).append(">").append(entry.getValue()).append("; ");
-        }
-        sb.append(System.lineSeparator()).append("Prf: ");
-        for (final Map.Entry<Train, Integer> entry : this.unpreferredTracksPenalties.entrySet()) {
-            sb.append(entry.getKey().getName()).append(">").append(entry.getValue()).append("; ");
-        }
-        return sb.append(System.lineSeparator()).toString();
-    }
 }
