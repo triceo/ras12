@@ -60,6 +60,11 @@
         <artifactId>commons-cli</artifactId>
         <version>1.2</version>
       </dependency>
+      <dependency>
+        <groupId>jfree</groupId>
+        <artifactId>jfreechart</artifactId>
+        <version>1.0.13</version>
+      </dependency>
       <!-- Logging -->
       <dependency>
         <groupId>ch.qos.logback</groupId>

@@ -56,6 +56,7 @@ import org.jdom2.Element;
 import org.jdom2.filter.ElementFilter;
 import org.jdom2.input.DOMBuilder;
 import org.jdom2.util.IteratorIterable;
+import org.jfree.data.statistics.BoxAndWhiskerCategoryDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -612,6 +613,32 @@ public class SolutionIO {
             return solution;
         } catch (final Exception e) {
             throw new IllegalStateException("Problem reading XML file.", e);
+        }
+    }
+
+    public void writeChart(final BoxAndWhiskerCategoryDataset dataset, final File outputSolutionFile) {
+        final String rowId = "";
+        final Map<String, List<Object>> results = new HashMap<String, List<Object>>();
+        results.put("solutions", new ArrayList<Object>());
+        for (final Object key : dataset.getColumnKeys()) {
+            final String columnId = (String) key;
+            final Map<String, Object> values = new HashMap<String, Object>();
+            values.put("name", columnId);
+            values.put("best", dataset.getMinOutlier(rowId, columnId));
+            values.put("worst", dataset.getMaxOutlier(rowId, columnId));
+            values.put("q1", dataset.getQ1Value(rowId, columnId));
+            values.put("q2", dataset.getMedianValue(rowId, columnId));
+            values.put("q3", dataset.getQ3Value(rowId, columnId));
+            results.get("solutions").add(values);
+        }
+        try {
+            this.freemarker.getTemplate("stats.tex.ftl").process(results,
+                    new FileWriter(outputSolutionFile));
+        } catch (final TemplateException e) {
+            SolutionIO.logger.error("Failed processing solution statistics template.", e);
+        } catch (final IOException e) {
+            SolutionIO.logger.error(
+                    "Failed writing solution statistics into " + outputSolutionFile, e);
         }
     }
 

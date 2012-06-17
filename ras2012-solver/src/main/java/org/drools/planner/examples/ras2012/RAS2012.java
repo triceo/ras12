@@ -4,16 +4,23 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.drools.planner.config.XmlSolverFactory;
 import org.drools.planner.core.Solver;
 import org.drools.planner.core.score.buildin.hardandsoft.HardAndSoftScore;
 import org.drools.planner.examples.ras2012.CLI.ApplicationMode;
+import org.drools.planner.examples.ras2012.util.Chart;
 import org.drools.planner.examples.ras2012.util.SolutionIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +42,7 @@ public class RAS2012 {
     /**
      * Executes Drools planner on a particular data set.
      */
-    private static class SolverRunner implements Runnable {
+    private static class SolverRunner implements Callable<HardAndSoftScore> {
 
         private final InputStream dataset;
         private final String      name;
@@ -51,7 +58,7 @@ public class RAS2012 {
         }
 
         @Override
-        public void run() {
+        public HardAndSoftScore call() {
             RAS2012.logger.info(this.name + " solver starting...");
             final SolutionIO io = new SolutionIO();
             ProblemSolution sol;
@@ -59,7 +66,7 @@ public class RAS2012 {
                 sol = io.read(this.dataset);
             } catch (final Exception e) {
                 RAS2012.logger.error("Solver " + this.name + " finished unexpectedly. Cause: ", e);
-                return;
+                return null;
             }
             // and now start solving
             final XmlSolverFactory configurer = new XmlSolverFactory();
@@ -68,32 +75,36 @@ public class RAS2012 {
             solver.setPlanningProblem(sol);
             solver.solve();
             // output the solution
-            final File targetFolder = new File("data/solutions");
-            if (!targetFolder.exists()) {
-                targetFolder.mkdirs();
+            if (!RAS2012.resultDir.exists()) {
+                RAS2012.resultDir.mkdirs();
             }
             sol = (ProblemSolution) solver.getBestSolution();
             final HardAndSoftScore score = sol.getScore();
             if (score.getHardScore() >= 0) { // don't write score that isn't feasible
-                io.writeXML(sol, new File(targetFolder, this.name + score.getSoftScore() + ".xml"));
-                io.writeTex(sol, new File(targetFolder, this.name + score.getSoftScore() + ".tex"));
-                sol.visualize(new File(targetFolder, this.name + score.getSoftScore() + ".png"));
+                io.writeXML(sol, new File(RAS2012.resultDir, this.name + score.getSoftScore()
+                        + ".xml"));
+                io.writeTex(sol, new File(RAS2012.resultDir, this.name + score.getSoftScore()
+                        + ".tex"));
+                sol.visualize(new File(RAS2012.resultDir, this.name + score.getSoftScore() + ".png"));
                 RAS2012.logger.info("Solver finished. Score: " + score);
             } else {
                 RAS2012.logger.warn("Not writing results because solution wasn't feasible: "
                         + score);
             }
+            return score;
         }
 
     }
 
+    private static final File            resultDir = new File("data/solutions");
+
     /**
      * Only use up to 2 threads, otherwise the increased GC would negatively impact performance.
      */
-    private static final ExecutorService executor = Executors.newFixedThreadPool(Math.min(2,
-                                                          Runtime.getRuntime()
-                                                                  .availableProcessors()));
-    private static final Logger          logger   = LoggerFactory.getLogger(RAS2012.class);
+    private static final ExecutorService executor  = Executors.newFixedThreadPool(Math.min(2,
+                                                           Runtime.getRuntime()
+                                                                   .availableProcessors()));
+    private static final Logger          logger    = LoggerFactory.getLogger(RAS2012.class);
 
     /**
      * Main method of the whole app. Use for launching the app.
@@ -147,14 +158,39 @@ public class RAS2012 {
         streams.add("RDS2");
         streams.add("RDS3");
         streams.add("TOY");
+        // prepare futures
+        final Map<String, List<Future<HardAndSoftScore>>> scores = new HashMap<String, List<Future<HardAndSoftScore>>>();
         for (final String entry : streams) {
             RAS2012.logger.info("Starting lookup for the best solutions on " + entry + "...");
-            for (int i = 0; i < 20; i++) {
+            scores.put(entry, new ArrayList<Future<HardAndSoftScore>>());
+            for (int i = 0; i < 1; i++) {
                 RAS2012.logger.info("Scheduled attempt #" + i + ".");
-                RAS2012.executor.execute(new SolverRunner(RAS2012.class.getResourceAsStream(entry
-                        + ".txt"), entry));
+                scores.get(entry).add(
+                        RAS2012.executor.submit(new SolverRunner(RAS2012.class
+                                .getResourceAsStream(entry + ".txt"), entry)));
             }
         }
+        // prepare chart
+        final Chart c = new Chart();
+        // process futures
+        for (final Map.Entry<String, List<Future<HardAndSoftScore>>> entry : scores.entrySet()) {
+            final String datasetName = entry.getKey();
+            final List<Integer> values = new ArrayList<Integer>();
+            for (final Future<HardAndSoftScore> future : entry.getValue()) {
+                try {
+                    final HardAndSoftScore result = future.get();
+                    if (result != null && result.getHardScore() >= 0) {
+                        values.add(Math.abs(result.getSoftScore()));
+                    }
+                } catch (final Exception e) {
+                    RAS2012.logger.error("One of the solvers failed.");
+                }
+            }
+            c.addData(values, datasetName);
+        }
+        // plot chart
+        c.plot(RAS2012.resultDir, "chart");
+        new SolutionIO().writeChart(c.getDataset(), new File(RAS2012.resultDir, "stats.tex"));
         RAS2012.shutdownExecutor();
     }
 

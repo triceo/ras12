@@ -43,6 +43,10 @@
       <artifactId>jung-visualization</artifactId>
     </dependency>
     <dependency>
+      <groupId>jfree</groupId>
+      <artifactId>jfreechart</artifactId>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
