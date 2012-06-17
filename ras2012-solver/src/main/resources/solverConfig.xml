@@ -14,11 +14,11 @@
       <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
     </termination> 
     <acceptor>
-      <solutionTabuSize>1000</solutionTabuSize>
-      <simulatedAnnealingStartingTemperature>40hard/100soft</simulatedAnnealingStartingTemperature>
+      <solutionTabuSize>10000</solutionTabuSize>
+      <simulatedAnnealingStartingTemperature>20hard/1000soft</simulatedAnnealingStartingTemperature>
     </acceptor>
     <forager>
-      <minimalAcceptedSelection>8</minimalAcceptedSelection>
+      <minimalAcceptedSelection>4</minimalAcceptedSelection>
     </forager>    
     <selector>
       <selector>
