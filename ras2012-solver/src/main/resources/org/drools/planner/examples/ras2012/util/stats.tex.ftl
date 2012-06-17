@@ -2,7 +2,7 @@
 \footnotesize
 \caption{Solution performance per data set.}
 \centering
-\begin{tabular}{c||c|c|c|c|c|c}
+\begin{tabular}{c||c|c|c|c|c}
 \hline \hline
                  & Best                 & Q1                 & Q2                & Q3                & Worst \\ 
 <#list solutions as solution> 
