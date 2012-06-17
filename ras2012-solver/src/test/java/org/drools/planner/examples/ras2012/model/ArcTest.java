@@ -61,7 +61,7 @@ public class ArcTest extends AbstractSectionTest {
         final Node n2 = Node.getNode(1);
         final BigDecimal length = new BigDecimal("1.5");
         final Arc a1 = new Arc(Track.MAIN_0, length, n1, n2);
-        Assert.assertTrue("The object should equal itself.", a1.equals(a1));
+        Assert.assertEquals("The object should equal itself.", a1, a1);
         final Arc a2 = new Arc(Track.MAIN_0, length, n1, n2);
         Assert.assertFalse("Objects with the exact same parameters shouldn't equal itself.",
                 a1.equals(a2));

@@ -15,13 +15,21 @@ import org.drools.planner.examples.ras2012.Directed;
 import org.drools.planner.examples.ras2012.Visualizable;
 import org.drools.planner.examples.ras2012.util.Converter;
 import org.drools.planner.examples.ras2012.util.model.ArcProgression;
+import org.drools.planner.examples.ras2012.util.model.Territory;
 import org.drools.planner.examples.ras2012.util.visualizer.RouteVisualizer;
 
 /**
+ * Represents a way in which it is possible to travel the {@link Territory}. When constructed using {@link Builder}, it is
+ * assigned an {@link ArcProgression}, which is a huge cache of various information about it.
+ * 
  * Note: this class has a natural ordering that is inconsistent with equals.
  */
 public class Route extends Visualizable implements Comparable<Route>, Directed {
 
+    /**
+     * Used to build the {@link Route} by specifying a series of {@link Arc}s.
+     * 
+     */
     public static class Builder implements Directed {
 
         private final AtomicInteger   idGenerator;
@@ -38,15 +46,28 @@ public class Route extends Visualizable implements Comparable<Route>, Directed {
 
         }
 
+        /**
+         * Instantiate new builder to create a new series of related routes. Routes from different {@link Territory}s should use
+         * different Builders.
+         * 
+         * @param isEastbound Whether or not the route goes east.
+         * @param arcs Arcs to be placed on the route, in the intended order.
+         */
         public Builder(final boolean isEastbound, final Arc... arcs) {
             this(isEastbound ? new AtomicInteger(0) : new AtomicInteger(1), isEastbound, arcs);
         }
 
+        /**
+         * Add another {@link Arc} at the end of the {@link Route}.
+         * 
+         * @param arc The arc in question.
+         * @return For call chaining.
+         */
         public Builder add(final Arc arc) {
             if (arc == null) {
                 throw new IllegalArgumentException("Cannot extend route with a null arc!");
             }
-            if (this.arcs.contains(arc)) {
+            if (this.isAdded(arc)) {
                 throw new IllegalArgumentException("Cannot extend route with the same arc twice!");
             }
             final List<Arc> arcs = new ArrayList<Arc>(this.arcs);
@@ -55,11 +76,19 @@ public class Route extends Visualizable implements Comparable<Route>, Directed {
                     arcs.toArray(new Arc[arcs.size()]));
         }
 
+        /**
+         * Actually create the {@link Route} instance. {@link Arc}s will be ordered the way they were {@link #add(Arc)}ed.
+         * 
+         * @return The route. Odd ID when westbound, even when eastbound.
+         */
         public Route build() {
             return new Route(this.idGenerator.getAndAdd(2), this.arcs.toArray(new Arc[this.arcs
                     .size()]));
         }
 
+        /**
+         * Builders only equal when they have the same {@link Arc}s in the same order and when they have the same direction.
+         */
         @Override
         public boolean equals(final Object obj) {
             if (this == obj) {
@@ -90,6 +119,12 @@ public class Route extends Visualizable implements Comparable<Route>, Directed {
             return result;
         }
 
+        /**
+         * Whether or not the {@link Arc} is already on the future {@link Route}.
+         * 
+         * @param arc Arc in question.
+         * @return True if already added.
+         */
         public boolean isAdded(final Arc arc) {
             return this.arcs.contains(arc);
         }
@@ -143,6 +178,9 @@ public class Route extends Visualizable implements Comparable<Route>, Directed {
         }
     }
 
+    /**
+     * Routes only equal when they have the same ID.
+     */
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
@@ -203,6 +241,28 @@ public class Route extends Visualizable implements Comparable<Route>, Directed {
         return this.getId() % 2 == 0;
     }
 
+    /**
+     * <p>
+     * Whether or not a particular {@link Train} is allowed on the route.
+     * </p>
+     * 
+     * <p>
+     * It would be forbidden, when the {@link Train}:
+     * </p>
+     * 
+     * <ul>
+     * <li>Goes the opposite direction than the route.</li>
+     * <li>Is required to pass through {@link Node} that is not on this route.</li>
+     * <li>Is longer than one of the sidings on this route. (Required by RAS problem description.)</li>
+     * <li>Carries hazardous materials and the route contains sidings. (Required by RAS problem description.)</li>
+     * <li>Is heavy and the route contains sidings. Although technically not required by the RAS problem description, this is
+     * the easiest way to fulfill the requirement of never sending heavy {@link Train} to sidings when meet-passing another
+     * {@link Train}.</li>
+     * </ul>
+     * 
+     * @param t The train in question.
+     * @return True if this route is possible for the {@link Train}. The results are cached.
+     */
     public boolean isPossibleForTrain(final Train t) {
         if (!this.routePossibilitiesCache.containsKey(t)) {
             this.routePossibilitiesCache.put(t, this.isPossibleForTrainUncached(t));

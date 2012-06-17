@@ -4,6 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 // TODO rework so that speeds aren't static
+/**
+ * A track is a type of railroad that the arc consists of. It may have different maximum speeds based on the {@link Train}
+ * direction. The speeds need to be assigned before the instances can be used.
+ * 
+ */
 public enum Track {
 
     MAIN_0('='), MAIN_1('<'), MAIN_2('>'), SWITCH('S', false), SIDING('/', false), CROSSOVER('C',
@@ -15,10 +20,23 @@ public enum Track {
 
     private static final Map<Track, Integer> speedsEastbound = new HashMap<Track, Integer>();
 
+    /**
+     * Set the maximum speed on a particular track, both directions. Speed can only be set once.
+     * 
+     * @param t The track in question.
+     * @param speed The speed.
+     */
     public static void setSpeed(final Track t, final int speed) {
         Track.setSpeed(t, speed, speed);
     }
 
+    /**
+     * Set the maximum speed on a particular track, each direction separately. Speed can only be set once.
+     * 
+     * @param t Te track in question.
+     * @param speedEastbound Speed when travelling to the east.
+     * @param speedWestbound Speed when travelling to the west.
+     */
     public static void setSpeed(final Track t, final int speedEastbound, final int speedWestbound) {
         if (!t.isMainTrack() && speedEastbound != speedWestbound) {
             throw new IllegalArgumentException(

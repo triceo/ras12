@@ -1,18 +1,26 @@
 package org.drools.planner.examples.ras2012.model;
 
 import java.math.BigDecimal;
-import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * The arc represents a single length of railroad track, whose properties such as maximum speed are uniform all over it.
+ * {@link Route} consist solely of arcs, each arc has the west and the east {@link Node}.
+ * 
+ */
 public class Arc extends Section {
 
-    private static final AtomicInteger idGenerator = new AtomicInteger();
+    private final Track      track;
 
-    private final int                  id          = Arc.idGenerator.incrementAndGet();
+    private final BigDecimal lengthInMiles;
 
-    private final Track                track;
-
-    private final BigDecimal           lengthInMiles;
-
+    /**
+     * Creates a new instance.
+     * 
+     * @param t Type of track that this arc is.
+     * @param lengthInMiles Length of the arc in miles.
+     * @param westNode The west-most end of the arc.
+     * @param eastNode The east-most end of the arc.
+     */
     public Arc(final Track t, final BigDecimal lengthInMiles, final Node westNode,
             final Node eastNode) {
         super(westNode, eastNode);
@@ -26,39 +34,12 @@ public class Arc extends Section {
         this.lengthInMiles = lengthInMiles;
     }
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (!(obj instanceof Arc)) {
-            return false;
-        }
-        final Arc other = (Arc) obj;
-        return this.id == other.id;
-    }
-
-    public int getId() {
-        return this.id;
-    }
-
     public BigDecimal getLength() {
         return this.lengthInMiles;
     }
 
     public Track getTrack() {
         return this.track;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + this.id;
-        return result;
     }
 
     @Override

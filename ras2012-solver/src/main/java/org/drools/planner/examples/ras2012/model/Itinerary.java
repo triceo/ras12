@@ -20,10 +20,20 @@ import org.drools.planner.examples.ras2012.Visualizable;
 import org.drools.planner.examples.ras2012.util.Converter;
 import org.drools.planner.examples.ras2012.util.model.ArcProgression;
 import org.drools.planner.examples.ras2012.util.model.OccupationTracker;
+import org.drools.planner.examples.ras2012.util.model.Territory;
 import org.drools.planner.examples.ras2012.util.visualizer.ItineraryVisualizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Represents the way a {@link Train} travels the {@link Route}, including all the stops for {@link MaintenanceWindow}s and
+ * {@link WaitTime}s. It is basically a schedule for the train on the {@link Territory}. Instances of the class cache most of
+ * their data, only updating it when a {@link WaitTime} change occurs. (See {@link #setWaitTime(Node, WaitTime)} and
+ * {@link #removeWaitTime(Node)}.)
+ * 
+ * This class has no concept of planning horizon. It always calculates the whole schedule, from the train entry to train
+ * reaching destination.
+ */
 public final class Itinerary extends Visualizable {
 
     public static enum ChangeType {
@@ -55,10 +65,24 @@ public final class Itinerary extends Visualizable {
     private static final Logger                logger                = LoggerFactory
                                                                              .getLogger(Itinerary.class);
 
+    /**
+     * Create schedule for a given {@link Train}, travelling a given {@link Route}, experiencing no {@link MaintenanceWindow} s.
+     * 
+     * @param r Route to schedule.
+     * @param t Train to schedule.
+     */
     public Itinerary(final Route r, final Train t) {
         this(r, t, null);
     }
 
+    /**
+     * Create schedule for a given {@link Train}, travelling a given {@link Route}, possibly experiencing some
+     * {@link MaintenanceWindow}s.
+     * 
+     * @param r Route to schedule.
+     * @param t Train to schedule.
+     * @param maintenanceWindows Maintenance windows to account for. Null if none.
+     */
     public Itinerary(final Route r, final Train t,
             final Collection<MaintenanceWindow> maintenanceWindows) {
         if (r == null || t == null) {
@@ -137,6 +161,9 @@ public final class Itinerary extends Visualizable {
         this.scheduleCacheValid.set(true);
     }
 
+    /**
+     * Instances only equal when they share the same train, route and wait times.
+     */
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
@@ -154,14 +181,34 @@ public final class Itinerary extends Visualizable {
                 .append(this.nodeWaitTimes, other.nodeWaitTimes).isEquals();
     }
 
+    /**
+     * When the train arrived at the destination.
+     * 
+     * @return Time in milliseconds since the start of the planning horizon when the train's lead engine first reached the
+     *         destination node.
+     */
     public long getArrivalTime() {
         return this.getSchedule().lastKey();
     }
 
+    /**
+     * When the train arrived at the {@link Arc}.
+     * 
+     * @param a The arc in question.
+     * @return Time in milliseconds since the start of the planning horizon when the train's lead engine first reached given
+     *         arc's origin node.
+     */
     public long getArrivalTime(final Arc a) {
         return this.getArrivalTime(a.getOrigin(this.getTrain()));
     }
 
+    /**
+     * When the train arrived at the {@link Node}.
+     * 
+     * @param n The node in question.
+     * @return Time in milliseconds since the start of the planning horizon when the train's lead engine first reached given
+     *         node.
+     */
     public long getArrivalTime(final Node n) {
         if (n == null) {
             throw new IllegalArgumentException("Node cannot be null.");
@@ -176,6 +223,12 @@ public final class Itinerary extends Visualizable {
                 "Proper node cannot be found! Possibly a bug in the algoritm.");
     }
 
+    /**
+     * The time spent not moving, from {@link Train#getEntryTime(TimeUnit)} to the specified time.
+     * 
+     * @param horizon The horizon in milliseconds at which to stop counting the time.
+     * @return Time in milliseconds spent waiting somewhere on the {@link Route}.
+     */
     public long getDelay(final long horizon) {
         this.cacheSchedule();
         long delay = 0;
@@ -209,10 +262,21 @@ public final class Itinerary extends Visualizable {
         return delay;
     }
 
+    /**
+     * Return the latest change made to this schedule by changing some of its wait times.
+     * 
+     * @return The change.
+     */
     public Pair<ChangeType, Node> getLatestWaitTimeChange() {
         return this.lastChange;
     }
 
+    /**
+     * Retrieve the {@link Arc} where the train is at the specified moment.
+     * 
+     * @param time The place in the schedule where to look at, in milliseconds.
+     * @return The arc occupied by the leading engine of the {@link Train} at the given time.
+     */
     protected Arc getLeadingArc(final long time) {
         if (time < this.trainEntryTime) {
             return null;
@@ -230,6 +294,13 @@ public final class Itinerary extends Visualizable {
         }
     }
 
+    /**
+     * When the train left the {@link Arc}.
+     * 
+     * @param a The arc in question.
+     * @return Time in milliseconds since the start of the planning horizon when the train's lead engine first reached given
+     *         arc's destination node. -1 when there's no destination node.
+     */
     public long getLeaveTime(final Arc a) {
         final Arc nextArc = this.route.getProgression().getNextArc(a);
         if (nextArc == null) {
@@ -238,6 +309,13 @@ public final class Itinerary extends Visualizable {
         return this.getArrivalTime(nextArc);
     }
 
+    /**
+     * When the train left the {@link Node}.
+     * 
+     * @param n The node in question.
+     * @return Time in milliseconds since the start of the planning horizon when the train's lead engine first reached given
+     *         nodes's next node. -1 when there's no next node.
+     */
     public long getLeaveTime(final Node n) {
         final Node nextNode = this.route.getProgression().getNextNode(n);
         if (nextNode == null) {
@@ -250,6 +328,20 @@ public final class Itinerary extends Visualizable {
         return this.maintenances;
     }
 
+    /**
+     * <p>
+     * Retrieve {@link Arc}s occupied by a given {@link Train} at a given point in time. After the {@link Train} reaches its
+     * destination, occupied arcs are estimated for the {@link Train} to gradually leave the {@link Territory}.
+     * </p>
+     * 
+     * <p>
+     * This method is one of the computationally intensive ones. Any optimizations here will have big impact on the performance
+     * of the algorithm as a whole.
+     * </p>
+     * 
+     * @param time The place in the schedule where to look at, in milliseconds.
+     * @return The occupied arcs.
+     */
     public OccupationTracker getOccupiedArcs(final long time) {
         final SortedMap<Long, Node> schedule = this.getSchedule();
         final ArcProgression progression = this.getRoute().getProgression();
@@ -294,16 +386,32 @@ public final class Itinerary extends Visualizable {
         return this.route;
     }
 
+    /**
+     * Return the actual schedule. This is cached on access.
+     * 
+     * @return Map, where keys are the time of arrival and the values are the {@link Node}s arrived at.
+     */
     public SortedMap<Long, Node> getSchedule() {
         this.cacheSchedule();
         return Collections.unmodifiableSortedMap(this.scheduleCache);
     }
 
+    /**
+     * Return the actual schedule. This is cached on access.
+     * 
+     * @return Map, where keys are the time of arrival and the values are the {@link Arc}s arrived at.
+     */
     public SortedMap<Long, Arc> getScheduleWithArcs() {
         this.cacheSchedule();
         return Collections.unmodifiableSortedMap(this.scheduleCacheWithArcs);
     }
 
+    /**
+     * The time spent moving on unpreferred tracks, from {@link Train#getEntryTime(TimeUnit)} to the specified time.
+     * 
+     * @param time The horizon in milliseconds at which to stop counting the time.
+     * @return Time in milliseconds spent on unpreferred tracks.
+     */
     public long getTimeSpentOnUnpreferredTracks(final long time) {
         final SortedMap<Long, Arc> arcEntryTimes = this.getScheduleWithArcs();
         long spentTime = 0;
@@ -335,10 +443,19 @@ public final class Itinerary extends Visualizable {
         return this.train;
     }
 
+    /**
+     * Get time a {@link Train} is stopped for at a particular {@link Node}.
+     * 
+     * @param n Node to stop the train at.
+     * @return The time to wait for.
+     */
     public WaitTime getWaitTime(final Node n) {
         return this.nodeWaitTimes.get(n);
     }
 
+    /**
+     * Get all times a {@link Train} is stopped at a particular {@link Node}.
+     */
     public Map<Node, WaitTime> getWaitTimes() {
         return Collections.unmodifiableMap(this.nodeWaitTimes);
     }
@@ -349,6 +466,12 @@ public final class Itinerary extends Visualizable {
                 .append(this.nodeWaitTimes).build();
     }
 
+    /**
+     * Whether or not the {@link Train}'s lead engine passes through the {@link Node} at some point.
+     * 
+     * @param n The node in question.
+     * @return True if the {@link Node} is in the itinerary.
+     */
     public boolean hasNode(final Node n) {
         return this.hasNodes.contains(n);
     }
@@ -357,6 +480,13 @@ public final class Itinerary extends Visualizable {
         this.scheduleCacheValid.set(false);
     }
 
+    /**
+     * Don't stop the {@link Train} at a particular {@link Node} any more. Will cause wait time change (see
+     * {@link #getLatestWaitTimeChange()}).
+     * 
+     * @param n Node in question.
+     * @return The time it originally waited there.
+     */
     public WaitTime removeWaitTime(final Node n) {
         if (this.nodeWaitTimes.containsKey(n)) {
             Itinerary.logger.debug("Removing wait time for {} from {}.", new Object[] { n, this });
@@ -370,6 +500,10 @@ public final class Itinerary extends Visualizable {
         }
     }
 
+    /**
+     * Don't stop the {@link Train} anywhere, except for {@link MaintenanceWindow}s. Will cause wait time change (see
+     * {@link #getLatestWaitTimeChange()}).
+     */
     public void removeWaitTimes() {
         if (this.nodeWaitTimes.size() > 0) {
             Itinerary.logger.debug("Removing all wait times from {}.", new Object[] { this });
@@ -379,10 +513,21 @@ public final class Itinerary extends Visualizable {
         this.lastChange = ImmutablePair.of(ChangeType.REMOVE_ALL_WAIT_TIMES, null);
     }
 
+    /**
+     * Make the itinerary act as if it was fresh. Will cause wait time change (see {@link #getLatestWaitTimeChange()}).
+     */
     public void resetLatestWaitTimeChange() {
         this.lastChange = ImmutablePair.of(ChangeType.UNCHANGED, null);
     }
 
+    /**
+     * Make the {@link Train} stop at a particular {@link Node}. Will cause wait time change (see
+     * {@link #getLatestWaitTimeChange()}).
+     * 
+     * @param n Node to stop the train at.
+     * @param w How long to wait there.
+     * @return The previous wait time or null if none.
+     */
     public WaitTime setWaitTime(final Node n, final WaitTime w) {
         if (!this.getRoute().getProgression().getWaitPoints().contains(n)) {
             throw new IllegalArgumentException(n + " not a wait point: " + this + ". Cannot set "

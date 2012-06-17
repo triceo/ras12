@@ -11,9 +11,17 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.drools.planner.examples.ras2012.Directed;
 import org.drools.planner.examples.ras2012.util.Converter;
+import org.drools.planner.examples.ras2012.util.model.Territory;
 
+/**
+ * Train is defined by the RAS problem description, including its attributes.
+ * 
+ */
 public class Train implements Comparable<Train>, Directed {
 
+    /**
+     * Represents the schedule adherence train type defined by the RAS problem description.
+     */
     public static enum Type {
         A(600), B(500), C(400), D(300), E(150, false), F(100, false);
 
@@ -76,6 +84,23 @@ public class Train implements Comparable<Train>, Directed {
 
     private final boolean                                 isWestbound;
 
+    /**
+     * Create new instance.
+     * 
+     * @param name Name of the train, must be in the format of [A-F][0-9]+. Will be used to determine the {@link Type}.
+     * @param length Length of the train in miles.
+     * @param speedMultiplier
+     * @param tob Tons per operative break. Will be used to determine train heaviness.
+     * @param origin Where the train enters the {@link Territory}.
+     * @param destination Where the train leaves the {@link Territory}.
+     * @param entryTime Time in minutes since the start of the planning horizon, when the train enters the {@link Territory}.
+     * @param wantTime Terminal want time in minutes since the start of the planning horizon, as defined by the RAS problem
+     *        description.
+     * @param originalScheduleAdherence
+     * @param sars Schedule adherence requirements.
+     * @param hazmat Does the train carry hazardous materials?
+     * @param isWestbound Is the train going west?
+     */
     public Train(final String name, final BigDecimal length, final BigDecimal speedMultiplier,
             final int tob, final Node origin, final Node destination, final int entryTime,
             final int wantTime, final int originalScheduleAdherence,
@@ -139,8 +164,6 @@ public class Train implements Comparable<Train>, Directed {
     /**
      * Trains are compared by their first letter as strings, then by their number as integers. For example, A2 < B1 and A2 <
      * A11.
-     * 
-     * @return String.compareTo(String)
      */
     @Override
     public int compareTo(final Train arg0) {
@@ -150,6 +173,9 @@ public class Train implements Comparable<Train>, Directed {
                         Integer.valueOf(arg0.getName().substring(1))).toComparison();
     }
 
+    /**
+     * Trains with the same name are equal.
+     */
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
@@ -165,6 +191,13 @@ public class Train implements Comparable<Train>, Directed {
         return new EqualsBuilder().append(this.getName(), other.getName()).isEquals();
     }
 
+    /**
+     * How much time will it take for this train to travel the given arc.
+     * 
+     * @param a The arc in question.
+     * @param unit The unit in which to return the time.
+     * @return Travelling time in the specified unit.
+     */
     public long getArcTravellingTime(final Arc a, final TimeUnit unit) {
         if (a == null) {
             throw new IllegalArgumentException("Arc cannot be null!");
@@ -186,10 +219,20 @@ public class Train implements Comparable<Train>, Directed {
         return this.length;
     }
 
+    /**
+     * Get train's max speed on a main track.
+     * 
+     * @return Speed in MPH.
+     */
     public BigDecimal getMaximumSpeed() {
         return this.getMaximumSpeed(Track.MAIN_0);
     }
 
+    /**
+     * Get train's max speed on a given track.
+     * 
+     * @return Speed in MPH.
+     */
     public BigDecimal getMaximumSpeed(final Track t) {
         final int coreSpeed = this.isWestbound() ? t.getSpeedWestbound() : t.getSpeedEastbound();
         if (t.isMainTrack()) {
@@ -208,7 +251,12 @@ public class Train implements Comparable<Train>, Directed {
         return this.origin;
     }
 
-    // negative means train is running late
+    /**
+     * Get the original difference between actual and expected arrival for the train, as specified by the data set.
+     * 
+     * @param unit The unit to return the time in.
+     * @return Negative numbers mean the train is late.
+     */
     public long getOriginalSA(final TimeUnit unit) {
         return unit.convert(this.originalDelay, Train.DEFAULT_TIME_UNIT);
     }
@@ -239,6 +287,11 @@ public class Train implements Comparable<Train>, Directed {
         return !this.isWestbound();
     }
 
+    /**
+     * Determine train heaviness, based on the RAS problem description.
+     * 
+     * @return True when the train is considered heavy.
+     */
     public boolean isHeavy() {
         return this.tob > 100;
     }

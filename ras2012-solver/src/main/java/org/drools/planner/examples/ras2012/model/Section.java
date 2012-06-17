@@ -2,6 +2,9 @@ package org.drools.planner.examples.ras2012.model;
 
 import org.drools.planner.examples.ras2012.Directed;
 
+/**
+ * A section is part of {@link Route} that is delimited by two {@link Node}s.
+ */
 public abstract class Section {
 
     private final Node westNode, eastNode;
@@ -17,6 +20,12 @@ public abstract class Section {
         this.eastNode = eastNode;
     }
 
+    /**
+     * The node that ends the section, based on the direction.
+     * 
+     * @param d The direction.
+     * @return The ending node.
+     */
     public Node getDestination(final Directed d) {
         if (d.isEastbound()) {
             return this.eastNode;
@@ -29,6 +38,12 @@ public abstract class Section {
         return this.eastNode;
     }
 
+    /**
+     * The node that starts the section, based on the direction.
+     * 
+     * @param d The direction.
+     * @return The starting node.
+     */
     public Node getOrigin(final Directed d) {
         if (d.isEastbound()) {
             return this.westNode;

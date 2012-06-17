@@ -4,6 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.drools.planner.examples.ras2012.util.model.ArcProgression;
+
+/**
+ * At specific parts of the route, called "wait points", the train can be stopped. (See {@link ArcProgression#getWaitPoints()}
+ * and {@link Itinerary#setWaitTime(Node, WaitTime)}.) Instances of this class represent the length of these stops.
+ */
 public class WaitTime {
 
     private static final Map<Long, WaitTime> waitTimes         = new HashMap<Long, WaitTime>();
@@ -14,9 +20,8 @@ public class WaitTime {
      * Get WaitTime instance with specified wait time.
      * 
      * @param i How many minutes of waiting should this WaitTime inflict.
-     * @return
      */
-    public static synchronized WaitTime getWaitTime(final int i) {
+    public static WaitTime getWaitTime(final int i) {
         return WaitTime.getWaitTime(i, TimeUnit.MINUTES);
     }
 
@@ -25,9 +30,8 @@ public class WaitTime {
      * 
      * @param i How many units of time of waiting should this WaitTime inflict.
      * @param unit In which units would that be.
-     * @return
      */
-    public static synchronized WaitTime getWaitTime(final long i, final TimeUnit unit) {
+    public static WaitTime getWaitTime(final long i, final TimeUnit unit) {
         if (i < 1) {
             throw new IllegalArgumentException("Wait time must be bigger than zero: " + i);
         }

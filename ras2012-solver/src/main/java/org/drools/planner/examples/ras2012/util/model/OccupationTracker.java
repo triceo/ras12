@@ -142,8 +142,8 @@ public class OccupationTracker {
         @Override
         public String toString() {
             final StringBuilder builder = new StringBuilder();
-            builder.append("ArcRange [arc=").append(this.arc.getId()).append(", start=")
-                    .append(this.start).append(", end=").append(this.end).append("]");
+            builder.append("ArcRange [arc=").append(this.arc).append(", start=").append(this.start)
+                    .append(", end=").append(this.end).append("]");
             return builder.toString();
         }
 

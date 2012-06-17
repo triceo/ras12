@@ -2,6 +2,10 @@ package org.drools.planner.examples.ras2012.model;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * A maintenance window is a period of time when no {@link Train} is allowed to enter the part of the {@link Route} delimited by
+ * the east and the west {@link Node}.
+ */
 public class MaintenanceWindow extends Section {
 
     private static final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.MILLISECONDS;
@@ -9,6 +13,14 @@ public class MaintenanceWindow extends Section {
     private final long            start;
     private final long            end;
 
+    /**
+     * Create new instance. The order of times is not significant, they will be ordered automatically.
+     * 
+     * @param westNode The maintenance window starts here from the west.
+     * @param eastNode The maintenance window ends here from the west.
+     * @param time1 Start or end of the maintenance window in milliseconds since beginning of planning horizon.
+     * @param time2 Start or end of the maintenance window in milliseconds since beginning of planning horizon.
+     */
     public MaintenanceWindow(final Node westNode, final Node eastNode, final long time1,
             final long time2) {
         super(westNode, eastNode);
@@ -42,11 +54,10 @@ public class MaintenanceWindow extends Section {
     }
 
     /**
-     * Whether or not the give time is inside the window.
+     * Whether or not the give time falls inside the window.
      * 
      * @param time Time to check for.
      * @param unit The unit of the provided time.
-     * @return
      */
     public boolean isInside(final long time, final TimeUnit unit) {
         final long actualTime = MaintenanceWindow.DEFAULT_TIME_UNIT.convert(time, unit);
