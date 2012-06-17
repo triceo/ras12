@@ -8,8 +8,8 @@
   Unpref. & 
   Delay &
   Node &
-  When &
   SA &
+  Actual &
   +/- &
   Pty &
   TWT &
@@ -24,13 +24,13 @@
       <#if i == 1>\multirow{${num}}{*}{${train.unpreferredPenalty}}</#if> &
       <#if i == 1>\multirow{${num}}{*}{${train.delay}}</#if> &
       ${stop.node} &
-      ${stop.arrive} &
       ${stop.sa} &
       <#if stop.saDiff??>
+        ${stop.arrive} &
         ${stop.saDiff} &
         ${stop.saPenalty} &
       <#else>
-        \multicolumn{2}{|c||}{N/A} &
+        \multicolumn{3}{|c||}{N/A} &
       </#if>
       <#if i == 1>\multirow{${num}}{*}{${train.twt}} &</#if>
       <#if train.twtDiff??>
