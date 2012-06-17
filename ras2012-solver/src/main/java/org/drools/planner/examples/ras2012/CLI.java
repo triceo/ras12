@@ -12,8 +12,16 @@ import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+/**
+ * Command-line interface for the app. Processes command-line arguments and decides which application mode should run. This
+ * class implements the singleton pattern.
+ */
 public class CLI {
 
+    /**
+     * The modes that the application supports running in.
+     * 
+     */
     public static enum ApplicationMode {
 
         EVALUATION, LOOKUP, RESOLVER, HELP, ERROR;
@@ -22,6 +30,11 @@ public class CLI {
 
     private static final CLI INSTANCE = new CLI();
 
+    /**
+     * Return the single instance of this class.
+     * 
+     * @return The instance.
+     */
     public static CLI getInstance() {
         return CLI.INSTANCE;
     }
@@ -46,6 +59,9 @@ public class CLI {
 
     public String         datasetLocation = null, solutionLocation = null;
 
+    /**
+     * The constructor is hidden, as should be with the singleton pattern.
+     */
     private CLI() {
         // pick in which mode the application should run
         final OptionGroup applicationMode = new OptionGroup();
@@ -60,14 +76,27 @@ public class CLI {
         this.options.addOption(this.solution);
     }
 
+    /**
+     * Get a location of the data-set.
+     * 
+     * @return Path to a data set file, or null if not provided.
+     */
     public String getDatasetLocation() {
         return this.datasetLocation;
     }
 
+    /**
+     * Get a location of the solution.
+     * 
+     * @return Path to the solution file, or null if not provided.
+     */
     public String getSolutionLocation() {
         return this.solutionLocation;
     }
 
+    /**
+     * Prints a help message, describing the usage of the app from the command-line.
+     */
     public void printHelp() {
         if (this.isError) {
             System.out.println(this.errorMessage);
@@ -76,6 +105,14 @@ public class CLI {
         formatter.printHelp("java -jar ras2012.jar", this.options, true);
     }
 
+    /**
+     * Process the command-line argument and make a decision about which application mode should run.
+     * 
+     * @param args Command-line arguments.
+     * @return The application mode. If it is {@link ApplicationMode#ERROR}, the cause of the problem may be found in
+     *         {@link #errorMessage}. In other cases, {@link #getDatasetLocation()} and {@link #getSolutionLocation()} may be
+     *         used to retrieve the important arguments from the command line.
+     */
     public ApplicationMode process(final String[] args) {
         this.datasetLocation = null;
         this.solutionLocation = null;

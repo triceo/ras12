@@ -14,14 +14,25 @@ import org.drools.planner.api.domain.solution.PlanningEntityCollectionProperty;
 import org.drools.planner.core.score.buildin.hardandsoft.HardAndSoftScore;
 import org.drools.planner.core.solution.Solution;
 import org.drools.planner.examples.ras2012.model.Arc;
+import org.drools.planner.examples.ras2012.model.Itinerary;
 import org.drools.planner.examples.ras2012.model.ItineraryAssignment;
 import org.drools.planner.examples.ras2012.model.MaintenanceWindow;
+import org.drools.planner.examples.ras2012.model.Route;
 import org.drools.planner.examples.ras2012.model.Train;
 import org.drools.planner.examples.ras2012.util.model.Territory;
 import org.drools.planner.examples.ras2012.util.visualizer.GraphVisualizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This class represents the problem at hand. It holds all the problem entities and values.
+ * 
+ * There are {@link Train}s travelling on {@link Route}s in a {@link Territory}. Each train has {@link Itinerary} associated
+ * with it through a {@link ItineraryAssignment}.
+ * 
+ * Everything except {@link ItineraryAssignment} instances and score is fixed and comes from a data set.
+ * {@link ItineraryAssignment} instances change as the problem's solution changes, resulting in score changes.
+ */
 public class ProblemSolution extends Visualizable implements Solution<HardAndSoftScore> {
 
     private static final Logger                   logger      = LoggerFactory
@@ -38,8 +49,36 @@ public class ProblemSolution extends Visualizable implements Solution<HardAndSof
 
     private long                                  horizon     = 0;
 
-    public ProblemSolution(final String name, final Territory territory,
-            final Collection<MaintenanceWindow> maintenances, final Collection<Train> trains) {
+    /**
+     * Create a clone of an existing solution. This clone will be exactly the same as the original solution, except for the
+     * {@link ItineraryAssignment} instances, which will be deep-cloned. This is the way Planner requires it to happen.
+     * 
+     * @param problem The solution to clone.
+     */
+    private ProblemSolution(final ProblemSolution problem) {
+        this.name = problem.name;
+        this.territory = problem.territory;
+        this.maintenances = problem.maintenances;
+        this.trains = problem.trains;
+        // clone assignments
+        for (final ItineraryAssignment a : problem.getAssignments()) {
+            this.assignments.put(a.getTrain(), a.clone());
+        }
+        this.horizon = problem.horizon;
+        this.score = problem.getScore();
+    }
+
+    /**
+     * Initialize a fresh problem. Each train will get a route assigned that is considered best for it. See
+     * {@link Territory#getBestRoute(Train)}.
+     * 
+     * @param name Name for the problem.
+     * @param trains Trains to travel on the territory.
+     * @param territory Problem's territory, containing routes for trains.
+     * @param maintenances Maintenance windows existing on the territory.
+     */
+    public ProblemSolution(final String name, final Collection<Train> trains,
+            final Territory territory, final Collection<MaintenanceWindow> maintenances) {
         this.name = name;
         this.territory = territory;
         this.maintenances = maintenances;
@@ -56,46 +95,57 @@ public class ProblemSolution extends Visualizable implements Solution<HardAndSof
         }
     }
 
-    private ProblemSolution(final String name, final Territory territory,
-            final Collection<MaintenanceWindow> maintenances, final Collection<Train> trains,
-            final Collection<ItineraryAssignment> assignments) {
-        this.name = name;
-        this.territory = territory;
-        this.maintenances = maintenances;
-        this.trains = trains;
-        // clone assignments
-        for (final ItineraryAssignment a : assignments) {
-            this.assignments.put(a.getTrain(), a.clone());
-        }
-    }
-
     @Override
     public Solution<HardAndSoftScore> cloneSolution() {
         ProblemSolution.logger.debug("Cloning solution.");
-        final ProblemSolution clone = new ProblemSolution(this.name, this.territory,
-                this.maintenances, this.trains, this.getAssignments());
-        clone.horizon = this.horizon;
-        clone.score = this.score;
-        return clone;
+        return new ProblemSolution(this);
     }
 
+    /**
+     * Get the assignment for a particular train.
+     * 
+     * @param t Train in question.
+     * @return The assignment for the train.
+     */
     public ItineraryAssignment getAssignment(final Train t) {
         return this.assignments.get(t);
     }
 
+    /**
+     * Retrieve assignments for all the train.
+     * 
+     * @return The assignments.
+     */
     @PlanningEntityCollectionProperty
     public Collection<ItineraryAssignment> getAssignments() {
         return this.assignments.values();
     }
 
+    /**
+     * Retrieve maintenance windows on the territory.
+     * 
+     * @return Maintenance windows.
+     */
     public Collection<MaintenanceWindow> getMaintenances() {
         return this.maintenances;
     }
 
+    /**
+     * Name for the problem, usually coming from a data set.
+     * 
+     * @return The name.
+     */
     public String getName() {
         return this.name;
     }
 
+    /**
+     * The time window in which to operate. No events outside the <0, $horizon> range will count towards the score. Zero is the
+     * present time.
+     * 
+     * @param unit Unit of time that the horizon will be returned in.
+     * @return The value of the planning horizon, in the chosen unit of time.
+     */
     public long getPlanningHorizon(final TimeUnit unit) {
         if (this.horizon == 0) {
             if (this.getName().endsWith("TOY")) {
@@ -122,10 +172,20 @@ public class ProblemSolution extends Visualizable implements Solution<HardAndSof
         return this.score;
     }
 
+    /**
+     * Retrieve the problem's territory.
+     * 
+     * @return The territory.
+     */
     public Territory getTerritory() {
         return this.territory;
     }
 
+    /**
+     * Retrieve the problem's trains.
+     * 
+     * @return The trains.
+     */
     public SortedSet<Train> getTrains() {
         return new TreeSet<Train>(this.trains);
     }

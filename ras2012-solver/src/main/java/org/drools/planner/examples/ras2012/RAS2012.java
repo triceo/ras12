@@ -19,16 +19,32 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Hello world!
+ * Main class for the application. Supports multiple modes of execution:
  * 
+ * <ul>
+ * <li>The solver mode takes a user-provided data set, runs Drools Planner and outputs the result.</li>
+ * <li>The lookup mode tries to find best solutions for every known data set.</li>
+ * <li>The evaluation mode takes a user-provided data set and a solution from that data set and calculates its score.</li>
+ * </ul>
+ * 
+ * Modes of execution are chosen by providing an argument on the command line. List of command line arguments will be shown when
+ * the application is run without any arguments.
  */
-public class App {
+public class RAS2012 {
 
+    /**
+     * Executes Drools planner on a particular data set.
+     */
     private static class SolverRunner implements Runnable {
 
         private final InputStream dataset;
         private final String      name;
 
+        /**
+         * 
+         * @param dataset The data set to execute Drools Planner on.
+         * @param name Name of the data set.
+         */
         public SolverRunner(final InputStream dataset, final String name) {
             this.dataset = dataset;
             this.name = name;
@@ -36,18 +52,18 @@ public class App {
 
         @Override
         public void run() {
-            App.logger.info(this.name + " solver starting...");
+            RAS2012.logger.info(this.name + " solver starting...");
             final SolutionIO io = new SolutionIO();
             ProblemSolution sol;
             try {
                 sol = io.read(this.dataset);
             } catch (final Exception e) {
-                App.logger.error("Solver " + this.name + " finished unexpectedly. Cause: ", e);
+                RAS2012.logger.error("Solver " + this.name + " finished unexpectedly. Cause: ", e);
                 return;
             }
             // and now start solving
             final XmlSolverFactory configurer = new XmlSolverFactory();
-            configurer.configure(App.class.getResourceAsStream("/solverConfig.xml"));
+            configurer.configure(RAS2012.class.getResourceAsStream("/solverConfig.xml"));
             final Solver solver = configurer.buildSolver();
             solver.setPlanningProblem(sol);
             solver.solve();
@@ -62,9 +78,10 @@ public class App {
                 io.writeXML(sol, new File(targetFolder, this.name + score.getSoftScore() + ".xml"));
                 io.writeTex(sol, new File(targetFolder, this.name + score.getSoftScore() + ".tex"));
                 sol.visualize(new File(targetFolder, this.name + score.getSoftScore() + ".png"));
-                App.logger.info("Solver finished. Score: " + score);
+                RAS2012.logger.info("Solver finished. Score: " + score);
             } else {
-                App.logger.warn("Not writing results because solution wasn't feasible: " + score);
+                RAS2012.logger.warn("Not writing results because solution wasn't feasible: "
+                        + score);
             }
         }
 
@@ -76,20 +93,25 @@ public class App {
     private static final ExecutorService executor = Executors.newFixedThreadPool(Math.min(2,
                                                           Runtime.getRuntime()
                                                                   .availableProcessors()));
-    private static final Logger          logger   = LoggerFactory.getLogger(App.class);
+    private static final Logger          logger   = LoggerFactory.getLogger(RAS2012.class);
 
+    /**
+     * Main method of the whole app. Use for launching the app.
+     * 
+     * @param args Command-line arguments.
+     */
     public static void main(final String[] args) {
         final CLI commandLine = CLI.getInstance();
         final ApplicationMode result = commandLine.process(args);
         switch (result) {
             case RESOLVER:
-                App.runSolverMode(commandLine.getDatasetLocation());
+                RAS2012.runSolverMode(commandLine.getDatasetLocation());
                 break;
             case LOOKUP:
-                App.runLookupMode();
+                RAS2012.runLookupMode();
                 break;
             case EVALUATION:
-                App.runEvaluationMode(commandLine.getDatasetLocation(),
+                RAS2012.runEvaluationMode(commandLine.getDatasetLocation(),
                         commandLine.getSolutionLocation());
                 break;
             case HELP:
@@ -115,7 +137,7 @@ public class App {
         // load solution
         final SolutionIO io = new SolutionIO();
         final ProblemSolution result = io.read(dataset, solution);
-        App.logger.info("Solution " + result.getName() + " has a score of "
+        RAS2012.logger.info("Solution " + result.getName() + " has a score of "
                 + ScoreCalculator.oneTimeCalculation(result) + ".");
     }
 
@@ -126,14 +148,14 @@ public class App {
         streams.add("RDS3");
         streams.add("TOY");
         for (final String entry : streams) {
-            App.logger.info("Starting lookup for the best solutions on " + entry + "...");
+            RAS2012.logger.info("Starting lookup for the best solutions on " + entry + "...");
             for (int i = 0; i < 20; i++) {
-                App.logger.info("Scheduled attempt #" + i + ".");
-                App.executor.execute(new SolverRunner(
-                        App.class.getResourceAsStream(entry + ".txt"), entry));
+                RAS2012.logger.info("Scheduled attempt #" + i + ".");
+                RAS2012.executor.execute(new SolverRunner(RAS2012.class.getResourceAsStream(entry
+                        + ".txt"), entry));
             }
         }
-        App.shutdownExecutor();
+        RAS2012.shutdownExecutor();
     }
 
     private static void runSolverMode(final String datasetLocation) {
@@ -142,18 +164,18 @@ public class App {
             throw new IllegalArgumentException("Cannot read data set: " + f);
         }
         try {
-            App.executor.submit(new SolverRunner(new FileInputStream(f), f.getName()));
-            App.shutdownExecutor();
+            RAS2012.executor.submit(new SolverRunner(new FileInputStream(f), f.getName()));
+            RAS2012.shutdownExecutor();
         } catch (final FileNotFoundException e) {
-            App.logger.warn(f.getName() + " solver not started. Cause: ", e);
+            RAS2012.logger.warn(f.getName() + " solver not started. Cause: ", e);
         }
     }
 
     private static void shutdownExecutor() {
-        App.executor.shutdown();
-        while (!App.executor.isTerminated()) {
+        RAS2012.executor.shutdown();
+        while (!RAS2012.executor.isTerminated()) {
             try {
-                App.executor.awaitTermination(1, TimeUnit.SECONDS);
+                RAS2012.executor.awaitTermination(1, TimeUnit.SECONDS);
             } catch (final InterruptedException e) {
                 // nothing we could do here
             }

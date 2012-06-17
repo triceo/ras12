@@ -339,7 +339,7 @@ public class SolutionIO {
         final Collection<Arc> arcs = this.initArcs(p);
         final Collection<MaintenanceWindow> mows = this.initMOW(p);
         final Collection<Train> trains = this.initTrains(name, p);
-        return new ProblemSolution(name, new Territory(this.nodes.values(), arcs), mows, trains);
+        return new ProblemSolution(name, trains, new Territory(this.nodes.values(), arcs), mows);
     }
 
     private Collection<Arc> initArcs(final DataSetParser p) {
