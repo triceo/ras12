@@ -186,7 +186,7 @@ public class Route extends Visualizable implements Comparable<Route>, Directed {
                 final BigDecimal length = a.getLength();
                 final int speed = this.isEastbound() ? a.getTrack().getSpeedEastbound() : a
                         .getTrack().getSpeedWestbound();
-                result += Converter.getTimeFromSpeedAndDistance(speed, length);
+                result += Converter.getTimeFromSpeedAndDistance(BigDecimal.valueOf(speed), length);
             }
             this.travellingTimeInMilliseconds = result;
         }

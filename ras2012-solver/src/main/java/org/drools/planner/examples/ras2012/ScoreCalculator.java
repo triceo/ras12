@@ -110,17 +110,6 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
         return DefaultHardAndSoftScore.valueOf(-conflicts, -penalty);
     }
 
-    private void clearEveryCache() {
-        this.wantTimePenalties.clear();
-        this.unpreferredTracksPenalties.clear();
-        this.scheduleAdherencePenalties.clear();
-        this.delayPenalties.clear();
-        this.conflicts = new ConflictRegistry(
-                (int) this.solution.getPlanningHorizon(TimeUnit.MINUTES)
-                        * ScoreCalculator.OCCUPATION_CHECKS_PER_MINUTE + 1);
-        this.entries = new EntryRegistry(Node.count());
-    }
-
     public int getDelayPenalty(final Itinerary i) {
         final long delay = i.getDelay(this.solution.getPlanningHorizon(TimeUnit.MILLISECONDS));
         if (delay <= 0) {
@@ -139,7 +128,7 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
             case SET_WAIT_TIME:
                 final Node previousToModifiedNode = i.getRoute().getProgression()
                         .getPreviousNode(lastChange.getRight());
-                if (previousToModifiedNode != null && i.isNodeOnRoute(previousToModifiedNode)) {
+                if (previousToModifiedNode != null && i.hasNode(previousToModifiedNode)) {
                     // start re-calculating occupied arcs from the first change in the itinerary
                     return i.getArrivalTime(previousToModifiedNode);
                 }
@@ -231,10 +220,10 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
         final Itinerary i = ia.getItinerary();
         this.entries.resetTimes(t);
         for (final Node n : ia.getRoute().getProgression().getNodes()) {
-            if (!i.isNodeOnRoute(n)) {
+            if (!i.hasNode(n)) {
                 continue;
             }
-            long leaveTime = i.getLeaveTime(n);
+            final long leaveTime = i.getLeaveTime(n);
             if (leaveTime <= this.solution.getPlanningHorizon(TimeUnit.MILLISECONDS)) {
                 this.entries.setTimes(n, t, i.getArrivalTime(n), i.getLeaveTime(n));
             }
@@ -270,7 +259,14 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
     @Override
     public void resetWorkingSolution(final ProblemSolution workingSolution) {
         this.solution = workingSolution;
-        this.clearEveryCache();
+        this.wantTimePenalties.clear();
+        this.unpreferredTracksPenalties.clear();
+        this.scheduleAdherencePenalties.clear();
+        this.delayPenalties.clear();
+        this.conflicts = new ConflictRegistry(
+                (int) this.solution.getPlanningHorizon(TimeUnit.MINUTES)
+                        * ScoreCalculator.OCCUPATION_CHECKS_PER_MINUTE + 1);
+        this.entries = new EntryRegistry(Node.count());
         for (final ItineraryAssignment ia : this.solution.getAssignments()) {
             ia.getItinerary().resetLatestWaitTimeChange();
             this.modify(ia);

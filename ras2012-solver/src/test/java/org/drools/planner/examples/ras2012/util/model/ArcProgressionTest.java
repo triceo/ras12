@@ -52,21 +52,6 @@ public class ArcProgressionTest {
     }
 
     @Test
-    public void testCompleteHeadAndTail() {
-        final Arc a = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
-        final Arc b = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(1), Node.getNode(2));
-        final Arc c = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(2), Node.getNode(3));
-        final List<Arc> arcs = Arrays.asList(new Arc[] { a, b, c });
-        final ArcProgression p = new ArcProgression(this.route, arcs);
-
-        // testing complete head/tail
-        Assert.assertSame("Head ends with last node; result should be full.", p,
-                p.head(p.getDestination().getDestination(p)));
-        Assert.assertSame("Tail starts with first node; result should be full.", p,
-                p.tail(p.getOrigin().getOrigin(p)));
-    }
-
-    @Test
     public void testConstructor() {
         final Arc a = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
         final Arc b = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(1), Node.getNode(2));
@@ -108,21 +93,6 @@ public class ArcProgressionTest {
                 .contains(arc));
         Assert.assertFalse("Collection should not contain the never-inserted arc.", r
                 .getProgression().contains(arc2));
-    }
-
-    @Test
-    public void testEmptyHeadAndTail() {
-        final Arc a = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
-        final Arc b = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(1), Node.getNode(2));
-        final Arc c = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(2), Node.getNode(3));
-        final List<Arc> arcs = Arrays.asList(new Arc[] { a, b, c });
-        final ArcProgression p = new ArcProgression(this.route, arcs);
-
-        // testing empty head/tail
-        Assert.assertEquals("Head ends with first node; result should be empty.", 0,
-                p.head(p.getOrigin().getOrigin(p)).countArcs());
-        Assert.assertEquals("Tail starts with last node; result should be empty.", 0,
-                p.tail(p.getDestination().getDestination(p)).countArcs());
     }
 
     @Test
@@ -322,57 +292,4 @@ public class ArcProgressionTest {
                 wp.contains(a2.getDestination(r)));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testHeadNullNode() {
-        final Arc a = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
-        final ArcProgression p = new ArcProgression(this.route, a);
-        Assert.assertEquals("Tail starts with last node; result should be empty.", 0,
-                p.head(Node.getNode(2)));
-    }
-
-    @Test
-    public void testPartialHeadAndTail() {
-        final Arc a = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
-        final Arc b = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(1), Node.getNode(2));
-        final Arc c = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(2), Node.getNode(3));
-        final Arc d = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(3), Node.getNode(4));
-        final List<Arc> arcs = Arrays.asList(new Arc[] { a, b, c, d });
-        final ArcProgression p = new ArcProgression(this.route, arcs);
-
-        // testing partial head/tail
-        Assert.assertEquals("Head ends with second node; result should be one item.",
-                p.isEastbound() ? Arrays.asList(new Arc[] { a }) : Arrays.asList(new Arc[] { d }),
-                p.head(p.isEastbound() ? Node.getNode(1) : Node.getNode(3)).getArcs());
-        Assert.assertEquals("Tail starts with second-to-last node; result should be one item.",
-                p.isEastbound() ? Arrays.asList(new Arc[] { d }) : Arrays.asList(new Arc[] { a }),
-                p.tail(p.isEastbound() ? Node.getNode(3) : Node.getNode(1)).getArcs());
-
-        Assert.assertEquals(
-                "Head ends with second-to-last node; result should be three items.",
-                p.isEastbound() ? Arrays.asList(new Arc[] { a, b, c }) : Arrays.asList(new Arc[] {
-                        d, c, b }), p.head(p.isEastbound() ? Node.getNode(3) : Node.getNode(1))
-                        .getArcs());
-        Assert.assertEquals(
-                "Tail starts with second node; result should be three items.",
-                p.isEastbound() ? Arrays.asList(new Arc[] { b, c, d }) : Arrays.asList(new Arc[] {
-                        c, b, a }), p.tail(p.isEastbound() ? Node.getNode(1) : Node.getNode(3))
-                        .getArcs());
-
-        Assert.assertEquals(
-                "Head ends with middle node; result should be two items.",
-                p.isEastbound() ? Arrays.asList(new Arc[] { a, b }) : Arrays.asList(new Arc[] { d,
-                        c }), p.head(Node.getNode(2)).getArcs());
-        Assert.assertEquals(
-                "Tail starts with middle node; result should be two items.",
-                p.isEastbound() ? Arrays.asList(new Arc[] { c, d }) : Arrays.asList(new Arc[] { b,
-                        a }), p.tail(Node.getNode(2)).getArcs());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testTailNullNode() {
-        final Arc a = new Arc(Track.MAIN_0, BigDecimal.ONE, Node.getNode(0), Node.getNode(1));
-        final ArcProgression p = new ArcProgression(this.route, a);
-        Assert.assertEquals("Tail starts with last node; result should be empty.", 0,
-                p.tail(Node.getNode(2)));
-    }
 }

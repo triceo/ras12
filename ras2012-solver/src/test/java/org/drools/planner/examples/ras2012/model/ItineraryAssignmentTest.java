@@ -17,7 +17,7 @@ public class ItineraryAssignmentTest extends AbstractItineraryProviderBasedTest 
         final Route r = i.getRoute();
         final Map<Node, MaintenanceWindow> result = new HashMap<Node, MaintenanceWindow>();
         for (final MaintenanceWindow mow : mows) {
-            if (i.isNodeOnRoute(mow.getOrigin(r)) && i.isNodeOnRoute(mow.getDestination(r))) {
+            if (i.hasNode(mow.getOrigin(r)) && i.hasNode(mow.getDestination(r))) {
                 result.put(mow.getOrigin(r), mow);
             }
         }

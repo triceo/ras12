@@ -13,8 +13,6 @@ public class Arc extends Section {
 
     private final BigDecimal           lengthInMiles;
 
-    private final String               asString;
-
     public Arc(final Track t, final BigDecimal lengthInMiles, final Node westNode,
             final Node eastNode) {
         super(westNode, eastNode);
@@ -26,7 +24,6 @@ public class Arc extends Section {
         }
         this.track = t;
         this.lengthInMiles = lengthInMiles;
-        this.asString = this.toStringInternal();
     }
 
     @Override
@@ -66,10 +63,6 @@ public class Arc extends Section {
 
     @Override
     public String toString() {
-        return this.asString;
-    }
-
-    private String toStringInternal() {
         final StringBuilder builder = new StringBuilder();
         builder.append("Arc (").append(this.track.getSymbol()).append(") [lengthInMiles=")
                 .append(this.lengthInMiles).append(", section=").append(super.toString())

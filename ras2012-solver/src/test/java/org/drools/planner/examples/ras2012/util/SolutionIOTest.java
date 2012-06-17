@@ -104,13 +104,13 @@ public class SolutionIOTest {
             SolutionIOTest.parent.mkdirs();
         }
         // compare XML results
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         io.writeXML(result, baos);
-        String oldContent = new Scanner(
+        final String oldContent = new Scanner(
                 SolutionIOTest.class.getResourceAsStream(this.solutionResource))
                 .useDelimiter("\\A").next();
-        String newContent = baos.toString();
-        File f = new File(SolutionIOTest.parent, result.getName() + this.score.getSoftScore()
+        final String newContent = baos.toString();
+        final File f = new File(SolutionIOTest.parent, result.getName() + this.score.getSoftScore()
                 + ".xml");
         io.writeXML(result, f);
         Assert.assertTrue("XML files do not match. Check " + f, newContent.equals(oldContent));

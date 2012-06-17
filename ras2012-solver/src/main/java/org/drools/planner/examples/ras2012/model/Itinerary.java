@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -42,8 +43,7 @@ public final class Itinerary extends Visualizable {
     private final Train                        train;
 
     private final AtomicBoolean                scheduleCacheValid    = new AtomicBoolean(false);
-    private final Collection<Node>             nodesEnRoute;
-    private final Collection<Arc>              arcsEnRoute;
+    private final Collection<Node>             hasNodes              = new LinkedHashSet<Node>();
     private final SortedMap<Long, Node>        scheduleCache         = new TreeMap<Long, Node>();
     private final SortedMap<Long, Arc>         scheduleCacheWithArcs = new TreeMap<Long, Arc>();
     private final long                         trainEntryTime;
@@ -71,16 +71,21 @@ public final class Itinerary extends Visualizable {
         this.route = r;
         this.train = t;
         this.trainEntryTime = t.getEntryTime(Itinerary.DEFAULT_TIME_UNIT);
-        final ArcProgression enRoute = this.getRoute().getProgression()
-                .tail(this.getTrain().getOrigin());
-        this.nodesEnRoute = enRoute.getNodes();
-        this.arcsEnRoute = enRoute.getArcs();
+
+        final ArcProgression progression = this.getRoute().getProgression();
+        Node currentNode = this.getTrain().getOrigin();
+        do {
+            this.hasNodes.add(currentNode);
+        } while ((currentNode = progression.getNextNode(currentNode)) != this.getTrain()
+                .getDestination());
+        this.hasNodes.add(currentNode);
+
         // initialize the maintenance windows
         if (maintenanceWindows != null) {
             for (final MaintenanceWindow mow : maintenanceWindows) {
                 final Node origin = mow.getOrigin(t);
                 final Node destination = mow.getDestination(t);
-                if (this.isNodeOnRoute(origin) && this.isNodeOnRoute(destination)) {
+                if (this.hasNode(origin) && this.hasNode(destination)) {
                     this.maintenances.put(origin, mow);
                 }
             }
@@ -96,7 +101,8 @@ public final class Itinerary extends Visualizable {
         int i = 0;
         long previousTime = 0;
         Arc previousArc = null;
-        for (final Arc currentArc : this.arcsEnRoute) {
+        for (final Node currentNode : this.hasNodes) {
+            final Arc currentArc = this.getRoute().getProgression().getWithOriginNode(currentNode);
             long time = 0;
             if (i == 0) {
                 // first item needs to be augmented by the train entry time
@@ -108,31 +114,26 @@ public final class Itinerary extends Visualizable {
                 time += previousTime;
             }
             // now adjust for node wait time, should there be any
-            final Node n = currentArc.getOrigin(this.getTrain());
-            final WaitTime wt = this.nodeWaitTimes.get(n);
+            final WaitTime wt = this.nodeWaitTimes.get(currentNode);
             if (wt != null) {
                 time += wt.getWaitFor(Itinerary.DEFAULT_TIME_UNIT);
             }
             // check for maintenance windows
-            if (this.maintenances.containsKey(n)) {
+            if (this.maintenances.containsKey(currentNode)) {
                 // there is a maintenance registered for the next node
-                final MaintenanceWindow w = this.maintenances.get(n);
+                final MaintenanceWindow w = this.maintenances.get(currentNode);
                 if (w.isInside(time, Itinerary.DEFAULT_TIME_UNIT)) { // the maintenance is ongoing, we have to wait
                     // and adjust total node entry time
                     time = w.getEnd(Itinerary.DEFAULT_TIME_UNIT);
                 }
             }
             // and store
-            this.scheduleCache.put(time, n);
+            this.scheduleCache.put(time, currentNode);
             this.scheduleCacheWithArcs.put(time, currentArc);
             previousTime = time;
             previousArc = currentArc;
             i++;
         }
-        final long time = previousTime
-                + this.getTrain().getArcTravellingTime(previousArc, Itinerary.DEFAULT_TIME_UNIT);
-        this.scheduleCache.put(time, previousArc.getDestination(this.getTrain()));
-        this.scheduleCacheWithArcs.put(time + 1, null);
         this.scheduleCacheValid.set(true);
     }
 
@@ -179,7 +180,7 @@ public final class Itinerary extends Visualizable {
         this.cacheSchedule();
         long delay = 0;
         for (final Node n : this.getRoute().getProgression().getNodes()) {
-            if (!this.isNodeOnRoute(n) || n == this.getTrain().getDestination()) {
+            if (!this.hasNode(n) || n == this.getTrain().getDestination()) {
                 continue;
             }
             long arrivalTime = -1;
@@ -245,7 +246,7 @@ public final class Itinerary extends Visualizable {
         return this.getArrivalTime(nextNode);
     }
 
-    public Map<Node, MaintenanceWindow> getMaintenances() {
+    protected Map<Node, MaintenanceWindow> getMaintenances() {
         return this.maintenances;
     }
 
@@ -273,7 +274,7 @@ public final class Itinerary extends Visualizable {
                 return progression.getOccupiedArcs(progression.getLength(), this.getTrain()
                         .getLength().subtract(travelledInArc));
             }
-        } else if (!this.arcsEnRoute.contains(leadingArc)) {
+        } else if (!this.hasNode(leadingArc.getOrigin(this.getTrain()))) {
             // the train didn't enter the territory yet
             return progression.getOccupiedArcs(progression.getDistance(leadingArc
                     .getDestination(progression)), this.getTrain().getLength());
@@ -348,12 +349,12 @@ public final class Itinerary extends Visualizable {
                 .append(this.nodeWaitTimes).build();
     }
 
-    private void invalidateCaches() {
-        this.scheduleCacheValid.set(false);
+    public boolean hasNode(final Node n) {
+        return this.hasNodes.contains(n);
     }
 
-    public boolean isNodeOnRoute(final Node n) {
-        return this.nodesEnRoute.contains(n);
+    private void invalidateCaches() {
+        this.scheduleCacheValid.set(false);
     }
 
     public WaitTime removeWaitTime(final Node n) {

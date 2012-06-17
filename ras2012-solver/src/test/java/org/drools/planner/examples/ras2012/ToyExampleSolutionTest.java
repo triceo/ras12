@@ -18,9 +18,12 @@ import org.junit.Test;
 
 public class ToyExampleSolutionTest {
 
-    private final ProblemSolution SOLUTION = new SolutionIO()
-                                                   .read(new File(
-                                                           "src/main/resources/org/drools/planner/examples/ras2012/TOY.txt"));
+    private final ProblemSolution SOLUTION  = new SolutionIO()
+                                                    .read(new File(
+                                                            "src/main/resources/org/drools/planner/examples/ras2012/TOY.txt"));
+
+    private static final File     DIRECTORY = new File("data/tests/"
+                                                    + ToyExampleSolutionTest.class.getName());
 
     private long getArrivalAtNode(final Itinerary i, final Node n) {
         for (final SortedMap.Entry<Long, Node> entry : i.getSchedule().entrySet()) {
@@ -55,12 +58,9 @@ public class ToyExampleSolutionTest {
         throw new IllegalArgumentException("Train does not exist!");
     }
 
-    private static final File DIRECTORY = new File("data/tests/"
-                                                + ToyExampleSolutionTest.class.getName());
-
     @Before
     public void prepareSolution() {
-        DIRECTORY.mkdirs();
+        ToyExampleSolutionTest.DIRECTORY.mkdirs();
         // prepare B1 according to the example
         final Train b1 = this.locateTrain("B1");
         final ItineraryAssignment b1Assignment = this.SOLUTION.getAssignment(b1);
@@ -69,7 +69,7 @@ public class ToyExampleSolutionTest {
         long delay = 5316076 - this.getArrivalAtNode(b1Assignment.getItinerary(), Node.getNode(6));
         b1Assignment.getItinerary().setWaitTime(Node.getNode(9),
                 WaitTime.getWaitTime(delay, TimeUnit.MILLISECONDS));
-        b1Assignment.getRoute().visualize(new File(DIRECTORY, "B1.png"));
+        b1Assignment.getRoute().visualize(new File(ToyExampleSolutionTest.DIRECTORY, "B1.png"));
         // prepare C1 according to the example
         final Train c1 = this.locateTrain("C1");
         final ItineraryAssignment c1Assignment = this.SOLUTION.getAssignment(c1);
@@ -80,14 +80,15 @@ public class ToyExampleSolutionTest {
         delay = 8158664 - this.getArrivalAtNode(c1Assignment.getItinerary(), Node.getNode(6));
         c1Assignment.getItinerary().setWaitTime(Node.getNode(4),
                 WaitTime.getWaitTime(delay, TimeUnit.MILLISECONDS));
-        c1Assignment.getRoute().visualize(new File(DIRECTORY, "C1.png"));
+        c1Assignment.getRoute().visualize(new File(ToyExampleSolutionTest.DIRECTORY, "C1.png"));
         // prepare A1 according to the example
         final Train a1 = this.locateTrain("A1");
         final ItineraryAssignment a1Assignment = this.SOLUTION.getAssignment(a1);
         a1Assignment.setRoute(this.locateRoute(4));
-        a1Assignment.getRoute().visualize(new File(DIRECTORY, "A1.png"));
-        this.SOLUTION.visualize(new File(DIRECTORY, "solution.png"));
-        this.SOLUTION.getTerritory().visualize(new File(DIRECTORY, "territory.png"));
+        a1Assignment.getRoute().visualize(new File(ToyExampleSolutionTest.DIRECTORY, "A1.png"));
+        this.SOLUTION.visualize(new File(ToyExampleSolutionTest.DIRECTORY, "solution.png"));
+        this.SOLUTION.getTerritory().visualize(
+                new File(ToyExampleSolutionTest.DIRECTORY, "territory.png"));
     }
 
     @Test

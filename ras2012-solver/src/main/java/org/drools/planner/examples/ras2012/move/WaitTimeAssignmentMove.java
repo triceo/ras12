@@ -124,7 +124,7 @@ public class WaitTimeAssignmentMove implements Move {
         if (this.assignment.getRoute() != this.route) {
             return false;
         }
-        if (this.assignment.getItinerary().isNodeOnRoute(this.node)) {
+        if (this.assignment.getItinerary().hasNode(this.node)) {
             return this.waitTime != this.previousWaitTime;
         } else {
             return false;

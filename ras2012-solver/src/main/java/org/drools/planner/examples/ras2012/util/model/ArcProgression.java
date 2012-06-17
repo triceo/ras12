@@ -311,28 +311,6 @@ public class ArcProgression implements Directed {
         return this.arcsPerOrigin.get(n);
     }
 
-    /**
-     * Returns arc progression that is a subset of this arc progression. The subset starts at the beginning and ends with the
-     * arc that has the specified node as its ending.
-     * 
-     * @param n Node to end the arc progression.
-     * @return Subset from nodes 0 to n. If the node is the ending node, returns this. If the node is the starting node, returns
-     *         empty progression.
-     */
-    public ArcProgression head(final Node n) {
-        if (!this.nodes.contains(n)) {
-            throw new IllegalArgumentException(n + " not in progression!");
-        } else if (n == this.getDestination().getDestination(this)) {
-            return this;
-        } else if (n == this.getOrigin().getOrigin(this)) {
-            return new ArcProgression(this, new Arc[0]);
-        }
-        final Arc a = this.getWithDestinationNode(n);
-        assert a != null;
-        final int indexOf = this.orderedArcs.indexOf(a);
-        return new ArcProgression(this, this.orderedArcs.subList(0, indexOf + 1));
-    }
-
     @Override
     public boolean isEastbound() {
         return this.isEastbound;
@@ -345,28 +323,6 @@ public class ArcProgression implements Directed {
     @Override
     public boolean isWestbound() {
         return !this.isEastbound();
-    }
-
-    /**
-     * Returns arc progression that is a subset of this arc progression. The subset starts with the arc that has the specified
-     * node as its beginning, ends where this progression ends.
-     * 
-     * @param n Node to start the arc progression.
-     * @return Subset from nodes n to end. If the node is the ending node, returns empty progression. If the node is the
-     *         starting node, returns this.
-     */
-    public ArcProgression tail(final Node n) {
-        if (!this.nodes.contains(n)) {
-            throw new IllegalArgumentException(n + " not in progression!");
-        } else if (n == this.getDestination().getDestination(this)) {
-            return new ArcProgression(this, new Arc[0]);
-        } else if (n == this.getOrigin().getOrigin(this)) {
-            return this;
-        }
-        final Arc a = this.getWithOriginNode(n);
-        assert a != null;
-        final int indexOf = this.orderedArcs.indexOf(a);
-        return new ArcProgression(this, this.orderedArcs.subList(indexOf, this.orderedArcs.size()));
     }
 
     @Override

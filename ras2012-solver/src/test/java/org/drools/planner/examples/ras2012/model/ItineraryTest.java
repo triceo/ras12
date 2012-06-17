@@ -14,7 +14,6 @@ import java.util.concurrent.TimeUnit;
 import org.drools.planner.examples.ras2012.ProblemSolution;
 import org.drools.planner.examples.ras2012.util.Converter;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
 
@@ -150,7 +149,7 @@ public class ItineraryTest extends AbstractItineraryProviderBasedTest {
         while ((currentArc = r.getProgression().getNextArc(currentArc)) != null) {
             // account for possible maintenance windows
             final Node n = currentArc.getOrigin(r);
-            if (!this.itinerary.isNodeOnRoute(n)) { // sometimes a train doesn't start at the beginning of a route
+            if (!this.itinerary.hasNode(n)) { // sometimes a train doesn't start at the beginning of a route
                 continue;
             }
             if (this.itinerary.getMaintenances().containsKey(n)
@@ -217,12 +216,6 @@ public class ItineraryTest extends AbstractItineraryProviderBasedTest {
                         occupiedArcs);
             }
         }
-    }
-
-    @Ignore
-    @Test
-    public void testGetSchedule() {
-        Assert.fail("Not yet implemented"); // TODO
     }
 
     @Override

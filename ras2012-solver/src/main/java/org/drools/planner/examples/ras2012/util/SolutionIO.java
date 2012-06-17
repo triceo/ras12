@@ -632,8 +632,8 @@ public class SolutionIO {
 
     public void writeXML(final ProblemSolution solution, final File outputSolutionFile) {
         try {
-            writeXML(solution, new FileOutputStream(outputSolutionFile));
-        } catch (FileNotFoundException e) {
+            this.writeXML(solution, new FileOutputStream(outputSolutionFile));
+        } catch (final FileNotFoundException e) {
             SolutionIO.logger.error("Failed writing " + solution.getName() + " into "
                     + outputSolutionFile, e);
         }

@@ -8,7 +8,6 @@ import org.apache.commons.lang3.builder.CompareToBuilder;
 public class Node implements Comparable<Node> {
 
     private final int                       id;
-    private final String                    asString;
 
     private static final Map<Integer, Node> nodes = new HashMap<Integer, Node>();
 
@@ -31,7 +30,6 @@ public class Node implements Comparable<Node> {
 
     private Node(final int id) {
         this.id = id;
-        this.asString = this.toStringInternal();
     }
 
     @Override
@@ -45,13 +43,7 @@ public class Node implements Comparable<Node> {
 
     @Override
     public String toString() {
-        return this.asString;
-    }
-
-    private String toStringInternal() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("Node #").append(this.id);
-        return builder.toString();
+        return "Node #" + this.getId();
     }
 
 }

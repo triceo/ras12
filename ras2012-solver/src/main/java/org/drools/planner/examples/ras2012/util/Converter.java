@@ -27,8 +27,4 @@ public class Converter {
                 .longValue();
     }
 
-    public static long getTimeFromSpeedAndDistance(final int speedInMPH, final BigDecimal distance) {
-        return Converter.getTimeFromSpeedAndDistance(BigDecimal.valueOf(speedInMPH), distance);
-    }
-
 }
