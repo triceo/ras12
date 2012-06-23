@@ -157,25 +157,12 @@ public class Route extends Visualizable implements Comparable<Route>, Directed {
 
     @Override
     public int compareTo(final Route o) {
-        if (this.isEastbound() == o.isEastbound()) { // less tracks = better
-            final int comparison = o.progression.countArcs() - this.progression.countArcs();
-            if (comparison == 0) { // shorter = better
-                if (this.getTravellingTimeInMillis() == o.getTravellingTimeInMillis()) { // more preferred tracks = better
-                    return this.getNumberOfPreferredTracks() - o.getNumberOfPreferredTracks();
-                } else {
-                    return o.getTravellingTimeInMillis() > this.getTravellingTimeInMillis() ? 1
-                            : -1;
-                }
-            } else {
-                return comparison;
-            }
-        } else {
-            if (this.isEastbound()) {
-                return -1;
-            } else {
-                return 1;
-            }
-        }
+        /* calculate a route quality metric. the less time, the better; the more preferred tracks, the better. */
+        final float thisMetric = (float) this.getTravellingTimeInMillis()
+                / (float) this.getNumberOfPreferredTracks();
+        final float otherMetric = (float) o.getTravellingTimeInMillis()
+                / (float) o.getNumberOfPreferredTracks();
+        return Math.round((otherMetric - thisMetric) * 1000);
     }
 
     /**

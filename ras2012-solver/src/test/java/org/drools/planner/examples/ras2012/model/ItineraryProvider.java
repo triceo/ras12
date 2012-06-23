@@ -161,8 +161,8 @@ public abstract class ItineraryProvider {
                 folder.mkdirs();
             }
             this.getSolution().getTerritory().visualize(new File(folder, "network.png"));
-            for (final Set<Route> routes : this.testedRoutes.values()) {
-                for (final Route route : routes) {
+            for (final Map.Entry<Train, Set<Route>> routes : this.testedRoutes.entrySet()) {
+                for (final Route route : routes.getValue()) {
                     final File f = new File(folder, "route" + route.getId() + ".png");
                     if (!f.exists()) {
                         route.visualize(f);
