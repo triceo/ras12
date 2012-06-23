@@ -462,6 +462,7 @@ public class SolutionIO {
         map.put("name", train.getName());
         map.put("delay", SolutionIO.convertMillisToSeconds(itinerary.getDelay(solution
                 .getPlanningHorizon(TimeUnit.MILLISECONDS))));
+        map.put("delayPenalty", calculator.getDelayPenalty(itinerary));
         map.put("unpreferredPenalty", calculator.getUnpreferredTracksPenalty(itinerary));
         map.put("stops", this.prepareTexTrainStops(itinerary, solution, calculator));
         map.put("numStops", ((Collection) map.get("stops")).size());

@@ -2,11 +2,12 @@
 \footnotesize
 \caption{Statistics for resolved system ``${name}'', costing \$${cost}.}
 \centering
-\begin{tabular}{c||c|c||c|c|c|c|c||c|c|c}
+\begin{tabular}{c||c|c|c||c|c|c|c|c||c|c|c}
   \hline \hline
   &
   Unpref. & 
   Delay &
+  Pty &
   Node &
   SA &
   Actual &
@@ -23,6 +24,7 @@
       <#if i == 1>\multirow{${num}}{*}{${train.name}}</#if> &
       <#if i == 1>\multirow{${num}}{*}{${train.unpreferredPenalty}}</#if> &
       <#if i == 1>\multirow{${num}}{*}{${train.delay}}</#if> &
+      <#if i == 1>\multirow{${num}}{*}{${train.delayPenalty}}</#if> &
       ${stop.node} &
       ${stop.sa} &
       <#if stop.saDiff??>
