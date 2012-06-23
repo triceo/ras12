@@ -22,28 +22,19 @@ This article describes an entry to the 2012 RAS Problem Solving Competition, con
 
 \section{Achieved results}
 
-Running the algorithm described above 20 times over each data set, we have compiled a set of results, see Table \ref{table:results}. All these were reached within 3 minutes in a single-threaded run, using Intel i7 Q820 processor running Fedora 17 and 2 GB of heap space inside Java 7 runtime environment.
+Running the algorithm described above 20 times over each data set, we have compiled a set of results, see Table \ref{table:result}. All these were reached within 3 minutes in a single-threaded run, using Intel i7 Q820 processor running Fedora 17 and 2 GB of heap space inside Java 7 runtime environment.
 
-\begin{table}
-\caption{Solution performance per data set.}
-\begin{tabular}{c||c|c|c|c|c|c}
-\hline \hline
-    & Best    & Q1      & Q2      & Q3      & Worst   & Std. dev. \\ 
-\hline
-TOY & \$808   & \$960   & \$1210  & \$1210  & \$1210  & 164 \\ 
-\hline 
-1   & \$1435  & \$1695  & \$1930  & \$2856  & \$5612  & 1219 \\ 
-\hline 
-2   & \$8097  & \$10364 & \$14865 & \$16177 & \$22486 & 4088 \\ 
-\hline 
-3   & \$10617 & \$13247 & \$15367 & \$17307 & \$21384 & 2986 \\ 
-\end{tabular} 
-\label{table:results}
-\end{table}
+\include{stats}
 
-Please note that via the benchmarking functionality of Drools Planner (see above), users may be able to fine-tune the algorithm to be focused either on providing better solutions or on faster turnaround times.
+\begin{figure}
+\centering
+\includegraphics[width=120mm]{chart.png}
+\caption{Plotting the data for the various resolved systems.}
+\end{figure}
 
-For statistics of the resolved systems, see tables \ref{table:TOY-808.tex}, \ref{table:RDS1-1435.tex}, \ref{table:RDS2-8097.tex} and \ref{table:RDS3-10617.tex} respectively. 
+Please note that via the benchmarking functionality of Drools Planner, users may be able to fine-tune the algorithm to be focused either on providing better solutions or on faster turnaround times. Drools Planner even allows for retrieving the intermediate results of the algorithm and also modify the problem while it's being solved, which makes it the ideal tool for real-time planning.
+
+For statistics of the resolved systems, see tables \ref{table:TOY-808.tex}, \ref{table:RDS1-996.tex}, \ref{table:RDS2-7597.tex} and \ref{table:RDS3-11023.tex} respectively. 
 
 \section{Conclusion}
 
@@ -54,9 +45,9 @@ For statistics of the resolved systems, see tables \ref{table:TOY-808.tex}, \ref
 In this section, we show the best solutions reached for each data set. 
 
 \include{TOY-808}
-\include{RDS1-1435}
-\include{RDS2-8097}
-\include{RDS3-10617}
+\include{RDS1-996}
+\include{RDS2-7597}
+\include{RDS3-11023}
 
 \section{Visualizations}
 
