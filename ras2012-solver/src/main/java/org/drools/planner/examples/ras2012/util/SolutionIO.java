@@ -471,6 +471,7 @@ public class SolutionIO {
         final boolean isInHorizon = arrival <= horizon;
         final long wantTime = train.getWantTime(TimeUnit.MILLISECONDS);
         map.put("twt", SolutionIO.convertMillisToSeconds(wantTime));
+        map.put("twtArrive", isInHorizon ? SolutionIO.convertMillisToSeconds(arrival) : null);
         map.put("twtDiff", isInHorizon ? SolutionIO.convertMillisToSeconds(wantTime - arrival)
                 : null);
         map.put("twtPenalty", isInHorizon ? calculator.getWantTimePenalty(itinerary) : "");

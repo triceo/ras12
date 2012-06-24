@@ -2,7 +2,7 @@
 \footnotesize
 \caption{Statistics for resolved system ``${name}'', costing \$${cost}.}
 \centering
-\begin{tabular}{c||c|c|c||c|c|c|c|c||c|c|c}
+\begin{tabular}{c||c|c|c||c|c|c|c||c|c|c}
   \hline \hline
   &
   Unpref. & 
@@ -11,10 +11,9 @@
   Node &
   SA &
   Actual &
-  +/- &
   Pty &
   TWT &
-  +/- &
+  Actual &
   Pty \\
   <#list trains as train> 
     <#assign num = train.numStops>
@@ -29,14 +28,13 @@
       ${stop.sa} &
       <#if stop.saDiff??>
         ${stop.arrive} &
-        ${stop.saDiff} &
         ${stop.saPenalty} &
       <#else>
-        \multicolumn{3}{|c||}{N/A} &
+        \multicolumn{2}{|c||}{N/A} &
       </#if>
       <#if i == 1>\multirow{${num}}{*}{${train.twt}} &</#if>
       <#if train.twtDiff??>
-        <#if i == 1>\multirow{${num}}{*}{${train.twtDiff}}</#if> &
+        <#if i == 1>\multirow{${num}}{*}{${train.twtArrive}</#if> &
         <#if i == 1>\multirow{${num}}{*}{${train.twtPenalty}}</#if>
       <#else>
         <#if i == 1>\multicolumn{2}{c}{\multirow{${num}}{*}{N/A}}</#if>
