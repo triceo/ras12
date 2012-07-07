@@ -136,7 +136,7 @@ public class CLI {
                     return ApplicationMode.ERROR;
                 } else {
                     if (presentOptions.contains(this.seed)) {
-                        final String seed = cli.getOptionValue(this.seed.getArgName());
+                        final String seed = cli.getOptionValue(this.seed.getOpt());
                         try {
                             final long actualSeed = new Long(seed);
                             this.setSeed(actualSeed);
@@ -145,17 +145,17 @@ public class CLI {
                             return ApplicationMode.ERROR;
                         }
                     }
-                    this.setDatasetLocation(cli.getOptionValue(this.dataset.getArgName()));
+                    this.setDatasetLocation(cli.getOptionValue(this.dataset.getOpt()));
                     return ApplicationMode.RESOLVER;
                 }
             } else if (presentOptions.contains(this.evaluationMode)) {
                 if (!presentOptions.contains(this.dataset)
-                        || !presentOptions.contains(this.solution.getArgName())) {
+                        || !presentOptions.contains(this.solution.getOpt())) {
                     this.setError("You must provide a data set and a solution to evaluate.");
                     return ApplicationMode.ERROR;
                 } else {
-                    this.setDatasetLocation(cli.getOptionValue(this.dataset.getArgName()));
-                    this.setSolutionLocation(cli.getOptionValue(this.solution.getArgName()));
+                    this.setDatasetLocation(cli.getOptionValue(this.dataset.getOpt()));
+                    this.setSolutionLocation(cli.getOptionValue(this.solution.getOpt()));
                     return ApplicationMode.EVALUATION;
                 }
             } else if (presentOptions.contains(this.lookupMode)) {
