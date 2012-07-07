@@ -51,6 +51,8 @@ public class CLI {
                                                  "Location of the data set. Ignored in lookup mode.");
     private final Option  solution       = new Option("s", "solution", true,
                                                  "Location of the resolved solution for evaluation mode. Ignored in other modes.");
+    private final Option  seed           = new Option("x", "seed", true,
+                                                 "Random seed for the solver mode. Will be ignored in every other mode.");
     private final Option  help           = new Option("h", "help", false,
                                                  "Display this help and exit.");
 
@@ -58,6 +60,7 @@ public class CLI {
     private boolean       isError        = false;
 
     public String         datasetLocation = null, solutionLocation = null;
+    public long           solverSeed      = -1;
 
     /**
      * The constructor is hidden, as should be with the singleton pattern.
@@ -74,6 +77,7 @@ public class CLI {
         this.options.addOptionGroup(applicationMode);
         this.options.addOption(this.dataset);
         this.options.addOption(this.solution);
+        this.options.addOption(this.seed);
     }
 
     /**
@@ -83,6 +87,10 @@ public class CLI {
      */
     public String getDatasetLocation() {
         return this.datasetLocation;
+    }
+
+    public long getSeed() {
+        return this.solverSeed;
     }
 
     /**
@@ -123,15 +131,25 @@ public class CLI {
             if (this.isError) {
                 return ApplicationMode.ERROR;
             } else if (presentOptions.contains(this.solverMode)) {
-                if (!presentOptions.contains(this.dataset.getArgName())) {
+                if (!presentOptions.contains(this.dataset)) {
                     this.setError("You must provide a data set to resolve.");
                     return ApplicationMode.ERROR;
                 } else {
+                    if (presentOptions.contains(this.seed)) {
+                        final String seed = cli.getOptionValue(this.seed.getArgName());
+                        try {
+                            final long actualSeed = new Long(seed);
+                            this.setSeed(actualSeed);
+                        } catch (final NumberFormatException ex) {
+                            this.setError("Seed, when provided, must be a non-negative integer.");
+                            return ApplicationMode.ERROR;
+                        }
+                    }
                     this.setDatasetLocation(cli.getOptionValue(this.dataset.getArgName()));
                     return ApplicationMode.RESOLVER;
                 }
             } else if (presentOptions.contains(this.evaluationMode)) {
-                if (!presentOptions.contains(this.dataset.getArgName())
+                if (!presentOptions.contains(this.dataset)
                         || !presentOptions.contains(this.solution.getArgName())) {
                     this.setError("You must provide a data set and a solution to evaluate.");
                     return ApplicationMode.ERROR;
@@ -162,6 +180,10 @@ public class CLI {
             return true;
         }
         return false;
+    }
+
+    private void setSeed(final long seed) {
+        this.solverSeed = seed;
     }
 
     private void setSolutionLocation(final String solutionLocation) {

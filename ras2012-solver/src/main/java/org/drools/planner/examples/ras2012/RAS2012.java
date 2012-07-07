@@ -17,6 +17,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.drools.planner.config.XmlSolverFactory;
+import org.drools.planner.config.solver.SolverConfig;
 import org.drools.planner.core.Solver;
 import org.drools.planner.core.score.buildin.hardandsoft.HardAndSoftScore;
 import org.drools.planner.examples.ras2012.CLI.ApplicationMode;
@@ -46,15 +47,18 @@ public class RAS2012 {
 
         private final InputStream dataset;
         private final String      name;
+        private final long        seed;
 
         /**
          * 
          * @param dataset The data set to execute Drools Planner on.
          * @param name Name of the data set.
+         * @param seed Random seed for the solver. If < 0, it will be given to Planner to automatically decide.
          */
-        public SolverRunner(final InputStream dataset, final String name) {
+        public SolverRunner(final InputStream dataset, final String name, final long seed) {
             this.dataset = dataset;
             this.name = name;
+            this.seed = seed;
         }
 
         @Override
@@ -71,7 +75,11 @@ public class RAS2012 {
             // and now start solving
             final XmlSolverFactory configurer = new XmlSolverFactory();
             configurer.configure(RAS2012.class.getResourceAsStream("/solverConfig.xml"));
-            final Solver solver = configurer.buildSolver();
+            final SolverConfig solverConfig = configurer.getSolverConfig();
+            if (this.seed >= 0) {
+                solverConfig.setRandomSeed(this.seed);
+            }
+            final Solver solver = solverConfig.buildSolver();
             solver.setPlanningProblem(sol);
             solver.solve();
             // output the solution
@@ -80,12 +88,15 @@ public class RAS2012 {
             }
             sol = (ProblemSolution) solver.getBestSolution();
             final HardAndSoftScore score = sol.getScore();
+            final long actualSeed = solverConfig.getRandomSeed() == null ? solverConfig
+                    .getRandomSeed() : this.seed;
             if (score.getHardScore() >= 0) { // don't write score that isn't feasible
-                io.writeXML(sol, new File(RAS2012.resultDir, this.name + score.getSoftScore()
-                        + ".xml"));
-                io.writeTex(sol, new File(RAS2012.resultDir, this.name + score.getSoftScore()
-                        + ".tex"));
-                sol.visualize(new File(RAS2012.resultDir, this.name + score.getSoftScore() + ".png"));
+                io.writeXML(sol, new File(RAS2012.resultDir, this.name + score.getSoftScore() + "_"
+                        + actualSeed + ".xml"));
+                io.writeTex(sol, new File(RAS2012.resultDir, this.name + score.getSoftScore() + "_"
+                        + actualSeed + ".tex"));
+                sol.visualize(new File(RAS2012.resultDir, this.name + score.getSoftScore() + "_"
+                        + actualSeed + ".png"));
                 RAS2012.logger.info("Solver finished. Score: " + score);
             } else {
                 RAS2012.logger.warn("Not writing results because solution wasn't feasible: "
@@ -93,7 +104,6 @@ public class RAS2012 {
             }
             return score;
         }
-
     }
 
     private static final File            resultDir = new File("data/solutions");
@@ -116,7 +126,7 @@ public class RAS2012 {
         final ApplicationMode result = commandLine.process(args);
         switch (result) {
             case RESOLVER:
-                RAS2012.runSolverMode(commandLine.getDatasetLocation());
+                RAS2012.runSolverMode(commandLine.getDatasetLocation(), commandLine.getSeed());
                 break;
             case LOOKUP:
                 RAS2012.runLookupMode();
@@ -166,7 +176,7 @@ public class RAS2012 {
                 RAS2012.logger.info("Scheduled attempt #" + i + ".");
                 scores.get(entry).add(
                         RAS2012.executor.submit(new SolverRunner(RAS2012.class
-                                .getResourceAsStream(entry + ".txt"), entry)));
+                                .getResourceAsStream(entry + ".txt"), entry, -1)));
             }
         }
         // prepare chart
@@ -182,7 +192,7 @@ public class RAS2012 {
                         values.add(Math.abs(result.getSoftScore()));
                     }
                 } catch (final Exception e) {
-                    RAS2012.logger.error("One of the solvers failed.");
+                    RAS2012.logger.error("One of the solvers failed.", e);
                 }
             }
             c.addData(values, datasetName);
@@ -193,13 +203,13 @@ public class RAS2012 {
         RAS2012.shutdownExecutor();
     }
 
-    private static void runSolverMode(final String datasetLocation) {
+    private static void runSolverMode(final String datasetLocation, final long seed) {
         final File f = new File(datasetLocation);
         if (!f.exists() || !f.canRead()) {
             throw new IllegalArgumentException("Cannot read data set: " + f);
         }
         try {
-            RAS2012.executor.submit(new SolverRunner(new FileInputStream(f), f.getName()));
+            RAS2012.executor.submit(new SolverRunner(new FileInputStream(f), f.getName(), seed));
             RAS2012.shutdownExecutor();
         } catch (final FileNotFoundException e) {
             RAS2012.logger.warn(f.getName() + " solver not started. Cause: ", e);
