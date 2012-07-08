@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -19,8 +20,8 @@ import java.util.concurrent.TimeUnit;
 import org.drools.planner.config.EnvironmentMode;
 import org.drools.planner.config.XmlSolverFactory;
 import org.drools.planner.config.solver.SolverConfig;
-import org.drools.planner.core.Solver;
 import org.drools.planner.core.score.buildin.hardandsoft.HardAndSoftScore;
+import org.drools.planner.core.solver.DefaultSolver;
 import org.drools.planner.examples.ras2012.CLI.ApplicationMode;
 import org.drools.planner.examples.ras2012.util.Chart;
 import org.drools.planner.examples.ras2012.util.SolutionIO;
@@ -46,15 +47,17 @@ public class App {
      */
     private static class SolverRunner implements Callable<HardAndSoftScore> {
 
-        private final InputStream dataset;
-        private final String      name;
-        private final long        seed;
+        private final InputStream   dataset;
+        private final String        name;
+        private final long          seed;
+
+        private static final Random RANDOM = new Random(System.nanoTime());
 
         /**
          * 
          * @param dataset The data set to execute Drools Planner on.
          * @param name Name of the data set.
-         * @param seed Random seed for the solver. If < 0, it will be given to Planner to automatically decide.
+         * @param seed Random seed for the solver. If < 0, Planner will be set to decide automatically.
          */
         public SolverRunner(final InputStream dataset, final String name, final long seed) {
             this.dataset = dataset;
@@ -77,11 +80,17 @@ public class App {
             final XmlSolverFactory configurer = new XmlSolverFactory();
             configurer.configure(App.class.getResourceAsStream("/solverConfig.xml"));
             final SolverConfig solverConfig = configurer.getSolverConfig();
+            App.logger
+                    .info("Overriding Planner enviromnent mode (from {} to {}) to be able to capture the seed.",
+                            new Object[] { solverConfig.getEnvironmentMode(),
+                                    EnvironmentMode.REPRODUCIBLE });
+            solverConfig.setEnvironmentMode(EnvironmentMode.REPRODUCIBLE);
             if (this.seed >= 0) {
                 solverConfig.setRandomSeed(this.seed);
-                solverConfig.setEnvironmentMode(EnvironmentMode.REPRODUCIBLE);
+            } else {
+                solverConfig.setRandomSeed(SolverRunner.RANDOM.nextLong());
             }
-            final Solver solver = solverConfig.buildSolver();
+            final DefaultSolver solver = (DefaultSolver) solverConfig.buildSolver();
             solver.setPlanningProblem(sol);
             solver.solve();
             // output the solution
@@ -90,15 +99,13 @@ public class App {
             }
             sol = (ProblemSolution) solver.getBestSolution();
             final HardAndSoftScore score = sol.getScore();
-            final long actualSeed = solverConfig.getRandomSeed() == null ? solverConfig
-                    .getRandomSeed() : this.seed;
+            final long actualSeed = solverConfig.getEnvironmentMode() == EnvironmentMode.REPRODUCIBLE ? solver
+                    .getRandomSeed() : 0;
             if (score.getHardScore() >= 0) { // don't write score that isn't feasible
-                io.writeXML(sol, new File(App.resultDir, this.name + score.getSoftScore() + "_"
-                        + actualSeed + ".xml"));
-                io.writeTex(sol, new File(App.resultDir, this.name + score.getSoftScore() + "_"
-                        + actualSeed + ".tex"));
-                sol.visualize(new File(App.resultDir, this.name + score.getSoftScore() + "_"
-                        + actualSeed + ".png"));
+                io.writeXML(sol, new File(App.resultDir, this.name + score.getSoftScore() + ".xml"));
+                io.writeTex(sol, actualSeed,
+                        new File(App.resultDir, this.name + score.getSoftScore() + ".tex"));
+                sol.visualize(new File(App.resultDir, this.name + score.getSoftScore() + ".png"));
                 App.logger.info("Solver finished. Score: " + score);
             } else {
                 App.logger.warn("Not writing results because solution wasn't feasible: " + score);

@@ -1,6 +1,6 @@
 \begin{sidewaystable}
 \footnotesize
-\caption{Statistics for resolved system ``${name}'', costing \$${cost}.}
+\caption{Statistics for resolved system ``${name}'', costing \$${cost}. Random seed: ${seed}.}
 \centering
 \begin{tabular}{c||c|c|c||c|c|c|c||c|c|c}
   \hline \hline

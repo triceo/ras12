@@ -645,10 +645,12 @@ public class SolutionIO {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public void writeTex(final ProblemSolution solution, final File outputSolutionFile) {
+    public void writeTex(final ProblemSolution solution, final long seed,
+            final File outputSolutionFile) {
         try {
             final Map map = this.prepareTexData(solution);
             map.put("id", solution.getName().replaceAll("\\Q \\E", ""));
+            map.put("seed", seed);
             this.freemarker.getTemplate("schedule.tex.ftl").process(map,
                     new FileWriter(outputSolutionFile));
         } catch (final TemplateException e) {
