@@ -150,9 +150,12 @@ public class Route extends Visualizable implements Comparable<Route>, Directed {
 
     private final Map<Train, Boolean> routePossibilitiesCache      = new HashMap<Train, Boolean>();
 
+    private final RouteVisualizer     visualizer;
+
     private Route(final int id, final Arc... e) {
         this.id = id;
         this.progression = new ArcProgression(this, e);
+        this.visualizer = new RouteVisualizer(this);
     }
 
     @Override
@@ -323,6 +326,6 @@ public class Route extends Visualizable implements Comparable<Route>, Directed {
 
     @Override
     public boolean visualize(final File target) {
-        return this.visualize(new RouteVisualizer(this), target);
+        return this.visualize(this.visualizer, target);
     }
 }
