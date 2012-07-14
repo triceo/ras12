@@ -1,7 +1,7 @@
 package org.drools.planner.examples.ras2012.model;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.apache.commons.lang3.builder.CompareToBuilder;
 
@@ -10,9 +10,9 @@ import org.apache.commons.lang3.builder.CompareToBuilder;
  */
 public class Node implements Comparable<Node> {
 
-    private final int                       id;
+    private final int                                 id;
 
-    private static final Map<Integer, Node> nodes = new HashMap<Integer, Node>();
+    private static final ConcurrentMap<Integer, Node> nodes = new ConcurrentHashMap<Integer, Node>();
 
     /**
      * Get the number of registered nodes.
@@ -29,17 +29,12 @@ public class Node implements Comparable<Node> {
      * @param id The unique ID of the node.
      * @return The node in question.
      */
-    public static synchronized Node getNode(final int id) {
+    public static Node getNode(final int id) {
         if (id < 0) {
             throw new IllegalArgumentException("Node ID cannot be less than zero!");
         }
-        if (!Node.nodes.containsKey(id)) {
-            final Node n = new Node(id);
-            Node.nodes.put(id, n);
-            return n;
-        }
+        Node.nodes.putIfAbsent(id, new Node(id));
         return Node.nodes.get(id);
-
     }
 
     /**

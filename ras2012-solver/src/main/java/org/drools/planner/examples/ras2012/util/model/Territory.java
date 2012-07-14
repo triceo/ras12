@@ -116,7 +116,7 @@ public class Territory extends Visualizable {
         return this.bestRoutes.get(t);
     }
 
-    public synchronized Collection<Route> getRoutes(final Train t) {
+    public Collection<Route> getRoutes(final Train t) {
         final Collection<Route> routes = t.isEastbound() ? this.eastboundRoutes
                 : this.westboundRoutes;
         final Collection<Route> properRoutes = new LinkedHashSet<Route>(routes);
