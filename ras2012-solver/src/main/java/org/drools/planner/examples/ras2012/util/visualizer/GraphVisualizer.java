@@ -100,6 +100,8 @@ public class GraphVisualizer {
 
     private static final Lock     l            = new ReentrantLock();
 
+    private Layout<Node, Arc>     layout       = null;
+
     public GraphVisualizer(final Collection<Arc> edges) {
         this(edges, null);
     }
@@ -129,10 +131,18 @@ public class GraphVisualizer {
         return g;
     }
 
-    protected Layout<Node, Arc> getLayout() {
-        final Layout<Node, Arc> layout = new ISOMLayout<Node, Arc>(this.formGraph());
-        layout.setSize(new Dimension(GraphVisualizer.GRAPH_WIDTH, GraphVisualizer.GRAPH_HEIGHT));
-        return layout;
+    private Layout<Node, Arc> getLayout() {
+        GraphVisualizer.l.lock();
+        try {
+            if (this.layout == null) {
+                this.layout = new ISOMLayout<Node, Arc>(this.formGraph());
+                this.layout.setSize(new Dimension(GraphVisualizer.GRAPH_WIDTH,
+                        GraphVisualizer.GRAPH_HEIGHT));
+            }
+        } finally {
+            GraphVisualizer.l.unlock();
+        }
+        return this.layout;
     }
 
     protected VisualizationImageServer<Node, Arc> getServer() {
