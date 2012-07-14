@@ -22,7 +22,7 @@
 
 <#list sa as item>
   <solverBenchmark>
-    <name>hard${item[0]}-soft${item[1]}-selection${item[2]}-tabu${item[3]}</name>
+    <name>H${item[0]}-S${item[1]}-MAS${item[2]}-TABU${item[3]}-SOL${item[4]}</name>
     <solver>
       <localSearch>
       <termination>
@@ -34,7 +34,8 @@
           <minimalAcceptedSelection>${item[2]}</minimalAcceptedSelection>
         </forager>
         <acceptor>
-          <solutionTabuSize>${item[3]}</solutionTabuSize>
+          <solutionTabuSize>${item[4]}</solutionTabuSize>
+          <moveTabuSize>${item[3]}</moveTabuSize>
           <simulatedAnnealingStartingTemperature>${item[0]}hard/${item[1]}soft</simulatedAnnealingStartingTemperature>
         </acceptor>
     <selector>

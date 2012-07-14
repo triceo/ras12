@@ -14,14 +14,13 @@
       <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
     </termination> 
     <acceptor>
+      <solutionTabuSize>1</solutionTabuSize>
       <moveTabuSize>7</moveTabuSize>
-      <undoMoveTabuSize>7</undoMoveTabuSize>
-      <solutionTabuSize>10000</solutionTabuSize>
-      <simulatedAnnealingStartingTemperature>40hard/10soft</simulatedAnnealingStartingTemperature>
+      <simulatedAnnealingStartingTemperature>50hard/10soft</simulatedAnnealingStartingTemperature>
     </acceptor>
     <forager>
       <minimalAcceptedSelection>4</minimalAcceptedSelection>
-    </forager>    
+    </forager>
     <selector>
       <selector>
         <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>

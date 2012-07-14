@@ -19,7 +19,7 @@
     <#assign num = train.numStops>
     <#assign i = 1>
     <#list train.stops as stop>
-      <#if i == 1>\hline<#else>\cline{4-8}</#if>
+      <#if i == 1>\hline<#else>\cline{5-8}</#if>
       <#if i == 1>\multirow{${num}}{*}{${train.name}}</#if> &
       <#if i == 1>\multirow{${num}}{*}{${train.unpreferredPenalty}}</#if> &
       <#if i == 1>\multirow{${num}}{*}{${train.delay}}</#if> &
@@ -34,7 +34,7 @@
       </#if>
       <#if i == 1>\multirow{${num}}{*}{${train.twt}} &</#if>
       <#if train.twtDiff??>
-        <#if i == 1>\multirow{${num}}{*}{${train.twtArrive}</#if> &
+        <#if i == 1>\multirow{${num}}{*}{${train.twtArrive}}</#if> &
         <#if i == 1>\multirow{${num}}{*}{${train.twtPenalty}}</#if>
       <#else>
         <#if i == 1>\multicolumn{2}{c}{\multirow{${num}}{*}{N/A}}</#if>

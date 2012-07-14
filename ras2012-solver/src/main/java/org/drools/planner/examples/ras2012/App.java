@@ -180,7 +180,7 @@ public class App {
         for (final String entry : streams) {
             App.logger.info("Starting lookup for the best solutions on " + entry + "...");
             scores.put(entry, new ArrayList<Future<HardAndSoftScore>>());
-            for (int i = 0; i < 20; i++) {
+            for (int i = 0; i < 50; i++) {
                 App.logger.info("Scheduled attempt #" + i + ".");
                 scores.get(entry).add(
                         App.executor.submit(new SolverRunner(App.class.getResourceAsStream(entry
