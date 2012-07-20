@@ -91,7 +91,7 @@ public class ProblemSolution extends Visualizable implements Solution<HardAndSof
          */
         // TODO separate into a solution initializer, for the sake of clarity
         for (final Train t : this.getTrains()) {
-            final ItineraryAssignment ia = new ItineraryAssignment(t, maintenances);
+            final ItineraryAssignment ia = new ItineraryAssignment(t, this);
             ia.setRoute(this.getTerritory().getBestRoute(t));
             this.assignments.put(t, ia);
         }

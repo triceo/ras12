@@ -52,8 +52,7 @@ public class ItineraryAssignmentTest extends AbstractItineraryProviderBasedTest 
 
     @Test
     public void testClone() {
-        final ItineraryAssignment ia = new ItineraryAssignment(this.expectedTrain,
-                this.solution.getMaintenances());
+        final ItineraryAssignment ia = new ItineraryAssignment(this.expectedTrain, this.solution);
         ia.setRoute(this.expectedRoute);
         final ItineraryAssignment ia2 = ia.clone();
         Assert.assertNotSame(ia2, ia);
@@ -62,8 +61,7 @@ public class ItineraryAssignmentTest extends AbstractItineraryProviderBasedTest 
 
     @Test
     public void testConstructorSimple() {
-        final ItineraryAssignment ia = new ItineraryAssignment(this.expectedTrain,
-                this.solution.getMaintenances());
+        final ItineraryAssignment ia = new ItineraryAssignment(this.expectedTrain, this.solution);
         Assert.assertSame(this.expectedTrain, ia.getTrain());
         Assert.assertNull(ia.getRoute());
         try {
@@ -76,13 +74,12 @@ public class ItineraryAssignmentTest extends AbstractItineraryProviderBasedTest 
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorWithNullTrain() {
-        new ItineraryAssignment(null, this.solution.getMaintenances());
+        new ItineraryAssignment(null, this.solution);
     }
 
     @Test
     public void testRouteGetterAndSetter() {
-        final ItineraryAssignment ia = new ItineraryAssignment(this.expectedTrain,
-                this.solution.getMaintenances());
+        final ItineraryAssignment ia = new ItineraryAssignment(this.expectedTrain, this.solution);
         ia.setRoute(this.expectedRoute);
         Assert.assertSame(this.expectedRoute, ia.getRoute());
         final Itinerary itinerary = ia.getItinerary();
@@ -96,22 +93,19 @@ public class ItineraryAssignmentTest extends AbstractItineraryProviderBasedTest 
 
     @Test(expected = IllegalArgumentException.class)
     public void testRouteSetterImpossible() {
-        final ItineraryAssignment ia = new ItineraryAssignment(this.expectedTrain,
-                this.solution.getMaintenances());
+        final ItineraryAssignment ia = new ItineraryAssignment(this.expectedTrain, this.solution);
         ia.setRoute(new Route.Builder(this.expectedTrain.isWestbound()).build());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testRouteSetterNull() {
-        final ItineraryAssignment ia = new ItineraryAssignment(this.expectedTrain,
-                this.solution.getMaintenances());
+        final ItineraryAssignment ia = new ItineraryAssignment(this.expectedTrain, this.solution);
         ia.setRoute(null);
     }
 
     @Test
     public void testRouteSetterTwiceTheSame() {
-        final ItineraryAssignment ia = new ItineraryAssignment(this.expectedTrain,
-                this.solution.getMaintenances());
+        final ItineraryAssignment ia = new ItineraryAssignment(this.expectedTrain, this.solution);
         ia.setRoute(this.expectedRoute);
         // itinerary isn't null, so getItinerary() works
         final Itinerary itinerary = ia.getItinerary();
