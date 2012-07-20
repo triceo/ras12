@@ -48,7 +48,6 @@ public class ProblemSolution extends Visualizable implements Solution<HardAndSof
     private HardAndSoftScore                      score;
 
     private long                                  horizon     = 0;
-    private final GraphVisualizer                 visualizer;
 
     /**
      * Create a clone of an existing solution. This clone will be exactly the same as the original solution, except for the
@@ -67,7 +66,6 @@ public class ProblemSolution extends Visualizable implements Solution<HardAndSof
         }
         this.horizon = problem.horizon;
         this.score = problem.getScore();
-        this.visualizer = problem.visualizer;
     }
 
     /**
@@ -95,12 +93,6 @@ public class ProblemSolution extends Visualizable implements Solution<HardAndSof
             ia.setRoute(this.getTerritory().getBestRoute(t));
             this.assignments.put(t, ia);
         }
-        // prepare a visualizer
-        final Collection<Arc> arcs = new HashSet<Arc>();
-        for (final ItineraryAssignment ia : this.getAssignments()) {
-            arcs.addAll(ia.getRoute().getProgression().getArcs());
-        }
-        this.visualizer = new GraphVisualizer(arcs);
     }
 
     @Override
@@ -220,7 +212,12 @@ public class ProblemSolution extends Visualizable implements Solution<HardAndSof
 
     @Override
     public boolean visualize(final File target) {
-        return this.visualize(this.visualizer, target);
+        // prepare a visualizer
+        final Collection<Arc> arcs = new HashSet<Arc>();
+        for (final ItineraryAssignment ia : this.getAssignments()) {
+            arcs.addAll(ia.getRoute().getProgression().getArcs());
+        }
+        return this.visualize(new GraphVisualizer(arcs), target);
     }
 
 }
