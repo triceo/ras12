@@ -110,9 +110,13 @@ public final class ItineraryAssignment implements Cloneable {
     }
 
     @PlanningVariable
-    @ValueRange(type = ValueRangeType.UNDEFINED)
+    @ValueRange(type = ValueRangeType.FROM_PLANNING_ENTITY_PROPERTY, planningEntityProperty = "routes")
     public Route getRoute() {
         return this.route;
+    }
+
+    public Collection<Route> getRoutes() {
+        return this.solution.getTerritory().getRoutes(this.getTrain());
     }
 
     public Train getTrain() {
