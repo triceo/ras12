@@ -150,7 +150,7 @@ public class CLI {
                 }
             } else if (presentOptions.contains(this.evaluationMode)) {
                 if (!presentOptions.contains(this.dataset)
-                        || !presentOptions.contains(this.solution.getOpt())) {
+                        || !presentOptions.contains(this.solution)) {
                     this.setError("You must provide a data set and a solution to evaluate.");
                     return ApplicationMode.ERROR;
                 } else {

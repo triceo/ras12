@@ -159,7 +159,7 @@ public class App {
         if (!dataset.exists() || !dataset.canRead()) {
             throw new IllegalArgumentException("Cannot read data set: " + dataset);
         }
-        final File solution = new File(datasetLocation);
+        final File solution = new File(solutionLocation);
         if (!solution.exists() || !solution.canRead()) {
             throw new IllegalArgumentException("Cannot read data set: " + solution);
         }
