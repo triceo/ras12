@@ -11,7 +11,7 @@ import java.util.Map;
  */
 public enum Track {
 
-    MAIN_0('='), MAIN_1('<'), MAIN_2('>'), SWITCH('S', false), SIDING('/', false), CROSSOVER('C',
+    MAIN_0('='), MAIN_1('<'), MAIN_2('>'), SWITCH('/', false), SIDING('S', false), CROSSOVER('C',
             false);
 
     private final boolean                    isMainTrack;
