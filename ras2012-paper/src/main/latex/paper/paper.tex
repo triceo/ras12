@@ -16,7 +16,7 @@ This article describes an entry to the \emph{2012 RAS Problem Solving Competitio
 
 \section{Introduction}
 
-Working in the field of expert systems, tackling complicated problems can easily become one's hobby. But even in your spare time, you still want to find out how you compare to others. Having heard of the \emph{2012 RAS Problem Solving Competition} at that point, registering wasn't at all a tough decision. After spending many a night on it, this is what emerged.
+Working in the field of expert systems, tackling complicated problems can easily become one's hobby. But even in one's spare time, one still wants to find out how one compares to others. Having heard of the \emph{2012 RAS Problem Solving Competition} at that point, registering wasn't at all a tough decision. After spending many a night on it, this is what emerged.
 
 We first describe the core concepts behind our submission, following by notes on the actual technical implementation. We show how the application can be used for both its primary purpose and also additional ones. We discuss the achieved results and potential for future improvement. In the appendices, we provide statistics for the best resolved systems.
 
@@ -27,7 +27,10 @@ Not being members of any of the Operations Research communities or even academia
 In this section, we describe the various approaches we have taken to implement the rules and constrains required by the competition. These are the key concepts leveraged in the algorithm, whose implementation will be described in later sections.
 
 \begin{description}
-\item[Train routes] From each particular data set, a territory is built. This territory is then analyzed and every possible route through that territory is found. Each train then holds a set of routes it is allowed to take, from which a solver will attempt to pick the best one\footnote{The competition rules state that the algorithm cannot assign trains to sidings. A case could be made that our approach here violates this rule. The algorithm may, indeed, explicitly put a train on a route with a siding. However, as the solution improves, this situation will inevitably be reduced to only occurring during a meet-pass event. Strictly speaking, we don't violate the rule at all, since we don't assign trains to sidings~-- we assign routes to trains.}. A train is not allowed to take a particular route when any of the following conditions hold true:
+
+\item[Meet-pass events] The most important concept to grasp in our case is the meet-pass event, or more precisely the lack thereof. The route of every train is planned independently of every other train and the only relevant criteria is the overall system's efficiency expressed by its cost.\footnote{While, of course, still honoring every rule of the competition.} This inevitably leads to trains being sent onto a collision course. These situations are called ``conflicts'' and are treated as hard constraints~-- no feasible solution will ever demonstrate any conflict\footnote{We would think it goes without saying. However, we've been getting that question over and over when describing the algorithm to friends and colleagues. Hence the clarification.}. The same goes for the mandatory time lapse between any two trains.
+
+\item[Train routes] From each particular data set, a territory is built. This territory is then analyzed and every possible route through that territory is found. Each train holds a set of routes it is allowed to take, from which solver will attempt to pick the best one\footnote{The competition rules state that the algorithm cannot assign trains to sidings. A case could be made that our approach here violates this rule~-- the algorithm indeed may put a train on a route with a siding. However, as the solution improves, this situation will be reduced to only occurring during what would be seen as a meet-pass event. Strictly speaking, we don't violate the rule at all, since we don't assign trains to sidings~-- we assign routes to trains.}. A train is not allowed to take a particular route when any of the following conditions hold true:
 
 \begin{itemize}
 \item Train is required to pass through a node that is not on the route. Examples would include situations when the route doesn't include the node with a schedule adherence requirement attached.
@@ -52,30 +55,35 @@ Trains are automatically stopped for maintenance windows. However, no additional
 
 \item[Solution] A solution is a set of itineraries, one for each train. The best found solution becomes a resolved system. A solution differs from the other by either of the trains taking a different route, waiting at different points and/or for different times.
 
-\item[Conflicts] The itinerary of each train is reached separately, without accounting for the whereabouts of any other train in the territory. This inevitably leads to solutions where two trains leverage the same part of the track at the same time, thus effectively colliding. These events are called ``conflicts'' and are treated as hard constraints~-- no feasible solution will ever demonstrate any conflict\footnote{We would think it goes without saying. However, we've been getting that question over and over when describing the algorithm to friends and colleagues. Hence the clarification.}. The same goes for the mandatory time lapse between any two trains.
-
 \end{description}
 
 \section{Implementation}
 
-In this section, we will describe the implementation of the algorithm, its various properties, strength and drawbacks.
+In this section, we will describe the implementation of the algorithm, its various properties, strengths and drawbacks.
 
 \subsection{Drools Planner} 
 
 Drools Planner\footnote{The Drools project, http://www.jboss.org/drools/} is an open-source Java-based solver that currently implements various tabu search techniques and simulated annealing. It allows for stating your problem in a declarative manner, using the following basic concepts:
 
 \begin{description}
-\item[Planning entity] The entity used for planning, in our case it is the itinerary for a particular train.
+\item[Planning entity] in our case is the itinerary for a particular train.
 
-\item[Planning variable] Each planning entity hold various variables. By changing their values, Planner can arrive at a better or worse solution. In our case, planning variables are the route for the train and wait times in wait points.
+\item[Planning variable] is a part of the planning entity. By changing variable's value, Planner can arrive at a better or worse solution. In our case, we have two planning variables: the route for the train and wait times in wait points.
 
-\item[Planning values] Each variable has a list of values applicable at the given point in time. For example, the itinerary has a list of routes that are available for its train to take. Each of them can become a value of the planning variable, resulting in a change in solution quality.
+\item[Planning values] are possible values to apply to a planning variable at any given time. For example, the itinerary has a list of routes that are available for its train to take. Each of them can become a value of the planning variable, resulting in a change in solution quality.
 
 \item[Move] is a way to change one solution into another, to cross from one state to another in a state space. Usually a move consists of changing the value of a planning variable. In our case, we know the following moves:
+
+\begin{itemize}
+\item A move to assign or remove a wait time for a specific wait point in the itinerary.
+\item A move to change a route the train will take, removing any and all wait times from the itinerary.
+\end{itemize}
 
 \item[Scoring function] is a means of evaluating the quality of the solution. In our case, it contains of two parts~-- a hard score, representing the number of conflicts (see above), and a soft score, representing the cost of the system.
 
 Scoring function in Planner can take two forms - first, you can write it in plain old Java. Alternatively, you can leverage Drools Expert, giving at your disposal the full power of a ReteOO-based inference engine. We use the former.
+
+Implementing an efficient scoring function without the help of an inference engine means writing a lot of caching and also figuring out a mechanism to only incrementally update those parts of the score where variables actually changed. Those features you get ``for free'' from a system such as Drools Expert; however, the rules of the scoring function ended up being so complex that it actually justified writing code in the imperative Java language.
 
 \end{description}
 
@@ -96,11 +104,11 @@ At the moment, Planner is a single-threaded application. Using multi-core CPUs w
 \begin{enumerate}
 \item Generate all possible moves for the solution.
 \item Based on the user-specified solver configuration, some or all of the moves are evaluated. This is where the simulated annealing and tabu searches come into play.
-\item Should a better solution be found, store it.
+\item Should any of the moves result in a better solution, store it.
 \item Repeat.
 \end{enumerate}
 
-\item When a user-specified termination condition is reached, the solver ends and reports the best found solution. The termination condition in our case is 3 minutes of run time.
+\item When a user-specified termination condition is reached, the solver ends and reports the best found solution. The termination condition in our case is achieving 3 minutes of run time.
 \item We take the solution and convert it into the submission format. Optionally, we visualize and tabulate.
 \item End processing.
 \end{enumerate}
@@ -146,16 +154,9 @@ Maven starts downloading our dependencies, building our code and running our ext
 
 \begin{figure}
 \centering
-\texttt{java -jar <JAR-FILE> -r -d <PATH-TO-DATA-SET>}
-\caption{Running the application in a resolver mode.}
-\label{figure:run-resolver}
-\end{figure}
-
-\begin{figure}
-\centering
 \texttt{java -jar <JAR-FILE> -r -d <PATH-TO-DATA-SET> -x <SEED>}
-\caption{Running the application in a resolver mode, specifying a random seed.}
-\label{figure:run-resolver-seed}
+\caption{Running the application in a resolver mode, optionally specifying a random seed.}
+\label{figure:run-resolver}
 \end{figure}
 
 \begin{figure}
@@ -174,11 +175,7 @@ Maven starts downloading our dependencies, building our code and running our ext
 
 \subsubsection{Running}
 
-To start resolving a data set with a fresh random seed, see Figure \ref{figure:run-resolver}. To provide a specific random seed, see Figure \ref{figure:run-resolver-seed}.
-
-To calculate cost for a specific resolved system, see Figure \ref{figure:run-evaluation}.
-
-To verify how your solver configuration performs on the three provided data sets, see Figure \ref{figure:run-lookup}. It will run the algorithm many times with a fresh random seed each time and provide a summary of the results, much like in Table \ref{table:result} and Figure \ref{figure:plot}.
+To start resolving a data set, see Figure \ref{figure:run-resolver}. To calculate cost for a specific resolved system, see Figure \ref{figure:run-evaluation}. To verify how your solver configuration performs on the three provided data sets, see Figure \ref{figure:run-lookup}. It will run the algorithm many times with a fresh random seed each time and provide a summary of the results, much like in Table \ref{table:result} and Figure \ref{figure:plot}.
 
 Please note that in all the figures, \texttt{<JAR-FILE>} refers to the \texttt{.jar} file from the previous section.
 
@@ -186,7 +183,11 @@ Please note that in all the figures, \texttt{<JAR-FILE>} refers to the \texttt{.
 
 Running the algorithm 50 times over each data set and using a fresh random seed every time, we have compiled a set of results, see Table \ref{table:result}. All these were reached within 3 minutes in a single-threaded run, using Intel i7 Q820 processor running Fedora 17 and 2 GB of heap space inside Java 7 runtime environment.
 
-\include{stats}
+As we can see, the differences between the best and the worst scores produced by the algorithm are fairly large~-- even more than 100 \% for the smallest data set. This randomness can be eliminated by providing a fixed seed. That may not be practical however, since various data sets behave differently with different seeds. Best practice could be to use the median (``Q2'') value as a guide for what to expect from the algorithm generally.
+
+Please note that via the benchmarking functionality of Drools Planner\footnote{We had to improve that functionality inside Planner to allow for parallel benchmarking. Otherwise our benchmarks would probably still be running today.}, users may be able to fine-tune the algorithm to be focused either on providing better solutions or on faster turnaround times. Drools Planner even allows for retrieving the intermediate results of the algorithm and modifying the problem while it's being solved, which makes it the ideal tool for real-time planning.
+
+For statistics of the resolved systems, see tables \ref{table:RASDATASET1}, \ref{table:RASDATASET2} and \ref{table:RASDATASET3} respectively. 
 
 \begin{figure}
 \centering
@@ -195,15 +196,21 @@ Running the algorithm 50 times over each data set and using a fresh random seed 
 \label{figure:plot}
 \end{figure}
 
-Please note that via the benchmarking functionality of Drools Planner, users may be able to fine-tune the algorithm to be focused either on providing better solutions or on faster turnaround times. Drools Planner even allows for retrieving the intermediate results of the algorithm and modifying the problem while it's being solved, which makes it the ideal tool for real-time planning.
+\include{stats}
 
-For statistics of the resolved systems, see tables \ref{table:RASDATASET1}, \ref{table:RASDATASET2} and \ref{table:RASDATASET3} respectively. 
+\section{The future}
+
+Drools Planner is an actively developed project, which means it brings new features all the time. Some of the recently added features include just-in-time move selectors. That feature, when introduced into the code base of our solution, could significantly reduce memory footprint of the application, leaving less memory for garbage collection and thus speeding up the solver. However, it wasn't possible to incorporate it into the submission while still meeting the competition deadline.
+
+Also, it is possible to refactor the application's code to allow for using Planner's generic move facilities. That would make the application more light-weight by removing significant portions of our own code for handling moves, while at the same time benefiting from various optimizations incorporated in Drools Planner.
+
+Although much care has been taken to optimize the inner workings of our submission to be as fast as possible, there still remain places where more optimization is at hand. Future work could focus on eliminating these places with the help of a code profiler.
 
 \section{Conclusion}
 
 We are submitting a well-documented solution to the stated problem which handles data sets both large and small, is easy to understand and extend and doesn't limit the user to any particular computing platform. We allow for tabulating and visualizing resolved systems for easier analysis, be they ours or competitors'.
 
-The submission is configured to work reasonably well on all three provided data sets. Users in the real world are encouraged to benchmark various solver configurations to come up with the one that matches the scale of their particular problem.
+The submission is configured to work reasonably well on all three provided data sets. Users in the real world are encouraged to benchmark various solver configurations to come up with the one that best matches the scale of their particular problem.
 
 \appendix
 
