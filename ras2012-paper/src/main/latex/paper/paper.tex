@@ -11,14 +11,20 @@
 \maketitle
 
 \begin{abstract}
-This article describes an entry to the 2012 RAS Problem Solving Competition, concerning dispatching on multi-track territories. The entry is based on the Drools Planner, a Java-based solver. On a reasonably recent computer, the resulting algorithm is able to produce feasible results within a minute and has been fine-tuned to provide best results in under 3 minutes. Source code of the entry is open and well documented.
+This article describes an entry to the \emph{2012 RAS Problem Solving Competition}, concerning dispatching on multi-track territories. The entry is based on the Drools Planner, a Java-based solver. On a reasonably recent computer, the resulting algorithm is able to produce feasible results within a minute and has been fine-tuned to provide best results in under 3 minutes. Source code of the entry is open and well documented.
 \end{abstract}
 
 \section{Introduction}
 
+Working in the field of expert systems, tackling complicated problems can easily become one's hobby. But even in your spare time, you still want to find out how you compare to others. Having heard of the \emph{2012 RAS Problem Solving Competition} at that point, registering wasn't at all a tough decision. After spending many a night on it, this is what emerged.
+
+We first describe the core concepts behind our submission, following by notes on the actual technical implementation. We show how the application can be used for both its primary purpose and also additional ones. We discuss the achieved results and potential for future improvement. In the appendices, we provide statistics for the best resolved systems.
+
+Not being members of any of the Operations Research communities or even academia at all, we sincerely apologize to the reader of this paper for unknowingly not following any and all conventions for writing such documents. The seasoned researcher must be frightened by the complete lack of citations and sourcing~-- however, there is a simple explanation. We~used no literature whatsoever in our process, except for the occasional software documentation on-line.
+
 \section{Key concepts}
 
-In this section, we will describe the various approaches we have taken to implement the rules and constrains required by the competition. These are the key concepts leveraged in the algorithm, whose implementation will be described in later sections.
+In this section, we describe the various approaches we have taken to implement the rules and constrains required by the competition. These are the key concepts leveraged in the algorithm, whose implementation will be described in later sections.
 
 \begin{description}
 \item[Train routes] From each particular data set, a territory is built. This territory is then analyzed and every possible route through that territory is found. Each train then holds a set of routes it is allowed to take, from which a solver will attempt to pick the best one\footnote{The competition rules state that the algorithm cannot assign trains to sidings. A case could be made that our approach here violates this rule. The algorithm may, indeed, explicitly put a train on a route with a siding. However, as the solution improves, this situation will inevitably be reduced to only occurring during a meet-pass event. Strictly speaking, we don't violate the rule at all, since we don't assign trains to sidings~-- we assign routes to trains.}. A train is not allowed to take a particular route when any of the following conditions hold true:
@@ -56,7 +62,7 @@ In this section, we will describe the implementation of the algorithm, its vario
 
 \subsection{Drools Planner} 
 
-Drools Planner\footnote{The Drools project, http://www.jboss.org/drools/} is an open-source Java-based solver that currently implements various tabu search techniques and simulated annealing. It allows for declaratively stating your problem, using the following basic concepts:
+Drools Planner\footnote{The Drools project, http://www.jboss.org/drools/} is an open-source Java-based solver that currently implements various tabu search techniques and simulated annealing. It allows for stating your problem in a declarative manner, using the following basic concepts:
 
 \begin{description}
 \item[Planning entity] The entity used for planning, in our case it is the itinerary for a particular train.
