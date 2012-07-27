@@ -1,4 +1,4 @@
-\documentclass[10pt,a4paper,draft]{article}
+\documentclass[10pt,a4paper,final]{article}
 \usepackage[utf8x]{inputenc}
 \usepackage{ucs}
 \usepackage[english]{babel}
@@ -11,18 +11,174 @@
 \maketitle
 
 \begin{abstract}
-This article describes an entry to the 2012 RAS Problem Solving Competition, concerning dispatching on multi-track territories. The entry is based on the Drools Planner, a Java-based solver. On a reasonably recent computer, the resulting algorithm is able to produce feasible results within a minute and has been fine-tuned to provide best results in under 3 minutes. Source code to the entry is open source and well documented.
+This article describes an entry to the 2012 RAS Problem Solving Competition, concerning dispatching on multi-track territories. The entry is based on the Drools Planner, a Java-based solver. On a reasonably recent computer, the resulting algorithm is able to produce feasible results within a minute and has been fine-tuned to provide best results in under 3 minutes. Source code of the entry is open and well documented.
 \end{abstract}
 
 \section{Introduction}
 
-\section{Describing the solution}
+\section{Key concepts}
+
+In this section, we will describe the various approaches we have taken to implement the rules and constrains required by the competition. These are the key concepts leveraged in the algorithm, whose implementation will be described in later sections.
+
+\begin{description}
+\item[Train routes] From each particular data set, a territory is built. This territory is then analyzed and every possible route through that territory is found. Each train then holds a set of routes it is allowed to take, from which a solver will attempt to pick the best one\footnote{The competition rules state that the algorithm cannot assign trains to sidings. A case could be made that our approach here violates this rule. The algorithm may, indeed, explicitly put a train on a route with a siding. However, as the solution improves, this situation will inevitably be reduced to only occurring during a meet-pass event. Strictly speaking, we don't violate the rule at all, since we don't assign trains to sidings~-- we assign routes to trains.}. A train is not allowed to take a particular route when any of the following conditions hold true:
+
+\begin{itemize}
+\item Train is required to pass through a node that is not on the route. Examples would include situations when the route doesn't include the node with a schedule adherence requirement attached.
+\item Length of the train is bigger than the length of any one siding on the route.
+\item There are sidings on the route of a train carrying hazardous materials.
+\item There are sidings on the route of a heavy train. This is the easiest way to fulfill the requirement that a heavy train must never use a siding when meet-passing another train.
+\end{itemize}
+
+\item[Train wait points] Our solution only allows trains to stop at specific points on the route, called ``wait points''\footnote{If we allowed the train to stop at any node on the route, we would be significantly extending the state space of the solution. We believe that it wouldn't be beneficial to the quality of the resolved system and have therefore made a decision to only stop the trains where they don't block main tracks.}. A train can be held when its lead engine enters a node for which any of the following conditions holds true:
+
+\begin{itemize}
+\item The node is the source terminal of the train. The train is not in the territory yet.
+\item The node is the starting node of a crossover arc, keeping the other main track available for whatever trains to pass.
+\item The node is the ending node of a siding arc. The train occupies the siding.
+\end{itemize}
+
+Trains are automatically stopped for maintenance windows. However, no additional delays are allowed in those nodes~-- the train starts to move immediately after the maintenance window is over.
+
+\item[Train wait times] In each of the wait points described above, the algorithm may incur one of a selection of delays. These delays are called ``wait times'' and range from 1 minute to $X$ minutes, where $X$ is the minimal possible delay that would cause the train to fall outside the planning horizon waiting\footnote{This is done to once again reduce the state space by eliminating wait times that aren't viable. Once a train falls out of the planning horizon, we no longer care about its further journey.}. The wait times aren't distributed evenly across the stated range~-- they get sparser as we progress towards bigger numbers in the range. That should allow for both fine-grained and coarse-grained planning.
+
+\item[Itinerary] An itinerary of a train consists of a route and 0 or more wait times at the wait points on that route.
+
+\item[Solution] A solution is a set of itineraries, one for each train. The best found solution becomes a resolved system. A solution differs from the other by either of the trains taking a different route, waiting at different points and/or for different times.
+
+\item[Conflicts] The itinerary of each train is reached separately, without accounting for the whereabouts of any other train in the territory. This inevitably leads to solutions where two trains leverage the same part of the track at the same time, thus effectively colliding. These events are called ``conflicts'' and are treated as hard constraints~-- no feasible solution will ever demonstrate any conflict\footnote{We would think it goes without saying. However, we've been getting that question over and over when describing the algorithm to friends and colleagues. Hence the clarification.}. The same goes for the mandatory time lapse between any two trains.
+
+\end{description}
 
 \section{Implementation}
 
+In this section, we will describe the implementation of the algorithm, its various properties, strength and drawbacks.
+
+\subsection{Drools Planner} 
+
+Drools Planner\footnote{The Drools project, http://www.jboss.org/drools/} is an open-source Java-based solver that currently implements various tabu search techniques and simulated annealing. It allows for declaratively stating your problem, using the following basic concepts:
+
+\begin{description}
+\item[Planning entity] The entity used for planning, in our case it is the itinerary for a particular train.
+
+\item[Planning variable] Each planning entity hold various variables. By changing their values, Planner can arrive at a better or worse solution. In our case, planning variables are the route for the train and wait times in wait points.
+
+\item[Planning values] Each variable has a list of values applicable at the given point in time. For example, the itinerary has a list of routes that are available for its train to take. Each of them can become a value of the planning variable, resulting in a change in solution quality.
+
+\item[Move] is a way to change one solution into another, to cross from one state to another in a state space. Usually a move consists of changing the value of a planning variable. In our case, we know the following moves:
+
+\item[Scoring function] is a means of evaluating the quality of the solution. In our case, it contains of two parts~-- a hard score, representing the number of conflicts (see above), and a soft score, representing the cost of the system.
+
+Scoring function in Planner can take two forms - first, you can write it in plain old Java. Alternatively, you can leverage Drools Expert, giving at your disposal the full power of a ReteOO-based inference engine. We use the former.
+
+\end{description}
+
+When all these are provided to Planner, along with a solver configuration where we specify  the types of algorithms to use\footnote{Such as simulated annealing, entity tabu, solution tabu etc.} and termination conditions, it will start traversing the state space by trying the moves, looking for the best solution. While solving, Planner makes no I/O operations, utilizing only the CPU and RAM~-- which means that any performance improvement to the scoring function, the moves or to Planner itself will directly affect the quality of your scores. 
+
+One of the benefits of Planner is that it is a Java application. That means neither the developer of the solver nor its user is limited to any particular operating system or platform. For our development and testing, we've been using Linux, but we've seen the submission perform on Windows as well.
+
+At the moment, Planner is a single-threaded application. Using multi-core CPUs will yield no benefit performance-wise, although you can leverage them to run multiple solvers at once~-- resolving one data set per core.
+
+\subsection{Typical flow of the algorithm}
+
+\begin{enumerate}
+\item Start processing.
+\item Parse the data set, re-constructing the territory.
+\item Turn the data set into an initial solution. Each train is assigned the fastest possible route through the territory with no wait times. 
+\item Launch the solver with the initial solution. The solver then iterates:
+
+\begin{enumerate}
+\item Generate all possible moves for the solution.
+\item Based on the user-specified solver configuration, some or all of the moves are evaluated. This is where the simulated annealing and tabu searches come into play.
+\item Should a better solution be found, store it.
+\item Repeat.
+\end{enumerate}
+
+\item When a user-specified termination condition is reached, the solver ends and reports the best found solution. The termination condition in our case is 3 minutes of run time.
+\item We take the solution and convert it into the submission format. Optionally, we visualize and tabulate.
+\item End processing.
+\end{enumerate}
+
+\subsection{Additional features} 
+
+During the development, debugging and tuning of the algorithm, we have developed various tools to make our work easier\footnote{As a side note, although technically not a ``feature,'' the algorithm is written in such a way that it should be very easy to adapt it for changing circumstances. For example, changing the territory to a directed graph by introducing one-way arcs should only take a couple minutes and shouldn't affect performance.}. Following is a list of them.
+
+\begin{description}
+
+\item[Data set parser] is generated on-the-fly from a JavaCC-based\footnote{JavaCC parser/scanner generator, http://javacc.java.net/} grammar and can be easily extended or reused in other applications.
+
+\item[Basic visualizations] of train routes, territories and solutions are possible. We draw graphs of these to help with the analysis of the resolved systems and debugging of the algorithm.
+
+\item[Solution validation] for reading the resolved system's XML, calculating its cost and also visualizing it. Can be used for comparing various competition submissions against each other using a single algorithm.
+
+\end{description}
+
+
+\subsection{Usage}
+
+\subsubsection{Compiling}
+
+We've relied on the industry-standard Maven\footnote{Apache Maven, http://maven.apache.org/} build tool for our dependency management and release needs. It is open-source and available for every major operating system. Our source code is tracked on Github\footnote{Our homepage, http://triceo.github.com/ras12/} using the Git SCM.
+
+Once you have downloaded the Git and Maven tools, download the source code by executing the command (see Figure \ref{figure:git}). This will create a \texttt{ras12} folder in your current working directory, containing a one-for-one copy of our entire code repository. After switching into it, simply type another command (see Figure \ref{figure:maven}).
+
+Maven starts downloading our dependencies, building our code and running our extensive tests. It may take a while and it should end in success. When it's done, switch to a directory called \texttt{ras2012-solver}. You will notice a new file called \texttt{target/ras2012-solver-1.0-jar-with-dependencies.jar}. You can use it to run the solver, as described in the following section.
+
+\begin{figure}
+\centering
+\texttt{git clone git://git@github.com:triceo/ras12.git}
+\caption{Obtaining the source code.}
+\label{figure:git}
+\end{figure}
+
+\begin{figure}
+\centering
+\texttt{mvn install}
+\caption{Building the binary distribution.}
+\label{figure:maven}
+\end{figure}
+
+\begin{figure}
+\centering
+\texttt{java -jar <JAR-FILE> -r -d <PATH-TO-DATA-SET>}
+\caption{Running the application in a resolver mode.}
+\label{figure:run-resolver}
+\end{figure}
+
+\begin{figure}
+\centering
+\texttt{java -jar <JAR-FILE> -r -d <PATH-TO-DATA-SET> -x <SEED>}
+\caption{Running the application in a resolver mode, specifying a random seed.}
+\label{figure:run-resolver-seed}
+\end{figure}
+
+\begin{figure}
+\centering
+\texttt{java -jar <JAR-FILE> -e -d <PATH-TO-DATA-SET> -s <PATH-TO-XML>}
+\caption{Running the application in an evaluation mode.}
+\label{figure:run-evaluation}
+\end{figure}
+
+\begin{figure}
+\centering
+\texttt{java -jar <JAR-FILE> -l}
+\caption{Running the application in lookup mode.}
+\label{figure:run-lookup}
+\end{figure}
+
+\subsubsection{Running}
+
+To start resolving a data set with a fresh random seed, see Figure \ref{figure:run-resolver}. To provide a specific random seed, see Figure \ref{figure:run-resolver-seed}.
+
+To calculate cost for a specific resolved system, see Figure \ref{figure:run-evaluation}.
+
+To verify how your solver configuration performs on the three provided data sets, see Figure \ref{figure:run-lookup}. It will run the algorithm many times with a fresh random seed each time and provide a summary of the results, much like in Table \ref{table:result} and Figure \ref{figure:plot}.
+
+Please note that in all the figures, \texttt{<JAR-FILE>} refers to the \texttt{.jar} file from the previous section.
+
 \section{Achieved results}
 
-Running the algorithm described above 50 times over each data set, we have compiled a set of results, see Table \ref{table:result}. All these were reached within 3 minutes in a single-threaded run, using Intel i7 Q820 processor running Fedora 17 and 2 GB of heap space inside Java 7 runtime environment.
+Running the algorithm 50 times over each data set and using a fresh random seed every time, we have compiled a set of results, see Table \ref{table:result}. All these were reached within 3 minutes in a single-threaded run, using Intel i7 Q820 processor running Fedora 17 and 2 GB of heap space inside Java 7 runtime environment.
 
 \include{stats}
 
@@ -30,15 +186,22 @@ Running the algorithm described above 50 times over each data set, we have compi
 \centering
 \includegraphics[width=120mm]{chart.png}
 \caption{Plotting the data for the various resolved systems.}
+\label{figure:plot}
 \end{figure}
 
-Please note that via the benchmarking functionality of Drools Planner, users may be able to fine-tune the algorithm to be focused either on providing better solutions or on faster turnaround times. Drools Planner even allows for retrieving the intermediate results of the algorithm and also modify the problem while it's being solved, which makes it the ideal tool for real-time planning.
+Please note that via the benchmarking functionality of Drools Planner, users may be able to fine-tune the algorithm to be focused either on providing better solutions or on faster turnaround times. Drools Planner even allows for retrieving the intermediate results of the algorithm and modifying the problem while it's being solved, which makes it the ideal tool for real-time planning.
 
 For statistics of the resolved systems, see tables \ref{table:RASDATASET1}, \ref{table:RASDATASET2} and \ref{table:RASDATASET3} respectively. 
 
 \section{Conclusion}
 
+We are submitting a well-documented solution to the stated problem which handles data sets both large and small, is easy to understand and extend and doesn't limit the user to any particular computing platform. We allow for tabulating and visualizing resolved systems for easier analysis, be they ours or competitors'.
+
+The submission is configured to work reasonably well on all three provided data sets. Users in the real world are encouraged to benchmark various solver configurations to come up with the one that matches the scale of their particular problem.
+
 \appendix
+
+Following are appendixes where we provide statistics of the best available resolved systems and examples of their visualizations. The paper would be complete even without them, for which reason we believe they shouldn't be counted toward the 10-page limit.
 
 \section{Resolved systems}
 
@@ -52,12 +215,12 @@ In this section, we show the best solutions reached for each data set.
 
 \begin{figure}
 \centering
-\includegraphics[width=150mm,angle=90]{solution.png}
+\includegraphics[width=190mm,angle=90]{solution.png}
 \caption{RAS DATA SET TOY example territory. Undirected graph, arcs have descriptions.}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=150mm,angle=90]{B1.png}
+\includegraphics[width=190mm,angle=90]{B1.png}
 \centering
 \caption{RAS DATA SET TOY example, route of Train B1. Directed graph where green marks the origin, red the destination and blue is where the train is allowed to wait.}
 \end{figure}
