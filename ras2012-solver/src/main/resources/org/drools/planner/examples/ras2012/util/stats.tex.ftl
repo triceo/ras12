@@ -1,6 +1,6 @@
 \begin{table}
 \footnotesize
-\caption{Solution performance per data set.}
+\caption{Submission performance per data set.}
 \centering
 \begin{tabular}{c||c|c|c|c|c}
 \hline \hline
