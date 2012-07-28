@@ -46,7 +46,7 @@ public class Chart {
             ChartUtilities.saveChartAsPNG(new File(folder, filename + ".png"), chart, 1024, 768);
             return true;
         } catch (final IOException e) {
-            logger.warn("Charting failed.", e);
+            Chart.logger.warn("Charting failed.", e);
             return false;
         }
     }

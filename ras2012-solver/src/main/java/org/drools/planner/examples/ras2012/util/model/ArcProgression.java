@@ -19,7 +19,6 @@ import org.drools.planner.examples.ras2012.Directed;
 import org.drools.planner.examples.ras2012.model.Arc;
 import org.drools.planner.examples.ras2012.model.Node;
 import org.drools.planner.examples.ras2012.model.Track;
-import org.drools.planner.examples.ras2012.util.model.OccupationTracker.Builder;
 
 public class ArcProgression implements Directed {
 
@@ -207,48 +206,6 @@ public class ArcProgression implements Directed {
 
     public List<Node> getNodes() {
         return Collections.unmodifiableList(this.nodes);
-    }
-
-    public OccupationTracker getOccupiedArcs(final BigDecimal endingMilestone,
-            final BigDecimal backtrack) {
-        if (endingMilestone.signum() < 0) {
-            throw new IllegalArgumentException("Please provide a milestone >= 0.");
-        }
-        if (backtrack.signum() <= 0) {
-            throw new IllegalArgumentException("Please provide a backtrack > 0.");
-        }
-        final BigDecimal startingMilestone = endingMilestone.subtract(backtrack);
-        if (startingMilestone.compareTo(this.getLength()) > 0) {
-            return OccupationTracker.Builder.empty();
-        }
-        final Builder b = new OccupationTracker.Builder(this);
-        // find the farthest away occupied arc
-        final SortedMap<BigDecimal, Arc> post = this.milestones.headMap(endingMilestone);
-        final BigDecimal endingWith = post.size() == 0 ? this.milestones.lastKey() : post.lastKey();
-        // determine how much must be occupied in other arcs
-        final BigDecimal occupied = endingMilestone.subtract(endingWith);
-        BigDecimal leftToOccupy = backtrack.subtract(occupied);
-        Arc currentArc = this.milestones.get(endingWith);
-        if (!leftToOccupy.equals(backtrack)) { // something has been occupied
-            b.addTo(currentArc, occupied);
-        }
-        while (leftToOccupy.signum() > 0) {
-            // now occupy every other arc for as long as necessary
-            currentArc = this.getPreviousArc(currentArc);
-            if (currentArc == null) {
-                break;
-            }
-            if (leftToOccupy.compareTo(currentArc.getLength()) < 0) {
-                // can no longer occupy the whole arc
-                b.addFrom(currentArc, currentArc.getLength().subtract(leftToOccupy));
-                break;
-            } else {
-                // occupy the whole arc and continue to another
-                b.addWhole(currentArc);
-            }
-            leftToOccupy = leftToOccupy.subtract(currentArc.getLength());
-        }
-        return b.build();
     }
 
     public Arc getOrigin() {

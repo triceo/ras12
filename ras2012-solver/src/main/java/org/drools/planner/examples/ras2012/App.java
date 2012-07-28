@@ -222,8 +222,8 @@ public class App {
                     .submit(new SolverRunner(new FileInputStream(f), f.getName(), seed));
             App.executor.shutdown();
             future.get();
-        } catch (Exception e) {
-            logger.error("Solver not started.", e);
+        } catch (final Exception e) {
+            App.logger.error("Solver not started.", e);
             System.exit(1);
         }
     }

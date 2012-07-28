@@ -19,7 +19,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.drools.planner.examples.ras2012.Visualizable;
 import org.drools.planner.examples.ras2012.util.Converter;
 import org.drools.planner.examples.ras2012.util.model.ArcProgression;
-import org.drools.planner.examples.ras2012.util.model.OccupationTracker;
 import org.drools.planner.examples.ras2012.util.model.Territory;
 import org.drools.planner.examples.ras2012.util.visualizer.ItineraryVisualizer;
 import org.slf4j.Logger;
@@ -327,60 +326,6 @@ public final class Itinerary extends Visualizable {
         return this.maintenances;
     }
 
-    /**
-     * <p>
-     * Retrieve {@link Arc}s occupied by a given {@link Train} at a given point in time. After the {@link Train} reaches its
-     * destination, occupied arcs are estimated for the {@link Train} to gradually leave the {@link Territory}.
-     * </p>
-     * 
-     * <p>
-     * This method is one of the computationally intensive ones. Any optimizations here will have big impact on the performance
-     * of the algorithm as a whole.
-     * </p>
-     * 
-     * @param time The place in the schedule where to look at, in milliseconds.
-     * @return The occupied arcs.
-     */
-    public OccupationTracker getOccupiedArcs(final long time) {
-        final SortedMap<Long, Node> schedule = this.getSchedule();
-        final ArcProgression progression = this.getRoute().getProgression();
-        final boolean trainStarted = time <= schedule.firstKey();
-        final boolean trainInOrigin = this.getTrain().getOrigin() == progression.getOrigin()
-                .getOrigin(this.getRoute());
-        if (trainStarted && trainInOrigin) {
-            // train not yet on the route
-            return OccupationTracker.Builder.empty();
-        }
-        final Arc leadingArc = this.getLeadingArc(time);
-        if (leadingArc == null) {
-            // the train should gradually leave the territory through its destination
-            final long timeTravelledInArc = time - schedule.lastKey();
-            final BigDecimal travelledInArc = Converter.getDistanceFromSpeedAndTime(this.getTrain()
-                    .getMaximumSpeed(Track.MAIN_0), timeTravelledInArc);
-            if (travelledInArc.compareTo(this.getTrain().getLength()) >= 0) {
-                // the train is gone completely
-                return OccupationTracker.Builder.empty();
-            } else {
-                // some part of the train is still in the territory
-                return progression.getOccupiedArcs(progression.getLength(), this.getTrain()
-                        .getLength().subtract(travelledInArc));
-            }
-        } else if (!this.hasNode(leadingArc.getOrigin(this.getTrain()))) {
-            // the train didn't enter the territory yet
-            return progression.getOccupiedArcs(progression.getDistance(leadingArc
-                    .getDestination(progression)), this.getTrain().getLength());
-        } else {
-            // the train is in the territory
-            final long timeTravelledInArc = time - this.getArrivalTime(leadingArc);
-            final BigDecimal travelledInArc = Converter.getDistanceFromSpeedAndTime(
-                    this.getTrain().getMaximumSpeed(leadingArc.getTrack()), timeTravelledInArc)
-                    .min(leadingArc.getLength());
-            return progression.getOccupiedArcs(
-                    progression.getDistance(leadingArc.getOrigin(progression)).add(travelledInArc),
-                    this.getTrain().getLength());
-        }
-    }
-
     public Route getRoute() {
         return this.route;
     }
@@ -557,6 +502,6 @@ public final class Itinerary extends Visualizable {
     }
 
     public boolean visualize(final File target, final long time) {
-        return this.visualize(new ItineraryVisualizer(this, time), target);
+        return this.visualize(new ItineraryVisualizer(this), target);
     }
 }
