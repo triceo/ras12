@@ -2,7 +2,6 @@ package org.drools.planner.examples.ras2012;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,7 +11,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -222,13 +220,11 @@ public class App {
         try {
             future = App.executor
                     .submit(new SolverRunner(new FileInputStream(f), f.getName(), seed));
+            App.executor.shutdown();
             future.get();
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             logger.error("Solver not started.", e);
-        } catch (InterruptedException e) {
-            logger.error("Solver error.", e);
-        } catch (ExecutionException e) {
-            logger.error("Solver error.", e);
+            System.exit(1);
         }
     }
 

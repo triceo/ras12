@@ -7,8 +7,9 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.Range;
 import org.apache.commons.lang3.tuple.Pair;
-import org.drools.planner.examples.ras2012.model.Node;
+import org.drools.planner.examples.ras2012.model.Arc;
 import org.drools.planner.examples.ras2012.model.Train;
 
 public class EntryRegistry {
@@ -22,15 +23,25 @@ public class EntryRegistry {
             final List<Pair<Long, Long>> times = new ArrayList<Pair<Long, Long>>(
                     this.timesByTrain.values());
             final int size = times.size();
-            for (int position = 0; position < size; position++) {
-                final long trainEntry = times.get(position).getLeft();
-                for (int i = position + 1; i < size; i++) {
-                    final long otherTrainLeave = times.get(i).getRight();
-                    if (otherTrainLeave < 0) {
+            final long millisToAdd = TimeUnit.MINUTES.toMillis(5);
+            for (int train = 0; train < size; train++) {
+                final Pair<Long, Long> entries = times.get(train);
+                final long forbiddenEntryWindowStart = entries.getLeft();
+                final long forbiddenEntryWindowEnd = entries.getRight() + millisToAdd;
+                final Range<Long> r = Range.between(forbiddenEntryWindowStart,
+                        forbiddenEntryWindowEnd);
+                for (int otherTrain = 0; otherTrain < size; otherTrain++) {
+                    if (train == otherTrain) {
+                        // don't look for conflicts with itself
                         continue;
                     }
-                    final long difference = Math.abs(trainEntry - otherTrainLeave);
-                    if (difference <= TimeUnit.MINUTES.toMillis(5)) {
+                    final Pair<Long, Long> otherEntries = times.get(otherTrain);
+                    final long trainEntry = otherEntries.getLeft();
+                    if (r.contains(trainEntry)) {
+                        conflicts++;
+                    }
+                    final long trainLeave = otherEntries.getRight();
+                    if (r.contains(trainLeave)) {
                         conflicts++;
                     }
                 }
@@ -64,10 +75,10 @@ public class EntryRegistry {
 
     }
 
-    private final Map<Node, RegistryItem> items;
+    private final Map<Arc, RegistryItem> items;
 
     public EntryRegistry(final int numberOfItems) {
-        this.items = new HashMap<Node, RegistryItem>(numberOfItems);
+        this.items = new HashMap<Arc, RegistryItem>(numberOfItems);
     }
 
     public int countConflicts() {
@@ -84,12 +95,12 @@ public class EntryRegistry {
         }
     }
 
-    public void setTimes(final Node node, final Train t, final long entryTime, final long leaveTime) {
-        final boolean itemExists = this.items.containsKey(node);
-        final RegistryItem item = itemExists ? this.items.get(node) : new RegistryItem();
+    public void setTimes(final Arc arc, final Train t, final long entryTime, final long leaveTime) {
+        final boolean itemExists = this.items.containsKey(arc);
+        final RegistryItem item = itemExists ? this.items.get(arc) : new RegistryItem();
         item.setTimes(t, entryTime, leaveTime);
         if (!itemExists) {
-            this.items.put(node, item);
+            this.items.put(arc, item);
         }
     }
 }

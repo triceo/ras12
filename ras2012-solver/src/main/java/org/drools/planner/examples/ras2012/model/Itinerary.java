@@ -230,7 +230,6 @@ public final class Itinerary extends Visualizable {
      * @return Time in milliseconds spent waiting somewhere on the {@link Route}.
      */
     public long getDelay(final long horizon) {
-        this.cacheSchedule();
         long delay = 0;
         for (final Node n : this.getRoute().getProgression().getNodes()) {
             if (!this.hasNode(n) || n == this.getTrain().getDestination()) {

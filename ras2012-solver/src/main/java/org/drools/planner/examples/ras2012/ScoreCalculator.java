@@ -10,6 +10,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.drools.planner.core.score.buildin.hardandsoft.DefaultHardAndSoftScore;
 import org.drools.planner.core.score.buildin.hardandsoft.HardAndSoftScore;
 import org.drools.planner.core.score.director.incremental.AbstractIncrementalScoreCalculator;
+import org.drools.planner.examples.ras2012.model.Arc;
 import org.drools.planner.examples.ras2012.model.Itinerary;
 import org.drools.planner.examples.ras2012.model.Itinerary.ChangeType;
 import org.drools.planner.examples.ras2012.model.ItineraryAssignment;
@@ -169,7 +170,12 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
             penalty += this.scheduleAdherencePenalties.get(t);
             penalty += this.unpreferredTracksPenalties.get(t);
         }
-        final int conflicts = this.entries.countConflicts() + this.conflicts.countConflicts();
+
+        final int conflicts = this.entries.countConflicts();
+        if (conflicts == 0 && this.conflicts.countConflicts() > 0) {
+            throw new IllegalStateException("Conflicts conflict! " + conflicts + " v. "
+                    + this.conflicts.countConflicts());
+        }
         return DefaultHardAndSoftScore.valueOf(-conflicts, -penalty);
     }
 
@@ -329,7 +335,7 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
         this.scheduleAdherencePenalties.put(t, this.getScheduleAdherencePenalty(i));
         this.wantTimePenalties.put(t, this.getWantTimePenalty(i));
         this.delayPenalties.put(t, this.getDelayPenalty(i));
-        this.recalculateOccupiedArcs(ia);
+        // this.recalculateOccupiedArcs(ia);
         this.recalculateEntries(ia);
     }
 
@@ -344,13 +350,13 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
         final Train t = ia.getTrain();
         final Itinerary i = ia.getItinerary();
         this.entries.resetTimes(t);
-        for (final Node n : ia.getRoute().getProgression().getNodes()) {
-            if (!i.hasNode(n)) {
+        for (final Arc a : ia.getRoute().getProgression().getArcs()) {
+            if (!i.hasNode(a.getOrigin(t)) || !i.hasNode(a.getDestination(t))) {
                 continue;
             }
-            final long leaveTime = i.getLeaveTime(n);
-            if (this.isInPlanningHorizon(leaveTime)) {
-                this.entries.setTimes(n, t, i.getArrivalTime(n), i.getLeaveTime(n));
+            final long arriveTime = i.getArrivalTime(a.getOrigin(t));
+            if (this.isInPlanningHorizon(arriveTime)) {
+                this.entries.setTimes(a, t, arriveTime, i.getArrivalTime(a.getDestination(t)));
             }
         }
     }
