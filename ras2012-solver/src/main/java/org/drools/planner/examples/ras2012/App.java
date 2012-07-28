@@ -175,6 +175,7 @@ public class App {
         streams.add("RDS1");
         streams.add("RDS2");
         streams.add("RDS3");
+        streams.add("TOY");
         // prepare futures
         final Map<String, List<Future<HardAndSoftScore>>> scores = new HashMap<String, List<Future<HardAndSoftScore>>>();
         for (final String entry : streams) {
