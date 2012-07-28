@@ -21,13 +21,15 @@
     <forager>
       <minimalAcceptedSelection>4</minimalAcceptedSelection>
     </forager>
-    <selector>
-      <selector>
-        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
-      </selector>
-      <selector>
-        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
-      </selector>
-    </selector>
+    <unionMoveSelector>
+      <moveListFactory>
+        <cacheType>STEP</cacheType>
+        <moveListFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveListFactoryClass>
+      </moveListFactory>
+      <moveListFactory>
+        <cacheType>PHASE</cacheType>
+        <moveListFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveListFactoryClass>
+      </moveListFactory>
+    </unionMoveSelector>
   </localSearch>
 </solver>
