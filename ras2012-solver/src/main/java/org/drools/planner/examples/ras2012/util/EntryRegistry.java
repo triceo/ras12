@@ -23,7 +23,7 @@ public class EntryRegistry {
             final List<Pair<Long, Long>> times = new ArrayList<Pair<Long, Long>>(
                     this.timesByTrain.values());
             final int size = times.size();
-            final long millisToAdd = TimeUnit.MINUTES.toMillis(5);
+            final long millisToAdd = TimeUnit.MINUTES.toMillis(5) - 1;
             for (int train = 0; train < size; train++) {
                 final Pair<Long, Long> entries = times.get(train);
                 final long forbiddenEntryWindowStart = entries.getLeft();

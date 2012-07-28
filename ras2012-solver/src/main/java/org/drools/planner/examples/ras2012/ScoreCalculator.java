@@ -304,9 +304,16 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
             if (!i.hasNode(a.getOrigin(t)) || !i.hasNode(a.getDestination(t))) {
                 continue;
             }
-            final long arriveTime = i.getArrivalTime(a.getOrigin(t));
+            final long arriveTime = i.getArrivalTime(a);
             if (this.isInPlanningHorizon(arriveTime)) {
-                this.entries.setTimes(a, t, arriveTime, i.getArrivalTime(a.getDestination(t)));
+                final long leaveTime = i.getLeaveTime(a);
+                if (leaveTime == -1) {
+                    // train reached the destination; make sure we properly account for its arrival time
+                    this.entries.setTimes(a, t, arriveTime, i.getArrivalTime(a.getDestination(t)));
+                } else {
+                    this.entries.setTimes(a, t, arriveTime, leaveTime);
+
+                }
             }
         }
     }
