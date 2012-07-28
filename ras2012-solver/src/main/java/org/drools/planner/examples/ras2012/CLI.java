@@ -11,6 +11,8 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Command-line interface for the app. Processes command-line arguments and decides which application mode should run. This
@@ -28,7 +30,9 @@ public class CLI {
 
     }
 
-    private static final CLI INSTANCE = new CLI();
+    private static final CLI    INSTANCE = new CLI();
+
+    private static final Logger logger   = LoggerFactory.getLogger(CLI.class);
 
     /**
      * Return the single instance of this class.
@@ -146,6 +150,7 @@ public class CLI {
                         }
                     }
                     this.setDatasetLocation(cli.getOptionValue(this.dataset.getOpt()));
+                    CLI.logger.info("Will start the app in resolver mode.");
                     return ApplicationMode.RESOLVER;
                 }
             } else if (presentOptions.contains(this.evaluationMode)) {
@@ -156,9 +161,11 @@ public class CLI {
                 } else {
                     this.setDatasetLocation(cli.getOptionValue(this.dataset.getOpt()));
                     this.setSolutionLocation(cli.getOptionValue(this.solution.getOpt()));
+                    CLI.logger.info("Will start the app in evaluation mode.");
                     return ApplicationMode.EVALUATION;
                 }
             } else if (presentOptions.contains(this.lookupMode)) {
+                CLI.logger.info("Will start the app in lookup mode.");
                 return ApplicationMode.LOOKUP;
             } else {
                 return ApplicationMode.HELP;

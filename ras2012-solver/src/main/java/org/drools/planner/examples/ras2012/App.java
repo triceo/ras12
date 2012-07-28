@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -132,6 +133,7 @@ public class App {
     public static void main(final String[] args) {
         final CLI commandLine = CLI.getInstance();
         final ApplicationMode result = commandLine.process(args);
+        App.logger.info("Application mode determined.");
         switch (result) {
             case RESOLVER:
                 App.runSolverMode(commandLine.getDatasetLocation(), commandLine.getSeed());
@@ -216,11 +218,17 @@ public class App {
         if (!f.exists() || !f.canRead()) {
             throw new IllegalArgumentException("Cannot read data set: " + f);
         }
+        Future<HardAndSoftScore> future;
         try {
-            App.executor.submit(new SolverRunner(new FileInputStream(f), f.getName(), seed));
-            App.shutdownExecutor();
-        } catch (final FileNotFoundException e) {
-            App.logger.warn(f.getName() + " solver not started. Cause: ", e);
+            future = App.executor
+                    .submit(new SolverRunner(new FileInputStream(f), f.getName(), seed));
+            future.get();
+        } catch (FileNotFoundException e) {
+            logger.error("Solver not started.", e);
+        } catch (InterruptedException e) {
+            logger.error("Solver error.", e);
+        } catch (ExecutionException e) {
+            logger.error("Solver error.", e);
         }
     }
 
