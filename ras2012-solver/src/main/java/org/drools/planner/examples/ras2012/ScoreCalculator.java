@@ -13,6 +13,7 @@ import org.drools.planner.examples.ras2012.model.Arc;
 import org.drools.planner.examples.ras2012.model.Itinerary;
 import org.drools.planner.examples.ras2012.model.ItineraryAssignment;
 import org.drools.planner.examples.ras2012.model.Node;
+import org.drools.planner.examples.ras2012.model.Track;
 import org.drools.planner.examples.ras2012.model.Train;
 import org.drools.planner.examples.ras2012.util.Converter;
 import org.drools.planner.examples.ras2012.util.EntryRegistry;
@@ -83,6 +84,7 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
 
     private final Map<Train, Integer> unpreferredTracksPenalties = new HashMap<Train, Integer>();
 
+    private final Map<Train, Integer> uselessSidingsPenalties    = new HashMap<Train, Integer>();
     private EntryRegistry             entries;
 
     @Override
@@ -142,16 +144,16 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
      */
     @Override
     public HardAndSoftScore calculateScore() {
-        int penalty = 0;
+        int softPenalty = 0;
+        int hardPenalty = this.entries.countConflicts();
         for (final Train t : this.solution.getTrains()) {
-            penalty += this.wantTimePenalties.get(t);
-            penalty += this.delayPenalties.get(t);
-            penalty += this.scheduleAdherencePenalties.get(t);
-            penalty += this.unpreferredTracksPenalties.get(t);
+            softPenalty += this.wantTimePenalties.get(t);
+            softPenalty += this.delayPenalties.get(t);
+            softPenalty += this.scheduleAdherencePenalties.get(t);
+            softPenalty += this.unpreferredTracksPenalties.get(t);
+            hardPenalty += this.uselessSidingsPenalties.get(t);
         }
-
-        final int conflicts = this.entries.countConflicts();
-        return DefaultHardAndSoftScore.valueOf(-conflicts, -penalty);
+        return DefaultHardAndSoftScore.valueOf(-hardPenalty, -softPenalty);
     }
 
     /**
@@ -169,6 +171,22 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
         final BigDecimal maxHoursDelay = hoursDelay.max(BigDecimal.ZERO);
         return maxHoursDelay.multiply(BigDecimal.valueOf(i.getTrain().getType().getDelayPenalty()))
                 .intValue();
+    }
+
+    public int getPenaltyForNoMeetPassOnSidings(final Itinerary i) {
+        int penalty = 0;
+        for (final Arc a : i.getRoute().getProgression().getArcs()) {
+            if (a.getTrack() != Track.SIDING) {
+                continue;
+            }
+            if (!i.hasNode(a.getOrigin(i.getTrain())) || i.hasNode(a.getDestination(i.getTrain()))) {
+                continue;
+            }
+            if (i.getWaitTime(a.getDestination(i.getTrain())) != null) {
+                penalty++;
+            }
+        }
+        return penalty;
     }
 
     /**
@@ -286,6 +304,7 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
         this.scheduleAdherencePenalties.put(t, this.getScheduleAdherencePenalty(i));
         this.wantTimePenalties.put(t, this.getWantTimePenalty(i));
         this.delayPenalties.put(t, this.getDelayPenalty(i));
+        this.uselessSidingsPenalties.put(t, this.getPenaltyForNoMeetPassOnSidings(i));
         this.recalculateEntries(ia);
     }
 
@@ -329,6 +348,7 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
         this.wantTimePenalties.clear();
         this.unpreferredTracksPenalties.clear();
         this.scheduleAdherencePenalties.clear();
+        this.uselessSidingsPenalties.clear();
         this.delayPenalties.clear();
         this.entries = new EntryRegistry(Node.count());
         for (final ItineraryAssignment ia : this.solution.getAssignments()) {
