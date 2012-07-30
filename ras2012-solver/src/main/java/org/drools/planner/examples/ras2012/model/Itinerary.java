@@ -198,6 +198,9 @@ public final class Itinerary extends Visualizable {
      *         arc's origin node.
      */
     public long getArrivalTime(final Arc a) {
+        if (a == null) {
+            throw new IllegalArgumentException("Arc cannot be null.");
+        }
         return this.getArrivalTime(a.getOrigin(this.getTrain()));
     }
 

@@ -547,17 +547,13 @@ public class SolutionIO {
         for (final SortedMap.Entry<Long, Arc> entry : i.getScheduleWithArcs().entrySet()) {
             final Map map = new HashMap();
             final Arc arc = entry.getValue();
-            if (arc.getDestination(t) == t.getDestination()) {
-                // this is the move into the destination; ignore here, handle elsewhere
-                break;
-            }
             if (entry.getKey() >= horizon) {
                 continue;
             }
             final BigDecimal timeInSeconds = SolutionIO.convertMillisToSeconds(
                     i.getArrivalTime(arc)).stripTrailingZeros();
-            final BigDecimal leaveTime = SolutionIO.convertMillisToSeconds(i.getLeaveTime(arc))
-                    .stripTrailingZeros();
+            final BigDecimal leaveTime = SolutionIO.convertMillisToSeconds(
+                    i.getArrivalTime(arc.getDestination(i.getTrain()))).stripTrailingZeros();
             if (leaveTime.intValue() > horizon) {
                 continue;
             }
@@ -566,6 +562,10 @@ public class SolutionIO {
             map.put("entry", timeInSeconds);
             map.put("exit", leaveTime);
             set.add(map);
+            if (arc.getDestination(i.getTrain()) == i.getTrain().getDestination()) {
+                // this is the last arc; further ones may be null
+                break;
+            }
         }
         return set;
     }
