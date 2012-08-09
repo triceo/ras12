@@ -11,25 +11,25 @@
     <termination>
       <terminationCompositionStyle>AND</terminationCompositionStyle>
       <maximumMinutesSpend>3</maximumMinutesSpend>
-      <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
+      <maximumUnimprovedStepCount>1000</maximumUnimprovedStepCount>
     </termination> 
     <acceptor>
-      <solutionTabuSize>1</solutionTabuSize>
-      <moveTabuSize>7</moveTabuSize>
-      <simulatedAnnealingStartingTemperature>50hard/10soft</simulatedAnnealingStartingTemperature>
+      <solutionTabuSize>1000</solutionTabuSize>
+      <moveTabuSize>1</moveTabuSize>
+      <simulatedAnnealingStartingTemperature>25hard/10soft</simulatedAnnealingStartingTemperature>
     </acceptor>
     <forager>
-      <minimalAcceptedSelection>4</minimalAcceptedSelection>
+      <minimalAcceptedSelection>8</minimalAcceptedSelection>
     </forager>
     <unionMoveSelector>
-      <moveListFactory>
-        <cacheType>STEP</cacheType>
-        <moveListFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveListFactoryClass>
-      </moveListFactory>
-      <moveListFactory>
-        <cacheType>PHASE</cacheType>
-        <moveListFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveListFactoryClass>
-      </moveListFactory>
+      <moveIteratorFactory>
+        <fixedProbabilityWeight>4</fixedProbabilityWeight>
+        <moveIteratorFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveIteratorFactoryClass>
+      </moveIteratorFactory>
+      <moveIteratorFactory>
+        <fixedProbabilityWeight>1</fixedProbabilityWeight>
+        <moveIteratorFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveIteratorFactoryClass>
+      </moveIteratorFactory>
     </unionMoveSelector>
   </localSearch>
 </solver>
