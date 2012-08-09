@@ -16,17 +16,18 @@
     <acceptor>
       <solutionTabuSize>1000</solutionTabuSize>
       <moveTabuSize>1</moveTabuSize>
-      <simulatedAnnealingStartingTemperature>25hard/10soft</simulatedAnnealingStartingTemperature>
+      <simulatedAnnealingStartingTemperature>80hard/10soft</simulatedAnnealingStartingTemperature>
     </acceptor>
     <forager>
       <minimalAcceptedSelection>8</minimalAcceptedSelection>
     </forager>
     <unionMoveSelector>
       <moveIteratorFactory>
-        <fixedProbabilityWeight>4</fixedProbabilityWeight>
+        <fixedProbabilityWeight>3</fixedProbabilityWeight>
         <moveIteratorFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveIteratorFactoryClass>
       </moveIteratorFactory>
       <moveIteratorFactory>
+        <cacheType>PHASE</cacheType>
         <fixedProbabilityWeight>1</fixedProbabilityWeight>
         <moveIteratorFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveIteratorFactoryClass>
       </moveIteratorFactory>

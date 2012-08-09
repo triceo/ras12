@@ -87,7 +87,7 @@ public class App {
             if (this.seed >= 0) {
                 solverConfig.setRandomSeed(this.seed);
             } else {
-                solverConfig.setRandomSeed(SolverRunner.RANDOM.nextLong());
+                solverConfig.setRandomSeed(Long.valueOf(SolverRunner.RANDOM.nextInt()));
             }
             final DefaultSolver solver = (DefaultSolver) solverConfig.buildSolver();
             solver.setPlanningProblem(sol);

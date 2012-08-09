@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plannerBenchmark>
-  <parallelBenchmarkCount>AUTO</parallelBenchmarkCount>
+  <parallelBenchmarkCount>3</parallelBenchmarkCount>
   <benchmarkDirectory>data/</benchmarkDirectory>
   <warmUpSecondsSpend>30</warmUpSecondsSpend>
   <inheritedSolverBenchmark>
@@ -22,14 +22,14 @@
 
 <#list sa as item>
   <solverBenchmark>
-    <name>H${item[0]}-S${item[1]}-MAS${item[2]}-TABU${item[3]}-SOL${item[4]}</name>
+    <name>${item[0]}-${item[1]}-PRB${item[5]}</name>
     <solver>
       <localSearch>
-      <termination>
-        <maximumMinutesSpend>3</maximumMinutesSpend>
-        <maximumUnimprovedStepCount>100</maximumUnimprovedStepCount>
-        <terminationCompositionStyle>AND</terminationCompositionStyle>
-      </termination>
+        <termination>
+          <maximumMinutesSpend>3</maximumMinutesSpend>
+          <maximumUnimprovedStepCount>500</maximumUnimprovedStepCount>
+          <terminationCompositionStyle>AND</terminationCompositionStyle>
+        </termination>
         <forager>
           <minimalAcceptedSelection>${item[2]}</minimalAcceptedSelection>
         </forager>
@@ -38,14 +38,17 @@
           <moveTabuSize>${item[3]}</moveTabuSize>
           <simulatedAnnealingStartingTemperature>${item[0]}hard/${item[1]}soft</simulatedAnnealingStartingTemperature>
         </acceptor>
-    <selector>
-      <selector>
-        <moveFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveFactoryClass>
-      </selector>
-      <selector>
-        <moveFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveFactoryClass>
-      </selector>
-    </selector>
+        <unionMoveSelector>
+          <moveIteratorFactory>
+            <fixedProbabilityWeight>${item[5]}</fixedProbabilityWeight>
+            <moveIteratorFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveIteratorFactoryClass>
+          </moveIteratorFactory>
+          <moveIteratorFactory>
+            <cacheType>PHASE</cacheType>
+            <fixedProbabilityWeight>1</fixedProbabilityWeight>
+            <moveIteratorFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveIteratorFactoryClass>
+          </moveIteratorFactory>
+        </unionMoveSelector>
       </localSearch>
     </solver>
   </solverBenchmark>
