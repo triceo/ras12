@@ -180,7 +180,7 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
             if (a.getTrack() != Track.SIDING) {
                 continue;
             }
-            if (!i.hasNode(a.getOrigin(i.getTrain())) || i.hasNode(destination)) {
+            if (!i.hasNode(a.getOrigin(i.getTrain())) || !i.hasNode(destination)) {
                 continue;
             }
             if (!this.isInPlanningHorizon(i.getArrivalTime(destination))) {
