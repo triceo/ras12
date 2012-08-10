@@ -479,6 +479,12 @@ public final class Itinerary extends Visualizable {
         if (!this.getRoute().getProgression().getWaitPoints().contains(n)) {
             throw new IllegalArgumentException(n + " not a wait point: " + this + ". Cannot set "
                     + w + ".");
+        } else if (n == this.getTrain().getOrigin()
+                && this.getTrain().getOrigin() != this.getRoute().getProgression().getOrigin()
+                        .getOrigin(this.getRoute())) {
+            // train starts in the middle of the network; don't let it stop there
+            throw new IllegalArgumentException(
+                    "Train can't immediately stop when it starts in the middle of the territory.");
         }
         if (w == null) {
             return this.removeWaitTime(n);
