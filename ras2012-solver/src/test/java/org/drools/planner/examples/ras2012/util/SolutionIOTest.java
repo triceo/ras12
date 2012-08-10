@@ -26,7 +26,8 @@ public class SolutionIOTest {
 
         RDS1("/org/drools/planner/examples/ras2012/parser/validParserInput1.txt"), RDS2(
                 "/org/drools/planner/examples/ras2012/parser/validParserInput2.txt"), RDS3(
-                "/org/drools/planner/examples/ras2012/parser/validParserInput3.txt");
+                "/org/drools/planner/examples/ras2012/parser/validParserInput3.txt"), TOY(
+                "/org/drools/planner/examples/ras2012/parser/validParserInput4.txt");
 
         private final String definition;
 
@@ -41,42 +42,20 @@ public class SolutionIOTest {
 
     private static Object[] getResource(final SolutionType solutionType, final int hard,
             final int soft) {
-        return new Object[] { solutionType.getDefinition(),
-                solutionType.name() + ".txt" + soft + ".xml", hard, soft };
+        return new Object[] { solutionType.getDefinition(), solutionType.name() + soft + ".xml",
+                hard, soft };
     }
 
     @Parameters
     public static Collection<Object[]> getResources() {
         final List<Object[]> resources = new LinkedList<Object[]>();
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -1160));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -1459));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -1570));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -2271));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -2623));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -2673));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -2943));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -5253));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -5502));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -7124));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -8764));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -8822));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -10767));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -11340));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -11483));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -13049));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -15089));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -16135));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -17326));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -18031));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -11669));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -15144));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -15524));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -16093));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -16671));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -17307));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -17367));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -18026));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -19966));
+        resources.add(SolutionIOTest.getResource(SolutionType.TOY, 0, -821));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -1567));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -3957));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -10503));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -7410));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -10751));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -13936));
         return resources;
     }
 
@@ -115,7 +94,7 @@ public class SolutionIOTest {
         io.writeXML(result, f);
         Assert.assertTrue("XML files do not match. Check " + f, newContent.equals(oldContent));
         // compare scores
-        Assert.assertEquals("Scores don't match, even though XML files do.", this.score,
+        Assert.assertEquals("Scores don't match.", this.score,
                 ScoreCalculator.oneTimeCalculation(result));
     }
 }

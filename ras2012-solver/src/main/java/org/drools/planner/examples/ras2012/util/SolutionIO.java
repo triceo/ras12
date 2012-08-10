@@ -247,7 +247,7 @@ public class SolutionIO {
         if (movementCount == 0) {
             /* we need so big delay that the train completely falls out of the planning horizon. */
             i.setWaitTime(train.getOrigin(), WaitTime.getWaitTime(
-                    solution.getPlanningHorizon(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS));
+                    solution.getPlanningHorizon(TimeUnit.MILLISECONDS) + 1, TimeUnit.MILLISECONDS));
         } else if (!reachedDestination) {
             /*
              * train needs to get so big a delay at the first node out the horizon so that every other node falls right out too.
