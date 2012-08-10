@@ -176,13 +176,17 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
     public int getPenaltyForNoMeetPassOnSidings(final Itinerary i) {
         int penalty = 0;
         for (final Arc a : i.getRoute().getProgression().getArcs()) {
+            final Node destination = a.getDestination(i.getTrain());
             if (a.getTrack() != Track.SIDING) {
                 continue;
             }
-            if (!i.hasNode(a.getOrigin(i.getTrain())) || i.hasNode(a.getDestination(i.getTrain()))) {
+            if (!i.hasNode(a.getOrigin(i.getTrain())) || i.hasNode(destination)) {
                 continue;
             }
-            if (i.getWaitTime(a.getDestination(i.getTrain())) != null) {
+            if (!this.isInPlanningHorizon(i.getArrivalTime(destination))) {
+                continue;
+            }
+            if (i.getWaitTime(destination) != null) {
                 penalty++;
             }
         }
