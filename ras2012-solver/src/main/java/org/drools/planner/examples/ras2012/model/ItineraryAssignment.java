@@ -92,7 +92,6 @@ public final class ItineraryAssignment implements Cloneable {
         for (final Map.Entry<Node, WaitTime> entry : this.getItinerary().getWaitTimes().entrySet()) {
             clone.itinerary.setWaitTime(entry.getKey(), entry.getValue());
         }
-        clone.itinerary.resetLatestWaitTimeChange();
         return clone;
     }
 

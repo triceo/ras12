@@ -356,7 +356,6 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
         this.delayPenalties.clear();
         this.entries = new EntryRegistry(Node.count());
         for (final ItineraryAssignment ia : this.solution.getAssignments()) {
-            ia.getItinerary().resetLatestWaitTimeChange();
             this.modify(ia);
         }
     }

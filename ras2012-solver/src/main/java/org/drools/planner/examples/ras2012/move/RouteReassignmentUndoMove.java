@@ -45,7 +45,6 @@ public class RouteReassignmentUndoMove implements Move {
         for (final Map.Entry<Node, WaitTime> entry : this.originalWaitTimes.entrySet()) {
             i.setWaitTime(entry.getKey(), entry.getValue());
         }
-        i.resetLatestWaitTimeChange(); // make sure calculator isn't mistaken the setWaitTime().
         scoreDirector.afterEntityAdded(this.assignment);
     }
 

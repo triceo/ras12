@@ -267,7 +267,6 @@ public class SolutionIO {
                 i.setWaitTime(n, WaitTime.getWaitTime(delay, TimeUnit.MILLISECONDS));
             }
         }
-        i.resetLatestWaitTimeChange();
     }
 
     private static void processXmlTrains(final Document doc, final ProblemSolution solution) {
