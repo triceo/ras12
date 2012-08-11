@@ -1,8 +1,6 @@
 package org.drools.planner.examples.ras2012.util;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
@@ -20,28 +18,23 @@ public class EntryRegistry {
 
         public int getConflicts() {
             int conflicts = 0;
-            final List<Pair<Long, Long>> times = new ArrayList<Pair<Long, Long>>(
-                    this.timesByTrain.values());
-            final int size = times.size();
             final long millisToAdd = TimeUnit.MINUTES.toMillis(5) - 1;
-            for (int train = 0; train < size; train++) {
-                final Pair<Long, Long> entries = times.get(train);
+            for (Train train : timesByTrain.keySet()) {
+                final Pair<Long, Long> entries = timesByTrain.get(train);
                 final long forbiddenEntryWindowStart = entries.getLeft();
                 final long forbiddenEntryWindowEnd = entries.getRight() + millisToAdd;
                 final Range<Long> r = Range.between(forbiddenEntryWindowStart,
                         forbiddenEntryWindowEnd);
-                for (int otherTrain = 0; otherTrain < size; otherTrain++) {
+                for (Train otherTrain : timesByTrain.keySet()) {
                     if (train == otherTrain) {
                         // don't look for conflicts with itself
                         continue;
                     }
-                    final Pair<Long, Long> otherEntries = times.get(otherTrain);
+                    final Pair<Long, Long> otherEntries = timesByTrain.get(otherTrain);
                     final long trainEntry = otherEntries.getLeft();
-                    if (r.contains(trainEntry)) {
-                        conflicts++;
-                    }
                     final long trainLeave = otherEntries.getRight();
-                    if (r.contains(trainLeave)) {
+                    final Range<Long> r2 = Range.between(trainEntry, trainLeave);
+                    if (r.isOverlappedBy(r2)) {
                         conflicts++;
                     }
                 }
@@ -96,6 +89,9 @@ public class EntryRegistry {
     }
 
     public void setTimes(final Arc arc, final Train t, final long entryTime, final long leaveTime) {
+        if (entryTime == leaveTime) {
+            throw new IllegalArgumentException("Entry time cannot equal leave time!");
+        }
         final boolean itemExists = this.items.containsKey(arc);
         final RegistryItem item = itemExists ? this.items.get(arc) : new RegistryItem();
         item.setTimes(t, entryTime, leaveTime);
