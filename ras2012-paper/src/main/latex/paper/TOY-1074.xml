@@ -15,16 +15,11 @@
 		</train>
 		<train id='B1'>
 			<movements>
-				<movement arc='(12,11)' entry='1200' exit='2410.084' />
-				<movement arc='(11,10)' entry='2410.084' exit='2482.084' />
-				<movement arc='(10,9)' entry='2482.084' exit='5242.084' />
-				<movement arc='(9,7)' entry='5242.084' exit='5314.084' />
-				<movement arc='(7,6)' entry='5314.084' exit='6403.16' />
-				<movement arc='(6,5)' entry='6403.16' exit='7613.244' />
-				<movement arc='(5,3)' entry='7613.244' exit='7673.748' />
-				<movement arc='(3,1)' entry='7673.748' exit='7734.252' />
-				<movement arc='(1,0)' entry='7734.252' exit='8823.328' />
-				<destination entry='8823.328' />
+				<movement arc='(12,11)' entry='6300' exit='7510.084' />
+				<movement arc='(11,10)' entry='7510.084' exit='7582.084' />
+				<movement arc='(10,9)' entry='7582.084' exit='7942.084' />
+				<movement arc='(9,7)' entry='7942.084' exit='8014.084' />
+				<movement arc='(7,6)' entry='8014.084' exit='9103.16' />
 			</movements>
 		</train>
 		<train id='C1'>

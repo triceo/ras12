@@ -9,6 +9,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.drools.planner.core.move.Move;
 import org.drools.planner.core.score.director.ScoreDirector;
 import org.drools.planner.examples.ras2012.ProblemSolution;
+import org.drools.planner.examples.ras2012.model.Itinerary;
 import org.drools.planner.examples.ras2012.model.ItineraryAssignment;
 import org.drools.planner.examples.ras2012.model.Node;
 import org.drools.planner.examples.ras2012.model.Route;
@@ -45,6 +46,13 @@ public class RouteReassignmentMove implements Move {
     public void doMove(final ScoreDirector scoreDirector) {
         this.assignment = this.initializeMove(scoreDirector);
         this.assignment.setRoute(this.route);
+        final Itinerary i = this.assignment.getItinerary();
+        for (final Map.Entry<Node, WaitTime> entry : this.previousWaitTimes.entrySet()) {
+            Node n = entry.getKey();
+            if (i.hasNode(n) && this.route.getProgression().getWaitPoints().contains(n)) {
+                i.setWaitTime(n, entry.getValue());
+            }
+        }
         scoreDirector.afterEntityAdded(this.assignment);
     }
 

@@ -132,11 +132,6 @@ public final class ItineraryAssignment implements Cloneable {
         for (final Node waitPoint : this.getRoute().getProgression().getWaitPoints()) {
             if (!this.getItinerary().hasNode(waitPoint)) {
                 continue;
-            } else if (waitPoint == this.getTrain().getOrigin()
-                    && waitPoint != this.getRoute().getProgression().getOrigin()
-                            .getOrigin(this.getTrain())) {
-                // don't allow the train to stop in cases where it would start somewhere in the middle of the territory
-                continue;
             }
             final WaitTime existingWaitTime = this.getItinerary().getWaitTime(waitPoint);
             final long currentArrival = this.getItinerary().getArrivalTime(waitPoint);

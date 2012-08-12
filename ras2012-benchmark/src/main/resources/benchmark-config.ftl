@@ -22,7 +22,7 @@
 
 <#list sa as item>
   <solverBenchmark>
-    <name>${item[0]}-${item[1]}-PRB${item[5]}</name>
+    <name>${item[0]}-${item[1]}-AS${item[2]}-PRB${item[5]}</name>
     <solver>
       <localSearch>
         <termination>
@@ -44,7 +44,6 @@
             <moveIteratorFactoryClass>org.drools.planner.examples.ras2012.move.WaitTimeAssignmentMoveFactory</moveIteratorFactoryClass>
           </moveIteratorFactory>
           <moveIteratorFactory>
-            <cacheType>PHASE</cacheType>
             <fixedProbabilityWeight>1</fixedProbabilityWeight>
             <moveIteratorFactoryClass>org.drools.planner.examples.ras2012.move.RouteReassignmentMoveFactory</moveIteratorFactoryClass>
           </moveIteratorFactory>
