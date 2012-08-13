@@ -49,13 +49,14 @@ public class SolutionIOTest {
     @Parameters
     public static Collection<Object[]> getResources() {
         final List<Object[]> resources = new LinkedList<Object[]>();
-        resources.add(SolutionIOTest.getResource(SolutionType.TOY, 0, -821));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -1567));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -3957));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -10503));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -7410));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -10751));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -13936));
+        resources.add(SolutionIOTest.getResource(SolutionType.TOY, 0, -1074));
+        resources.add(SolutionIOTest.getResource(SolutionType.TOY, 0, -1099));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -1981));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -6213));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -7249));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -18655));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -10033));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -31269));
         return resources;
     }
 
