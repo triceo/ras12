@@ -186,7 +186,7 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
             if (!this.isInPlanningHorizon(i.getArrivalTime(destination))) {
                 continue;
             }
-            if (i.getWaitTime(destination) != null) {
+            if (i.getWaitTime(destination) == null) {
                 penalty++;
             }
         }
