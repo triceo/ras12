@@ -49,14 +49,12 @@ public class SolutionIOTest {
     @Parameters
     public static Collection<Object[]> getResources() {
         final List<Object[]> resources = new LinkedList<Object[]>();
-        resources.add(SolutionIOTest.getResource(SolutionType.TOY, 0, -1074));
-        resources.add(SolutionIOTest.getResource(SolutionType.TOY, 0, -1099));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -1981));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -6213));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -7249));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -18655));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -10033));
-        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -31269));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -1829));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -5355));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -8255));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -13728));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -11063));
+        resources.add(SolutionIOTest.getResource(SolutionType.RDS3, 0, -16108));
         return resources;
     }
 

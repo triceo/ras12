@@ -106,14 +106,6 @@ public class SyntheticItineraryTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testGetterAndSetterOutsideWaitPoint() {
-        final Itinerary i = new Itinerary(SyntheticItineraryTest.ROUTE_POSSIBLE,
-                SyntheticItineraryTest.TRAIN1);
-        final WaitTime wt = WaitTime.getWaitTime(10);
-        i.setWaitTime(SyntheticItineraryTest.END, wt);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
     public void testImpossibleRoute() {
         new Itinerary(SyntheticItineraryTest.ROUTE_IMPOSSIBLE, SyntheticItineraryTest.TRAIN1);
     }
