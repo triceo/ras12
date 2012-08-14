@@ -438,18 +438,13 @@ public final class Itinerary extends Visualizable {
     }
 
     /**
-     * Make the {@link Train} stop at a particular {@link Node}. Will cause wait time change (see
-     * {@link #getLatestWaitTimeChange()}).
+     * Make the {@link Train} stop at a particular {@link Node}.
      * 
      * @param n Node to stop the train at.
      * @param w How long to wait there.
      * @return The previous wait time or null if none.
      */
     public WaitTime setWaitTime(final Node n, final WaitTime w) {
-        if (!this.getRoute().getProgression().getWaitPoints().contains(n)) {
-            throw new IllegalArgumentException(n + " not a wait point: " + this + ". Cannot set "
-                    + w + ".");
-        }
         if (w == null) {
             return this.removeWaitTime(n);
         }
