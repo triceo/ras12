@@ -17,6 +17,9 @@ import org.drools.planner.examples.ras2012.model.WaitTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This move will make a train stop in a wait point for a defined amount of time.
+ */
 public class WaitTimeAssignmentMove implements Move {
 
     private static final Logger logger = LoggerFactory.getLogger(WaitTimeAssignmentMove.class);

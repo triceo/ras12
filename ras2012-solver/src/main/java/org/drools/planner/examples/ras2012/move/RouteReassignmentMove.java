@@ -18,6 +18,10 @@ import org.drools.planner.examples.ras2012.model.WaitTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This move causes a train to move on one route instead of the other. It will keep whatever existing wait times, if possible.
+ * 
+ */
 public class RouteReassignmentMove implements Move {
 
     private static final Logger logger = LoggerFactory.getLogger(RouteReassignmentMove.class);

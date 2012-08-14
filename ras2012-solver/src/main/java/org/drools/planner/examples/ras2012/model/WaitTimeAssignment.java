@@ -1,5 +1,8 @@
 package org.drools.planner.examples.ras2012.model;
 
+/**
+ * Represents a relationship between a wait point and a wait time.
+ */
 public class WaitTimeAssignment {
 
     private final Node     node;

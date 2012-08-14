@@ -407,8 +407,7 @@ public final class Itinerary extends Visualizable {
     }
 
     /**
-     * Don't stop the {@link Train} at a particular {@link Node} any more. Will cause wait time change (see
-     * {@link #getLatestWaitTimeChange()}).
+     * Don't stop the {@link Train} at a particular {@link Node} any more.
      * 
      * @param n Node in question.
      * @return The time it originally waited there.
@@ -426,8 +425,7 @@ public final class Itinerary extends Visualizable {
     }
 
     /**
-     * Don't stop the {@link Train} anywhere, except for {@link MaintenanceWindow}s. Will cause wait time change (see
-     * {@link #getLatestWaitTimeChange()}).
+     * Don't stop the {@link Train} anywhere, except for {@link MaintenanceWindow}s.
      */
     public void removeWaitTimes() {
         if (this.nodeWaitTimes.size() > 0) {

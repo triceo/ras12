@@ -122,6 +122,12 @@ public final class ItineraryAssignment implements Cloneable {
         return this.train;
     }
 
+    /**
+     * Calculates the possible wait times for every wait point on the route. Will be used by {@link WaitTimeAssignmentFactory}
+     * to assemble all the valid moves. See {@link #getWaitTimeAssignments()} for the rules by which a wait time is generated.
+     * 
+     * @return A collection of all the valid wait points and wait times.
+     */
     public Collection<WaitTimeAssignment> getWaitTimeAssignments() {
         if (this.route == null) {
             return Collections.emptyList();

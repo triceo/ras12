@@ -41,6 +41,11 @@ import org.drools.planner.examples.ras2012.util.EntryRegistry;
  * </p>
  * 
  * <p>
+ * Also a part of hard score is the number of unused sidings. Every time a train takes a siding where it doesn't stop, it is
+ * penalized.
+ * </p>
+ * 
+ * <p>
  * Soft constraints, those that only affect score quality and not its feasibility, are all defined by the problem. They are:
  * </p>
  * 
@@ -173,6 +178,12 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
                 .intValue();
     }
 
+    /**
+     * Find the number of sidings where the train does not wait.
+     * 
+     * @param i The schedule in question.
+     * @return The number in question.
+     */
     public int getPenaltyForNoMeetPassOnSidings(final Itinerary i) {
         int penalty = 0;
         for (final Arc a : i.getRoute().getProgression().getArcs()) {
