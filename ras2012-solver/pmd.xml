@@ -1,17 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.3" timestamp="2012-06-02T20:57:47.144">
-<file name="/home/lpetrovi/Workspaces/Stuff/ras2012/ras2012-solver/src/main/java/org/drools/planner/examples/ras2012/ScoreCalculator.java">
-<violation beginline="300" endline="302" begincolumn="20" endcolumn="13" rule="EmptyIfStmt" ruleset="Basic Rules" package="org.drools.planner.examples.ras2012" class="ScoreCalculator" method="recalculateOccupiedArcs" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyIfStmt" priority="3">
-Avoid empty if statements
-</violation>
-</file>
+<pmd version="4.3" timestamp="2012-08-14T07:25:46.808">
 <file name="/home/lpetrovi/Workspaces/Stuff/ras2012/ras2012-solver/src/main/java/org/drools/planner/examples/ras2012/Visualizable.java">
-<violation beginline="39" endline="41" begincolumn="19" endcolumn="17" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.drools.planner.examples.ras2012" class="Visualizable" method="visualize" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+<violation beginline="50" endline="52" begincolumn="19" endcolumn="17" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.drools.planner.examples.ras2012" class="Visualizable" method="visualize" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
 </violation>
 </file>
 <file name="/home/lpetrovi/Workspaces/Stuff/ras2012/ras2012-solver/src/main/java/org/drools/planner/examples/ras2012/util/SolutionIO.java">
-<violation beginline="363" endline="365" begincolumn="19" endcolumn="17" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.drools.planner.examples.ras2012.util" class="SolutionIO" method="read" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+<violation beginline="587" endline="589" begincolumn="19" endcolumn="17" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.drools.planner.examples.ras2012.util" class="SolutionIO" method="read" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
 </violation>
 </file>

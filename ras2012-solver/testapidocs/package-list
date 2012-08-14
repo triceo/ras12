@@ -1,4 +1,5 @@
 org.drools.planner.examples.ras2012
 org.drools.planner.examples.ras2012.model
 org.drools.planner.examples.ras2012.parser
+org.drools.planner.examples.ras2012.util
 org.drools.planner.examples.ras2012.util.model

@@ -1,3 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <pmd-cpd>
+<duplication lines="22" tokens="105">
+<file line="31" path="/home/lpetrovi/Workspaces/Stuff/ras2012/ras2012-solver/src/main/java/org/drools/planner/examples/ras2012/move/RouteReassignmentMoveFactory.java"/>
+<file line="31" path="/home/lpetrovi/Workspaces/Stuff/ras2012/ras2012-solver/src/main/java/org/drools/planner/examples/ras2012/move/WaitTimeAssignmentMoveFactory.java"/>
+<codefragment>
+<![CDATA[
+                    this.pairs.add(Pair.of(t, r));
+                }
+            }
+            this.random = random;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return this.usedIndices.size() < this.pairs.size();
+        }
+
+        @Override
+        public Move next() {
+            if (!this.hasNext()) {
+                throw new NoSuchElementException();
+            }
+            int index = -1;
+            do {
+                index = this.random.nextInt(this.pairs.size());
+            } while (this.usedIndices.contains(index));
+            this.usedIndices.add(index);
+            final Pair<Train, Route> pair = this.pairs.get(index);
+]]>
+</codefragment>
+</duplication>
 </pmd-cpd>
