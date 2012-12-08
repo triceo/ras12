@@ -17,7 +17,7 @@
     <project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
     <jung.version>2.0.1</jung.version>
     <cobertura.version>2.5.1</cobertura.version>
-    <drools.version>5.5.0-SNAPSHOT</drools.version>
+    <drools.version>5.5.0.Final</drools.version>
   </properties>
 
   <dependencyManagement>
