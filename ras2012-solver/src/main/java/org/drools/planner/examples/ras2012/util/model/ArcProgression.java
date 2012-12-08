@@ -22,6 +22,21 @@ import org.drools.planner.examples.ras2012.model.Track;
 
 public class ArcProgression implements Directed {
 
+    private static Node getStartingNode(final Directed r, final Collection<Arc> arcs) {
+        final Set<Node> isDestination = new HashSet<Node>();
+        final Set<Node> isOrigin = new HashSet<Node>();
+        for (final Arc a : arcs) {
+            isOrigin.add(a.getOrigin(r));
+            isDestination.add(a.getDestination(r));
+        }
+        isOrigin.removeAll(isDestination);
+        if (isOrigin.size() == 1) {
+            return isOrigin.toArray(new Node[1])[0];
+        } else {
+            return null;
+        }
+    }
+
     private final List<Arc>                  orderedArcs        = new ArrayList<Arc>();
     private final SortedMap<BigDecimal, Arc> milestones         = new TreeMap<BigDecimal, Arc>();
     private final Map<Node, Arc>             arcsPerOrigin      = new LinkedHashMap<Node, Arc>();
@@ -35,6 +50,7 @@ public class ArcProgression implements Directed {
     private final Collection<Node>           waitPoints;
     private final boolean                    isEastbound;
     private final boolean                    isEmpty;
+
     private final BigDecimal                 length;
 
     private final Map<Node, BigDecimal>      distanceCache      = new HashMap<Node, BigDecimal>();
@@ -46,7 +62,7 @@ public class ArcProgression implements Directed {
     public ArcProgression(final Directed directed, final Collection<Arc> arcs) {
         this.isEastbound = directed.isEastbound();
         // put arcs in proper order
-        Node startingNode = this.getStartingNode(directed, arcs);
+        Node startingNode = ArcProgression.getStartingNode(directed, arcs);
         while (arcs.size() != this.orderedArcs.size()) {
             for (final Arc a : arcs) {
                 if (a.getOrigin(directed) == startingNode) {
@@ -238,21 +254,6 @@ public class ArcProgression implements Directed {
             return this.previousNodes.get(n);
         } else {
             throw new IllegalArgumentException(n + " not in the progression!");
-        }
-    }
-
-    private Node getStartingNode(final Directed r, final Collection<Arc> arcs) {
-        final Set<Node> isDestination = new HashSet<Node>();
-        final Set<Node> isOrigin = new HashSet<Node>();
-        for (final Arc a : arcs) {
-            isOrigin.add(a.getOrigin(r));
-            isDestination.add(a.getDestination(r));
-        }
-        isOrigin.removeAll(isDestination);
-        if (isOrigin.size() == 1) {
-            return isOrigin.toArray(new Node[1])[0];
-        } else {
-            return null;
         }
     }
 

@@ -63,6 +63,73 @@ import org.xml.sax.SAXException;
 
 public class SolutionIO {
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private static Map prepareTexTrain(final Itinerary itinerary, final ProblemSolution solution,
+            final ScoreCalculator calculator) {
+        final Train train = itinerary.getTrain();
+        final Map map = new HashMap();
+        map.put("name", train.getName());
+        map.put("delay", SolutionIO.convertMillisToSeconds(itinerary.getDelay(solution
+                .getPlanningHorizon(TimeUnit.MILLISECONDS))));
+        map.put("delayPenalty", calculator.getDelayPenalty(itinerary));
+        map.put("unpreferredPenalty", calculator.getUnpreferredTracksPenalty(itinerary));
+        map.put("stops", SolutionIO.prepareTexTrainStops(itinerary, solution, calculator));
+        map.put("numStops", ((Collection) map.get("stops")).size());
+        final long horizon = solution.getPlanningHorizon(TimeUnit.MILLISECONDS);
+        final long arrival = itinerary.getArrivalTime();
+        final boolean isInHorizon = arrival <= horizon;
+        final long wantTime = train.getWantTime(TimeUnit.MILLISECONDS);
+        map.put("twt", SolutionIO.convertMillisToSeconds(wantTime));
+        map.put("twtArrive", isInHorizon ? SolutionIO.convertMillisToSeconds(arrival) : null);
+        map.put("twtDiff", isInHorizon ? SolutionIO.convertMillisToSeconds(wantTime - arrival)
+                : null);
+        map.put("twtPenalty", isInHorizon ? calculator.getWantTimePenalty(itinerary) : "");
+        return map;
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private static Map prepareTexTrainStop(final Itinerary itinerary, final Node n,
+            final ProblemSolution solution, final ScoreCalculator calculator) {
+        final Train t = itinerary.getTrain();
+        final long horizon = solution.getPlanningHorizon(TimeUnit.MILLISECONDS);
+        final long arrival = itinerary.getArrivalTime(n);
+        final boolean isInHorizon = arrival <= horizon;
+        final Map stop = new HashMap();
+        stop.put("node", n.getId());
+        stop.put("arrive", SolutionIO.convertMillisToSeconds(arrival).stripTrailingZeros());
+        if (t.getScheduleAdherenceRequirements().containsKey(n)) {
+            final long wantTime = t.getScheduleAdherenceRequirements().get(n)
+                    .getTimeSinceStartOfWorld(TimeUnit.MILLISECONDS);
+            stop.put("sa", SolutionIO.convertMillisToSeconds(wantTime));
+            stop.put("saDiff", isInHorizon ? SolutionIO.convertMillisToSeconds(wantTime - arrival)
+                    : null);
+            stop.put("saPenalty",
+                    isInHorizon ? calculator.getScheduleAdherencePenalty(itinerary, n) : "");
+        }
+        return stop;
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private static Collection prepareTexTrainStops(final Itinerary itinerary,
+            final ProblemSolution solution, final ScoreCalculator calculator) {
+        final Train train = itinerary.getTrain();
+        // prepare the set of stops, make sure they are in a proper order
+        final List<Node> nodes = new ArrayList<Node>();
+        final Map<Node, ScheduleAdherenceRequirement> sa = train.getScheduleAdherenceRequirements();
+        for (final Node n : itinerary.getRoute().getProgression().getNodes()) {
+            if (sa.containsKey(n)) {
+                nodes.add(n);
+            }
+        }
+        // and now populate the stop data
+        final List stops = new ArrayList();
+        for (final Node node : nodes) {
+            final Map stop = SolutionIO.prepareTexTrainStop(itinerary, node, solution, calculator);
+            stops.add(stop);
+        }
+        return stops;
+    }
+
     private final Configuration freemarker;
 
     private Map<Integer, Node>  nodes;
@@ -154,6 +221,55 @@ public class SolutionIO {
         final org.w3c.dom.Document doc = dombuilder.parse(new ByteArrayInputStream(content
                 .getBytes("UTF-8")));
         return new DOMBuilder().build(doc);
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private static Set prepareXmlData(final ProblemSolution solution) throws IOException {
+        final Set set = new LinkedHashSet();
+        for (final Train t : solution.getTrains()) {
+            final Map map = new HashMap();
+            map.put("name", t.getName());
+            map.put("movements", SolutionIO.prepareXmlMovements(t, solution));
+            final Itinerary i = solution.getAssignment(t).getItinerary();
+            if (i.getArrivalTime() <= solution.getPlanningHorizon(TimeUnit.MILLISECONDS)) {
+                final BigDecimal timeInSeconds = SolutionIO.convertMillisToSeconds(i
+                        .getArrivalTime(t.getDestination()));
+                map.put("destinationEntry", timeInSeconds.stripTrailingZeros());
+            }
+            set.add(map);
+        }
+        return set;
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private static Set prepareXmlMovements(final Train t, final ProblemSolution solution) {
+        final Set set = new LinkedHashSet();
+        final Itinerary i = solution.getAssignment(t).getItinerary();
+        final long horizon = solution.getPlanningHorizon(TimeUnit.MILLISECONDS);
+        for (final SortedMap.Entry<Long, Arc> entry : i.getScheduleWithArcs().entrySet()) {
+            final Map map = new HashMap();
+            final Arc arc = entry.getValue();
+            if (entry.getKey() >= horizon) {
+                continue;
+            }
+            final BigDecimal timeInSeconds = SolutionIO.convertMillisToSeconds(
+                    i.getArrivalTime(arc)).stripTrailingZeros();
+            final BigDecimal leaveTime = SolutionIO.convertMillisToSeconds(
+                    i.getArrivalTime(arc.getDestination(i.getTrain()))).stripTrailingZeros();
+            if (leaveTime.intValue() > horizon) {
+                continue;
+            }
+            map.put("origin", arc.getOrigin(t).getId());
+            map.put("destination", arc.getDestination(t).getId());
+            map.put("entry", timeInSeconds);
+            map.put("exit", leaveTime);
+            set.add(map);
+            if (arc.getDestination(i.getTrain()) == i.getTrain().getDestination()) {
+                // this is the last arc; further ones may be null
+                break;
+            }
+        }
+        return set;
     }
 
     private static void processXmlMovements(final ProblemSolution solution, final Train train,
@@ -438,135 +554,19 @@ public class SolutionIO {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private Map prepareTexData(final ProblemSolution solution) {
+    private static Map prepareTexData(final ProblemSolution solution) {
         final ScoreCalculator calc = new ScoreCalculator();
         calc.resetWorkingSolution(solution);
         final Map map = new HashMap();
         map.put("name", solution.getName());
         final Set trainsMap = new LinkedHashSet();
         for (final Train t : solution.getTrains()) {
-            trainsMap.add(this.prepareTexTrain(solution.getAssignment(t).getItinerary(), solution,
-                    calc));
+            trainsMap.add(SolutionIO.prepareTexTrain(solution.getAssignment(t).getItinerary(),
+                    solution, calc));
         }
         map.put("trains", trainsMap);
         map.put("cost", -calc.calculateScore().getSoftScore());
         return map;
-    }
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private Map prepareTexTrain(final Itinerary itinerary, final ProblemSolution solution,
-            final ScoreCalculator calculator) {
-        final Train train = itinerary.getTrain();
-        final Map map = new HashMap();
-        map.put("name", train.getName());
-        map.put("delay", SolutionIO.convertMillisToSeconds(itinerary.getDelay(solution
-                .getPlanningHorizon(TimeUnit.MILLISECONDS))));
-        map.put("delayPenalty", calculator.getDelayPenalty(itinerary));
-        map.put("unpreferredPenalty", calculator.getUnpreferredTracksPenalty(itinerary));
-        map.put("stops", this.prepareTexTrainStops(itinerary, solution, calculator));
-        map.put("numStops", ((Collection) map.get("stops")).size());
-        final long horizon = solution.getPlanningHorizon(TimeUnit.MILLISECONDS);
-        final long arrival = itinerary.getArrivalTime();
-        final boolean isInHorizon = arrival <= horizon;
-        final long wantTime = train.getWantTime(TimeUnit.MILLISECONDS);
-        map.put("twt", SolutionIO.convertMillisToSeconds(wantTime));
-        map.put("twtArrive", isInHorizon ? SolutionIO.convertMillisToSeconds(arrival) : null);
-        map.put("twtDiff", isInHorizon ? SolutionIO.convertMillisToSeconds(wantTime - arrival)
-                : null);
-        map.put("twtPenalty", isInHorizon ? calculator.getWantTimePenalty(itinerary) : "");
-        return map;
-    }
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private Map prepareTexTrainStop(final Itinerary itinerary, final Node n,
-            final ProblemSolution solution, final ScoreCalculator calculator) {
-        final Train t = itinerary.getTrain();
-        final long horizon = solution.getPlanningHorizon(TimeUnit.MILLISECONDS);
-        final long arrival = itinerary.getArrivalTime(n);
-        final boolean isInHorizon = arrival <= horizon;
-        final Map stop = new HashMap();
-        stop.put("node", n.getId());
-        stop.put("arrive", SolutionIO.convertMillisToSeconds(arrival).stripTrailingZeros());
-        if (t.getScheduleAdherenceRequirements().containsKey(n)) {
-            final long wantTime = t.getScheduleAdherenceRequirements().get(n)
-                    .getTimeSinceStartOfWorld(TimeUnit.MILLISECONDS);
-            stop.put("sa", SolutionIO.convertMillisToSeconds(wantTime));
-            stop.put("saDiff", isInHorizon ? SolutionIO.convertMillisToSeconds(wantTime - arrival)
-                    : null);
-            stop.put("saPenalty",
-                    isInHorizon ? calculator.getScheduleAdherencePenalty(itinerary, n) : "");
-        }
-        return stop;
-    }
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private Collection prepareTexTrainStops(final Itinerary itinerary,
-            final ProblemSolution solution, final ScoreCalculator calculator) {
-        final Train train = itinerary.getTrain();
-        // prepare the set of stops, make sure they are in a proper order
-        final List<Node> nodes = new ArrayList<Node>();
-        final Map<Node, ScheduleAdherenceRequirement> sa = train.getScheduleAdherenceRequirements();
-        for (final Node n : itinerary.getRoute().getProgression().getNodes()) {
-            if (sa.containsKey(n)) {
-                nodes.add(n);
-            }
-        }
-        // and now populate the stop data
-        final List stops = new ArrayList();
-        for (final Node node : nodes) {
-            final Map stop = this.prepareTexTrainStop(itinerary, node, solution, calculator);
-            stops.add(stop);
-        }
-        return stops;
-    }
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private Set prepareXmlData(final ProblemSolution solution) throws IOException {
-        final Set set = new LinkedHashSet();
-        for (final Train t : solution.getTrains()) {
-            final Map map = new HashMap();
-            map.put("name", t.getName());
-            map.put("movements", this.prepareXmlMovements(t, solution));
-            final Itinerary i = solution.getAssignment(t).getItinerary();
-            if (i.getArrivalTime() <= solution.getPlanningHorizon(TimeUnit.MILLISECONDS)) {
-                final BigDecimal timeInSeconds = SolutionIO.convertMillisToSeconds(i
-                        .getArrivalTime(t.getDestination()));
-                map.put("destinationEntry", timeInSeconds.stripTrailingZeros());
-            }
-            set.add(map);
-        }
-        return set;
-    }
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private Set prepareXmlMovements(final Train t, final ProblemSolution solution) {
-        final Set set = new LinkedHashSet();
-        final Itinerary i = solution.getAssignment(t).getItinerary();
-        final long horizon = solution.getPlanningHorizon(TimeUnit.MILLISECONDS);
-        for (final SortedMap.Entry<Long, Arc> entry : i.getScheduleWithArcs().entrySet()) {
-            final Map map = new HashMap();
-            final Arc arc = entry.getValue();
-            if (entry.getKey() >= horizon) {
-                continue;
-            }
-            final BigDecimal timeInSeconds = SolutionIO.convertMillisToSeconds(
-                    i.getArrivalTime(arc)).stripTrailingZeros();
-            final BigDecimal leaveTime = SolutionIO.convertMillisToSeconds(
-                    i.getArrivalTime(arc.getDestination(i.getTrain()))).stripTrailingZeros();
-            if (leaveTime.intValue() > horizon) {
-                continue;
-            }
-            map.put("origin", arc.getOrigin(t).getId());
-            map.put("destination", arc.getDestination(t).getId());
-            map.put("entry", timeInSeconds);
-            map.put("exit", leaveTime);
-            set.add(map);
-            if (arc.getDestination(i.getTrain()) == i.getTrain().getDestination()) {
-                // this is the last arc; further ones may be null
-                break;
-            }
-        }
-        return set;
     }
 
     public ProblemSolution read(final File inputSolutionFile) {
@@ -647,7 +647,7 @@ public class SolutionIO {
     public void writeTex(final ProblemSolution solution, final long seed,
             final File outputSolutionFile) {
         try {
-            final Map map = this.prepareTexData(solution);
+            final Map map = SolutionIO.prepareTexData(solution);
             map.put("id", solution.getName().replaceAll("\\Q \\E", ""));
             map.put("seed", seed);
             this.freemarker.getTemplate("schedule.tex.ftl").process(map,
@@ -673,7 +673,7 @@ public class SolutionIO {
     public void writeXML(final ProblemSolution solution, final OutputStream outputSolution) {
         try {
             final Map map = new HashMap();
-            map.put("trains", this.prepareXmlData(solution));
+            map.put("trains", SolutionIO.prepareXmlData(solution));
             map.put("name", solution.getName());
             this.freemarker.getTemplate("schedule.xml.ftl").process(map,
                     new OutputStreamWriter(outputSolution));

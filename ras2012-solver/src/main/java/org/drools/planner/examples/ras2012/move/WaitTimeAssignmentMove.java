@@ -84,7 +84,7 @@ public class WaitTimeAssignmentMove implements Move {
     }
 
     private ItineraryAssignment getAssignment(final ScoreDirector scoreDirector) {
-        return this.getSolution(scoreDirector).getAssignment(this.train);
+        return WaitTimeAssignmentMove.getSolution(scoreDirector).getAssignment(this.train);
     }
 
     @Override
@@ -100,7 +100,7 @@ public class WaitTimeAssignmentMove implements Move {
         return Collections.singletonList(this.waitTime);
     }
 
-    private ProblemSolution getSolution(final ScoreDirector scoreDirector) {
+    private static ProblemSolution getSolution(final ScoreDirector scoreDirector) {
         return (ProblemSolution) scoreDirector.getWorkingSolution();
     }
 
