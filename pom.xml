@@ -95,11 +95,6 @@
         <artifactId>jung-visualization</artifactId>
         <version>${jung.version}</version>
       </dependency>
-      <dependency> <!--  Otherwise it won't compile. -->
-        <groupId>org.mvel</groupId>
-        <artifactId>mvel2</artifactId>
-        <version>2.1.0.Final</version>
-      </dependency>
     </dependencies>
   </dependencyManagement>
   <build>
