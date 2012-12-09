@@ -16,7 +16,7 @@
     </dependency>
     <dependency>
       <groupId>org.jdom</groupId>
-      <artifactId>jdom</artifactId>
+      <artifactId>jdom2</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -43,7 +43,7 @@
       <artifactId>jung-visualization</artifactId>
     </dependency>
     <dependency>
-      <groupId>jfree</groupId>
+      <groupId>org.jfree</groupId>
       <artifactId>jfreechart</artifactId>
     </dependency>
     <dependency>
