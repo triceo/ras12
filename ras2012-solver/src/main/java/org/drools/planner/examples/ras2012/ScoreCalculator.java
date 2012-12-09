@@ -79,6 +79,14 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
                 Converter.BIGDECIMAL_SCALE, Converter.BIGDECIMAL_ROUNDING);
     }
 
+    private static int sumPenalties(final Map<Train, Integer> penalties) {
+        int sum = 0;
+        for (final int i : penalties.values()) {
+            sum += i;
+        }
+        return sum;
+    }
+
     private ProblemSolution           solution                   = null;
 
     private final Map<Train, Integer> wantTimePenalties          = new HashMap<>();
@@ -88,8 +96,8 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
     private final Map<Train, Integer> scheduleAdherencePenalties = new HashMap<>();
 
     private final Map<Train, Integer> unpreferredTracksPenalties = new HashMap<>();
-
     private final Map<Train, Integer> uselessSidingsPenalties    = new HashMap<>();
+
     private EntryRegistry             entries;
 
     @Override
@@ -149,15 +157,12 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
      */
     @Override
     public HardAndSoftScore calculateScore() {
-        int softPenalty = 0;
-        int hardPenalty = this.entries.countConflicts();
-        for (final Train t : this.solution.getTrains()) {
-            softPenalty += this.wantTimePenalties.get(t);
-            softPenalty += this.delayPenalties.get(t);
-            softPenalty += this.scheduleAdherencePenalties.get(t);
-            softPenalty += this.unpreferredTracksPenalties.get(t);
-            hardPenalty += this.uselessSidingsPenalties.get(t);
-        }
+        final int hardPenalty = this.entries.countConflicts()
+                + ScoreCalculator.sumPenalties(this.uselessSidingsPenalties);
+        int softPenalty = ScoreCalculator.sumPenalties(this.wantTimePenalties);
+        softPenalty += ScoreCalculator.sumPenalties(this.delayPenalties);
+        softPenalty += ScoreCalculator.sumPenalties(this.scheduleAdherencePenalties);
+        softPenalty += ScoreCalculator.sumPenalties(this.unpreferredTracksPenalties);
         return DefaultHardAndSoftScore.valueOf(-hardPenalty, -softPenalty);
     }
 
