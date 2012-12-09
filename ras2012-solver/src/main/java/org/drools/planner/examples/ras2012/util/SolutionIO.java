@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -62,6 +63,22 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 public class SolutionIO {
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private static Map prepareTexData(final ProblemSolution solution) {
+        final ScoreCalculator calc = new ScoreCalculator();
+        calc.resetWorkingSolution(solution);
+        final Map map = new HashMap();
+        map.put("name", solution.getName());
+        final Set trainsMap = new LinkedHashSet();
+        for (final Train t : solution.getTrains()) {
+            trainsMap.add(SolutionIO.prepareTexTrain(solution.getAssignment(t).getItinerary(),
+                    solution, calc));
+        }
+        map.put("trains", trainsMap);
+        map.put("cost", -calc.calculateScore().getSoftScore());
+        return map;
+    }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private static Map prepareTexTrain(final Itinerary itinerary, final ProblemSolution solution,
@@ -553,22 +570,6 @@ public class SolutionIO {
         return trains;
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private static Map prepareTexData(final ProblemSolution solution) {
-        final ScoreCalculator calc = new ScoreCalculator();
-        calc.resetWorkingSolution(solution);
-        final Map map = new HashMap();
-        map.put("name", solution.getName());
-        final Set trainsMap = new LinkedHashSet();
-        for (final Train t : solution.getTrains()) {
-            trainsMap.add(SolutionIO.prepareTexTrain(solution.getAssignment(t).getItinerary(),
-                    solution, calc));
-        }
-        map.put("trains", trainsMap);
-        map.put("cost", -calc.calculateScore().getSoftScore());
-        return map;
-    }
-
     public ProblemSolution read(final File inputSolutionFile) {
         InputStream is = null;
         try {
@@ -646,12 +647,11 @@ public class SolutionIO {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void writeTex(final ProblemSolution solution, final long seed,
             final File outputSolutionFile) {
-        try {
+        try (Writer w = new FileWriter(outputSolutionFile)) {
             final Map map = SolutionIO.prepareTexData(solution);
             map.put("id", solution.getName().replaceAll("\\Q \\E", ""));
             map.put("seed", seed);
-            this.freemarker.getTemplate("schedule.tex.ftl").process(map,
-                    new FileWriter(outputSolutionFile));
+            this.freemarker.getTemplate("schedule.tex.ftl").process(map, w);
         } catch (final TemplateException e) {
             SolutionIO.logger.error("Failed processing LaTeX schedule template.", e);
         } catch (final IOException e) {
