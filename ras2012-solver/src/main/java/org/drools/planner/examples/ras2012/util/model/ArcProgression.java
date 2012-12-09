@@ -18,7 +18,6 @@ import java.util.TreeSet;
 import org.drools.planner.examples.ras2012.Directed;
 import org.drools.planner.examples.ras2012.model.Arc;
 import org.drools.planner.examples.ras2012.model.Node;
-import org.drools.planner.examples.ras2012.model.Track;
 
 public class ArcProgression implements Directed {
 
@@ -97,10 +96,6 @@ public class ArcProgression implements Directed {
             this.nextArcs.put(this.getDestination(), null);
             this.nodes.add(this.getDestination().getDestination(this));
         }
-        // determine whether a particular arc is preferred
-        for (final Arc a : this.orderedArcs) {
-            this.isArcPreferred.put(a, this.determineArcPreferrence(a));
-        }
         // and finally cache the wait points
         this.waitPoints = this.assembleWaitPoints();
     }
@@ -141,24 +136,6 @@ public class ArcProgression implements Directed {
 
     public int countArcs() {
         return this.orderedArcs.size();
-    }
-
-    private boolean determineArcPreferrence(final Arc a) {
-        if (a.getTrack() == Track.MAIN_0) {
-            return true;
-        } else if (a.getTrack() == Track.MAIN_2) {
-            return this.isEastbound();
-        } else if (a.getTrack() == Track.MAIN_1) {
-            return this.isWestbound();
-        } else {
-            // preference of SIDING/SWITCH/CROSSOVER is based on which track are those coming off of
-            final Arc previousArc = this.getPreviousArc(a);
-            if (previousArc == null) {
-                return true;
-            } else {
-                return this.determineArcPreferrence(previousArc);
-            }
-        }
     }
 
     public List<Arc> getArcs() {
@@ -275,7 +252,29 @@ public class ArcProgression implements Directed {
     }
 
     public boolean isPreferred(final Arc a) {
+        if (!this.isArcPreferred.containsKey(a)) {
+            this.isArcPreferred.put(a, this.isPreferredUncached(a));
+        }
         return this.isArcPreferred.get(a);
+    }
+
+    private boolean isPreferredUncached(final Arc a) {
+        switch (a.getTrack()) {
+            case MAIN_0:
+                return true;
+            case MAIN_2:
+                return this.isEastbound();
+            case MAIN_1:
+                return this.isWestbound();
+            default:
+                // preference of SIDING/SWITCH/CROSSOVER is based on which track are those coming off of
+                final Arc previousArc = this.getPreviousArc(a);
+                if (previousArc == null) {
+                    return true;
+                } else {
+                    return this.isPreferred(previousArc);
+                }
+        }
     }
 
     @Override
