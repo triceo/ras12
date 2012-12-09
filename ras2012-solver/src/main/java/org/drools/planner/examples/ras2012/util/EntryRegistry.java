@@ -25,8 +25,8 @@ public class EntryRegistry {
             final long millisToAdd = TimeUnit.MINUTES.toMillis(5) - 1;
             for (int train = 0; train < size; train++) {
                 final Pair<Long, Long> entries = times.get(train);
-                final long forbiddenEntryWindowStart = entries.getLeft();
-                final long forbiddenEntryWindowEnd = entries.getRight() + millisToAdd;
+                final Long forbiddenEntryWindowStart = entries.getLeft();
+                final Long forbiddenEntryWindowEnd = entries.getRight() + millisToAdd;
                 final Range<Long> r = Range.between(forbiddenEntryWindowStart,
                         forbiddenEntryWindowEnd);
                 for (int otherTrain = 0; otherTrain < size; otherTrain++) {
@@ -35,11 +35,11 @@ public class EntryRegistry {
                         continue;
                     }
                     final Pair<Long, Long> otherEntries = times.get(otherTrain);
-                    final long trainEntry = otherEntries.getLeft();
+                    final Long trainEntry = otherEntries.getLeft();
                     if (r.contains(trainEntry)) {
                         conflicts++;
                     }
-                    final long trainLeave = otherEntries.getRight();
+                    final Long trainLeave = otherEntries.getRight();
                     if (r.contains(trainLeave)) {
                         conflicts++;
                     }
