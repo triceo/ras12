@@ -91,7 +91,7 @@ public class RouteReassignmentMove implements Move {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(this.route).append(this.train).build();
+        return new HashCodeBuilder().append(this.route).append(this.train).toHashCode();
     }
 
     private ItineraryAssignment initializeMove(final ScoreDirector scoreDirector) {

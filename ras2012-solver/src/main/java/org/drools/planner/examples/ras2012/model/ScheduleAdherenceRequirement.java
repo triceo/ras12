@@ -73,7 +73,7 @@ public class ScheduleAdherenceRequirement {
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(this.getDestination())
-                .append(this.getTimeSinceStartOfWorld(TimeUnit.MILLISECONDS)).build();
+                .append(this.getTimeSinceStartOfWorld(TimeUnit.MILLISECONDS)).toHashCode();
     }
 
     @Override

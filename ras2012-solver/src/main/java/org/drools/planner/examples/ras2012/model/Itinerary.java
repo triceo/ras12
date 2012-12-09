@@ -389,7 +389,7 @@ public final class Itinerary extends Visualizable {
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(this.getTrain()).append(this.getRoute())
-                .append(this.nodeWaitTimes).build();
+                .append(this.nodeWaitTimes).toHashCode();
     }
 
     /**

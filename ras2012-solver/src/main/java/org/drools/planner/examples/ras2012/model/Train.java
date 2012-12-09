@@ -279,7 +279,7 @@ public class Train implements Comparable<Train>, Directed {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(this.getName()).build();
+        return new HashCodeBuilder().append(this.getName()).toHashCode();
     }
 
     @Override

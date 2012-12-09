@@ -79,7 +79,7 @@ public class RouteReassignmentUndoMove implements Move {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(this.routeToUndo).append(this.train).build();
+        return new HashCodeBuilder().append(this.routeToUndo).append(this.train).toHashCode();
     }
 
     private ItineraryAssignment initializeMove(final ScoreDirector scoreDirector) {

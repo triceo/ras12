@@ -223,7 +223,7 @@ public class Route extends Visualizable implements Comparable<Route>, Directed {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(this.getId()).build();
+        return new HashCodeBuilder().append(this.getId()).toHashCode();
     }
 
     @Override

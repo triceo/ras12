@@ -109,7 +109,7 @@ public class WaitTimeAssignmentMove implements Move {
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(this.route).append(this.train).append(this.node)
-                .append(this.waitTime).build();
+                .append(this.waitTime).toHashCode();
     }
 
     private ItineraryAssignment initializeMove(final ScoreDirector scoreDirector) {
