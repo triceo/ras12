@@ -12,7 +12,7 @@ import org.drools.planner.examples.ras2012.util.model.ArcProgression;
  */
 public class WaitTime {
 
-    private static final Map<Long, WaitTime> waitTimes         = new HashMap<Long, WaitTime>();
+    private static final Map<Long, WaitTime> waitTimes         = new HashMap<>();
 
     private static final TimeUnit            DEFAULT_TIME_UNIT = TimeUnit.MILLISECONDS;
 

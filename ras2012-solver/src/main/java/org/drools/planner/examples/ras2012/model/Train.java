@@ -79,7 +79,7 @@ public class Train implements Comparable<Train>, Directed {
     private final long                                    entryTime;
     private final long                                    wantTime;
     private final long                                    originalDelay;
-    private final Map<Node, ScheduleAdherenceRequirement> scheduleAdherenceRequirements = new HashMap<Node, ScheduleAdherenceRequirement>();
+    private final Map<Node, ScheduleAdherenceRequirement> scheduleAdherenceRequirements = new HashMap<>();
     private final boolean                                 carriesHazardousMaterials;
 
     private final boolean                                 isWestbound;

@@ -81,15 +81,15 @@ public class ScoreCalculator extends AbstractIncrementalScoreCalculator<ProblemS
 
     private ProblemSolution           solution                   = null;
 
-    private final Map<Train, Integer> wantTimePenalties          = new HashMap<Train, Integer>();
+    private final Map<Train, Integer> wantTimePenalties          = new HashMap<>();
 
-    private final Map<Train, Integer> delayPenalties             = new HashMap<Train, Integer>();
+    private final Map<Train, Integer> delayPenalties             = new HashMap<>();
 
-    private final Map<Train, Integer> scheduleAdherencePenalties = new HashMap<Train, Integer>();
+    private final Map<Train, Integer> scheduleAdherencePenalties = new HashMap<>();
 
-    private final Map<Train, Integer> unpreferredTracksPenalties = new HashMap<Train, Integer>();
+    private final Map<Train, Integer> unpreferredTracksPenalties = new HashMap<>();
 
-    private final Map<Train, Integer> uselessSidingsPenalties    = new HashMap<Train, Integer>();
+    private final Map<Train, Integer> uselessSidingsPenalties    = new HashMap<>();
     private EntryRegistry             entries;
 
     @Override

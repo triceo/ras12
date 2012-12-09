@@ -23,11 +23,17 @@ import org.slf4j.LoggerFactory;
 public class WaitTimeAssignmentMove implements Move {
 
     private static final Logger logger = LoggerFactory.getLogger(WaitTimeAssignmentMove.class);
+
+    private static ProblemSolution getSolution(final ScoreDirector scoreDirector) {
+        return (ProblemSolution) scoreDirector.getWorkingSolution();
+    }
+
     private ItineraryAssignment assignment;
     private final Train         train;
     private final Route         route;
     private final Node          node;
     private final WaitTime      waitTime;
+
     private WaitTime            previousWaitTime;
 
     public WaitTimeAssignmentMove(final Train t, final Route r, final Node n, final WaitTime wt) {
@@ -98,10 +104,6 @@ public class WaitTimeAssignmentMove implements Move {
     @Override
     public Collection<? extends Object> getPlanningValues() {
         return Collections.singletonList(this.waitTime);
-    }
-
-    private static ProblemSolution getSolution(final ScoreDirector scoreDirector) {
-        return (ProblemSolution) scoreDirector.getWorkingSolution();
     }
 
     @Override

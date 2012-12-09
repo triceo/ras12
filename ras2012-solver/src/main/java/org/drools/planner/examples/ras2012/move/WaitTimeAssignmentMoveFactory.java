@@ -20,9 +20,9 @@ public class WaitTimeAssignmentMoveFactory implements MoveIteratorFactory {
 
     private static final class RandomWaitTimeAssignmentMoveIterator implements Iterator<Move> {
 
-        private final List<Pair<ItineraryAssignment, WaitTimeAssignment>> pairs       = new ArrayList<Pair<ItineraryAssignment, WaitTimeAssignment>>();
+        private final List<Pair<ItineraryAssignment, WaitTimeAssignment>> pairs       = new ArrayList<>();
         private final Random                                              random;
-        private final Set<Integer>                                        usedIndices = new TreeSet<Integer>();
+        private final Set<Integer>                                        usedIndices = new TreeSet<>();
 
         public RandomWaitTimeAssignmentMoveIterator(final ProblemSolution solution,
                 final Random random) {
@@ -65,7 +65,7 @@ public class WaitTimeAssignmentMoveFactory implements MoveIteratorFactory {
 
     private static final class WaitTimeAssignmentMoveIterator implements Iterator<Move> {
 
-        private final List<Pair<ItineraryAssignment, WaitTimeAssignment>> pairs        = new ArrayList<Pair<ItineraryAssignment, WaitTimeAssignment>>();
+        private final List<Pair<ItineraryAssignment, WaitTimeAssignment>> pairs        = new ArrayList<>();
         private int                                                       currentIndex = 0;
 
         public WaitTimeAssignmentMoveIterator(final ProblemSolution solution) {

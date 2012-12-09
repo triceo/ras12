@@ -114,9 +114,9 @@ public class GraphVisualizer {
     private Graph<Node, Arc> formGraph() {
         Graph<Node, Arc> g = null;
         if (this.route != null) {
-            g = new DirectedOrderedSparseMultigraph<Node, Arc>();
+            g = new DirectedOrderedSparseMultigraph<>();
         } else {
-            g = new UndirectedOrderedSparseMultigraph<Node, Arc>();
+            g = new UndirectedOrderedSparseMultigraph<>();
         }
         final boolean isGraphDirected = g instanceof DirectedGraph;
         for (final Arc a : this.edges) {
@@ -135,7 +135,7 @@ public class GraphVisualizer {
         GraphVisualizer.l.lock();
         try {
             if (this.layout == null) {
-                this.layout = new ISOMLayout<Node, Arc>(this.formGraph());
+                this.layout = new ISOMLayout<>(this.formGraph());
                 this.layout.setSize(new Dimension(GraphVisualizer.GRAPH_WIDTH,
                         GraphVisualizer.GRAPH_HEIGHT));
             }
@@ -147,8 +147,8 @@ public class GraphVisualizer {
 
     protected VisualizationImageServer<Node, Arc> getServer() {
         final Layout<Node, Arc> layout = this.getLayout();
-        final VisualizationImageServer<Node, Arc> server = new VisualizationImageServer<Node, Arc>(
-                layout, layout.getSize());
+        final VisualizationImageServer<Node, Arc> server = new VisualizationImageServer<>(layout,
+                layout.getSize());
         if (layout.getGraph() instanceof DirectedGraph) {
             server.getRenderContext().setVertexFillPaintTransformer(new NodePainter(this.route));
             server.getRenderContext().setEdgeStrokeTransformer(new EdgePainter(this.route));

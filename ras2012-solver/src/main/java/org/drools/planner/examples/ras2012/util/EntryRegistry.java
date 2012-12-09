@@ -16,12 +16,11 @@ public class EntryRegistry {
 
     private static class RegistryItem {
 
-        private final Map<Train, Pair<Long, Long>> timesByTrain = new TreeMap<Train, Pair<Long, Long>>();
+        private final Map<Train, Pair<Long, Long>> timesByTrain = new TreeMap<>();
 
         public int getConflicts() {
             int conflicts = 0;
-            final List<Pair<Long, Long>> times = new ArrayList<Pair<Long, Long>>(
-                    this.timesByTrain.values());
+            final List<Pair<Long, Long>> times = new ArrayList<>(this.timesByTrain.values());
             final int size = times.size();
             final long millisToAdd = TimeUnit.MINUTES.toMillis(5) - 1;
             for (int train = 0; train < size; train++) {
@@ -78,7 +77,7 @@ public class EntryRegistry {
     private final Map<Arc, RegistryItem> items;
 
     public EntryRegistry(final int numberOfItems) {
-        this.items = new HashMap<Arc, RegistryItem>(numberOfItems);
+        this.items = new HashMap<>(numberOfItems);
     }
 
     public int countConflicts() {

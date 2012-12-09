@@ -131,7 +131,7 @@ public class SolutionIO {
             final ProblemSolution solution, final ScoreCalculator calculator) {
         final Train train = itinerary.getTrain();
         // prepare the set of stops, make sure they are in a proper order
-        final List<Node> nodes = new ArrayList<Node>();
+        final List<Node> nodes = new ArrayList<>();
         final Map<Node, ScheduleAdherenceRequirement> sa = train.getScheduleAdherenceRequirements();
         for (final Node n : itinerary.getRoute().getProgression().getNodes()) {
             if (sa.containsKey(n)) {
@@ -293,7 +293,7 @@ public class SolutionIO {
             final IteratorIterable<Element> movements) {
         // first locate the route we are on
         final Collection<Route> availableRoutes = solution.getTerritory().getRoutes(train);
-        final Collection<Route> routes = new HashSet<Route>(availableRoutes);
+        final Collection<Route> routes = new HashSet<>(availableRoutes);
         final Iterator<Element> it = movements.iterator();
         Arc lastArc = null;
         long lastTravellingTime = Long.MAX_VALUE;
@@ -488,8 +488,8 @@ public class SolutionIO {
             throw new IllegalStateException("Arc types do not correspond to their number.");
         }
         // now start processing
-        final List<Arc> newArcs = new ArrayList<Arc>();
-        final Map<Integer, Node> newNodes = new TreeMap<Integer, Node>();
+        final List<Arc> newArcs = new ArrayList<>();
+        final Map<Integer, Node> newNodes = new TreeMap<>();
         for (int i = 0; i < numberOfItems; i++) {
             final Track t = SolutionIO.getArcType(trackTypes.get(i));
             final BigDecimal length = SolutionIO.tokenToBigDecimal(trackLengths.get(i));
@@ -512,7 +512,7 @@ public class SolutionIO {
     }
 
     private Collection<MaintenanceWindow> initMOW(final DataSetParser p) {
-        final List<MaintenanceWindow> mows = new ArrayList<MaintenanceWindow>();
+        final List<MaintenanceWindow> mows = new ArrayList<>();
         for (final List<Token> mow : p.getMows()) {
             final MaintenanceWindow newMow = new MaintenanceWindow(this.nodes.get(SolutionIO
                     .tokenToInteger(mow.get(0))), this.nodes.get(SolutionIO.tokenToInteger(mow
@@ -543,7 +543,7 @@ public class SolutionIO {
                     + " will be corrected by directing the train to the proper destination.");
         }
         // and now assemble schedules
-        final List<ScheduleAdherenceRequirement> sars = new ArrayList<ScheduleAdherenceRequirement>();
+        final List<ScheduleAdherenceRequirement> sars = new ArrayList<>();
         for (int i = 0; i < t.getSchedule().size(); i++) {
             final List<Token> data = t.getSchedule().get(i);
             final Node n = this.nodes.get(SolutionIO.tokenToInteger(data.get(0)));
@@ -563,7 +563,7 @@ public class SolutionIO {
                     "Number of trains specified doesn't match the actual number of trains!");
         }
         // now parse each train individually
-        final List<Train> trains = new ArrayList<Train>();
+        final List<Train> trains = new ArrayList<>();
         for (final ParsedTrain t : origTrains) {
             trains.add(this.initTrain(solutionName, t));
         }
@@ -620,11 +620,11 @@ public class SolutionIO {
 
     public void writeChart(final BoxAndWhiskerCategoryDataset dataset, final File outputSolutionFile) {
         final String rowId = "";
-        final Map<String, List<Object>> results = new HashMap<String, List<Object>>();
-        results.put("solutions", new ArrayList<Object>());
+        final Map<String, List<Object>> results = new HashMap<>();
+        results.put("solutions", new ArrayList<>());
         for (final Object key : dataset.getColumnKeys()) {
             final String columnId = (String) key;
-            final Map<String, Object> values = new HashMap<String, Object>();
+            final Map<String, Object> values = new HashMap<>();
             values.put("name", columnId);
             values.put("best", dataset.getMinOutlier(rowId, columnId));
             values.put("worst", dataset.getMaxOutlier(rowId, columnId));

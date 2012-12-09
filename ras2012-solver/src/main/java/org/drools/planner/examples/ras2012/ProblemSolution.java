@@ -2,9 +2,9 @@ package org.drools.planner.examples.ras2012;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -42,8 +42,8 @@ public class ProblemSolution extends Visualizable implements Solution<HardAndSof
 
     private final Territory                       territory;
     private final Collection<MaintenanceWindow>   maintenances;
-    private final Map<Train, ItineraryAssignment> assignments = new LinkedHashMap<Train, ItineraryAssignment>();
-    private final Collection<Train>               trains;
+    private final Map<Train, ItineraryAssignment> assignments = new LinkedHashMap<>();
+    private final SortedSet<Train>                trains;
 
     private HardAndSoftScore                      score;
 
@@ -82,7 +82,7 @@ public class ProblemSolution extends Visualizable implements Solution<HardAndSof
         this.name = name;
         this.territory = territory;
         this.maintenances = maintenances;
-        this.trains = trains;
+        this.trains = new TreeSet<Train>(trains);
         /*
          * generate assignments; always pick the best route for the particular train, nevermind if it's used by another train
          * already.
@@ -163,8 +163,7 @@ public class ProblemSolution extends Visualizable implements Solution<HardAndSof
 
     @Override
     public Collection<? extends Object> getProblemFacts() {
-        final Collection<Object> allFacts = new LinkedList<Object>();
-        return allFacts;
+        return Collections.emptyList();
     }
 
     @Override
@@ -187,7 +186,7 @@ public class ProblemSolution extends Visualizable implements Solution<HardAndSof
      * @return The trains.
      */
     public SortedSet<Train> getTrains() {
-        return new TreeSet<Train>(this.trains);
+        return Collections.unmodifiableSortedSet(this.trains);
     }
 
     @Override
@@ -213,7 +212,7 @@ public class ProblemSolution extends Visualizable implements Solution<HardAndSof
     @Override
     public boolean visualize(final File target) {
         // prepare a visualizer
-        final Collection<Arc> arcs = new HashSet<Arc>();
+        final Collection<Arc> arcs = new HashSet<>();
         for (final ItineraryAssignment ia : this.getAssignments()) {
             arcs.addAll(ia.getRoute().getProgression().getArcs());
         }

@@ -40,14 +40,14 @@ public final class Itinerary extends Visualizable {
     private final Train                        train;
 
     private final AtomicBoolean                scheduleCacheValid    = new AtomicBoolean(false);
-    private final Collection<Node>             hasNodes              = new LinkedHashSet<Node>();
-    private final SortedMap<Long, Node>        scheduleCache         = new TreeMap<Long, Node>();
-    private final SortedMap<Long, Arc>         scheduleCacheWithArcs = new TreeMap<Long, Arc>();
+    private final Collection<Node>             hasNodes              = new LinkedHashSet<>();
+    private final SortedMap<Long, Node>        scheduleCache         = new TreeMap<>();
+    private final SortedMap<Long, Arc>         scheduleCacheWithArcs = new TreeMap<>();
     private final long                         trainEntryTime;
-    private final Map<Node, WaitTime>          nodeWaitTimes         = new HashMap<Node, WaitTime>();
+    private final Map<Node, WaitTime>          nodeWaitTimes         = new HashMap<>();
 
     // FIXME only one window per node; multiple different windows with same node will get lost
-    private final Map<Node, MaintenanceWindow> maintenances          = new HashMap<Node, MaintenanceWindow>();
+    private final Map<Node, MaintenanceWindow> maintenances          = new HashMap<>();
 
     private static final Logger                logger                = LoggerFactory
                                                                              .getLogger(Itinerary.class);

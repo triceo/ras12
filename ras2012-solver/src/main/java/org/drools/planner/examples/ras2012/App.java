@@ -177,7 +177,7 @@ public class App {
         streams.add("RDS3");
         streams.add("TOY");
         // prepare futures
-        final Map<String, List<Future<HardAndSoftScore>>> scores = new HashMap<String, List<Future<HardAndSoftScore>>>();
+        final Map<String, List<Future<HardAndSoftScore>>> scores = new HashMap<>();
         for (final String entry : streams) {
             App.logger.info("Starting lookup for the best solutions on " + entry + "...");
             scores.put(entry, new ArrayList<Future<HardAndSoftScore>>());
@@ -193,7 +193,7 @@ public class App {
         // process futures
         for (final Map.Entry<String, List<Future<HardAndSoftScore>>> entry : scores.entrySet()) {
             final String datasetName = entry.getKey();
-            final List<Integer> values = new ArrayList<Integer>();
+            final List<Integer> values = new ArrayList<>();
             for (final Future<HardAndSoftScore> future : entry.getValue()) {
                 try {
                     final HardAndSoftScore result = future.get();

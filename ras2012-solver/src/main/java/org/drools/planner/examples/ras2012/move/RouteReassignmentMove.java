@@ -52,7 +52,7 @@ public class RouteReassignmentMove implements Move {
         this.assignment.setRoute(this.route);
         final Itinerary i = this.assignment.getItinerary();
         for (final Map.Entry<Node, WaitTime> entry : this.previousWaitTimes.entrySet()) {
-            Node n = entry.getKey();
+            final Node n = entry.getKey();
             if (i.hasNode(n) && this.route.getProgression().getWaitPoints().contains(n)) {
                 i.setWaitTime(n, entry.getValue());
             }

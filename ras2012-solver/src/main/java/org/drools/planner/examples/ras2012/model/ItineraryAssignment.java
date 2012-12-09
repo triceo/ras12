@@ -40,7 +40,7 @@ public final class ItineraryAssignment implements Cloneable {
     private static final float  DECREASE_TO = 7.0f / 8.0f;
 
     private static List<WaitTime> getAllowedWaitTimes(final long horizon) {
-        final List<WaitTime> waitTimes = new LinkedList<WaitTime>();
+        final List<WaitTime> waitTimes = new LinkedList<>();
         int waitTime = (int) horizon;
         while (waitTime > ItineraryAssignment.ALL_FIRST_X) {
             waitTimes.add(WaitTime.getWaitTime(waitTime));
@@ -134,7 +134,7 @@ public final class ItineraryAssignment implements Cloneable {
         }
         // when train entered X minutes after start of world, don't generate wait times to cover those X minutes.
         final long horizon = this.solution.getPlanningHorizon(TimeUnit.MILLISECONDS);
-        final Collection<WaitTimeAssignment> moves = new ArrayList<WaitTimeAssignment>();
+        final Collection<WaitTimeAssignment> moves = new ArrayList<>();
         for (final Node waitPoint : this.getRoute().getProgression().getWaitPoints()) {
             if (!this.getItinerary().hasNode(waitPoint)) {
                 continue;

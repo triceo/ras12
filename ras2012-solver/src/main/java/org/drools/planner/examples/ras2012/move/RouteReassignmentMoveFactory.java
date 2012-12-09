@@ -20,9 +20,9 @@ public class RouteReassignmentMoveFactory implements MoveIteratorFactory {
 
     private static final class RandomRouteReassignmentMoveIterator implements Iterator<Move> {
 
-        private final List<Pair<Train, Route>> pairs       = new ArrayList<Pair<Train, Route>>();
+        private final List<Pair<Train, Route>> pairs       = new ArrayList<>();
         private final Random                   random;
-        private final Set<Integer>             usedIndices = new TreeSet<Integer>();
+        private final Set<Integer>             usedIndices = new TreeSet<>();
 
         public RandomRouteReassignmentMoveIterator(final ProblemSolution solution,
                 final Random random) {
@@ -62,7 +62,7 @@ public class RouteReassignmentMoveFactory implements MoveIteratorFactory {
 
     private static final class RouteReassignmentMoveIterator implements Iterator<Move> {
 
-        private final List<Pair<Train, Route>> pairs        = new ArrayList<Pair<Train, Route>>();
+        private final List<Pair<Train, Route>> pairs        = new ArrayList<>();
         private int                            currentIndex = 0;
 
         public RouteReassignmentMoveIterator(final ProblemSolution solution) {

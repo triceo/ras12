@@ -35,7 +35,7 @@ public class Route extends Visualizable implements Comparable<Route>, Directed {
         private final AtomicInteger   idGenerator;
 
         private final boolean         isEastbound;
-        private final Collection<Arc> arcs = new ArrayList<Arc>();
+        private final Collection<Arc> arcs = new ArrayList<>();
 
         private Builder(final AtomicInteger id, final boolean isEastbound, final Arc... arcs) {
             this.idGenerator = id;
@@ -70,7 +70,7 @@ public class Route extends Visualizable implements Comparable<Route>, Directed {
             if (this.isAdded(arc)) {
                 throw new IllegalArgumentException("Cannot extend route with the same arc twice!");
             }
-            final List<Arc> arcs = new ArrayList<Arc>(this.arcs);
+            final List<Arc> arcs = new ArrayList<>(this.arcs);
             arcs.add(arc);
             return new Builder(this.idGenerator, this.isEastbound,
                     arcs.toArray(new Arc[arcs.size()]));
@@ -148,7 +148,7 @@ public class Route extends Visualizable implements Comparable<Route>, Directed {
 
     private long                      travellingTimeInMilliseconds = -1;
 
-    private final Map<Train, Boolean> routePossibilitiesCache      = new HashMap<Train, Boolean>();
+    private final Map<Train, Boolean> routePossibilitiesCache      = new HashMap<>();
 
     private final RouteVisualizer     visualizer;
 

@@ -22,8 +22,8 @@ import org.drools.planner.examples.ras2012.model.Node;
 public class ArcProgression implements Directed {
 
     private static Node getStartingNode(final Directed r, final Collection<Arc> arcs) {
-        final Set<Node> isDestination = new HashSet<Node>();
-        final Set<Node> isOrigin = new HashSet<Node>();
+        final Set<Node> isDestination = new HashSet<>();
+        final Set<Node> isOrigin = new HashSet<>();
         for (final Arc a : arcs) {
             isOrigin.add(a.getOrigin(r));
             isDestination.add(a.getDestination(r));
@@ -36,16 +36,16 @@ public class ArcProgression implements Directed {
         }
     }
 
-    private final List<Arc>                  orderedArcs        = new ArrayList<Arc>();
-    private final SortedMap<BigDecimal, Arc> milestones         = new TreeMap<BigDecimal, Arc>();
-    private final Map<Node, Arc>             arcsPerOrigin      = new LinkedHashMap<Node, Arc>();
-    private final Map<Node, Arc>             arcsPerDestination = new LinkedHashMap<Node, Arc>();
-    private final Map<Arc, Arc>              nextArcs           = new LinkedHashMap<Arc, Arc>();
-    private final Map<Arc, Arc>              previousArcs       = new LinkedHashMap<Arc, Arc>();
-    private final Map<Node, Node>            nextNodes          = new LinkedHashMap<Node, Node>();
-    private final Map<Node, Node>            previousNodes      = new LinkedHashMap<Node, Node>();
-    private final Map<Arc, Boolean>          isArcPreferred     = new LinkedHashMap<Arc, Boolean>();
-    private final List<Node>                 nodes              = new ArrayList<Node>();
+    private final List<Arc>                  orderedArcs        = new ArrayList<>();
+    private final SortedMap<BigDecimal, Arc> milestones         = new TreeMap<>();
+    private final Map<Node, Arc>             arcsPerOrigin      = new LinkedHashMap<>();
+    private final Map<Node, Arc>             arcsPerDestination = new LinkedHashMap<>();
+    private final Map<Arc, Arc>              nextArcs           = new LinkedHashMap<>();
+    private final Map<Arc, Arc>              previousArcs       = new LinkedHashMap<>();
+    private final Map<Node, Node>            nextNodes          = new LinkedHashMap<>();
+    private final Map<Node, Node>            previousNodes      = new LinkedHashMap<>();
+    private final Map<Arc, Boolean>          isArcPreferred     = new LinkedHashMap<>();
+    private final List<Node>                 nodes              = new ArrayList<>();
     private final Collection<Node>           waitPoints;
     private final boolean                    isEastbound;
     private final boolean                    isEmpty;
@@ -105,7 +105,7 @@ public class ArcProgression implements Directed {
         if (this.isEmpty) {
             return Collections.unmodifiableSet(Collections.EMPTY_SET);
         }
-        final Collection<Node> points = new TreeSet<Node>();
+        final Collection<Node> points = new TreeSet<>();
         // we want to be able to hold the train before it enters the network
         final Arc firstArc = this.getOrigin();
         points.add(firstArc.getOrigin(this));

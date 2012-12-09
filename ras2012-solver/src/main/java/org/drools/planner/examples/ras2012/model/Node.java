@@ -12,7 +12,7 @@ public class Node implements Comparable<Node> {
 
     private final int                                 id;
 
-    private static final ConcurrentMap<Integer, Node> nodes = new ConcurrentHashMap<Integer, Node>();
+    private static final ConcurrentMap<Integer, Node> nodes = new ConcurrentHashMap<>();
 
     /**
      * Get the number of registered nodes.

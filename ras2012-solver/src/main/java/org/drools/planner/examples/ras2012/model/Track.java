@@ -16,9 +16,9 @@ public enum Track {
 
     private final boolean                    isMainTrack;
 
-    private static final Map<Track, Integer> speedsWestbound = new HashMap<Track, Integer>();
+    private static final Map<Track, Integer> speedsWestbound = new HashMap<>();
 
-    private static final Map<Track, Integer> speedsEastbound = new HashMap<Track, Integer>();
+    private static final Map<Track, Integer> speedsEastbound = new HashMap<>();
 
     /**
      * Set the maximum speed on a particular track, both directions. Speed can only be set once.

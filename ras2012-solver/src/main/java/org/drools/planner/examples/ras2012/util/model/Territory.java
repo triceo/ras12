@@ -25,13 +25,13 @@ public class Territory extends Visualizable {
     private final GraphVisualizer   visualizer;
     private final Collection<Route> westboundRoutes;
     private final Collection<Route> eastboundRoutes;
-    private final Map<Train, Route> bestRoutes = new HashMap<Train, Route>();
+    private final Map<Train, Route> bestRoutes = new HashMap<>();
 
     public Territory(final Collection<Node> nodes, final Collection<Arc> edges) {
         this.visualizer = new GraphVisualizer(edges);
         // now map every connection node
-        final SortedMap<Node, SortedMap<Node, Arc>> eastboundConnections = new TreeMap<Node, SortedMap<Node, Arc>>();
-        final SortedMap<Node, SortedMap<Node, Arc>> westboundConnections = new TreeMap<Node, SortedMap<Node, Arc>>();
+        final SortedMap<Node, SortedMap<Node, Arc>> eastboundConnections = new TreeMap<>();
+        final SortedMap<Node, SortedMap<Node, Arc>> westboundConnections = new TreeMap<>();
         final Route eastbound = new Builder(true).build();
         for (final Arc a : edges) {
             final Node east = a.getDestination(eastbound);
@@ -68,7 +68,7 @@ public class Territory extends Visualizable {
     }
 
     public Collection<Route> getAllRoutes() {
-        final Collection<Route> routes = new LinkedList<Route>();
+        final Collection<Route> routes = new LinkedList<>();
         routes.addAll(this.eastboundRoutes);
         routes.addAll(this.westboundRoutes);
         return Collections.unmodifiableCollection(routes);
@@ -84,12 +84,12 @@ public class Territory extends Visualizable {
      */
     private Collection<Route> getAllRoutes(final Builder b,
             final SortedMap<Node, SortedMap<Node, Arc>> connections, final Node startingNode) {
-        final Collection<Route> routes = new LinkedList<Route>();
+        final Collection<Route> routes = new LinkedList<>();
         if (connections.get(startingNode) == null) {
             return routes;
         }
         // traverse all the nodes in a defined order, create new routes from them
-        final SortedSet<Node> keys = new TreeSet<Node>(connections.get(startingNode).keySet());
+        final SortedSet<Node> keys = new TreeSet<>(connections.get(startingNode).keySet());
         for (final Node n : keys) {
             final Node nextNode = n;
             final Arc edge = connections.get(startingNode).get(n);
@@ -110,7 +110,7 @@ public class Territory extends Visualizable {
 
     public Route getBestRoute(final Train t) {
         if (!this.bestRoutes.containsKey(t)) {
-            final SortedSet<Route> routes = new TreeSet<Route>(this.getRoutes(t));
+            final SortedSet<Route> routes = new TreeSet<>(this.getRoutes(t));
             this.bestRoutes.put(t, routes.last());
         }
         return this.bestRoutes.get(t);
@@ -119,7 +119,7 @@ public class Territory extends Visualizable {
     public Collection<Route> getRoutes(final Train t) {
         final Collection<Route> routes = t.isEastbound() ? this.eastboundRoutes
                 : this.westboundRoutes;
-        final Collection<Route> properRoutes = new LinkedHashSet<Route>(routes);
+        final Collection<Route> properRoutes = new LinkedHashSet<>(routes);
         for (final Route r : routes) {
             if (!r.isPossibleForTrain(t)) {
                 properRoutes.remove(r);
