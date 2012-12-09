@@ -15,7 +15,7 @@ public class ItineraryAssignmentTest extends AbstractItineraryProviderBasedTest 
     private static Map<Node, MaintenanceWindow> convertMOWs(
             final Collection<MaintenanceWindow> mows, final Itinerary i) {
         final Route r = i.getRoute();
-        final Map<Node, MaintenanceWindow> result = new HashMap<Node, MaintenanceWindow>();
+        final Map<Node, MaintenanceWindow> result = new HashMap<>();
         for (final MaintenanceWindow mow : mows) {
             if (i.hasNode(mow.getOrigin(r)) && i.hasNode(mow.getDestination(r))) {
                 result.put(mow.getOrigin(r), mow);
@@ -26,7 +26,7 @@ public class ItineraryAssignmentTest extends AbstractItineraryProviderBasedTest 
 
     @Parameters
     public static Collection<Object[]> getInput() {
-        final Collection<Object[]> providers = new ArrayList<Object[]>();
+        final Collection<Object[]> providers = new ArrayList<>();
         for (final ItineraryProvider p : AbstractItineraryProviderBasedTest.getProviders()) {
             for (final Map.Entry<String, int[]> routes : p.getExpectedValues().entrySet()) {
                 for (final int routeId : routes.getValue()) {

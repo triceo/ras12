@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.SortedMap;
 import java.util.concurrent.TimeUnit;
 
-import junit.framework.Assert;
 import org.drools.planner.core.score.buildin.hardandsoft.HardAndSoftScore;
 import org.drools.planner.examples.ras2012.model.Itinerary;
 import org.drools.planner.examples.ras2012.model.ItineraryAssignment;
@@ -13,6 +12,7 @@ import org.drools.planner.examples.ras2012.model.Route;
 import org.drools.planner.examples.ras2012.model.Train;
 import org.drools.planner.examples.ras2012.model.WaitTime;
 import org.drools.planner.examples.ras2012.util.SolutionIO;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 

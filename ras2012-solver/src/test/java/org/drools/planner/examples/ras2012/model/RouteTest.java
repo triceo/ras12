@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-import junit.framework.Assert;
 import org.drools.planner.examples.ras2012.model.Route.Builder;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -22,7 +22,7 @@ public class RouteTest {
      */
     @Parameters
     public static Collection<Object[]> getDirections() {
-        final Collection<Object[]> directions = new ArrayList<Object[]>();
+        final Collection<Object[]> directions = new ArrayList<>();
         directions.add(new Boolean[] { true });
         directions.add(new Boolean[] { false });
         return directions;

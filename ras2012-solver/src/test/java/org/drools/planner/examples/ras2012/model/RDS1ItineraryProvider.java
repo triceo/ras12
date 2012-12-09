@@ -45,7 +45,7 @@ public class RDS1ItineraryProvider extends ItineraryProvider {
 
     @Override
     protected Map<String, int[]> getExpectedValues() {
-        final Map<String, int[]> expected = new HashMap<String, int[]>();
+        final Map<String, int[]> expected = new HashMap<>();
         expected.put(RDS1ItineraryProvider.TRAIN1, new int[] { RDS1ItineraryProvider.TRAIN1_ROUTE0,
                 RDS1ItineraryProvider.TRAIN1_ROUTE1 });
         expected.put(RDS1ItineraryProvider.TRAIN2, new int[] { RDS1ItineraryProvider.TRAIN2_ROUTE0,
@@ -65,7 +65,7 @@ public class RDS1ItineraryProvider extends ItineraryProvider {
 
     @Override
     public List<Itinerary> getItineraries() {
-        final List<Itinerary> results = new LinkedList<Itinerary>();
+        final List<Itinerary> results = new LinkedList<>();
         results.add(this.getItinerary(RDS1ItineraryProvider.TRAIN1,
                 RDS1ItineraryProvider.TRAIN1_ROUTE0));
         results.add(this.getItinerary(RDS1ItineraryProvider.TRAIN1,

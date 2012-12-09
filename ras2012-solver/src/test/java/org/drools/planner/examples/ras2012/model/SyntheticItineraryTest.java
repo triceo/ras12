@@ -52,7 +52,7 @@ public class SyntheticItineraryTest {
         final MaintenanceWindow invalidMOW = new MaintenanceWindow(
                 SyntheticItineraryTest.ARC2.getOrigin(SyntheticItineraryTest.TRAIN1),
                 SyntheticItineraryTest.ARC2.getDestination(SyntheticItineraryTest.TRAIN1), 0, 10);
-        final Collection<MaintenanceWindow> mows = new LinkedList<MaintenanceWindow>();
+        final Collection<MaintenanceWindow> mows = new LinkedList<>();
         mows.add(properMOW);
         mows.add(invalidMOW);
         i = new Itinerary(SyntheticItineraryTest.ROUTE_POSSIBLE, SyntheticItineraryTest.TRAIN1,

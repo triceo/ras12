@@ -16,7 +16,7 @@ public class ParseValidInputTest {
 
     @Parameters
     public static Collection<Object[]> parserTestFiles() {
-        final List<Object[]> streams = new ArrayList<Object[]>();
+        final List<Object[]> streams = new ArrayList<>();
         int i = 1;
         while (true) {
             final String name = "validParserInput" + i + ".txt";

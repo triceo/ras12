@@ -32,7 +32,7 @@ public class ToyItineraryProvider extends ItineraryProvider {
 
     @Override
     protected Map<String, int[]> getExpectedValues() {
-        final Map<String, int[]> expected = new HashMap<String, int[]>();
+        final Map<String, int[]> expected = new HashMap<>();
         expected.put(ToyItineraryProvider.TRAIN1, new int[] { ToyItineraryProvider.TRAIN1_ROUTE0,
                 ToyItineraryProvider.TRAIN1_ROUTE1 });
         expected.put(ToyItineraryProvider.TRAIN2, new int[] { ToyItineraryProvider.TRAIN2_ROUTE0,
@@ -43,7 +43,7 @@ public class ToyItineraryProvider extends ItineraryProvider {
 
     @Override
     public List<Itinerary> getItineraries() {
-        final List<Itinerary> results = new LinkedList<Itinerary>();
+        final List<Itinerary> results = new LinkedList<>();
         results.add(this.getItinerary(ToyItineraryProvider.TRAIN1,
                 ToyItineraryProvider.TRAIN1_ROUTE0));
         results.add(this.getItinerary(ToyItineraryProvider.TRAIN1,

@@ -7,24 +7,14 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import junit.framework.Assert;
 import org.drools.planner.examples.ras2012.model.Train.Type;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class TrainTest {
 
-    @BeforeClass
-    public static void setSpeeds() {
-        Track.setSpeed(Track.MAIN_0, 100, 50);
-        Track.setSpeed(Track.MAIN_1, 85, 75);
-        Track.setSpeed(Track.MAIN_2, 110, 95);
-        Track.setSpeed(Track.SIDING, 25);
-        Track.setSpeed(Track.SWITCH, 35);
-        Track.setSpeed(Track.CROSSOVER, 45);
-    }
-
-    private Arc[] getArcs(final Node n1, final Node n2, final BigDecimal length) {
+    private static Arc[] getArcs(final Node n1, final Node n2, final BigDecimal length) {
         // prepare arcs, all of the same length
         final Arc mainArc0 = new Arc(Track.MAIN_0, length, n1, n2);
         final Arc mainArc1 = new Arc(Track.MAIN_0, length, n1, n2);
@@ -35,7 +25,7 @@ public class TrainTest {
         return new Arc[] { mainArc0, mainArc1, mainArc2, sidingArc, switchArc, crossoverArc };
     }
 
-    private Train[] getTrains(final Node n1, final Node n2) {
+    private static Train[] getTrains(final Node n1, final Node n2) {
         // now prepare various trains
         final Random rand = new Random(0); // speed multipliers will be random, but with a fixed seed, so repeatable
         final Train aTrainWest = new Train("A1", BigDecimal.ONE, BigDecimal.valueOf(rand
@@ -64,6 +54,16 @@ public class TrainTest {
                 0, null, true, false);
         return new Train[] { aTrainWest, bTrainWest, cTrainWest, dTrainWest, eTrainWest,
                 fTrainWest, aTrainEast, bTrainEast, cTrainEast, dTrainEast, eTrainEast, fTrainEast };
+    }
+
+    @BeforeClass
+    public static void setSpeeds() {
+        Track.setSpeed(Track.MAIN_0, 100, 50);
+        Track.setSpeed(Track.MAIN_1, 85, 75);
+        Track.setSpeed(Track.MAIN_2, 110, 95);
+        Track.setSpeed(Track.SIDING, 25);
+        Track.setSpeed(Track.SWITCH, 35);
+        Track.setSpeed(Track.CROSSOVER, 45);
     }
 
     @Test
@@ -213,8 +213,8 @@ public class TrainTest {
         final Node n1 = Node.getNode(0);
         final Node n2 = Node.getNode(1);
         final BigDecimal length = new BigDecimal("1.5");
-        for (final Arc a : this.getArcs(n1, n2, length)) {
-            for (final Train t : this.getTrains(n1, n2)) {
+        for (final Arc a : TrainTest.getArcs(n1, n2, length)) {
+            for (final Train t : TrainTest.getTrains(n1, n2)) {
                 final BigDecimal distanceInMiles = a.getLength();
                 final BigDecimal trainSpeedInMph = t.getMaximumSpeed(a.getTrack());
                 final BigDecimal timeInHours = distanceInMiles.divide(trainSpeedInMph, 7,
@@ -231,7 +231,7 @@ public class TrainTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetArcTravellingTimeInMillisecondsWithNullArc() {
-        final Train t = this.getTrains(Node.getNode(0), Node.getNode(1))[0];
+        final Train t = TrainTest.getTrains(Node.getNode(0), Node.getNode(1))[0];
         t.getArcTravellingTime(null, TimeUnit.MILLISECONDS);
     }
 
@@ -240,8 +240,8 @@ public class TrainTest {
         final Node n1 = Node.getNode(0);
         final Node n2 = Node.getNode(1);
         final BigDecimal length = new BigDecimal("1.5");
-        for (final Arc a : this.getArcs(n1, n2, length)) {
-            for (final Train t : this.getTrains(n1, n2)) {
+        for (final Arc a : TrainTest.getArcs(n1, n2, length)) {
+            for (final Train t : TrainTest.getTrains(n1, n2)) {
                 final Integer arcSpeed = t.isEastbound() ? a.getTrack().getSpeedEastbound() : a
                         .getTrack().getSpeedWestbound();
                 if (a.getTrack().isMainTrack()) {
@@ -265,7 +265,7 @@ public class TrainTest {
 
     @Test
     public void testGetType() {
-        final Map<String, Type> types = new HashMap<String, Type>();
+        final Map<String, Type> types = new HashMap<>();
         types.put("A", Type.A);
         types.put("B", Type.B);
         types.put("C", Type.C);

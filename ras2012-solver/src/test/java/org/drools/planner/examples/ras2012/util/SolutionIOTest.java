@@ -48,7 +48,7 @@ public class SolutionIOTest {
 
     @Parameters
     public static Collection<Object[]> getResources() {
-        final List<Object[]> resources = new LinkedList<Object[]>();
+        final List<Object[]> resources = new LinkedList<>();
         resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -1829));
         resources.add(SolutionIOTest.getResource(SolutionType.RDS1, 0, -5355));
         resources.add(SolutionIOTest.getResource(SolutionType.RDS2, 0, -8255));

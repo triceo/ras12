@@ -18,7 +18,7 @@ public class ItineraryTest extends AbstractItineraryProviderBasedTest {
 
     @Parameters
     public static Collection<Object[]> getInput() {
-        final Collection<Object[]> providers = new ArrayList<Object[]>();
+        final Collection<Object[]> providers = new ArrayList<>();
         for (final ItineraryProvider provider : AbstractItineraryProviderBasedTest.getProviders()) {
             providers.addAll(ItineraryTest.unwrapProvider(provider));
         }
@@ -26,7 +26,7 @@ public class ItineraryTest extends AbstractItineraryProviderBasedTest {
     }
 
     private static Collection<Object[]> unwrapProvider(final ItineraryProvider provider) {
-        final List<Object[]> itineraries = new LinkedList<Object[]>();
+        final List<Object[]> itineraries = new LinkedList<>();
         for (final Itinerary i : provider.getItineraries()) {
             itineraries.add(new Object[] { i, provider.getSolution() });
         }
@@ -49,7 +49,7 @@ public class ItineraryTest extends AbstractItineraryProviderBasedTest {
     @Test
     public void testGetLeadingArc() {
         // assemble a list of "checkpoint" where the train should be at which times
-        final SortedMap<Long, Arc> expecteds = new TreeMap<Long, Arc>();
+        final SortedMap<Long, Arc> expecteds = new TreeMap<>();
         final Route r = this.itinerary.getRoute();
         final Train t = this.itinerary.getTrain();
         long totalTime = t.getEntryTime(TimeUnit.MILLISECONDS);

@@ -33,11 +33,11 @@ public abstract class ItineraryProvider {
      * @return
      */
     private Map<Train, Set<Route>> fetchTestedRoutes() {
-        final Map<Train, Set<Route>> results = new TreeMap<Train, Set<Route>>();
+        final Map<Train, Set<Route>> results = new TreeMap<>();
         final ProblemSolution sol = this.getSolution();
         Type lastUsedWestboundTrainType = null;
         Type lastUsedEastboundTrainType = null;
-        final Collection<Route> routes = new LinkedHashSet<Route>(sol.getTerritory().getAllRoutes());
+        final Collection<Route> routes = new LinkedHashSet<>(sol.getTerritory().getAllRoutes());
         for (final Train t : sol.getTrains()) {
             /*
              * pick only one train for every train type and direction; depends on the assumption that the trains are sorted by
@@ -49,14 +49,14 @@ public abstract class ItineraryProvider {
                 continue;
             }
             // take only the possible routes that are yet unused
-            final SortedSet<Route> routeSet = new TreeSet<Route>();
+            final SortedSet<Route> routeSet = new TreeSet<>();
             for (final Route r : sol.getTerritory().getRoutes(t)) {
                 if (routes.contains(r)) {
                     routeSet.add(r);
                 }
             }
             // and pick the best and worst of those
-            final SortedSet<Route> result = new TreeSet<Route>();
+            final SortedSet<Route> result = new TreeSet<>();
             result.add(routeSet.first());
             result.add(routeSet.last());
             results.put(t, result);
@@ -141,7 +141,7 @@ public abstract class ItineraryProvider {
             // make sure we have all the expected routes
             for (final Train t : trains) {
                 final String name = t.getName();
-                final List<Integer> expectedRouteIds = new LinkedList<Integer>();
+                final List<Integer> expectedRouteIds = new LinkedList<>();
                 for (final int id : expected.get(name)) {
                     expectedRouteIds.add(id);
                 }

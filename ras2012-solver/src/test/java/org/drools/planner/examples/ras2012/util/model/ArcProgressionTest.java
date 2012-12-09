@@ -37,7 +37,7 @@ public class ArcProgressionTest {
      */
     @Parameters
     public static Collection<Object[]> getDirections() {
-        final Collection<Object[]> directions = new ArrayList<Object[]>();
+        final Collection<Object[]> directions = new ArrayList<>();
         directions.add(new Builder[] { new Builder(false) });
         directions.add(new Builder[] { new Builder(true) });
         return directions;

@@ -11,7 +11,7 @@ import org.junit.runners.Parameterized;
 public abstract class AbstractItineraryProviderBasedTest {
 
     public static Collection<ItineraryProvider> getProviders() {
-        final Collection<ItineraryProvider> providers = new LinkedHashSet<ItineraryProvider>();
+        final Collection<ItineraryProvider> providers = new LinkedHashSet<>();
         providers.add(new ToyItineraryProvider());
         providers.add(new RDS1ItineraryProvider());
         providers.add(new RDS2ItineraryProvider());
