@@ -105,6 +105,8 @@ public class Train implements Comparable<Train>, Directed {
 
     private final boolean                                 isWestbound;
 
+    private final Map<Track, BigDecimal>                  maximumSpeeds                 = new HashMap<>();
+
     /**
      * Create new instance.
      * 
@@ -177,6 +179,16 @@ public class Train implements Comparable<Train>, Directed {
             for (final ScheduleAdherenceRequirement sa : sars) {
                 this.scheduleAdherenceRequirements.put(sa.getDestination(), sa);
             }
+        }
+    }
+
+    private BigDecimal calculateMaximumSpeed(final Track t) {
+        final int coreSpeed = this.isWestbound() ? t.getSpeedWestbound() : t.getSpeedEastbound();
+        if (t.isMainTrack()) {
+            return this.speedMultiplier.multiply(BigDecimal.valueOf(coreSpeed)).setScale(1,
+                    BigDecimal.ROUND_HALF_EVEN);
+        } else {
+            return BigDecimal.valueOf(coreSpeed);
         }
     }
 
@@ -255,13 +267,10 @@ public class Train implements Comparable<Train>, Directed {
      * @return Speed in MPH.
      */
     public BigDecimal getMaximumSpeed(final Track t) {
-        final int coreSpeed = this.isWestbound() ? t.getSpeedWestbound() : t.getSpeedEastbound();
-        if (t.isMainTrack()) {
-            return this.speedMultiplier.multiply(BigDecimal.valueOf(coreSpeed)).setScale(1,
-                    BigDecimal.ROUND_HALF_EVEN);
-        } else {
-            return BigDecimal.valueOf(coreSpeed);
+        if (!this.maximumSpeeds.containsKey(t)) {
+            this.maximumSpeeds.put(t, this.calculateMaximumSpeed(t));
         }
+        return this.maximumSpeeds.get(t);
     }
 
     public String getName() {
