@@ -3,6 +3,7 @@ package org.drools.planner.examples.ras2012.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -24,22 +25,25 @@ import org.slf4j.LoggerFactory;
 @PlanningEntity
 public final class ItineraryAssignment implements Cloneable {
 
-    private static final Logger logger      = LoggerFactory.getLogger(ItineraryAssignment.class);
+    private static final Logger                    logger          = LoggerFactory
+                                                                           .getLogger(ItineraryAssignment.class);
 
     /**
      * Numbers from 0 to this will all become wait times. This is done so that the algorithm has enough space for fine-tuning
      * the results.
      */
-    private static final int    ALL_FIRST_X = 5;
+    private static final int                       ALL_FIRST_X     = 5;
 
     /**
      * Specifies what change there will be between two consecutive wait times. Please keep it between 0 and 1, both exclusive.
      * 
      * The current value has been carefully benchmarked against many other values and found to bring the best results.
      */
-    private static final float  DECREASE_TO = 7.0f / 8.0f;
+    private static final float                     DECREASE_TO     = 7.0f / 8.0f;
 
-    private static List<WaitTime> getAllowedWaitTimes(final long horizon) {
+    private static final Map<Long, List<WaitTime>> WAIT_TIME_CACHE = new HashMap<>();
+
+    private static List<WaitTime> calculateAllowedWaitTimes(final long horizon) {
         final List<WaitTime> waitTimes = new LinkedList<>();
         int waitTime = (int) horizon;
         while (waitTime > ItineraryAssignment.ALL_FIRST_X) {
@@ -56,6 +60,15 @@ public final class ItineraryAssignment implements Cloneable {
         ItineraryAssignment.logger.debug("Generating moves with the following wait times: "
                 + waitTimes);
         return waitTimes;
+    }
+
+    private static List<WaitTime> getAllowedWaitTimes(final long horizon) {
+        final Long properHorizon = Long.valueOf(horizon);
+        if (!ItineraryAssignment.WAIT_TIME_CACHE.containsKey(properHorizon)) {
+            ItineraryAssignment.WAIT_TIME_CACHE.put(properHorizon,
+                    ItineraryAssignment.calculateAllowedWaitTimes(horizon));
+        }
+        return ItineraryAssignment.WAIT_TIME_CACHE.get(properHorizon);
     }
 
     private final Train                         train;
