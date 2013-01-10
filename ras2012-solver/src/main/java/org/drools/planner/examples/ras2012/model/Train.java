@@ -68,7 +68,28 @@ public class Train implements Comparable<Train>, Directed {
         }
     }
 
+    private static char determineTypeCode(final Type t) {
+        switch (t) {
+            case A:
+                return 'A';
+            case B:
+                return 'B';
+            case C:
+                return 'C';
+            case D:
+                return 'D';
+            case E:
+                return 'E';
+            case F:
+                return 'F';
+            default:
+                throw new IllegalArgumentException("Invalid train type: " + t);
+        }
+    }
+
     private final String                                  name;
+    private final char                                    typeCode;
+    private final int                                     trainNumber;
 
     private final BigDecimal                              length;
     private final BigDecimal                              speedMultiplier;
@@ -119,6 +140,8 @@ public class Train implements Comparable<Train>, Directed {
                     + name);
         }
         this.name = name;
+        this.typeCode = Train.determineTypeCode(this.type);
+        this.trainNumber = Integer.valueOf(this.getName().substring(1));
         if (length == null || length.signum() <= 0) {
             throw new IllegalArgumentException("Train must have a length greater than 0.");
         }
@@ -167,10 +190,8 @@ public class Train implements Comparable<Train>, Directed {
      */
     @Override
     public int compareTo(final Train arg0) {
-        return new CompareToBuilder()
-                .append(this.getName().charAt(0), arg0.getName().charAt(0))
-                .append(Integer.valueOf(this.getName().substring(1)),
-                        Integer.valueOf(arg0.getName().substring(1))).toComparison();
+        return new CompareToBuilder().append(this.typeCode, arg0.typeCode)
+                .append(this.trainNumber, arg0.trainNumber).toComparison();
     }
 
     /**
