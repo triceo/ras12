@@ -1,12 +1,12 @@
 package org.drools.planner.examples.ras2012.move;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Random;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.drools.planner.core.heuristic.selector.move.factory.MoveIteratorFactory;
@@ -15,43 +15,35 @@ import org.drools.planner.core.score.director.ScoreDirector;
 import org.drools.planner.examples.ras2012.ProblemSolution;
 import org.drools.planner.examples.ras2012.model.ItineraryAssignment;
 import org.drools.planner.examples.ras2012.model.WaitTimeAssignment;
+import org.drools.planner.examples.ras2012.util.RandomAccessor;
 
 public class WaitTimeAssignmentMoveFactory implements MoveIteratorFactory {
 
     private static final class RandomWaitTimeAssignmentMoveIterator implements Iterator<Move> {
 
-        private final List<Pair<ItineraryAssignment, WaitTimeAssignment>> pairs       = new ArrayList<>();
-        private final Random                                              random;
-        private final Set<Integer>                                        usedIndices = new TreeSet<>();
+        private final Map<ItineraryAssignment, RandomAccessor<WaitTimeAssignment>> waitTimes = new HashMap<>();
+        private final RandomAccessor<ItineraryAssignment>                          itineraries;
 
         public RandomWaitTimeAssignmentMoveIterator(final ProblemSolution solution,
                 final Random random) {
+            this.itineraries = new RandomAccessor<ItineraryAssignment>(solution.getAssignments(),
+                    random);
             for (final ItineraryAssignment ia : solution.getAssignments()) {
-                for (final WaitTimeAssignment wt : ia.getWaitTimeAssignments()) {
-                    this.pairs.add(Pair.of(ia, wt));
-                }
+                this.waitTimes
+                        .put(ia, new RandomAccessor<WaitTimeAssignment>(
+                                ia.getWaitTimeAssignments(), random));
             }
-            this.random = random;
         }
 
         @Override
         public boolean hasNext() {
-            return this.usedIndices.size() < this.pairs.size();
+            return true;
         }
 
         @Override
         public Move next() {
-            if (!this.hasNext()) {
-                throw new NoSuchElementException();
-            }
-            int index = -1;
-            do {
-                index = this.random.nextInt(this.pairs.size());
-            } while (this.usedIndices.contains(index));
-            this.usedIndices.add(index);
-            final Pair<ItineraryAssignment, WaitTimeAssignment> pair = this.pairs.get(index);
-            final ItineraryAssignment ia = pair.getLeft();
-            final WaitTimeAssignment wta = pair.getRight();
+            final ItineraryAssignment ia = this.itineraries.get();
+            final WaitTimeAssignment wta = this.waitTimes.get(ia).get();
             return new WaitTimeAssignmentMove(ia.getTrain(), ia.getRoute(), wta.getNode(),
                     wta.getWaitTime());
         }
