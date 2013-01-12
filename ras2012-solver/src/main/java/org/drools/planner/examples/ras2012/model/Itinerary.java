@@ -52,6 +52,8 @@ public final class Itinerary extends Visualizable {
     private static final Logger                logger                = LoggerFactory
                                                                              .getLogger(Itinerary.class);
 
+    private Node                               scheduleCacheIsInvalidFrom;
+
     /**
      * Create schedule for a given {@link Train}, travelling a given {@link Route}, experiencing no {@link MaintenanceWindow} s.
      * 
@@ -85,6 +87,7 @@ public final class Itinerary extends Visualizable {
 
         final ArcProgression progression = this.getRoute().getProgression();
         Node currentNode = this.getTrain().getOrigin();
+        this.scheduleCacheIsInvalidFrom = currentNode;
         do {
             this.hasNodes.add(currentNode);
         } while ((currentNode = progression.getNextNode(currentNode)) != this.getTrain()
@@ -107,15 +110,45 @@ public final class Itinerary extends Visualizable {
         if (this.scheduleCacheValid.get()) {
             return;
         }
-        SortedMap<Long, Node> scheduleCache = new TreeMap<>();
-        SortedMap<Long, Arc> scheduleCacheWithArcs = new TreeMap<>();
-        int i = 0;
+        final SortedMap<Long, Node> tempScheduleCache = new TreeMap<>();
+        final SortedMap<Long, Arc> tempScheduleCacheWithArcs = new TreeMap<>();
+        // don't recalculate bits of cache that are still valid
+        Node firstUncachedNode = null;
+        for (final SortedMap.Entry<Long, Arc> entry : this.scheduleCacheWithArcs.entrySet()) {
+            final Arc a = entry.getValue();
+            final Node n = a.getOrigin(this.train);
+            if (n == this.scheduleCacheIsInvalidFrom) {
+                // this is the node from which the cache needs to be recreated
+                break;
+            }
+            final Long time = entry.getKey();
+            tempScheduleCache.put(time, n);
+            tempScheduleCacheWithArcs.put(time, a);
+            firstUncachedNode = a.getDestination(this.train);
+        }
+        // and now recalculate the bits of cache that aren't valid
+        int entryId = 0;
         long previousTime = 0;
         Arc previousArc = null;
+        boolean scheduleIsValid = !(firstUncachedNode == null);
         for (final Node currentNode : this.hasNodes) {
+            if (currentNode == firstUncachedNode) {
+                // from this point onward, we will re-calculate the schedule
+                scheduleIsValid = false;
+                if (tempScheduleCacheWithArcs.size() > 0) {
+                    // properly define the start of re-calculation
+                    final Long workingTime = tempScheduleCacheWithArcs.lastKey();
+                    previousArc = tempScheduleCacheWithArcs.get(workingTime);
+                    previousTime = workingTime.longValue();
+                }
+            }
+            if (scheduleIsValid) {
+                entryId++;
+                continue;
+            }
             final Arc currentArc = this.getRoute().getProgression().getWithOriginNode(currentNode);
             long time = 0;
-            if (i == 0) {
+            if (entryId == 0) {
                 // first item needs to be augmented by the train entry time
                 time += this.trainEntryTime;
             } else {
@@ -140,15 +173,16 @@ public final class Itinerary extends Visualizable {
             }
             // and store
             final Long time2 = Long.valueOf(time);
-            scheduleCache.put(time2, currentNode);
-            scheduleCacheWithArcs.put(time2, currentArc);
+            tempScheduleCache.put(time2, currentNode);
+            tempScheduleCacheWithArcs.put(time2, currentArc);
             previousTime = time;
             previousArc = currentArc;
-            i++;
+            entryId++;
         }
-        this.scheduleCache = Collections.unmodifiableSortedMap(scheduleCache);
-        this.scheduleCacheWithArcs = Collections.unmodifiableSortedMap(scheduleCacheWithArcs);
+        this.scheduleCache = Collections.unmodifiableSortedMap(tempScheduleCache);
+        this.scheduleCacheWithArcs = Collections.unmodifiableSortedMap(tempScheduleCacheWithArcs);
         this.scheduleCacheValid.set(true);
+        this.scheduleCacheIsInvalidFrom = null;
     }
 
     /**
@@ -407,6 +441,14 @@ public final class Itinerary extends Visualizable {
     }
 
     private void invalidateCaches() {
+        this.invalidateCaches(this.getTrain().getOrigin());
+    }
+
+    private void invalidateCaches(final Node n) {
+        if (!this.hasNode(n)) {
+            throw new IllegalStateException("Itinerary has no node " + n + ".");
+        }
+        this.scheduleCacheIsInvalidFrom = n;
         this.scheduleCacheValid.set(false);
     }
 
@@ -419,7 +461,7 @@ public final class Itinerary extends Visualizable {
     public WaitTime removeWaitTime(final Node n) {
         if (this.nodeWaitTimes.containsKey(n)) {
             Itinerary.logger.debug("Removing wait time for {} from {}.", new Object[] { n, this });
-            this.invalidateCaches();
+            this.invalidateCaches(n);
             return this.nodeWaitTimes.remove(n);
         } else {
             Itinerary.logger.debug("No wait time to remove for {} from {}.",
@@ -450,7 +492,7 @@ public final class Itinerary extends Visualizable {
         if (w == null) {
             return this.removeWaitTime(n);
         }
-        this.invalidateCaches();
+        this.invalidateCaches(n);
         final WaitTime previous = this.nodeWaitTimes.put(n, w);
         Itinerary.logger.debug("Set {} on {} in {}, replacing {}.", new Object[] { w, n, this,
                 previous });
