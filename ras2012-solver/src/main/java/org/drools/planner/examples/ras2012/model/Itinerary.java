@@ -181,8 +181,8 @@ public final class Itinerary extends Visualizable {
         }
         this.scheduleCache = Collections.unmodifiableSortedMap(tempScheduleCache);
         this.scheduleCacheWithArcs = Collections.unmodifiableSortedMap(tempScheduleCacheWithArcs);
-        this.scheduleCacheValid.set(true);
         this.scheduleCacheIsInvalidFrom = null;
+        this.scheduleCacheValid.set(true);
     }
 
     /**
@@ -464,9 +464,8 @@ public final class Itinerary extends Visualizable {
             this.invalidateCaches(n);
             return this.nodeWaitTimes.remove(n);
         } else {
-            Itinerary.logger.debug("No wait time to remove for {} from {}.",
-                    new Object[] { n, this });
-            return null;
+            throw new IllegalStateException("No wait time to remove from node " + n
+                    + " on itinerary " + this + ".");
         }
     }
 
@@ -476,9 +475,9 @@ public final class Itinerary extends Visualizable {
     public void removeWaitTimes() {
         if (this.nodeWaitTimes.size() > 0) {
             Itinerary.logger.debug("Removing all wait times from {}.", new Object[] { this });
+            this.nodeWaitTimes.clear();
             this.invalidateCaches();
         }
-        this.nodeWaitTimes.clear();
     }
 
     /**
@@ -492,8 +491,8 @@ public final class Itinerary extends Visualizable {
         if (w == null) {
             return this.removeWaitTime(n);
         }
-        this.invalidateCaches(n);
         final WaitTime previous = this.nodeWaitTimes.put(n, w);
+        this.invalidateCaches(n);
         Itinerary.logger.debug("Set {} on {} in {}, replacing {}.", new Object[] { w, n, this,
                 previous });
         return previous;
