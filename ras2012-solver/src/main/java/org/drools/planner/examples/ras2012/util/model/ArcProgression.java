@@ -36,7 +36,7 @@ public class ArcProgression implements Directed {
         }
     }
 
-    private final List<Arc>                  orderedArcs        = new ArrayList<>();
+    private final List<Arc>                  arcs;
     private final SortedMap<BigDecimal, Arc> milestones         = new TreeMap<>();
     private final Map<Node, Arc>             arcsPerOrigin      = new LinkedHashMap<>();
     private final Map<Node, Arc>             arcsPerDestination = new LinkedHashMap<>();
@@ -45,7 +45,7 @@ public class ArcProgression implements Directed {
     private final Map<Node, Node>            nextNodes          = new LinkedHashMap<>();
     private final Map<Node, Node>            previousNodes      = new LinkedHashMap<>();
     private final Map<Arc, Boolean>          isArcPreferred     = new LinkedHashMap<>();
-    private final List<Node>                 nodes              = new ArrayList<>();
+    private final List<Node>                 nodes;
     private final Collection<Node>           waitPoints;
     private final boolean                    isEastbound;
     private final boolean                    isEmpty;
@@ -62,20 +62,23 @@ public class ArcProgression implements Directed {
         this.isEastbound = directed.isEastbound();
         // put arcs in proper order
         Node startingNode = ArcProgression.getStartingNode(directed, arcs);
-        while (arcs.size() != this.orderedArcs.size()) {
+        final List<Arc> orderedArcs = new ArrayList<Arc>();
+        while (arcs.size() != orderedArcs.size()) {
             for (final Arc a : arcs) {
                 if (a.getOrigin(directed) == startingNode) {
-                    this.orderedArcs.add(a);
+                    orderedArcs.add(a);
                     // find the node of the last arc in the progression
                     startingNode = a.getDestination(directed);
                     break;
                 }
             }
         }
+        this.arcs = Collections.unmodifiableList(orderedArcs);
         // cache information about nodes related to arcs
         BigDecimal milestone = BigDecimal.ZERO;
         Arc previousArc = null;
-        for (final Arc a : this.orderedArcs) {
+        final List<Node> nodes = new ArrayList<Node>();
+        for (final Arc a : this.arcs) {
             this.milestones.put(milestone, a);
             this.arcsPerOrigin.put(a.getOrigin(this), a);
             this.arcsPerDestination.put(a.getDestination(this), a);
@@ -83,19 +86,20 @@ public class ArcProgression implements Directed {
             this.nextArcs.put(previousArc, a);
             this.nextNodes.put(a.getOrigin(this), a.getDestination(this));
             this.previousNodes.put(a.getDestination(this), a.getOrigin(this));
-            this.nodes.add(a.getOrigin(this));
+            nodes.add(a.getOrigin(this));
             milestone = milestone.add(a.getLength());
             previousArc = a;
         }
         this.length = milestone;
-        this.isEmpty = this.orderedArcs.size() == 0;
+        this.isEmpty = this.arcs.size() == 0;
         if (!this.isEmpty) {
             this.previousNodes.put(this.getOrigin().getOrigin(this), null);
             this.nextNodes.put(this.getDestination().getDestination(this), null);
             this.previousArcs.put(this.getOrigin(), null);
             this.nextArcs.put(this.getDestination(), null);
-            this.nodes.add(this.getDestination().getDestination(this));
+            nodes.add(this.getDestination().getDestination(this));
         }
+        this.nodes = Collections.unmodifiableList(nodes);
         // and finally cache the wait points
         this.waitPoints = this.assembleWaitPoints();
     }
@@ -110,7 +114,7 @@ public class ArcProgression implements Directed {
         final Arc firstArc = this.getOrigin();
         points.add(firstArc.getOrigin(this));
         // other wait points depend on the type of the track
-        for (final Arc a : this.orderedArcs) {
+        for (final Arc a : this.arcs) {
             switch (a.getTrack()) {
                 case SIDING:
                     // on sidings, wait before leaving them through a switch
@@ -131,22 +135,22 @@ public class ArcProgression implements Directed {
     }
 
     public boolean contains(final Arc a) {
-        return this.orderedArcs.contains(a);
+        return this.arcs.contains(a);
     }
 
     public int countArcs() {
-        return this.orderedArcs.size();
+        return this.arcs.size();
     }
 
     public List<Arc> getArcs() {
-        return Collections.unmodifiableList(this.orderedArcs);
+        return this.arcs;
     }
 
     public Arc getDestination() {
         if (this.isEmpty) {
             throw new IllegalStateException("Empty progression has no destination.");
         }
-        return this.orderedArcs.get(this.orderedArcs.size() - 1);
+        return this.arcs.get(this.arcs.size() - 1);
     }
 
     public BigDecimal getDistance(final Node end) {
@@ -198,14 +202,14 @@ public class ArcProgression implements Directed {
     }
 
     public List<Node> getNodes() {
-        return Collections.unmodifiableList(this.nodes);
+        return this.nodes;
     }
 
     public Arc getOrigin() {
         if (this.isEmpty) {
             throw new IllegalStateException("Empty progression has no origin.");
         }
-        return this.orderedArcs.get(0);
+        return this.arcs.get(0);
     }
 
     public Arc getPreviousArc(final Arc a) {
@@ -285,7 +289,7 @@ public class ArcProgression implements Directed {
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        builder.append("ArcProgression [orderedArcs=").append(this.orderedArcs).append("]");
+        builder.append("ArcProgression [orderedArcs=").append(this.arcs).append("]");
         return builder.toString();
     }
 }
