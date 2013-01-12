@@ -1,11 +1,11 @@
 package org.drools.planner.examples.ras2012.util.model;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.SortedSet;
@@ -68,7 +68,8 @@ public class Territory extends Visualizable {
     }
 
     public Collection<Route> getAllRoutes() {
-        final Collection<Route> routes = new LinkedList<>();
+        final Collection<Route> routes = new ArrayList<>(this.eastboundRoutes.size()
+                + this.westboundRoutes.size());
         routes.addAll(this.eastboundRoutes);
         routes.addAll(this.westboundRoutes);
         return Collections.unmodifiableCollection(routes);
@@ -84,7 +85,7 @@ public class Territory extends Visualizable {
      */
     private Collection<Route> getAllRoutes(final Builder b,
             final SortedMap<Node, SortedMap<Node, Arc>> connections, final Node startingNode) {
-        final Collection<Route> routes = new LinkedList<>();
+        final Collection<Route> routes = new ArrayList<>();
         if (connections.get(startingNode) == null) {
             return routes;
         }
