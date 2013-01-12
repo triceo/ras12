@@ -41,8 +41,8 @@ public final class Itinerary extends Visualizable {
 
     private final AtomicBoolean                scheduleCacheValid    = new AtomicBoolean(false);
     private final Collection<Node>             hasNodes              = new LinkedHashSet<>();
-    private final SortedMap<Long, Node>        scheduleCache         = new TreeMap<>();
-    private final SortedMap<Long, Arc>         scheduleCacheWithArcs = new TreeMap<>();
+    private SortedMap<Long, Node>              scheduleCache         = new TreeMap<>();
+    private SortedMap<Long, Arc>               scheduleCacheWithArcs = new TreeMap<>();
     private final long                         trainEntryTime;
     private final Map<Node, WaitTime>          nodeWaitTimes         = new HashMap<>();
 
@@ -107,8 +107,8 @@ public final class Itinerary extends Visualizable {
         if (this.scheduleCacheValid.get()) {
             return;
         }
-        this.scheduleCache.clear();
-        this.scheduleCacheWithArcs.clear();
+        SortedMap<Long, Node> scheduleCache = new TreeMap<>();
+        SortedMap<Long, Arc> scheduleCacheWithArcs = new TreeMap<>();
         int i = 0;
         long previousTime = 0;
         Arc previousArc = null;
@@ -140,12 +140,14 @@ public final class Itinerary extends Visualizable {
             }
             // and store
             final Long time2 = Long.valueOf(time);
-            this.scheduleCache.put(time2, currentNode);
-            this.scheduleCacheWithArcs.put(time2, currentArc);
+            scheduleCache.put(time2, currentNode);
+            scheduleCacheWithArcs.put(time2, currentArc);
             previousTime = time;
             previousArc = currentArc;
             i++;
         }
+        this.scheduleCache = Collections.unmodifiableSortedMap(scheduleCache);
+        this.scheduleCacheWithArcs = Collections.unmodifiableSortedMap(scheduleCacheWithArcs);
         this.scheduleCacheValid.set(true);
     }
 
@@ -321,7 +323,7 @@ public final class Itinerary extends Visualizable {
      */
     public SortedMap<Long, Node> getSchedule() {
         this.cacheSchedule();
-        return Collections.unmodifiableSortedMap(this.scheduleCache);
+        return this.scheduleCache;
     }
 
     /**
@@ -331,7 +333,7 @@ public final class Itinerary extends Visualizable {
      */
     public SortedMap<Long, Arc> getScheduleWithArcs() {
         this.cacheSchedule();
-        return Collections.unmodifiableSortedMap(this.scheduleCacheWithArcs);
+        return this.scheduleCacheWithArcs;
     }
 
     /**
