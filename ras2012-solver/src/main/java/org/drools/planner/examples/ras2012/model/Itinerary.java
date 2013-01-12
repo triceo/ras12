@@ -139,8 +139,9 @@ public final class Itinerary extends Visualizable {
                 }
             }
             // and store
-            this.scheduleCache.put(time, currentNode);
-            this.scheduleCacheWithArcs.put(time, currentArc);
+            final Long time2 = Long.valueOf(time);
+            this.scheduleCache.put(time2, currentNode);
+            this.scheduleCacheWithArcs.put(time2, currentArc);
             previousTime = time;
             previousArc = currentArc;
             i++;
@@ -261,13 +262,14 @@ public final class Itinerary extends Visualizable {
         if (time < this.trainEntryTime) {
             return null;
         }
-        final SortedMap<Long, Arc> arcs = this.getScheduleWithArcs().tailMap(time);
+        final Long time2 = Long.valueOf(time);
+        final SortedMap<Long, Arc> arcs = this.getScheduleWithArcs().tailMap(time2);
         if (arcs.size() == 0) {
             return null;
         }
-        final long arcTime = arcs.firstKey();
+        final Long arcTime = arcs.firstKey();
         final Arc arc = arcs.get(arcTime);
-        if (time > arcTime) {
+        if (time2.compareTo(arcTime) > 0) {
             return arc;
         } else {
             return this.getRoute().getProgression().getPreviousArc(arc);
