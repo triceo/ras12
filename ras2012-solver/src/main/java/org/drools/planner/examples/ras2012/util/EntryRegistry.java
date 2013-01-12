@@ -2,9 +2,9 @@ package org.drools.planner.examples.ras2012.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.Range;
@@ -16,7 +16,7 @@ public class EntryRegistry {
 
     private static class RegistryItem {
 
-        private final Map<Train, Pair<Long, Long>> timesByTrain = new TreeMap<>();
+        private final Map<Train, Pair<Long, Long>> timesByTrain = new LinkedHashMap<>();
 
         public int getConflicts() {
             int conflicts = 0;
