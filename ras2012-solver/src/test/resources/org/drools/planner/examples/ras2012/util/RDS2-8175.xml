@@ -1,0 +1,786 @@
+<solution territory='RAS DATA SET 2'>
+	<trains>
+		<train id='A1'>
+			<movements>
+				<movement arc='(0,1)' entry='300' exit='313.5' />
+				<movement arc='(1,3)' entry='313.5' exit='403.5' />
+				<movement arc='(3,5)' entry='403.5' exit='417' />
+				<movement arc='(5,6)' entry='417' exit='642' />
+				<movement arc='(6,7)' entry='642' exit='822' />
+				<movement arc='(7,8)' entry='822' exit='835.5' />
+				<movement arc='(8,10)' entry='835.5' exit='925.5' />
+				<movement arc='(10,12)' entry='925.5' exit='939' />
+				<movement arc='(12,13)' entry='939' exit='1164' />
+				<movement arc='(13,14)' entry='1164' exit='1389' />
+				<movement arc='(14,15)' entry='1389' exit='1402.5' />
+				<movement arc='(15,17)' entry='1402.5' exit='1492.5' />
+				<movement arc='(17,19)' entry='1492.5' exit='1506' />
+				<movement arc='(19,20)' entry='1506' exit='1731' />
+				<movement arc='(20,21)' entry='1731' exit='2001' />
+				<movement arc='(21,22)' entry='2001' exit='2014.5' />
+				<movement arc='(22,25)' entry='2014.5' exit='2104.5' />
+				<movement arc='(25,26)' entry='2104.5' exit='2118' />
+				<movement arc='(26,27)' entry='2118' exit='2163' />
+				<movement arc='(27,28)' entry='2163' exit='2176.5' />
+				<movement arc='(28,30)' entry='2176.5' exit='2311.5' />
+				<movement arc='(30,31)' entry='2311.5' exit='2446.5' />
+				<movement arc='(31,32)' entry='2446.5' exit='2460' />
+				<movement arc='(32,34)' entry='2460' exit='2550' />
+				<movement arc='(34,36)' entry='2550' exit='2563.5' />
+				<movement arc='(36,37)' entry='2563.5' exit='2698.5' />
+				<movement arc='(37,40)' entry='2698.5' exit='2712' />
+				<movement arc='(40,43)' entry='2712' exit='2802' />
+				<movement arc='(43,45)' entry='2802' exit='2937' />
+				<movement arc='(45,47)' entry='2937' exit='2950.5' />
+				<movement arc='(47,49)' entry='2950.5' exit='3130.5' />
+				<movement arc='(49,50)' entry='3130.5' exit='3144' />
+				<movement arc='(50,52)' entry='3144' exit='3234' />
+				<movement arc='(52,55)' entry='3234' exit='3247.5' />
+				<movement arc='(55,56)' entry='3247.5' exit='4297.5' />
+				<movement arc='(56,57)' entry='4297.5' exit='4369.5' />
+				<movement arc='(57,59)' entry='4369.5' exit='4504.5' />
+				<movement arc='(59,61)' entry='4504.5' exit='4639.5' />
+				<movement arc='(61,63)' entry='4639.5' exit='4653' />
+				<movement arc='(63,65)' entry='4653' exit='4788' />
+				<movement arc='(65,67)' entry='4788' exit='4923' />
+				<movement arc='(67,69)' entry='4923' exit='4936.5' />
+				<movement arc='(69,70)' entry='4936.5' exit='5161.5' />
+				<movement arc='(70,71)' entry='5161.5' exit='5386.5' />
+				<movement arc='(71,72)' entry='5386.5' exit='5400' />
+				<movement arc='(72,74)' entry='5400' exit='5490' />
+				<movement arc='(74,76)' entry='5490' exit='5503.5' />
+				<movement arc='(76,77)' entry='5503.5' exit='5683.5' />
+				<movement arc='(77,78)' entry='5683.5' exit='5863.5' />
+				<movement arc='(78,80)' entry='5863.5' exit='5935.5' />
+				<movement arc='(80,82)' entry='5935.5' exit='6355.5' />
+				<movement arc='(82,38)' entry='6355.5' exit='6427.5' />
+				<movement arc='(38,39)' entry='6427.5' exit='6652.5' />
+				<destination entry='6652.5' />
+			</movements>
+		</train>
+		<train id='A2'>
+			<movements>
+				<movement arc='(0,1)' entry='8160' exit='8174.211' />
+				<movement arc='(1,3)' entry='8174.211' exit='8268.948' />
+				<movement arc='(3,5)' entry='8268.948' exit='8283.159' />
+				<movement arc='(5,6)' entry='8283.159' exit='8520.001' />
+				<movement arc='(6,7)' entry='8520.001' exit='8709.475' />
+				<movement arc='(7,8)' entry='8709.475' exit='8723.686' />
+				<movement arc='(8,10)' entry='8723.686' exit='8818.423' />
+				<movement arc='(10,12)' entry='8818.423' exit='8832.634' />
+				<movement arc='(12,13)' entry='8832.634' exit='9069.476' />
+				<movement arc='(13,14)' entry='9069.476' exit='9306.318' />
+				<movement arc='(14,16)' entry='9306.318' exit='9378.318' />
+				<movement arc='(16,18)' entry='9378.318' exit='10128.318' />
+				<movement arc='(18,19)' entry='10128.318' exit='10200.318' />
+				<movement arc='(19,20)' entry='10200.318' exit='10437.16' />
+				<movement arc='(20,21)' entry='10437.16' exit='10721.371' />
+				<movement arc='(21,22)' entry='10721.371' exit='10735.582' />
+				<movement arc='(22,25)' entry='10735.582' exit='10830.319' />
+				<movement arc='(25,26)' entry='10830.319' exit='10844.53' />
+				<movement arc='(26,27)' entry='10844.53' exit='10891.898' />
+				<movement arc='(27,28)' entry='10891.898' exit='10906.109' />
+				<movement arc='(28,30)' entry='10906.109' exit='11048.214' />
+				<movement arc='(30,31)' entry='11048.214' exit='11190.319' />
+				<movement arc='(31,33)' entry='11190.319' exit='11262.319' />
+				<movement arc='(33,35)' entry='11262.319' exit='11682.319' />
+				<movement arc='(35,36)' entry='11682.319' exit='11754.319' />
+				<movement arc='(36,37)' entry='11754.319' exit='11896.424' />
+				<movement arc='(37,41)' entry='11896.424' exit='11968.424' />
+				<movement arc='(41,42)' entry='11968.424' exit='12063.161' />
+				<movement arc='(42,44)' entry='12063.161' exit='12385.266' />
+				<movement arc='(44,47)' entry='12385.266' exit='12457.266' />
+				<movement arc='(47,49)' entry='12457.266' exit='12646.74' />
+				<movement arc='(49,51)' entry='12646.74' exit='12718.74' />
+				<movement arc='(51,53)' entry='12718.74' exit='13618.74' />
+				<movement arc='(53,55)' entry='13618.74' exit='13690.74' />
+				<movement arc='(55,56)' entry='13690.74' exit='13785.477' />
+				<movement arc='(56,57)' entry='13785.477' exit='13857.477' />
+				<movement arc='(57,59)' entry='13857.477' exit='13999.582' />
+				<movement arc='(59,61)' entry='13999.582' exit='14141.687' />
+				<movement arc='(61,63)' entry='14141.687' exit='14155.898' />
+				<movement arc='(63,65)' entry='14155.898' exit='14298.003' />
+				<movement arc='(65,67)' entry='14298.003' exit='14440.108' />
+				<movement arc='(67,69)' entry='14440.108' exit='14454.319' />
+				<movement arc='(69,70)' entry='14454.319' exit='14691.161' />
+				<movement arc='(70,71)' entry='14691.161' exit='14928.003' />
+				<movement arc='(71,72)' entry='14928.003' exit='14942.214' />
+				<movement arc='(72,74)' entry='14942.214' exit='15036.951' />
+				<movement arc='(74,76)' entry='15036.951' exit='15051.162' />
+				<movement arc='(76,77)' entry='15051.162' exit='15240.636' />
+				<movement arc='(77,78)' entry='15240.636' exit='15430.11' />
+				<movement arc='(78,79)' entry='15430.11' exit='15444.321' />
+				<movement arc='(79,81)' entry='15444.321' exit='15539.058' />
+				<movement arc='(81,38)' entry='15539.058' exit='15553.269' />
+				<movement arc='(38,39)' entry='15553.269' exit='15790.111' />
+				<destination entry='15790.111' />
+			</movements>
+		</train>
+		<train id='A3'>
+			<movements>
+				<movement arc='(0,1)' entry='15180' exit='15193.5' />
+				<movement arc='(1,3)' entry='15193.5' exit='15283.5' />
+				<movement arc='(3,5)' entry='15283.5' exit='15297' />
+				<movement arc='(5,6)' entry='15297' exit='15522' />
+				<movement arc='(6,7)' entry='15522' exit='15702' />
+				<movement arc='(7,8)' entry='15702' exit='15715.5' />
+				<movement arc='(8,10)' entry='15715.5' exit='15805.5' />
+				<movement arc='(10,12)' entry='15805.5' exit='15819' />
+				<movement arc='(12,13)' entry='15819' exit='16044' />
+				<movement arc='(13,14)' entry='16044' exit='16269' />
+				<movement arc='(14,16)' entry='16269' exit='16341' />
+				<movement arc='(16,18)' entry='16341' exit='17871' />
+				<movement arc='(18,19)' entry='17871' exit='17943' />
+				<movement arc='(19,20)' entry='17943' exit='18168' />
+				<movement arc='(20,21)' entry='18168' exit='18438' />
+				<movement arc='(21,22)' entry='18438' exit='18451.5' />
+				<movement arc='(22,25)' entry='18451.5' exit='18541.5' />
+				<movement arc='(25,26)' entry='18541.5' exit='18555' />
+				<movement arc='(26,27)' entry='18555' exit='18600' />
+				<movement arc='(27,28)' entry='18600' exit='18613.5' />
+				<movement arc='(28,30)' entry='18613.5' exit='18748.5' />
+				<movement arc='(30,31)' entry='18748.5' exit='18883.5' />
+				<movement arc='(31,32)' entry='18883.5' exit='18897' />
+				<movement arc='(32,34)' entry='18897' exit='18987' />
+				<movement arc='(34,36)' entry='18987' exit='19000.5' />
+				<movement arc='(36,37)' entry='19000.5' exit='19135.5' />
+				<movement arc='(37,40)' entry='19135.5' exit='19149' />
+				<movement arc='(40,43)' entry='19149' exit='19239' />
+				<movement arc='(43,45)' entry='19239' exit='19374' />
+				<movement arc='(45,47)' entry='19374' exit='19387.5' />
+				<movement arc='(47,49)' entry='19387.5' exit='19567.5' />
+				<movement arc='(49,50)' entry='19567.5' exit='19581' />
+				<movement arc='(50,52)' entry='19581' exit='19671' />
+				<movement arc='(52,55)' entry='19671' exit='19684.5' />
+				<movement arc='(55,56)' entry='19684.5' exit='19894.5' />
+				<movement arc='(56,57)' entry='19894.5' exit='19966.5' />
+				<movement arc='(57,59)' entry='19966.5' exit='20101.5' />
+				<movement arc='(59,61)' entry='20101.5' exit='20236.5' />
+				<movement arc='(61,63)' entry='20236.5' exit='20250' />
+				<movement arc='(63,65)' entry='20250' exit='20385' />
+				<movement arc='(65,67)' entry='20385' exit='20520' />
+				<movement arc='(67,69)' entry='20520' exit='20533.5' />
+				<movement arc='(69,70)' entry='20533.5' exit='20758.5' />
+				<movement arc='(70,71)' entry='20758.5' exit='20983.5' />
+				<movement arc='(71,72)' entry='20983.5' exit='20997' />
+				<movement arc='(72,74)' entry='20997' exit='21087' />
+				<movement arc='(74,76)' entry='21087' exit='21100.5' />
+				<movement arc='(76,77)' entry='21100.5' exit='21280.5' />
+				<movement arc='(77,78)' entry='21280.5' exit='21460.5' />
+				<movement arc='(78,79)' entry='21460.5' exit='21474' />
+				<movement arc='(79,81)' entry='21474' exit='21564' />
+				<movement arc='(81,38)' entry='21564' exit='21577.5' />
+				<movement arc='(38,39)' entry='21577.5' exit='21802.5' />
+				<destination entry='21802.5' />
+			</movements>
+		</train>
+		<train id='A4'>
+			<movements>
+				<movement arc='(39,38)' entry='33720' exit='33990.677' />
+				<movement arc='(38,82)' entry='33990.677' exit='34062.677' />
+				<movement arc='(82,80)' entry='34062.677' exit='38022.677' />
+				<movement arc='(80,78)' entry='38022.677' exit='38094.677' />
+				<movement arc='(78,77)' entry='38094.677' exit='38311.218' />
+				<movement arc='(77,76)' entry='38311.218' exit='38527.759' />
+				<movement arc='(76,74)' entry='38527.759' exit='38544' />
+				<movement arc='(74,72)' entry='38544' exit='38652.271' />
+				<movement arc='(72,71)' entry='38652.271' exit='38668.512' />
+				<movement arc='(71,70)' entry='38668.512' exit='38939.189' />
+				<movement arc='(70,69)' entry='38939.189' exit='39209.866' />
+				<movement arc='(69,68)' entry='39209.866' exit='39281.866' />
+				<movement arc='(68,66)' entry='39281.866' exit='39444.272' />
+				<movement arc='(66,64)' entry='39444.272' exit='39606.678' />
+				<movement arc='(64,62)' entry='39606.678' exit='39622.919' />
+				<movement arc='(62,60)' entry='39622.919' exit='39785.325' />
+				<movement arc='(60,58)' entry='39785.325' exit='39947.731' />
+				<movement arc='(58,56)' entry='39947.731' exit='39963.972' />
+				<movement arc='(56,55)' entry='39963.972' exit='40072.243' />
+				<movement arc='(55,52)' entry='40072.243' exit='40088.484' />
+				<movement arc='(52,50)' entry='40088.484' exit='40196.755' />
+				<movement arc='(50,49)' entry='40196.755' exit='40212.996' />
+				<movement arc='(49,47)' entry='40212.996' exit='40489.537' />
+				<movement arc='(47,44)' entry='40489.537' exit='40561.537' />
+				<movement arc='(44,42)' entry='40561.537' exit='40723.943' />
+				<movement arc='(42,41)' entry='40723.943' exit='41072.214' />
+				<movement arc='(41,37)' entry='41072.214' exit='41144.214' />
+				<movement arc='(37,36)' entry='41144.214' exit='41306.62' />
+				<movement arc='(36,35)' entry='41306.62' exit='41378.62' />
+				<movement arc='(35,33)' entry='41378.62' exit='41858.62' />
+				<movement arc='(33,31)' entry='41858.62' exit='41930.62' />
+				<movement arc='(31,30)' entry='41930.62' exit='42093.026' />
+				<movement arc='(30,28)' entry='42093.026' exit='42255.432' />
+				<movement arc='(28,27)' entry='42255.432' exit='42271.673' />
+				<movement arc='(27,26)' entry='42271.673' exit='42325.808' />
+				<movement arc='(26,25)' entry='42325.808' exit='42342.049' />
+				<movement arc='(25,22)' entry='42342.049' exit='42450.32' />
+				<movement arc='(22,21)' entry='42450.32' exit='42466.561' />
+				<movement arc='(21,20)' entry='42466.561' exit='42791.373' />
+				<movement arc='(20,19)' entry='42791.373' exit='43062.05' />
+				<movement arc='(19,17)' entry='43062.05' exit='43078.291' />
+				<movement arc='(17,15)' entry='43078.291' exit='43186.562' />
+				<movement arc='(15,14)' entry='43186.562' exit='43202.803' />
+			</movements>
+		</train>
+		<train id='B1'>
+			<movements>
+				<movement arc='(0,2)' entry='3600' exit='3672' />
+				<movement arc='(2,4)' entry='3672' exit='4092' />
+				<movement arc='(4,5)' entry='4092' exit='4164' />
+				<movement arc='(5,6)' entry='4164' exit='4428.706' />
+				<movement arc='(6,7)' entry='4428.706' exit='4640.471' />
+				<movement arc='(7,8)' entry='4640.471' exit='4656.353' />
+				<movement arc='(8,10)' entry='4656.353' exit='4762.235' />
+				<movement arc='(10,12)' entry='4762.235' exit='4778.117' />
+				<movement arc='(12,13)' entry='4778.117' exit='5042.823' />
+				<movement arc='(13,14)' entry='5042.823' exit='5307.529' />
+				<movement arc='(14,15)' entry='5307.529' exit='5323.411' />
+				<movement arc='(15,17)' entry='5323.411' exit='5429.293' />
+				<movement arc='(17,19)' entry='5429.293' exit='5445.175' />
+				<movement arc='(19,20)' entry='5445.175' exit='5709.881' />
+				<movement arc='(20,21)' entry='5709.881' exit='6027.528' />
+				<movement arc='(21,22)' entry='6027.528' exit='6043.41' />
+				<movement arc='(22,25)' entry='6043.41' exit='6149.292' />
+				<movement arc='(25,26)' entry='6149.292' exit='6165.174' />
+				<movement arc='(26,27)' entry='6165.174' exit='6218.115' />
+				<movement arc='(27,28)' entry='6218.115' exit='6233.997' />
+				<movement arc='(28,30)' entry='6233.997' exit='6392.821' />
+				<movement arc='(30,31)' entry='6392.821' exit='6551.645' />
+				<movement arc='(31,33)' entry='6551.645' exit='6623.645' />
+				<movement arc='(33,35)' entry='6623.645' exit='7103.645' />
+				<movement arc='(35,36)' entry='7103.645' exit='7175.645' />
+				<movement arc='(36,37)' entry='7175.645' exit='7334.469' />
+				<movement arc='(37,40)' entry='7334.469' exit='7350.351' />
+				<movement arc='(40,43)' entry='7350.351' exit='7456.233' />
+				<movement arc='(43,45)' entry='7456.233' exit='7615.057' />
+				<movement arc='(45,47)' entry='7615.057' exit='7630.939' />
+				<movement arc='(47,49)' entry='7630.939' exit='7842.704' />
+				<movement arc='(49,51)' entry='7842.704' exit='7914.704' />
+				<movement arc='(51,53)' entry='7914.704' exit='8394.704' />
+				<movement arc='(53,55)' entry='8394.704' exit='8466.704' />
+				<movement arc='(55,56)' entry='8466.704' exit='8572.586' />
+				<movement arc='(56,58)' entry='8572.586' exit='8588.468' />
+				<movement arc='(58,60)' entry='8588.468' exit='8747.292' />
+				<movement arc='(60,62)' entry='8747.292' exit='8906.116' />
+				<movement arc='(62,64)' entry='8906.116' exit='8921.998' />
+				<movement arc='(64,66)' entry='8921.998' exit='9080.822' />
+				<movement arc='(66,68)' entry='9080.822' exit='9239.646' />
+				<movement arc='(68,69)' entry='9239.646' exit='9311.646' />
+				<movement arc='(69,70)' entry='9311.646' exit='9576.352' />
+				<movement arc='(70,71)' entry='9576.352' exit='9841.058' />
+				<movement arc='(71,72)' entry='9841.058' exit='9856.94' />
+				<movement arc='(72,74)' entry='9856.94' exit='9962.822' />
+				<movement arc='(74,76)' entry='9962.822' exit='9978.704' />
+				<movement arc='(76,77)' entry='9978.704' exit='10190.469' />
+				<movement arc='(77,78)' entry='10190.469' exit='10402.234' />
+				<movement arc='(78,79)' entry='10402.234' exit='10418.116' />
+				<movement arc='(79,81)' entry='10418.116' exit='10523.998' />
+				<movement arc='(81,38)' entry='10523.998' exit='10539.88' />
+				<movement arc='(38,39)' entry='10539.88' exit='10804.586' />
+				<destination entry='10804.586' />
+			</movements>
+		</train>
+		<train id='B2'>
+			<movements>
+				<movement arc='(0,1)' entry='28800' exit='28816.875' />
+				<movement arc='(1,3)' entry='28816.875' exit='28929.375' />
+				<movement arc='(3,5)' entry='28929.375' exit='28946.25' />
+				<movement arc='(5,6)' entry='28946.25' exit='29227.5' />
+				<movement arc='(6,7)' entry='29227.5' exit='29452.5' />
+				<movement arc='(7,8)' entry='29452.5' exit='29469.375' />
+				<movement arc='(8,10)' entry='29469.375' exit='29581.875' />
+				<movement arc='(10,12)' entry='29581.875' exit='29598.75' />
+				<movement arc='(12,13)' entry='29598.75' exit='29880' />
+				<movement arc='(13,14)' entry='29880' exit='30161.25' />
+				<movement arc='(14,16)' entry='30161.25' exit='30233.25' />
+				<movement arc='(16,18)' entry='30233.25' exit='31823.25' />
+				<movement arc='(18,19)' entry='31823.25' exit='31895.25' />
+				<movement arc='(19,20)' entry='31895.25' exit='32176.5' />
+				<movement arc='(20,21)' entry='32176.5' exit='32514' />
+				<movement arc='(21,22)' entry='32514' exit='32530.875' />
+				<movement arc='(22,25)' entry='32530.875' exit='32643.375' />
+				<movement arc='(25,26)' entry='32643.375' exit='32660.25' />
+				<movement arc='(26,27)' entry='32660.25' exit='32716.5' />
+				<movement arc='(27,28)' entry='32716.5' exit='32733.375' />
+				<movement arc='(28,30)' entry='32733.375' exit='32902.125' />
+				<movement arc='(30,31)' entry='32902.125' exit='33070.875' />
+				<movement arc='(31,32)' entry='33070.875' exit='33087.75' />
+				<movement arc='(32,34)' entry='33087.75' exit='33200.25' />
+				<movement arc='(34,36)' entry='33200.25' exit='33217.125' />
+				<movement arc='(36,37)' entry='33217.125' exit='33385.875' />
+				<movement arc='(37,41)' entry='33385.875' exit='33457.875' />
+				<movement arc='(41,42)' entry='33457.875' exit='33570.375' />
+				<movement arc='(42,44)' entry='33570.375' exit='33739.125' />
+				<movement arc='(44,46)' entry='33739.125' exit='33756' />
+				<movement arc='(46,48)' entry='33756' exit='33981' />
+				<movement arc='(48,54)' entry='33981' exit='34206' />
+				<movement arc='(54,57)' entry='34206' exit='34222.875' />
+				<movement arc='(57,59)' entry='34222.875' exit='34391.625' />
+				<movement arc='(59,61)' entry='34391.625' exit='34560.375' />
+				<movement arc='(61,63)' entry='34560.375' exit='34577.25' />
+				<movement arc='(63,65)' entry='34577.25' exit='34746' />
+				<movement arc='(65,67)' entry='34746' exit='34914.75' />
+				<movement arc='(67,69)' entry='34914.75' exit='34931.625' />
+				<movement arc='(69,70)' entry='34931.625' exit='35212.875' />
+				<movement arc='(70,71)' entry='35212.875' exit='35494.125' />
+				<movement arc='(71,72)' entry='35494.125' exit='35511' />
+				<movement arc='(72,74)' entry='35511' exit='35623.5' />
+				<movement arc='(74,76)' entry='35623.5' exit='35640.375' />
+				<movement arc='(76,77)' entry='35640.375' exit='35865.375' />
+				<movement arc='(77,78)' entry='35865.375' exit='36090.375' />
+				<movement arc='(78,79)' entry='36090.375' exit='36107.25' />
+				<movement arc='(79,81)' entry='36107.25' exit='36219.75' />
+				<movement arc='(81,38)' entry='36219.75' exit='36236.625' />
+				<movement arc='(38,39)' entry='36236.625' exit='36517.875' />
+				<destination entry='36517.875' />
+			</movements>
+		</train>
+		<train id='B3'>
+			<movements>
+				<movement arc='(39,38)' entry='12240' exit='12561.429' />
+				<movement arc='(38,81)' entry='12561.429' exit='12580.715' />
+				<movement arc='(81,79)' entry='12580.715' exit='12709.286' />
+				<movement arc='(79,78)' entry='12709.286' exit='12728.572' />
+				<movement arc='(78,77)' entry='12728.572' exit='12985.715' />
+				<movement arc='(77,76)' entry='12985.715' exit='13242.858' />
+				<movement arc='(76,74)' entry='13242.858' exit='13262.144' />
+				<movement arc='(74,72)' entry='13262.144' exit='13390.715' />
+				<movement arc='(72,71)' entry='13390.715' exit='13410.001' />
+				<movement arc='(71,70)' entry='13410.001' exit='13731.43' />
+				<movement arc='(70,69)' entry='13731.43' exit='14052.859' />
+				<movement arc='(69,68)' entry='14052.859' exit='14124.859' />
+				<movement arc='(68,66)' entry='14124.859' exit='14317.716' />
+				<movement arc='(66,64)' entry='14317.716' exit='14510.573' />
+				<movement arc='(64,62)' entry='14510.573' exit='14529.859' />
+				<movement arc='(62,60)' entry='14529.859' exit='14722.716' />
+				<movement arc='(60,58)' entry='14722.716' exit='14915.573' />
+				<movement arc='(58,56)' entry='14915.573' exit='14934.859' />
+				<movement arc='(56,55)' entry='14934.859' exit='15063.43' />
+				<movement arc='(55,52)' entry='15063.43' exit='15082.716' />
+				<movement arc='(52,50)' entry='15082.716' exit='15211.287' />
+				<movement arc='(50,49)' entry='15211.287' exit='15230.573' />
+				<movement arc='(49,47)' entry='15230.573' exit='15487.716' />
+				<movement arc='(47,45)' entry='15487.716' exit='15507.002' />
+				<movement arc='(45,43)' entry='15507.002' exit='15699.859' />
+				<movement arc='(43,40)' entry='15699.859' exit='15828.43' />
+				<movement arc='(40,37)' entry='15828.43' exit='15847.716' />
+				<movement arc='(37,36)' entry='15847.716' exit='16040.573' />
+				<movement arc='(36,34)' entry='16040.573' exit='16059.859' />
+				<movement arc='(34,32)' entry='16059.859' exit='16188.43' />
+				<movement arc='(32,31)' entry='16188.43' exit='16207.716' />
+				<movement arc='(31,30)' entry='16207.716' exit='16400.573' />
+				<movement arc='(30,28)' entry='16400.573' exit='16593.43' />
+				<movement arc='(28,27)' entry='16593.43' exit='16612.716' />
+				<movement arc='(27,26)' entry='16612.716' exit='16677.002' />
+				<movement arc='(26,25)' entry='16677.002' exit='16696.288' />
+				<movement arc='(25,22)' entry='16696.288' exit='16824.859' />
+				<movement arc='(22,21)' entry='16824.859' exit='16844.145' />
+				<movement arc='(21,20)' entry='16844.145' exit='17229.859' />
+				<movement arc='(20,19)' entry='17229.859' exit='17551.288' />
+				<movement arc='(19,17)' entry='17551.288' exit='17570.574' />
+				<movement arc='(17,15)' entry='17570.574' exit='17699.145' />
+				<movement arc='(15,14)' entry='17699.145' exit='17718.431' />
+				<movement arc='(14,13)' entry='17718.431' exit='18039.86' />
+				<movement arc='(13,12)' entry='18039.86' exit='18361.289' />
+				<movement arc='(12,10)' entry='18361.289' exit='18380.575' />
+				<movement arc='(10,8)' entry='18380.575' exit='18509.146' />
+				<movement arc='(8,7)' entry='18509.146' exit='18528.432' />
+				<movement arc='(7,6)' entry='18528.432' exit='18785.575' />
+				<movement arc='(6,5)' entry='18785.575' exit='19107.004' />
+				<movement arc='(5,3)' entry='19107.004' exit='19126.29' />
+				<movement arc='(3,1)' entry='19126.29' exit='19254.861' />
+				<movement arc='(1,0)' entry='19254.861' exit='19274.147' />
+				<destination entry='19274.147' />
+			</movements>
+		</train>
+		<train id='C1'>
+			<movements>
+				<movement arc='(0,1)' entry='41940' exit='41957.308' />
+				<movement arc='(1,3)' entry='41957.308' exit='42072.693' />
+				<movement arc='(3,5)' entry='42072.693' exit='42090.001' />
+				<movement arc='(5,6)' entry='42090.001' exit='42378.463' />
+				<movement arc='(6,7)' entry='42378.463' exit='42609.232' />
+				<movement arc='(7,8)' entry='42609.232' exit='42626.54' />
+				<movement arc='(8,10)' entry='42626.54' exit='42741.925' />
+				<movement arc='(10,12)' entry='42741.925' exit='42759.233' />
+				<movement arc='(12,13)' entry='42759.233' exit='43047.695' />
+				<movement arc='(13,14)' entry='43047.695' exit='43336.157' />
+			</movements>
+		</train>
+		<train id='C2'>
+			<movements>
+				<movement arc='(34,36)' entry='0' exit='18' />
+				<movement arc='(36,37)' entry='18' exit='198' />
+				<movement arc='(37,40)' entry='198' exit='216' />
+				<movement arc='(40,43)' entry='216' exit='336' />
+				<movement arc='(43,45)' entry='336' exit='516' />
+				<movement arc='(45,47)' entry='516' exit='534' />
+				<movement arc='(47,49)' entry='534' exit='774' />
+				<movement arc='(49,50)' entry='774' exit='792' />
+				<movement arc='(50,52)' entry='792' exit='912' />
+				<movement arc='(52,55)' entry='912' exit='930' />
+				<movement arc='(55,56)' entry='930' exit='1050' />
+				<movement arc='(56,58)' entry='1050' exit='1068' />
+				<movement arc='(58,60)' entry='1068' exit='1248' />
+				<movement arc='(60,62)' entry='1248' exit='1428' />
+				<movement arc='(62,64)' entry='1428' exit='1446' />
+				<movement arc='(64,66)' entry='1446' exit='1626' />
+				<movement arc='(66,68)' entry='1626' exit='1806' />
+				<movement arc='(68,69)' entry='1806' exit='1878' />
+				<movement arc='(69,70)' entry='1878' exit='2178' />
+				<movement arc='(70,71)' entry='2178' exit='2478' />
+				<movement arc='(71,72)' entry='2478' exit='2496' />
+				<movement arc='(72,74)' entry='2496' exit='2616' />
+				<movement arc='(74,76)' entry='2616' exit='2634' />
+				<movement arc='(76,77)' entry='2634' exit='2874' />
+				<movement arc='(77,78)' entry='2874' exit='3114' />
+				<movement arc='(78,79)' entry='3114' exit='3132' />
+				<movement arc='(79,81)' entry='3132' exit='3252' />
+				<movement arc='(81,38)' entry='3252' exit='3270' />
+				<movement arc='(38,39)' entry='3270' exit='3570' />
+				<destination entry='3570' />
+			</movements>
+		</train>
+		<train id='C3'>
+			<movements>
+				<movement arc='(39,38)' entry='18180' exit='18501.429' />
+				<movement arc='(38,81)' entry='18501.429' exit='18520.715' />
+				<movement arc='(81,79)' entry='18520.715' exit='18649.286' />
+				<movement arc='(79,78)' entry='18649.286' exit='18668.572' />
+				<movement arc='(78,77)' entry='18668.572' exit='18925.715' />
+				<movement arc='(77,76)' entry='18925.715' exit='19182.858' />
+				<movement arc='(76,74)' entry='19182.858' exit='19202.144' />
+				<movement arc='(74,72)' entry='19202.144' exit='19330.715' />
+				<movement arc='(72,71)' entry='19330.715' exit='19350.001' />
+				<movement arc='(71,70)' entry='19350.001' exit='19671.43' />
+				<movement arc='(70,69)' entry='19671.43' exit='19992.859' />
+				<movement arc='(69,68)' entry='19992.859' exit='20064.859' />
+				<movement arc='(68,66)' entry='20064.859' exit='20257.716' />
+				<movement arc='(66,64)' entry='20257.716' exit='20450.573' />
+				<movement arc='(64,62)' entry='20450.573' exit='20469.859' />
+				<movement arc='(62,60)' entry='20469.859' exit='20662.716' />
+				<movement arc='(60,58)' entry='20662.716' exit='20855.573' />
+				<movement arc='(58,56)' entry='20855.573' exit='20874.859' />
+				<movement arc='(56,55)' entry='20874.859' exit='21003.43' />
+				<movement arc='(55,52)' entry='21003.43' exit='21022.716' />
+				<movement arc='(52,50)' entry='21022.716' exit='21151.287' />
+				<movement arc='(50,49)' entry='21151.287' exit='21170.573' />
+				<movement arc='(49,47)' entry='21170.573' exit='21427.716' />
+				<movement arc='(47,45)' entry='21427.716' exit='21447.002' />
+				<movement arc='(45,43)' entry='21447.002' exit='21639.859' />
+				<movement arc='(43,40)' entry='21639.859' exit='21768.43' />
+				<movement arc='(40,37)' entry='21768.43' exit='21787.716' />
+				<movement arc='(37,36)' entry='21787.716' exit='21980.573' />
+				<movement arc='(36,35)' entry='21980.573' exit='22052.573' />
+				<movement arc='(35,33)' entry='22052.573' exit='22472.573' />
+				<movement arc='(33,31)' entry='22472.573' exit='22544.573' />
+				<movement arc='(31,30)' entry='22544.573' exit='22737.43' />
+				<movement arc='(30,28)' entry='22737.43' exit='22930.287' />
+				<movement arc='(28,27)' entry='22930.287' exit='22949.573' />
+				<movement arc='(27,26)' entry='22949.573' exit='23013.859' />
+				<movement arc='(26,25)' entry='23013.859' exit='23033.145' />
+				<movement arc='(25,22)' entry='23033.145' exit='23161.716' />
+				<movement arc='(22,21)' entry='23161.716' exit='23181.002' />
+				<movement arc='(21,20)' entry='23181.002' exit='23566.716' />
+				<movement arc='(20,19)' entry='23566.716' exit='23888.145' />
+				<movement arc='(19,17)' entry='23888.145' exit='23907.431' />
+				<movement arc='(17,15)' entry='23907.431' exit='24036.002' />
+				<movement arc='(15,14)' entry='24036.002' exit='24055.288' />
+				<movement arc='(14,13)' entry='24055.288' exit='24376.717' />
+				<movement arc='(13,12)' entry='24376.717' exit='24698.146' />
+				<movement arc='(12,10)' entry='24698.146' exit='24717.432' />
+				<movement arc='(10,8)' entry='24717.432' exit='24846.003' />
+				<movement arc='(8,7)' entry='24846.003' exit='24865.289' />
+				<movement arc='(7,6)' entry='24865.289' exit='25122.432' />
+				<movement arc='(6,5)' entry='25122.432' exit='25443.861' />
+				<movement arc='(5,4)' entry='25443.861' exit='25515.861' />
+				<movement arc='(4,2)' entry='25515.861' exit='25935.861' />
+				<movement arc='(2,0)' entry='25935.861' exit='26007.861' />
+				<destination entry='26007.861' />
+			</movements>
+		</train>
+		<train id='D1'>
+			<movements>
+				<movement arc='(0,2)' entry='36000' exit='36072' />
+				<movement arc='(2,4)' entry='36072' exit='36492' />
+				<movement arc='(4,5)' entry='36492' exit='36564' />
+				<movement arc='(5,6)' entry='36564' exit='36939' />
+				<movement arc='(6,7)' entry='36939' exit='37239' />
+				<movement arc='(7,8)' entry='37239' exit='37261.5' />
+				<movement arc='(8,10)' entry='37261.5' exit='37411.5' />
+				<movement arc='(10,12)' entry='37411.5' exit='37434' />
+				<movement arc='(12,13)' entry='37434' exit='37809' />
+				<movement arc='(13,14)' entry='37809' exit='38184' />
+				<movement arc='(14,15)' entry='38184' exit='38206.5' />
+				<movement arc='(15,17)' entry='38206.5' exit='38356.5' />
+				<movement arc='(17,19)' entry='38356.5' exit='38379' />
+				<movement arc='(19,20)' entry='38379' exit='38754' />
+				<movement arc='(20,21)' entry='38754' exit='39204' />
+				<movement arc='(21,22)' entry='39204' exit='39226.5' />
+				<movement arc='(22,25)' entry='39226.5' exit='39376.5' />
+				<movement arc='(25,26)' entry='39376.5' exit='39399' />
+				<movement arc='(26,27)' entry='39399' exit='39474' />
+				<movement arc='(27,28)' entry='39474' exit='39496.5' />
+				<movement arc='(28,30)' entry='39496.5' exit='39721.5' />
+				<movement arc='(30,31)' entry='39721.5' exit='39946.5' />
+				<movement arc='(31,33)' entry='39946.5' exit='40018.5' />
+				<movement arc='(33,35)' entry='40018.5' exit='40498.5' />
+				<movement arc='(35,36)' entry='40498.5' exit='40570.5' />
+				<movement arc='(36,37)' entry='40570.5' exit='40795.5' />
+				<movement arc='(37,40)' entry='40795.5' exit='40818' />
+				<movement arc='(40,43)' entry='40818' exit='40968' />
+				<movement arc='(43,45)' entry='40968' exit='41193' />
+				<movement arc='(45,47)' entry='41193' exit='41215.5' />
+				<movement arc='(47,49)' entry='41215.5' exit='41515.5' />
+				<movement arc='(49,50)' entry='41515.5' exit='41538' />
+				<movement arc='(50,52)' entry='41538' exit='41688' />
+				<movement arc='(52,55)' entry='41688' exit='41710.5' />
+				<movement arc='(55,56)' entry='41710.5' exit='41980.5' />
+				<movement arc='(56,57)' entry='41980.5' exit='42052.5' />
+				<movement arc='(57,59)' entry='42052.5' exit='42277.5' />
+				<movement arc='(59,61)' entry='42277.5' exit='42502.5' />
+				<movement arc='(61,63)' entry='42502.5' exit='42525' />
+				<movement arc='(63,65)' entry='42525' exit='42750' />
+				<movement arc='(65,67)' entry='42750' exit='42975' />
+				<movement arc='(67,69)' entry='42975' exit='42997.5' />
+				<movement arc='(69,70)' entry='42997.5' exit='43372.5' />
+			</movements>
+		</train>
+		<train id='D2'>
+			<movements>
+				<movement arc='(17,19)' entry='0' exit='20.769' />
+				<movement arc='(19,20)' entry='20.769' exit='366.923' />
+				<movement arc='(20,21)' entry='366.923' exit='782.308' />
+				<movement arc='(21,22)' entry='782.308' exit='803.077' />
+				<movement arc='(22,25)' entry='803.077' exit='941.539' />
+				<movement arc='(25,26)' entry='941.539' exit='962.308' />
+				<movement arc='(26,27)' entry='962.308' exit='1031.539' />
+				<movement arc='(27,28)' entry='1031.539' exit='1052.308' />
+				<movement arc='(28,30)' entry='1052.308' exit='1260' />
+				<movement arc='(30,31)' entry='1260' exit='1467.692' />
+				<movement arc='(31,32)' entry='1467.692' exit='1488.461' />
+				<movement arc='(32,34)' entry='1488.461' exit='1626.923' />
+				<movement arc='(34,36)' entry='1626.923' exit='1647.692' />
+				<movement arc='(36,37)' entry='1647.692' exit='1855.384' />
+				<movement arc='(37,40)' entry='1855.384' exit='1876.153' />
+				<movement arc='(40,43)' entry='1876.153' exit='2014.615' />
+				<movement arc='(43,45)' entry='2014.615' exit='2342.307' />
+				<movement arc='(45,46)' entry='2342.307' exit='2414.307' />
+				<movement arc='(46,48)' entry='2414.307' exit='2691.23' />
+				<movement arc='(48,54)' entry='2691.23' exit='2968.153' />
+				<movement arc='(54,57)' entry='2968.153' exit='2988.922' />
+				<movement arc='(57,59)' entry='2988.922' exit='3196.614' />
+				<movement arc='(59,61)' entry='3196.614' exit='3404.306' />
+				<movement arc='(61,63)' entry='3404.306' exit='3425.075' />
+				<movement arc='(63,65)' entry='3425.075' exit='3632.767' />
+				<movement arc='(65,67)' entry='3632.767' exit='3840.459' />
+				<movement arc='(67,69)' entry='3840.459' exit='3861.228' />
+				<movement arc='(69,70)' entry='3861.228' exit='4207.382' />
+				<movement arc='(70,71)' entry='4207.382' exit='4553.536' />
+				<movement arc='(71,72)' entry='4553.536' exit='4574.305' />
+				<movement arc='(72,74)' entry='4574.305' exit='4712.767' />
+				<movement arc='(74,76)' entry='4712.767' exit='4733.536' />
+				<movement arc='(76,77)' entry='4733.536' exit='5010.459' />
+				<movement arc='(77,78)' entry='5010.459' exit='5287.382' />
+				<movement arc='(78,79)' entry='5287.382' exit='5308.151' />
+				<movement arc='(79,81)' entry='5308.151' exit='5446.613' />
+				<movement arc='(81,38)' entry='5446.613' exit='5467.382' />
+				<movement arc='(38,39)' entry='5467.382' exit='5813.536' />
+				<destination entry='5813.536' />
+			</movements>
+		</train>
+		<train id='E1'>
+			<movements>
+				<movement arc='(0,2)' entry='360' exit='432' />
+				<movement arc='(2,4)' entry='432' exit='912' />
+				<movement arc='(4,5)' entry='912' exit='984' />
+				<movement arc='(5,6)' entry='984' exit='1393.091' />
+				<movement arc='(6,7)' entry='1393.091' exit='1720.364' />
+				<movement arc='(7,8)' entry='1720.364' exit='1744.909' />
+				<movement arc='(8,10)' entry='1744.909' exit='1908.545' />
+				<movement arc='(10,12)' entry='1908.545' exit='1933.09' />
+				<movement arc='(12,13)' entry='1933.09' exit='2342.181' />
+				<movement arc='(13,14)' entry='2342.181' exit='2751.272' />
+				<movement arc='(14,15)' entry='2751.272' exit='2775.817' />
+				<movement arc='(15,17)' entry='2775.817' exit='2939.453' />
+				<movement arc='(17,19)' entry='2939.453' exit='2963.998' />
+				<movement arc='(19,20)' entry='2963.998' exit='3373.089' />
+				<movement arc='(20,21)' entry='3373.089' exit='3863.998' />
+				<movement arc='(21,22)' entry='3863.998' exit='3888.543' />
+				<movement arc='(22,25)' entry='3888.543' exit='4052.179' />
+				<movement arc='(25,26)' entry='4052.179' exit='4076.724' />
+				<movement arc='(26,27)' entry='4076.724' exit='4158.542' />
+				<movement arc='(27,28)' entry='4158.542' exit='4183.087' />
+				<movement arc='(28,30)' entry='4183.087' exit='4428.542' />
+				<movement arc='(30,31)' entry='4428.542' exit='4673.997' />
+				<movement arc='(31,32)' entry='4673.997' exit='4698.542' />
+				<movement arc='(32,34)' entry='4698.542' exit='4862.178' />
+				<movement arc='(34,36)' entry='4862.178' exit='4886.723' />
+				<movement arc='(36,37)' entry='4886.723' exit='5132.178' />
+				<movement arc='(37,40)' entry='5132.178' exit='5156.723' />
+				<movement arc='(40,43)' entry='5156.723' exit='5320.359' />
+				<movement arc='(43,45)' entry='5320.359' exit='5565.814' />
+				<movement arc='(45,46)' entry='5565.814' exit='5637.814' />
+				<movement arc='(46,48)' entry='5637.814' exit='5965.087' />
+				<movement arc='(48,54)' entry='5965.087' exit='6352.36' />
+				<movement arc='(54,58)' entry='6352.36' exit='6424.36' />
+				<movement arc='(58,60)' entry='6424.36' exit='6669.815' />
+				<movement arc='(60,62)' entry='6669.815' exit='6915.27' />
+				<movement arc='(62,64)' entry='6915.27' exit='6939.815' />
+				<movement arc='(64,66)' entry='6939.815' exit='7185.27' />
+				<movement arc='(66,68)' entry='7185.27' exit='7490.725' />
+				<movement arc='(68,69)' entry='7490.725' exit='7562.725' />
+				<movement arc='(69,70)' entry='7562.725' exit='7971.816' />
+				<movement arc='(70,71)' entry='7971.816' exit='8380.907' />
+				<movement arc='(71,72)' entry='8380.907' exit='8405.452' />
+				<movement arc='(72,74)' entry='8405.452' exit='8569.088' />
+				<movement arc='(74,76)' entry='8569.088' exit='8593.633' />
+				<movement arc='(76,77)' entry='8593.633' exit='8920.906' />
+				<movement arc='(77,78)' entry='8920.906' exit='9248.179' />
+				<movement arc='(78,79)' entry='9248.179' exit='9272.724' />
+				<movement arc='(79,81)' entry='9272.724' exit='9436.36' />
+				<movement arc='(81,38)' entry='9436.36' exit='9460.905' />
+				<movement arc='(38,39)' entry='9460.905' exit='9869.996' />
+				<destination entry='9869.996' />
+			</movements>
+		</train>
+		<train id='E2'>
+			<movements>
+				<movement arc='(48,46)' entry='0' exit='457.143' />
+				<movement arc='(46,44)' entry='457.143' exit='491.429' />
+				<movement arc='(44,42)' entry='491.429' exit='834.286' />
+				<movement arc='(42,41)' entry='834.286' exit='6402.857' />
+				<movement arc='(41,37)' entry='6402.857' exit='6474.857' />
+				<movement arc='(37,36)' entry='6474.857' exit='6817.714' />
+				<movement arc='(36,34)' entry='6817.714' exit='6852' />
+				<movement arc='(34,32)' entry='6852' exit='7080.571' />
+				<movement arc='(32,31)' entry='7080.571' exit='7114.857' />
+				<movement arc='(31,30)' entry='7114.857' exit='7457.714' />
+				<movement arc='(30,28)' entry='7457.714' exit='7800.571' />
+				<movement arc='(28,27)' entry='7800.571' exit='7834.857' />
+				<movement arc='(27,26)' entry='7834.857' exit='7949.143' />
+				<movement arc='(26,25)' entry='7949.143' exit='7983.429' />
+				<movement arc='(25,22)' entry='7983.429' exit='8212' />
+				<movement arc='(22,21)' entry='8212' exit='8246.286' />
+				<movement arc='(21,20)' entry='8246.286' exit='8932' />
+				<movement arc='(20,19)' entry='8932' exit='9503.429' />
+				<movement arc='(19,17)' entry='9503.429' exit='9537.715' />
+				<movement arc='(17,15)' entry='9537.715' exit='9766.286' />
+				<movement arc='(15,14)' entry='9766.286' exit='9800.572' />
+				<movement arc='(14,13)' entry='9800.572' exit='10372.001' />
+				<movement arc='(13,12)' entry='10372.001' exit='10943.43' />
+				<movement arc='(12,10)' entry='10943.43' exit='10977.716' />
+				<movement arc='(10,8)' entry='10977.716' exit='11206.287' />
+				<movement arc='(8,7)' entry='11206.287' exit='11240.573' />
+				<movement arc='(7,6)' entry='11240.573' exit='11697.716' />
+				<movement arc='(6,5)' entry='11697.716' exit='12269.145' />
+				<movement arc='(5,3)' entry='12269.145' exit='12303.431' />
+				<movement arc='(3,1)' entry='12303.431' exit='12532.002' />
+				<movement arc='(1,0)' entry='12532.002' exit='12566.288' />
+				<destination entry='12566.288' />
+			</movements>
+		</train>
+		<train id='E3'>
+			<movements>
+				<movement arc='(39,38)' entry='24000' exit='24514.286' />
+				<movement arc='(38,81)' entry='24514.286' exit='24545.143' />
+				<movement arc='(81,79)' entry='24545.143' exit='24750.857' />
+				<movement arc='(79,78)' entry='24750.857' exit='24781.714' />
+				<movement arc='(78,77)' entry='24781.714' exit='25193.143' />
+				<movement arc='(77,76)' entry='25193.143' exit='25604.572' />
+				<movement arc='(76,74)' entry='25604.572' exit='25635.429' />
+				<movement arc='(74,72)' entry='25635.429' exit='25841.143' />
+				<movement arc='(72,71)' entry='25841.143' exit='25872' />
+				<movement arc='(71,70)' entry='25872' exit='26386.286' />
+				<movement arc='(70,69)' entry='26386.286' exit='27740.572' />
+				<movement arc='(69,68)' entry='27740.572' exit='27812.572' />
+				<movement arc='(68,66)' entry='27812.572' exit='28121.143' />
+				<movement arc='(66,64)' entry='28121.143' exit='28429.714' />
+				<movement arc='(64,62)' entry='28429.714' exit='28460.571' />
+				<movement arc='(62,60)' entry='28460.571' exit='28769.142' />
+				<movement arc='(60,58)' entry='28769.142' exit='29077.713' />
+				<movement arc='(58,56)' entry='29077.713' exit='29108.57' />
+				<movement arc='(56,55)' entry='29108.57' exit='29314.284' />
+				<movement arc='(55,53)' entry='29314.284' exit='29386.284' />
+				<movement arc='(53,51)' entry='29386.284' exit='43246.284' />
+			</movements>
+		</train>
+		<train id='E4'>
+			<movements>
+				<movement arc='(39,38)' entry='22200' exit='22667.532' />
+				<movement arc='(38,82)' entry='22667.532' exit='22739.532' />
+				<movement arc='(82,80)' entry='22739.532' exit='23219.532' />
+				<movement arc='(80,78)' entry='23219.532' exit='23291.532' />
+				<movement arc='(78,77)' entry='23291.532' exit='23665.558' />
+				<movement arc='(77,76)' entry='23665.558' exit='24039.584' />
+				<movement arc='(76,74)' entry='24039.584' exit='24067.636' />
+				<movement arc='(74,72)' entry='24067.636' exit='24254.649' />
+				<movement arc='(72,71)' entry='24254.649' exit='24282.701' />
+				<movement arc='(71,70)' entry='24282.701' exit='24750.233' />
+				<movement arc='(70,69)' entry='24750.233' exit='25337.765' />
+				<movement arc='(69,68)' entry='25337.765' exit='25409.765' />
+				<movement arc='(68,66)' entry='25409.765' exit='25690.284' />
+				<movement arc='(66,64)' entry='25690.284' exit='25970.803' />
+				<movement arc='(64,62)' entry='25970.803' exit='25998.855' />
+				<movement arc='(62,60)' entry='25998.855' exit='26279.374' />
+				<movement arc='(60,58)' entry='26279.374' exit='26559.893' />
+				<movement arc='(58,56)' entry='26559.893' exit='26587.945' />
+				<movement arc='(56,55)' entry='26587.945' exit='26774.958' />
+				<movement arc='(55,52)' entry='26774.958' exit='26803.01' />
+				<movement arc='(52,50)' entry='26803.01' exit='26990.023' />
+				<movement arc='(50,49)' entry='26990.023' exit='27018.075' />
+				<movement arc='(49,47)' entry='27018.075' exit='27572.101' />
+				<movement arc='(47,44)' entry='27572.101' exit='27644.101' />
+				<movement arc='(44,42)' entry='27644.101' exit='27924.62' />
+				<movement arc='(42,41)' entry='27924.62' exit='28711.633' />
+				<movement arc='(41,37)' entry='28711.633' exit='28783.633' />
+				<movement arc='(37,36)' entry='28783.633' exit='29064.152' />
+				<movement arc='(36,35)' entry='29064.152' exit='29136.152' />
+				<movement arc='(35,33)' entry='29136.152' exit='29556.152' />
+				<movement arc='(33,31)' entry='29556.152' exit='29628.152' />
+				<movement arc='(31,30)' entry='29628.152' exit='29908.671' />
+				<movement arc='(30,28)' entry='29908.671' exit='30189.19' />
+				<movement arc='(28,27)' entry='30189.19' exit='30217.242' />
+				<movement arc='(27,26)' entry='30217.242' exit='30310.748' />
+				<movement arc='(26,25)' entry='30310.748' exit='30338.8' />
+				<movement arc='(25,22)' entry='30338.8' exit='30525.813' />
+				<movement arc='(22,21)' entry='30525.813' exit='30553.865' />
+				<movement arc='(21,20)' entry='30553.865' exit='31114.904' />
+				<movement arc='(20,19)' entry='31114.904' exit='31582.436' />
+				<movement arc='(19,17)' entry='31582.436' exit='31610.488' />
+				<movement arc='(17,15)' entry='31610.488' exit='31797.501' />
+				<movement arc='(15,14)' entry='31797.501' exit='31825.553' />
+				<movement arc='(14,13)' entry='31825.553' exit='32293.085' />
+				<movement arc='(13,12)' entry='32293.085' exit='32760.617' />
+				<movement arc='(12,10)' entry='32760.617' exit='32788.669' />
+				<movement arc='(10,8)' entry='32788.669' exit='32975.682' />
+				<movement arc='(8,7)' entry='32975.682' exit='33003.734' />
+				<movement arc='(7,6)' entry='33003.734' exit='33377.76' />
+				<movement arc='(6,5)' entry='33377.76' exit='33845.292' />
+				<movement arc='(5,3)' entry='33845.292' exit='33873.344' />
+				<movement arc='(3,1)' entry='33873.344' exit='34060.357' />
+				<movement arc='(1,0)' entry='34060.357' exit='34088.409' />
+				<destination entry='34088.409' />
+			</movements>
+		</train>
+		<train id='F1'>
+			<movements>
+				<movement arc='(0,1)' entry='42900' exit='42940.909' />
+				<movement arc='(1,3)' entry='42940.909' exit='43213.636' />
+			</movements>
+		</train>
+		<train id='F2'>
+			<movements>
+				<movement arc='(39,38)' entry='37500' exit='38785.714' />
+				<movement arc='(38,82)' entry='38785.714' exit='38857.714' />
+				<movement arc='(82,80)' entry='38857.714' exit='39697.714' />
+				<movement arc='(80,78)' entry='39697.714' exit='39769.714' />
+				<movement arc='(78,77)' entry='39769.714' exit='40798.285' />
+				<movement arc='(77,76)' entry='40798.285' exit='41826.856' />
+				<movement arc='(76,74)' entry='41826.856' exit='41903.999' />
+				<movement arc='(74,72)' entry='41903.999' exit='42418.285' />
+				<movement arc='(72,71)' entry='42418.285' exit='42495.428' />
+				<movement arc='(71,70)' entry='42495.428' exit='43781.142' />
+			</movements>
+		</train>
+	</trains>
+</solution>
